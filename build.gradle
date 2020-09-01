@@ -92,6 +92,9 @@ dependencies {
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft 'net.minecraftforge:forge:1.16.2-33.0.20'
 
+    // Geckolib for ingame animations
+    implementation fg.deobf('software.bernie.geckolib:forge-1.16.2-geckolib:2.1.0')
+
     // You may put jars on which you depend on in ./libs or you may define them like so..
     // compile "some.group:artifact:version:classifier"
     // compile "some.group:artifact:version"
@@ -144,4 +147,8 @@ publishing {
             url "file:///${project.projectDir}/mcmodsrepo"
         }
     }
+}
+
+repositories {
+    maven { url 'https://repo.repsy.io/mvn/gandiber/geckolib' }
 }

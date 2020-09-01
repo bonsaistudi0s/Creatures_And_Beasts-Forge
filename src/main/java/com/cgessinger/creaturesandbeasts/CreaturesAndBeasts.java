@@ -1,6 +1,11 @@
 package com.cgessinger.creaturesandbeasts;
 
+import com.cgessinger.creaturesandbeasts.common.entites.LittleGrebeEntity;
+import com.cgessinger.creaturesandbeasts.common.init.ModEntityTypes;
+import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -14,17 +19,23 @@ public class CreaturesAndBeasts
 
 	public CreaturesAndBeasts ()
 	{
-		// Register the setup method for modloading
-		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
-		// Register the doClientStuff method for modloading
-		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
+		IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
+		// Register the setup method for modloading
+		eventBus.addListener(this::setup);
+		// Register the doClientStuff method for modloading
+		eventBus.addListener(this::doClientStuff);
+
+		ModEntityTypes.ENTITY_TYPES.register(eventBus);
 		// Register ourselves for server and other game events we are interested in
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
 	private void setup (final FMLCommonSetupEvent event)
 	{
+		DeferredWorkQueue.runLater(() -> {
+			GlobalEntityTypeAttributes.put(ModEntityTypes.LITTLE_GREBE.get(), LittleGrebeEntity.setCustomAttributes().func_233813_a_());
+		});
 	}
 
 	private void doClientStuff (final FMLClientSetupEvent event)
