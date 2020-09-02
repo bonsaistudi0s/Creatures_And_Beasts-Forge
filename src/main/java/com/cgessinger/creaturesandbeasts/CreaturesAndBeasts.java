@@ -1,5 +1,6 @@
 package com.cgessinger.creaturesandbeasts;
 
+import com.cgessinger.creaturesandbeasts.common.entites.LittleGrebeChickEntity;
 import com.cgessinger.creaturesandbeasts.common.entites.LittleGrebeEntity;
 import com.cgessinger.creaturesandbeasts.common.init.ModEntityTypes;
 import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
@@ -35,6 +36,7 @@ public class CreaturesAndBeasts
 	{
 		DeferredWorkQueue.runLater(() -> {
 			GlobalEntityTypeAttributes.put(ModEntityTypes.LITTLE_GREBE.get(), LittleGrebeEntity.setCustomAttributes().func_233813_a_());
+			GlobalEntityTypeAttributes.put(ModEntityTypes.LITTLE_GREBE_CHICK.get(), LittleGrebeChickEntity.setCustomAttributes().func_233813_a_());
 		});
 	}
 

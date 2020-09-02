@@ -1,6 +1,7 @@
 package com.cgessinger.creaturesandbeasts.common.init;
 
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
+import com.cgessinger.creaturesandbeasts.common.entites.LittleGrebeChickEntity;
 import com.cgessinger.creaturesandbeasts.common.entites.LittleGrebeEntity;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
@@ -18,4 +19,9 @@ public class ModEntityTypes
 			() -> EntityType.Builder.create(LittleGrebeEntity::new, EntityClassification.CREATURE)
 					.size(1.0f, 1.0f)
 					.build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "little_grebe").toString()));
+
+	public static final RegistryObject<EntityType<LittleGrebeChickEntity>> LITTLE_GREBE_CHICK = ENTITY_TYPES.register("little_grebe_chick",
+			() -> EntityType.Builder.create(LittleGrebeChickEntity::new, EntityClassification.CREATURE)
+					.size(1.0f, 1.0f)
+					.build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "little_grebe_chick").toString()));
 }

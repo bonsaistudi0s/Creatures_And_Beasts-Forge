@@ -1,6 +1,7 @@
 package com.cgessinger.creaturesandbeasts.client;
 
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
+import com.cgessinger.creaturesandbeasts.client.render.LittleGrebeChickRender;
 import com.cgessinger.creaturesandbeasts.client.render.LittleGrebeRender;
 import com.cgessinger.creaturesandbeasts.common.init.ModEntityTypes;
 import net.minecraftforge.api.distmarker.Dist;
@@ -16,5 +17,6 @@ public class ClientEventBusSubscriber
 	public static void onClientSetup (FMLClientSetupEvent event)
 	{
 		RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.LITTLE_GREBE.get(), LittleGrebeRender::new);
+		RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.LITTLE_GREBE_CHICK.get(), LittleGrebeChickRender::new);
 	}
 }
