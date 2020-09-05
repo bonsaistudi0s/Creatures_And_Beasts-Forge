@@ -2,15 +2,17 @@ package com.cgessinger.creaturesandbeasts.common.entites;
 
 import com.cgessinger.creaturesandbeasts.common.goals.MountAdultGoal;
 import com.cgessinger.creaturesandbeasts.common.init.ModEntityTypes;
-import net.minecraft.entity.AgeableEntity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.MobEntity;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import software.bernie.geckolib.entity.IAnimatedEntity;
@@ -43,10 +45,13 @@ public class LittleGrebeChickEntity extends AbstractGrebeEntity
 	@Override
 	protected void onGrowingAdult ()
 	{
-		if( this.getRidingEntity() instanceof LittleGrebeEntity)
+		if(!this.isChild())
 		{
-			Debug.println("little grebe chick", "is adult");
 			Vector3d pos = this.getPositionVec();
+			if(this.isPassenger())
+			{
+				this.stopRiding();
+			}
 			this.remove();
 			if(this.world instanceof ServerWorld)
 			{
@@ -56,5 +61,13 @@ public class LittleGrebeChickEntity extends AbstractGrebeEntity
 				serverworld.summonEntity(entity);
 			}
 		}
+	}
+
+	@Override
+	public ILivingEntityData onInitialSpawn (IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag)
+	{
+		ILivingEntityData data = super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+		this.setGrowingAge(-100);
+		return data;
 	}
 }
