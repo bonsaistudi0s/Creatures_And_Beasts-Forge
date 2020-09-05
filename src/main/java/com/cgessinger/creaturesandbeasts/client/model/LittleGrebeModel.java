@@ -1,14 +1,13 @@
 package com.cgessinger.creaturesandbeasts.client.model;
-
-import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
 import com.cgessinger.creaturesandbeasts.common.entites.LittleGrebeEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
-import net.minecraft.util.ResourceLocation;
-import software.bernie.geckolib.animation.model.AnimatedEntityModel;
+import net.minecraft.entity.passive.AnimalEntity;
+import net.minecraft.util.math.MathHelper;
 
-public class LittleGrebeModel<T extends LittleGrebeEntity> extends AnimatedEntityModel<LittleGrebeEntity>
+public class LittleGrebeModel<L extends AnimalEntity> extends EntityModel<LittleGrebeEntity>
 {
 	private final ModelRenderer bone;
 	private final ModelRenderer Lwing;
@@ -81,14 +80,21 @@ public class LittleGrebeModel<T extends LittleGrebeEntity> extends AnimatedEntit
 	}
 
 	@Override
-	public void render (MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
+	public void setRotationAngles (LittleGrebeEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
 	{
-		bone.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn);
+		this.Head.rotateAngleX = headPitch * ((float)Math.PI / 270F);
+		this.Head.rotateAngleY = netHeadYaw * ((float)Math.PI / 270F);
+		this.Neck.rotateAngleX = this.Head.rotateAngleX;
+		this.Neck.rotateAngleY = this.Head.rotateAngleY;
+		this.Rleg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
+		this.Lleg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + (float)Math.PI) * 1.4F * limbSwingAmount;
+		this.Rwing.rotateAngleZ = ageInTicks%3;
+		this.Lwing.rotateAngleZ = -(ageInTicks%3);
 	}
 
 	@Override
-	public ResourceLocation getAnimationFileLocation ()
+	public void render (MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
 	{
-		return new ResourceLocation(CreaturesAndBeasts.MOD_ID, "animations/little_grebe_anim.json");
+		bone.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn);
 	}
 }
