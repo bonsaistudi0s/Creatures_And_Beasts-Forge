@@ -2,22 +2,16 @@ package com.cgessinger.creaturesandbeasts.common.entites;
 
 import com.cgessinger.creaturesandbeasts.common.goals.MountAdultGoal;
 import com.cgessinger.creaturesandbeasts.common.init.ModEntityTypes;
-import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
-import software.bernie.geckolib.entity.IAnimatedEntity;
-import software.bernie.geckolib.manager.EntityAnimationManager;
-import sun.security.ssl.Debug;
 
 import javax.annotation.Nullable;
 import java.util.Objects;

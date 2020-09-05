@@ -2,9 +2,7 @@ package com.cgessinger.creaturesandbeasts.client.render;
 
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
 import com.cgessinger.creaturesandbeasts.client.model.LittleGrebeChickModel;
-import com.cgessinger.creaturesandbeasts.client.model.LittleGrebeModel;
 import com.cgessinger.creaturesandbeasts.common.entites.LittleGrebeChickEntity;
-import com.cgessinger.creaturesandbeasts.common.entites.LittleGrebeEntity;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.util.ResourceLocation;

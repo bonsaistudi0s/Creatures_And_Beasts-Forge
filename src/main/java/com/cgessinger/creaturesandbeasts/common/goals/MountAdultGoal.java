@@ -1,7 +1,6 @@
 package com.cgessinger.creaturesandbeasts.common.goals;
 
 import com.cgessinger.creaturesandbeasts.common.entites.LittleGrebeEntity;
-import com.cgessinger.creaturesandbeasts.common.init.ModEntityTypes;
 import net.minecraft.entity.EntityPredicate;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.Goal;
