@@ -1,22 +1,21 @@
 package com.cgessinger.creaturesandbeasts.common.entites;
 
-import net.minecraft.entity.AgeableEntity;
-import net.minecraft.entity.CreatureEntity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.MobEntity;
+import com.cgessinger.creaturesandbeasts.common.init.ModEntityTypes;
+import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.brain.task.WalkRandomlyTask;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.passive.ChickenEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Items;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
+import sun.security.ssl.Debug;
 
 import javax.annotation.Nullable;
 
@@ -44,21 +43,24 @@ public class LittleGrebeEntity extends AnimalEntity
 	@Override
 	protected void registerGoals() {
 		this.goalSelector.addGoal(0, new SwimGoal(this));
-		this.goalSelector.addGoal(1, new PanicGoal(this, 1.4D));
+		this.goalSelector.addGoal(1, new PanicGoal(this, 1.0D));
 		this.goalSelector.addGoal(2, new BreedGoal(this, 1.0D));
 		this.goalSelector.addGoal(3, new TemptGoal(this, 1.0D, false, TEMPTATION_ITEMS));
 		this.goalSelector.addGoal(4, new FollowParentGoal(this, 1.1D));
 		this.goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, 1.0D));
 		this.goalSelector.addGoal(6, new LookAtGoal(this, PlayerEntity.class, 6.0F));
 		this.goalSelector.addGoal(7, new LookRandomlyGoal(this));
-
 	}
 
 	@Nullable
 	@Override
-	public AgeableEntity func_241840_a (ServerWorld p_241840_1_, AgeableEntity p_241840_2_)
+	public AgeableEntity func_241840_a (ServerWorld serverIn, AgeableEntity entityIn)
 	{
-		return null;
+		LittleGrebeChickEntity child = ModEntityTypes.LITTLE_GREBE_CHICK.get().create(serverIn);
+		assert child != null;
+		serverIn.summonEntity(child);
+		child.setPosition(this.getPosX(), this.getPosY(), this.getPosZ());
+		return child;
 	}
 
 	@Override
@@ -82,5 +84,25 @@ public class LittleGrebeEntity extends AnimalEntity
 		}
 
 		this.wingRotation += this.wingRotDelta * 2.0F;
+	}
+
+	/* Debugging
+	@Override
+	public ActionResultType func_230254_b_(PlayerEntity p_230254_1_, Hand p_230254_2_)
+	{
+		if(this.world instanceof ServerWorld)
+		{
+			ServerWorld serverworld = (ServerWorld)this.world;
+			this.func_241840_a(serverworld, this);
+			return ActionResultType.SUCCESS;
+		}
+		return  ActionResultType.PASS;
+	}
+	 */
+
+	@Override
+	public double getMountedYOffset ()
+	{
+		return this.getHeight() * 0.2D;
 	}
 }

@@ -22,6 +22,6 @@ public class ModEntityTypes
 
 	public static final RegistryObject<EntityType<LittleGrebeChickEntity>> LITTLE_GREBE_CHICK = ENTITY_TYPES.register("little_grebe_chick",
 			() -> EntityType.Builder.create(LittleGrebeChickEntity::new, EntityClassification.CREATURE)
-					.size(1.0f, 1.0f)
+					.size(0.35f, 0.35f)
 					.build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "little_grebe_chick").toString()));
 }

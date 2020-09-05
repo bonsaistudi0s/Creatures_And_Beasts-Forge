@@ -1,17 +1,12 @@
-package com.cgessinger.creaturesandbeasts.client.model;// Made with Blockbench 3.6.6
-// Exported for Minecraft version 1.15
-// Paste this class into your mod and generate all required imports
+package com.cgessinger.creaturesandbeasts.client.model;
 
-
-import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
 import com.cgessinger.creaturesandbeasts.common.entites.LittleGrebeChickEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
-import net.minecraft.util.ResourceLocation;
-import software.bernie.geckolib.animation.model.AnimatedEntityModel;
 
-public class LittleGrebeChickModel <T extends LittleGrebeChickEntity> extends AnimatedEntityModel<LittleGrebeChickEntity>
+public class LittleGrebeChickModel <T extends LittleGrebeChickEntity> extends EntityModel<LittleGrebeChickEntity>
 {
 	private final ModelRenderer bone;
 	private final ModelRenderer Head;
@@ -64,6 +59,12 @@ public class LittleGrebeChickModel <T extends LittleGrebeChickEntity> extends An
 		Rleg.setTextureOffset(14, 0).addBox(-0.5F, -0.005F, -0.5F, 2.0F, 2.0F, 2.0F, 0.0F, true);
 	}
 
+	@Override
+	public void setRotationAngles (LittleGrebeChickEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+	{
+
+	}
+
 	public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z) {
 		modelRenderer.rotateAngleX = x;
 		modelRenderer.rotateAngleY = y;
@@ -74,11 +75,5 @@ public class LittleGrebeChickModel <T extends LittleGrebeChickEntity> extends An
 	public void render (MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
 	{
 		bone.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn);
-	}
-
-	@Override
-	public ResourceLocation getAnimationFileLocation ()
-	{
-		return new ResourceLocation(CreaturesAndBeasts.MOD_ID, "animations/little_grebe_chick_anim.json");
 	}
 }

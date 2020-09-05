@@ -18,12 +18,18 @@ public class LittleGrebeChickRender extends MobRenderer<LittleGrebeChickEntity, 
 
 	public LittleGrebeChickRender (EntityRendererManager renderManagerIn)
 	{
-		super(renderManagerIn, new LittleGrebeChickModel<LittleGrebeChickEntity>(), 0.5F);
+		super(renderManagerIn, new LittleGrebeChickModel<LittleGrebeChickEntity>(), 0.2F);
 	}
 
 	@Override
 	public ResourceLocation getEntityTexture (LittleGrebeChickEntity entity)
 	{
 		return TEXTURE;
+	}
+
+	@Override
+	public LittleGrebeChickModel<LittleGrebeChickEntity> getEntityModel ()
+	{
+		return super.getEntityModel();
 	}
 }
