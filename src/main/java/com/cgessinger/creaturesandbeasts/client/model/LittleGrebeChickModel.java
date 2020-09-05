@@ -5,6 +5,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.util.math.MathHelper;
 
 public class LittleGrebeChickModel <T extends LittleGrebeChickEntity> extends EntityModel<LittleGrebeChickEntity>
 {
@@ -62,7 +63,12 @@ public class LittleGrebeChickModel <T extends LittleGrebeChickEntity> extends En
 	@Override
 	public void setRotationAngles (LittleGrebeChickEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
 	{
-
+		this.Head.rotateAngleX = headPitch * -((float)Math.PI / 180F);
+		this.Head.rotateAngleY = netHeadYaw * ((float)Math.PI / 180F);
+		this.Rleg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
+		this.Lleg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + (float)Math.PI) * 1.4F * limbSwingAmount;
+		this.Rwing.rotateAngleZ = ageInTicks;
+		this.Lwing.rotateAngleZ = -ageInTicks;
 	}
 
 	public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z) {

@@ -88,8 +88,8 @@ public class LittleGrebeModel<L extends AnimalEntity> extends EntityModel<Little
 		this.Neck.rotateAngleY = this.Head.rotateAngleY;
 		this.Rleg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
 		this.Lleg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + (float)Math.PI) * 1.4F * limbSwingAmount;
-		this.Rwing.rotateAngleZ = ageInTicks%3;
-		this.Lwing.rotateAngleZ = -(ageInTicks%3);
+		this.Rwing.rotateAngleZ = ageInTicks;
+		this.Lwing.rotateAngleZ = -ageInTicks;
 	}
 
 	@Override

@@ -8,6 +8,7 @@ import com.cgessinger.creaturesandbeasts.common.entites.LittleGrebeEntity;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -27,9 +28,13 @@ public class LittleGrebeChickRender extends MobRenderer<LittleGrebeChickEntity, 
 		return TEXTURE;
 	}
 
+	/**
+	 * Defines what float the third param in setRotationAngles of ModelBase is
+	 */
 	@Override
-	public LittleGrebeChickModel<LittleGrebeChickEntity> getEntityModel ()
-	{
-		return super.getEntityModel();
+	protected float handleRotationFloat(LittleGrebeChickEntity livingBase, float partialTicks) {
+		float f = MathHelper.lerp(partialTicks, livingBase.oFlap, livingBase.wingRotation);
+		float f1 = MathHelper.lerp(partialTicks, livingBase.oFlapSpeed, livingBase.destPos);
+		return (MathHelper.sin(f) + 1.0F) * f1;
 	}
 }
