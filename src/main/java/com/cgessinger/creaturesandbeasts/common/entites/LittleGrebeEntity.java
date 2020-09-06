@@ -46,7 +46,7 @@ public class LittleGrebeEntity extends AbstractGrebeEntity
 	@Override
 	public double getMountedYOffset ()
 	{
-		return this.getHeight() * 0.2D;
+		return this.getHeight() * 0.3D;
 	}
 
 	@Override

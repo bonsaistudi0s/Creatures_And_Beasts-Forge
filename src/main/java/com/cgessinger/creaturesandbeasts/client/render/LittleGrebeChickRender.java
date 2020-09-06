@@ -3,6 +3,8 @@ package com.cgessinger.creaturesandbeasts.client.render;
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
 import com.cgessinger.creaturesandbeasts.client.model.LittleGrebeChickModel;
 import com.cgessinger.creaturesandbeasts.common.entites.LittleGrebeChickEntity;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.util.ResourceLocation;
@@ -34,5 +36,20 @@ public class LittleGrebeChickRender extends MobRenderer<LittleGrebeChickEntity, 
 		float f = MathHelper.lerp(partialTicks, livingBase.oFlap, livingBase.wingRotation);
 		float f1 = MathHelper.lerp(partialTicks, livingBase.oFlapSpeed, livingBase.destPos);
 		return (MathHelper.sin(f) + 1.0F) * f1;
+	}
+
+	@Override
+	public void render (LittleGrebeChickEntity entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn)
+	{
+		if (entityIn.isPassenger())
+		{
+			matrixStackIn.push();
+			matrixStackIn.scale(0.75F, 0.75F, 0.75F);
+			super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
+			matrixStackIn.pop();
+		} else
+		{
+			super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
+		}
 	}
 }

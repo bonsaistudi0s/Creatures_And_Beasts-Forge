@@ -17,11 +17,11 @@ public class ModEntityTypes
 	// Entity Types
 	public static final RegistryObject<EntityType<LittleGrebeEntity>> LITTLE_GREBE = ENTITY_TYPES.register("little_grebe",
 			() -> EntityType.Builder.create(LittleGrebeEntity::new, EntityClassification.CREATURE)
-					.size(0.5f, 0.5f)
+					.size(0.5f, 0.6f)
 					.build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "little_grebe").toString()));
 
 	public static final RegistryObject<EntityType<LittleGrebeChickEntity>> LITTLE_GREBE_CHICK = ENTITY_TYPES.register("little_grebe_chick",
 			() -> EntityType.Builder.create(LittleGrebeChickEntity::new, EntityClassification.CREATURE)
-					.size(0.35f, 0.35f)
+					.size(0.45f, 0.45f)
 					.build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "little_grebe_chick").toString()));
 }

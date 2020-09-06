@@ -34,7 +34,7 @@ public class MountAdultGoal extends Goal
 	@Override
 	public void tick() {
 		Vector3d pos = childAnimal.getPositionVec();
-		LivingEntity closestEntity = world.getClosestEntityWithinAABB(LittleGrebeEntity.class, entityPredicate, this.childAnimal, pos.getX(), pos.getY(), pos.getZ(), this.childAnimal.getBoundingBox().grow(20.0D, 6.0D, 20.0D));
+		LivingEntity closestEntity = world.getClosestEntityWithinAABB(LittleGrebeEntity.class, entityPredicate, this.childAnimal, pos.getX(), pos.getY(), pos.getZ(), this.childAnimal.getBoundingBox().grow(40.0D, 6.0D, 40.0D));
 		if(closestEntity != null && !closestEntity.isBeingRidden())
 		{
 			this.childAnimal.getNavigator().tryMoveToEntityLiving(closestEntity, this.moveSpeed);

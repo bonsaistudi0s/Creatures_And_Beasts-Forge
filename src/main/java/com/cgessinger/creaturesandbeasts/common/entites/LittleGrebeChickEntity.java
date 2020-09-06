@@ -27,13 +27,13 @@ public class LittleGrebeChickEntity extends AbstractGrebeEntity
 	{
 		return MobEntity.func_233666_p_()
 				.func_233815_a_(Attributes.field_233818_a_, 5.0D) // Max Health
-				.func_233815_a_(Attributes.field_233821_d_, 0.35D); // Movement Speed
+				.func_233815_a_(Attributes.field_233821_d_, 0.3D); // Movement Speed
 	}
 
 	@Override
 	protected void registerGoals() {
 		super.registerGoals();
-		this.goalSelector.addGoal(0, new MountAdultGoal(this, 1.2D));
+		this.goalSelector.addGoal(0, new MountAdultGoal(this, 1.1D));
 	}
 
 	@Override
@@ -61,7 +61,7 @@ public class LittleGrebeChickEntity extends AbstractGrebeEntity
 	public ILivingEntityData onInitialSpawn (IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag)
 	{
 		ILivingEntityData data = super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
-		this.setGrowingAge(-100);
+		this.setGrowingAge(-600);
 		return data;
 	}
 }
