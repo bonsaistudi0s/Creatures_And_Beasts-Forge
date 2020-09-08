@@ -3,6 +3,7 @@ package com.cgessinger.creaturesandbeasts.common.entites;
 import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.passive.AnimalEntity;
@@ -11,6 +12,7 @@ import net.minecraft.item.Items;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 
@@ -74,5 +76,11 @@ public abstract class AbstractGrebeEntity extends AnimalEntity
 	public AgeableEntity func_241840_a (ServerWorld p_241840_1_, AgeableEntity p_241840_2_)
 	{
 		return null;
+	}
+
+	@Override
+	public boolean canSpawn (IWorld worldIn, SpawnReason spawnReasonIn)
+	{
+		return super.canSpawn(worldIn, spawnReasonIn);
 	}
 }

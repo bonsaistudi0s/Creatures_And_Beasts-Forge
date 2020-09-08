@@ -22,8 +22,8 @@ public class LittleGrebeEntity extends AbstractGrebeEntity
 	public static AttributeModifierMap.MutableAttribute setCustomAttributes()
 	{
 		return MobEntity.func_233666_p_()
-				.func_233815_a_(Attributes.field_233818_a_, 10.0D) // Max Health
-				.func_233815_a_(Attributes.field_233821_d_, 0.25D); // Movement Speed
+				.createMutableAttribute(Attributes.MAX_HEALTH, 10.0D) // Max Health
+				.createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.25D); // Movement Speed
 	}
 
 	@Override

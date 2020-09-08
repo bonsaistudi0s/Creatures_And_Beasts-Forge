@@ -26,8 +26,8 @@ public class LittleGrebeChickEntity extends AbstractGrebeEntity
 	public static AttributeModifierMap.MutableAttribute setCustomAttributes()
 	{
 		return MobEntity.func_233666_p_()
-				.func_233815_a_(Attributes.field_233818_a_, 5.0D) // Max Health
-				.func_233815_a_(Attributes.field_233821_d_, 0.3D); // Movement Speed
+				.createMutableAttribute(Attributes.MAX_HEALTH, 5.0D) // Max Health
+				.createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.3D); // Movement Speed
 	}
 
 	@Override
@@ -61,7 +61,7 @@ public class LittleGrebeChickEntity extends AbstractGrebeEntity
 	public ILivingEntityData onInitialSpawn (IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag)
 	{
 		ILivingEntityData data = super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
-		this.setGrowingAge(-600);
+		this.setGrowingAge(-800);
 		return data;
 	}
 }
