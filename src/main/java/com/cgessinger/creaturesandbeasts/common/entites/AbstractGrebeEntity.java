@@ -18,7 +18,7 @@ import javax.annotation.Nullable;
 
 public abstract class AbstractGrebeEntity extends AnimalEntity
 {
-	public static final Ingredient TEMPTATION_ITEMS = Ingredient.fromItems(Items.WHEAT_SEEDS, Items.MELON_SEEDS, Items.PUMPKIN_SEEDS, Items.BEETROOT_SEEDS);
+	public static final Ingredient TEMPTATION_ITEMS = Ingredient.fromItems(Items.COD, Items.SALMON, Items.TROPICAL_FISH);
 	public float wingRotation;
 	public float destPos;
 	public float oFlapSpeed;
