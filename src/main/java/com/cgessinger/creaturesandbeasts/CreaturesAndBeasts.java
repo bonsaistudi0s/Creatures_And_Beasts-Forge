@@ -3,7 +3,10 @@ package com.cgessinger.creaturesandbeasts;
 import com.cgessinger.creaturesandbeasts.common.entites.LittleGrebeChickEntity;
 import com.cgessinger.creaturesandbeasts.common.entites.LittleGrebeEntity;
 import com.cgessinger.creaturesandbeasts.common.init.ModEntityTypes;
+import com.cgessinger.creaturesandbeasts.common.init.ModItems;
 import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DeferredWorkQueue;
@@ -12,7 +15,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
-// The value here should match an entry in the META-INF/mods.toml file
 @Mod(CreaturesAndBeasts.MOD_ID)
 public class CreaturesAndBeasts
 {
@@ -28,7 +30,9 @@ public class CreaturesAndBeasts
 		eventBus.addListener(this::doClientStuff);
 
 		ModEntityTypes.ENTITY_TYPES.register(eventBus);
-		// Register ourselves for server and other game events we are interested in
+
+		ModItems.ITEMS.register(eventBus);
+
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
@@ -43,4 +47,11 @@ public class CreaturesAndBeasts
 	private void doClientStuff (final FMLClientSetupEvent event)
 	{
 	}
+
+	public static final ItemGroup TAB = new ItemGroup("cnb_tab") {
+		@Override
+		public ItemStack createIcon() {
+			return new ItemStack(ModItems.GREBE_SPAWN_EGG.get());
+		}
+	};
 }
