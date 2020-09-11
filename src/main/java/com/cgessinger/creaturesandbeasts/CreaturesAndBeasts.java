@@ -16,7 +16,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 @Mod(CreaturesAndBeasts.MOD_ID)
 public class CreaturesAndBeasts
 {
-	public static final String MOD_ID = "cab1";
+	public static final String MOD_ID = "cnb";
 
 	public CreaturesAndBeasts ()
 	{
