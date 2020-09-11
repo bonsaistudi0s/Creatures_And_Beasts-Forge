@@ -27,7 +27,7 @@ public class ModEntitySpawns
 			Biome.Category category = biome.getCategory();
 			if(category.equals(Biome.Category.OCEAN) || category.equals(Biome.Category.RIVER) || category.equals(Biome.Category.BEACH))
 			{
-				MobSpawnInfo.Spawners info = new MobSpawnInfo.Spawners(ModEntityTypes.LITTLE_GREBE.get(), 100, 2, 4);
+				MobSpawnInfo.Spawners info = new MobSpawnInfo.Spawners(ModEntityTypes.LITTLE_GREBE.get(), 50, 2, 4);
 				addMobSpawnToBiome(biome, EntityClassification.CREATURE, info);
 			}
 		}
