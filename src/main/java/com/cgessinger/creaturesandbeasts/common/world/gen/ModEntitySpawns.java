@@ -30,6 +30,11 @@ public class ModEntitySpawns
 				MobSpawnInfo.Spawners info = new MobSpawnInfo.Spawners(ModEntityTypes.LITTLE_GREBE.get(), 50, 2, 4);
 				addMobSpawnToBiome(biome, EntityClassification.CREATURE, info);
 			}
+			else if (category.equals(Biome.Category.DESERT) || category.equals(Biome.Category.MESA))
+			{
+				MobSpawnInfo.Spawners info = new MobSpawnInfo.Spawners(ModEntityTypes.LIZARD.get(), 500, 1, 4);
+				addMobSpawnToBiome(biome, EntityClassification.CREATURE, info);
+			}
 		}
 	}
 

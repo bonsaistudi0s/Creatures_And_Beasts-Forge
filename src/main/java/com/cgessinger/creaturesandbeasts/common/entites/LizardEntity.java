@@ -51,12 +51,11 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity
 		{
 			this.dataManager.set(LIZARD_VARIANT, dataTag.getInt("variant"));
 		}
-		else if (biomeCategory == Biome.Category.DESERT || biomeCategory == Biome.Category.MESA)
+		else if (biomeCategory.equals(Biome.Category.DESERT) || biomeCategory.equals(Biome.Category.MESA))
 		{
 			this.dataManager.set(LIZARD_VARIANT, this.getRNG().nextInt(2));
-			System.out.println(this.getTexture() + "");
 		}
-		else if (biomeCategory == Biome.Category.JUNGLE)
+		else if (biomeCategory.equals(Biome.Category.JUNGLE))
 		{
 			this.dataManager.set(LIZARD_VARIANT, this.getRNG().nextInt(2) + 2);
 		}
