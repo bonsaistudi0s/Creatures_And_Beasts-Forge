@@ -1,24 +1,27 @@
 package com.cgessinger.creaturesandbeasts.common.entites;
 
-import net.minecraft.entity.AgeableEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.MobEntity;
+import com.cgessinger.creaturesandbeasts.client.render.LizardRender;
+import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.passive.AnimalEntity;
+import net.minecraft.entity.passive.horse.HorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Items;
-import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.server.ServerWorld;
 import software.bernie.geckolib.animation.builder.AnimationBuilder;
 import software.bernie.geckolib.animation.controller.EntityAnimationController;
 import software.bernie.geckolib.entity.IAnimatedEntity;
 import software.bernie.geckolib.event.AnimationTestEvent;
 import software.bernie.geckolib.manager.EntityAnimationManager;
-import sun.security.ssl.Debug;
 
 import javax.annotation.Nullable;
 
@@ -26,11 +29,39 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity
 {
 	EntityAnimationManager manager = new EntityAnimationManager();
 	EntityAnimationController controller = new EntityAnimationController(this, "moveController", 10.0F, this::animationPredicate);
+	private static final DataParameter<Integer> LIZARD_VARIANT = EntityDataManager.createKey(LizardEntity.class, DataSerializers.VARINT);
 
 	public LizardEntity (EntityType<? extends AnimalEntity> type, World worldIn)
 	{
 		super(type, worldIn);
 		getAnimationManager().addAnimationController(controller);
+	}
+
+	@Override
+	protected void registerData() {
+		super.registerData();
+		this.dataManager.register(LIZARD_VARIANT, 0);
+	}
+
+	@Override
+	public ILivingEntityData onInitialSpawn (IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag)
+	{
+		Biome.Category biomeCategory = worldIn.getBiome(this.getPosition()).getCategory();
+		if(dataTag != null && dataTag.contains("variant"))
+		{
+			this.dataManager.set(LIZARD_VARIANT, dataTag.getInt("variant"));
+		}
+		else if (biomeCategory == Biome.Category.DESERT || biomeCategory == Biome.Category.MESA)
+		{
+			this.dataManager.set(LIZARD_VARIANT, this.getRNG().nextInt(2));
+			System.out.println(this.getTexture() + "");
+		}
+		else if (biomeCategory == Biome.Category.JUNGLE)
+		{
+			this.dataManager.set(LIZARD_VARIANT, this.getRNG().nextInt(2) + 2);
+		}
+
+		return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
 	}
 
 	private <E extends Entity> boolean animationPredicate(AnimationTestEvent<E> event)
@@ -72,5 +103,27 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity
 	public EntityAnimationManager getAnimationManager ()
 	{
 		return this.manager;
+	}
+
+	@Override
+	public void writeAdditional (CompoundNBT compound)
+	{
+		super.writeAdditional(compound);
+		compound.putInt("variant", getTexture());
+	}
+
+	@Override
+	public void readAdditional (CompoundNBT compound)
+	{
+		super.readAdditional(compound);
+		if(compound.contains("variant"))
+		{
+			this.dataManager.set(LIZARD_VARIANT, compound.getInt("variant"));
+		}
+	}
+
+	public int getTexture ()
+	{
+		return this.dataManager.get(LIZARD_VARIANT);
 	}
 }
