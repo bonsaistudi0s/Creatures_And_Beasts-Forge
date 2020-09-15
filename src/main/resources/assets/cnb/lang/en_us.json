@@ -1,6 +1,8 @@
 {
   "item.cnb.little_grebe_spawn_egg": "Little Grebe Spawn Egg",
+  "item.cnb.lizard_spawn_egg": "Lizarb",
   "entity.cnb.little_grebe": "Little Grebe",
   "entity.cnb.little_grebe_chick": "Little Grebe Chick",
+  "entity.cnb.lizard": "Lizard",
   "itemGroup.cnb_tab": "Creatures And Beasts"
 }

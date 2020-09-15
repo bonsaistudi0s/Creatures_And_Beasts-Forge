@@ -18,7 +18,7 @@ public class LizardRender extends MobRenderer<LizardEntity, LizardModel<LizardEn
 
 	public LizardRender (EntityRendererManager renderManagerIn)
 	{
-		super(renderManagerIn, new LizardModel<LizardEntity>(), 0.4F);
+		super(renderManagerIn, new LizardModel<LizardEntity>(), 0.35F);
 		TEXTURES = new ResourceLocation[]{
 				new ResourceLocation(CreaturesAndBeasts.MOD_ID, "textures/model/entity/lizard/lizard_desert.png"),
 				new ResourceLocation(CreaturesAndBeasts.MOD_ID, "textures/model/entity/lizard/lizard_desert_2.png"),
@@ -30,7 +30,7 @@ public class LizardRender extends MobRenderer<LizardEntity, LizardModel<LizardEn
 	@Override
 	public ResourceLocation getEntityTexture (LizardEntity entity)
 	{
-		return TEXTURES[entity.getTexture()];
+		return TEXTURES[entity.getVariant()];
 	}
 
 	@Override

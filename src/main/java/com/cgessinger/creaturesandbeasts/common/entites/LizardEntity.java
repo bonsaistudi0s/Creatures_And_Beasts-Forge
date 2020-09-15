@@ -1,12 +1,10 @@
 package com.cgessinger.creaturesandbeasts.common.entites;
 
-import com.cgessinger.creaturesandbeasts.client.render.LizardRender;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.passive.horse.HorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
@@ -28,7 +26,7 @@ import javax.annotation.Nullable;
 public class LizardEntity extends AnimalEntity implements IAnimatedEntity
 {
 	EntityAnimationManager manager = new EntityAnimationManager();
-	EntityAnimationController controller = new EntityAnimationController(this, "moveController", 10.0F, this::animationPredicate);
+	EntityAnimationController<LizardEntity> controller = new EntityAnimationController<>(this, "moveController", 5.0F, this::animationPredicate);
 	private static final DataParameter<Integer> LIZARD_VARIANT = EntityDataManager.createKey(LizardEntity.class, DataSerializers.VARINT);
 
 	public LizardEntity (EntityType<? extends AnimalEntity> type, World worldIn)
@@ -49,15 +47,19 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity
 		Biome.Category biomeCategory = worldIn.getBiome(this.getPosition()).getCategory();
 		if(dataTag != null && dataTag.contains("variant"))
 		{
-			this.dataManager.set(LIZARD_VARIANT, dataTag.getInt("variant"));
+			setVariant(dataTag.getInt("variant"));
 		}
 		else if (biomeCategory.equals(Biome.Category.DESERT) || biomeCategory.equals(Biome.Category.MESA))
 		{
-			this.dataManager.set(LIZARD_VARIANT, this.getRNG().nextInt(2));
+			setVariant(this.getRNG().nextInt(2));
 		}
 		else if (biomeCategory.equals(Biome.Category.JUNGLE))
 		{
-			this.dataManager.set(LIZARD_VARIANT, this.getRNG().nextInt(2) + 2);
+			setVariant(this.getRNG().nextInt(2) + 2);
+		}
+		else
+		{
+			setVariant(this.getRNG().nextInt(4));
 		}
 
 		return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
@@ -70,8 +72,7 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity
 			this.controller.setAnimation((new AnimationBuilder()).addAnimation("WALK"));
 			return true;
 		}
-		this.controller.setAnimation((new AnimationBuilder()).addAnimation("DANCE"));
-		return true;
+		return false;
 	}
 
 	@Override
@@ -87,8 +88,8 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity
 	public static AttributeModifierMap.MutableAttribute setCustomAttributes()
 	{
 		return MobEntity.func_233666_p_()
-				.createMutableAttribute(Attributes.MAX_HEALTH, 10.0D) // Max Health
-				.createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.4D); // Movement Speed
+				.createMutableAttribute(Attributes.MAX_HEALTH, 20.0D) // Max Health
+				.createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.5D); // Movement Speed
 	}
 
 	@Nullable
@@ -108,7 +109,7 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity
 	public void writeAdditional (CompoundNBT compound)
 	{
 		super.writeAdditional(compound);
-		compound.putInt("variant", getTexture());
+		compound.putInt("variant", getVariant());
 	}
 
 	@Override
@@ -117,12 +118,17 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity
 		super.readAdditional(compound);
 		if(compound.contains("variant"))
 		{
-			this.dataManager.set(LIZARD_VARIANT, compound.getInt("variant"));
+			setVariant(compound.getInt("variant"));
 		}
 	}
 
-	public int getTexture ()
+	public int getVariant ()
 	{
 		return this.dataManager.get(LIZARD_VARIANT);
+	}
+
+	public void setVariant (int variant)
+	{
+		this.dataManager.set(LIZARD_VARIANT, variant);
 	}
 }

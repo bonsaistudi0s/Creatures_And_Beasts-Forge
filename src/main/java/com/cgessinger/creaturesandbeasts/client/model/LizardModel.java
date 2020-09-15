@@ -6,7 +6,6 @@ package com.cgessinger.creaturesandbeasts.client.model;
 
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
 import com.cgessinger.creaturesandbeasts.common.entites.LizardEntity;
-import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib.animation.model.AnimatedEntityModel;
 import software.bernie.geckolib.animation.render.AnimatedModelRenderer;
