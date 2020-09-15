@@ -13,4 +13,8 @@ public class ModItems
 
 	public static RegistryObject<ModSpawnEggItem> GREBE_SPAWN_EGG = ITEMS.register("little_grebe_spawn_egg",
 			() -> new ModSpawnEggItem(ModEntityTypes.LITTLE_GREBE,0x201d1c, 0x6d3021, new Item.Properties().group(CreaturesAndBeasts.TAB)));
+
+
+	public static RegistryObject<ModSpawnEggItem> LIZARD_SPAWN_EGG = ITEMS.register("lizard_spawn_egg",
+			() -> new ModSpawnEggItem(ModEntityTypes.LIZARD,0, 0, new Item.Properties().group(CreaturesAndBeasts.TAB)));
 }

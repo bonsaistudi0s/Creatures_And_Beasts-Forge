@@ -30,9 +30,7 @@ public class CreaturesAndBeasts
 		eventBus.addListener(this::doClientStuff);
 
 		ModEntityTypes.ENTITY_TYPES.register(eventBus);
-
 		ModItems.ITEMS.register(eventBus);
-
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
@@ -41,6 +39,7 @@ public class CreaturesAndBeasts
 		DeferredWorkQueue.runLater(() -> {
 			GlobalEntityTypeAttributes.put(ModEntityTypes.LITTLE_GREBE.get(), LittleGrebeEntity.setCustomAttributes().create());
 			GlobalEntityTypeAttributes.put(ModEntityTypes.LITTLE_GREBE_CHICK.get(), LittleGrebeChickEntity.setCustomAttributes().create());
+			GlobalEntityTypeAttributes.put(ModEntityTypes.LIZARD.get(), LittleGrebeChickEntity.setCustomAttributes().create());
 		});
 	}
 
