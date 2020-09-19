@@ -27,7 +27,6 @@ public class LizardModel<T extends LizardEntity> extends AnimatedEntityModel<Liz
 	{
 		textureWidth = 64;
 		textureHeight = 64;
-
 		bone = new AnimatedModelRenderer(this);
 		bone.setRotationPoint(0.0F, 24.0F, 5.0F);
 		setRotationAngle(bone, -0.1309F, 0.0F, 0.0F);
@@ -83,11 +82,11 @@ public class LizardModel<T extends LizardEntity> extends AnimatedEntityModel<Liz
 		this.registerModelRenderer(bone8);
 
 		bone2 = new AnimatedModelRenderer(this);
-		bone2.setRotationPoint(-1.0F, 0.4892F, -0.715F);
+		bone2.setRotationPoint(0.0F, 0.4892F, -0.715F);
 		bone8.addChild(bone2);
 		setRotationAngle(bone2, 0.1308F, 0.0F, 0.0F);
-		bone2.setTextureOffset(14, 15).addBox(-1.0F, -2.0387F, -3.815F, 4.0F, 4.0F, 4.0F, 0.0F, false);
-		bone2.setTextureOffset(36, 17).addBox(-0.5F, -0.0387F, -4.815F, 3.0F, 2.0F, 1.0F, 0.0F, false);
+		bone2.setTextureOffset(14, 15).addBox(-2.0F, -2.0387F, -3.815F, 4.0F, 4.0F, 4.0F, 0.0F, false);
+		bone2.setTextureOffset(36, 17).addBox(-1.5F, -0.0387F, -4.815F, 3.0F, 2.0F, 1.0F, 0.0F, false);
 		bone2.setModelRendererName("bone2");
 		this.registerModelRenderer(bone2);
 
