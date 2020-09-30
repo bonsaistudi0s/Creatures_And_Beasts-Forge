@@ -28,6 +28,6 @@ public class ModEntityTypes
 
 	public static final RegistryObject<EntityType<LizardEntity>> LIZARD = ENTITY_TYPES.register("lizard",
 			() -> EntityType.Builder.create(LizardEntity::new, EntityClassification.CREATURE)
-					.size(0.4f, 0.3f)
+					.size(0.52f, 0.3f)
 					.build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "lizard").toString()));
 }
