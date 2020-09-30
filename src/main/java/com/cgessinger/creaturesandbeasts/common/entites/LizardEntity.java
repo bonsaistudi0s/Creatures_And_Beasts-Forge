@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
 public class LizardEntity extends AnimalEntity implements IAnimatedEntity
 {
 	EntityAnimationManager manager = new EntityAnimationManager();
-	EntityAnimationController<LizardEntity> controller = new EntityAnimationController<>(this, "moveController", 5.0F, this::animationPredicate);
+	EntityAnimationController<LizardEntity> controller = new EntityAnimationController<>(this, "moveController", 2.0F, this::animationPredicate);
 	private static final DataParameter<Integer> LIZARD_VARIANT = EntityDataManager.createKey(LizardEntity.class, DataSerializers.VARINT);
 
 	public LizardEntity (EntityType<? extends AnimalEntity> type, World worldIn)
@@ -89,7 +89,7 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity
 	{
 		return MobEntity.func_233666_p_()
 				.createMutableAttribute(Attributes.MAX_HEALTH, 20.0D) // Max Health
-				.createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.5D); // Movement Speed
+				.createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.4D); // Movement Speed
 	}
 
 	@Nullable
