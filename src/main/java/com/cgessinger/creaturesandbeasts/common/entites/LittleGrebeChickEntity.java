@@ -64,4 +64,10 @@ public class LittleGrebeChickEntity extends AbstractGrebeEntity
 		this.setGrowingAge(-800);
 		return data;
 	}
+
+	@Override
+	public EntitySize getSize (Pose poseIn)
+	{
+		return super.getSize(poseIn);
+	}
 }

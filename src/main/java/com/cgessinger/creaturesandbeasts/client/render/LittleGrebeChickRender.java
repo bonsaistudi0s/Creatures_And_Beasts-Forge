@@ -4,7 +4,6 @@ import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
 import com.cgessinger.creaturesandbeasts.client.model.LittleGrebeChickModel;
 import com.cgessinger.creaturesandbeasts.common.entites.LittleGrebeChickEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.util.ResourceLocation;
@@ -39,17 +38,12 @@ public class LittleGrebeChickRender extends MobRenderer<LittleGrebeChickEntity, 
 	}
 
 	@Override
-	public void render (LittleGrebeChickEntity entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn)
+	protected void preRenderCallback (LittleGrebeChickEntity entitylivingbaseIn, MatrixStack matrixStackIn, float partialTickTime)
 	{
-		if (entityIn.isPassenger())
+		if (entitylivingbaseIn.isPassenger())
 		{
-			matrixStackIn.push();
 			matrixStackIn.scale(0.75F, 0.75F, 0.75F);
-			super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
-			matrixStackIn.pop();
-		} else
-		{
-			super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
 		}
+		super.preRenderCallback(entitylivingbaseIn, matrixStackIn, partialTickTime);
 	}
 }
