@@ -9,6 +9,7 @@ import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Items;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
@@ -28,6 +29,7 @@ public abstract class AbstractGrebeEntity extends AnimalEntity
 	public AbstractGrebeEntity (EntityType<? extends AnimalEntity> type, World worldIn)
 	{
 		super(type, worldIn);
+		this.setPathPriority(PathNodeType.WATER, 10.0F);
 	}
 
 	static public AttributeModifierMap.MutableAttribute setCustomAttributes()
@@ -75,5 +77,11 @@ public abstract class AbstractGrebeEntity extends AnimalEntity
 	public AgeableEntity func_241840_a (ServerWorld p_241840_1_, AgeableEntity p_241840_2_)
 	{
 		return null;
+	}
+
+	@Override
+	public boolean onLivingFall (float distance, float damageMultiplier)
+	{
+		return false;
 	}
 }
