@@ -22,4 +22,5 @@ eclipse
 run
 
 # Files from Forge MDK
+logs/
 forge*changelog.txt

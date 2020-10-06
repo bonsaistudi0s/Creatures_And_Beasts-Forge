@@ -77,7 +77,7 @@ minecraft {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.16.2-33.0.32'
+    minecraft 'net.minecraftforge:forge:1.16.3-34.1.5'
 
     // Geckolib for ingame animations
     implementation fg.deobf('software.bernie.geckolib:forge-1.16.2-geckolib:2.1.0')
