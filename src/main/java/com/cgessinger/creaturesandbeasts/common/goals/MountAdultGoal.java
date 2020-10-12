@@ -5,8 +5,10 @@ import net.minecraft.entity.EntityPredicate;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.passive.AnimalEntity;
+import net.minecraft.pathfinding.Path;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
+import sun.security.ssl.Debug;
 
 public class MountAdultGoal extends Goal
 {
@@ -33,14 +35,20 @@ public class MountAdultGoal extends Goal
 	 */
 	@Override
 	public void tick() {
-		Vector3d pos = childAnimal.getPositionVec();
-		LivingEntity closestEntity = world.getClosestEntityWithinAABB(LittleGrebeEntity.class, entityPredicate, this.childAnimal, pos.getX(), pos.getY(), pos.getZ(), this.childAnimal.getBoundingBox().grow(40.0D, 6.0D, 40.0D));
+		Vector3d pos = this.childAnimal.getPositionVec();
+		LivingEntity closestEntity = world.getClosestEntityWithinAABB(LittleGrebeEntity.class, entityPredicate, this.childAnimal, pos.getX(), pos.getY(), pos.getZ(), this.childAnimal.getBoundingBox().grow(20.0D, 6.0D, 20.0D));
 		if(closestEntity != null && !closestEntity.isBeingRidden())
 		{
 			this.childAnimal.getNavigator().tryMoveToEntityLiving(closestEntity, this.moveSpeed);
-			if(closestEntity.getPositionVec().distanceTo(this.childAnimal.getPositionVec()) <= 1)
+			double dist = this.childAnimal.getDistance(closestEntity);
+			if(dist <= 0.6)
 			{
-				childAnimal.startRiding(closestEntity);
+				this.childAnimal.startRiding(closestEntity);
+			}
+			else if (dist <= 2)
+			{
+				this.childAnimal.getLookController().setLookPosition(closestEntity.getPositionVec());
+				this.childAnimal.moveRelative(0.1F, this.childAnimal.getLookVec());
 			}
 		}
 	}
