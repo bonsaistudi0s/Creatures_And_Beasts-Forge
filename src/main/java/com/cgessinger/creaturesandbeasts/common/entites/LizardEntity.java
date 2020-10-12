@@ -52,19 +52,27 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity
 	public ILivingEntityData onInitialSpawn (IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag)
 	{
 		Biome.Category biomeCategory = worldIn.getBiome(this.getPosition()).getCategory();
+		int variant;
 		if (dataTag != null && dataTag.contains("variant"))
 		{
-			setVariant(dataTag.getInt("variant"));
+			variant = dataTag.getInt("variant");
 		} else if (biomeCategory.equals(Biome.Category.DESERT) || biomeCategory.equals(Biome.Category.MESA))
 		{
-			setVariant(this.getRNG().nextInt(2));
+			variant = this.getRNG().nextInt(2);
 		} else if (biomeCategory.equals(Biome.Category.JUNGLE))
 		{
-			setVariant(this.getRNG().nextInt(2) + 2);
+			variant = this.getRNG().nextInt(2) + 2;
 		} else
 		{
-			setVariant(this.getRNG().nextInt(4));
+			variant = this.getRNG().nextInt(4);
 		}
+		// 1/10 chance to change variant to sad lizard variant
+		if(this.getRNG().nextInt(4) == 1)
+		{
+			variant += 3;  // Skip the first 4 entries in texture list to get to sad lizard textures (look at lizard render)
+		}
+
+		setVariant(variant);
 
 		return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
 	}
@@ -163,5 +171,10 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity
 	public boolean isPartying ()
 	{
 		return this.partyLizard;
+	}
+
+	public boolean isSad()
+	{
+		return this.dataManager.get(LIZARD_VARIANT) > 3;
 	}
 }

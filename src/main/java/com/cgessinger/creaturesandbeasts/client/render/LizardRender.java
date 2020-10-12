@@ -23,7 +23,11 @@ public class LizardRender extends MobRenderer<LizardEntity, LizardModel<LizardEn
 				new ResourceLocation(CreaturesAndBeasts.MOD_ID, "textures/model/entity/lizard/lizard_desert.png"),
 				new ResourceLocation(CreaturesAndBeasts.MOD_ID, "textures/model/entity/lizard/lizard_desert_2.png"),
 				new ResourceLocation(CreaturesAndBeasts.MOD_ID, "textures/model/entity/lizard/lizard_jungle.png"),
-				new ResourceLocation(CreaturesAndBeasts.MOD_ID, "textures/model/entity/lizard/lizard_jungle_2.png")
+				new ResourceLocation(CreaturesAndBeasts.MOD_ID, "textures/model/entity/lizard/lizard_jungle_2.png"),
+				new ResourceLocation(CreaturesAndBeasts.MOD_ID, "textures/model/entity/lizard/sad_lizard_desert.png"),
+				new ResourceLocation(CreaturesAndBeasts.MOD_ID, "textures/model/entity/lizard/sad_lizard_desert_2.png"),
+				new ResourceLocation(CreaturesAndBeasts.MOD_ID, "textures/model/entity/lizard/sad_lizard_jungle.png"),
+				new ResourceLocation(CreaturesAndBeasts.MOD_ID, "textures/model/entity/lizard/sad_lizard_jungle_2.png")
 		};
 	}
 
@@ -31,12 +35,6 @@ public class LizardRender extends MobRenderer<LizardEntity, LizardModel<LizardEn
 	public ResourceLocation getEntityTexture (LizardEntity entity)
 	{
 		return TEXTURES[entity.getVariant()];
-	}
-
-	@Override
-	public void render (LizardEntity entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn)
-	{
-		super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
 	}
 
 	@Override

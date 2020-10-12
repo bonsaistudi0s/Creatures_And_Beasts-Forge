@@ -114,4 +114,14 @@ public class LizardModel<T extends LizardEntity> extends AnimatedEntityModel<Liz
     {
         return new ResourceLocation(CreaturesAndBeasts.MOD_ID, "animations/lizard.json");
     }
+
+	@Override
+	public void setLivingAnimations (LizardEntity entity, float limbSwing, float limbSwingAmount, float partialTick)
+	{
+		super.setLivingAnimations(entity, limbSwing, limbSwingAmount, partialTick);
+		if(entity.isSad())
+		{
+			this.setRotationAngle(bone8, 0.2182F, 0.0F, 0.0F);
+		}
+	}
 }
