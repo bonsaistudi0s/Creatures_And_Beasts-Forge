@@ -1,5 +1,6 @@
 package com.cgessinger.creaturesandbeasts.common.entites;
 
+import com.cgessinger.creaturesandbeasts.common.items.AppleSliceItem;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
@@ -7,10 +8,14 @@ import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
@@ -100,6 +105,20 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity
 			this.jukeboxPosition = null;
 		}
 		super.livingTick();
+	}
+
+	@Override
+	public ActionResultType func_230254_b_ (PlayerEntity player, Hand hand) // on right click
+	{
+		ActionResultType result = super.func_230254_b_(player, hand);
+		ItemStack item = player.getHeldItem(hand);
+		if (item.getItem() instanceof AppleSliceItem && this.isSad())
+		{
+			this.setVariant(this.getVariant()-4);
+			item.shrink(1);
+			return ActionResultType.SUCCESS;
+		}
+		return result;
 	}
 
 	@Override
