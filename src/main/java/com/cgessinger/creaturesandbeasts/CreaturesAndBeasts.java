@@ -2,6 +2,7 @@ package com.cgessinger.creaturesandbeasts;
 
 import com.cgessinger.creaturesandbeasts.common.entites.LittleGrebeChickEntity;
 import com.cgessinger.creaturesandbeasts.common.entites.LittleGrebeEntity;
+import com.cgessinger.creaturesandbeasts.common.entites.LizardEntity;
 import com.cgessinger.creaturesandbeasts.common.init.ModEntityTypes;
 import com.cgessinger.creaturesandbeasts.common.init.ModItems;
 import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
@@ -39,7 +40,7 @@ public class CreaturesAndBeasts
 		DeferredWorkQueue.runLater(() -> {
 			GlobalEntityTypeAttributes.put(ModEntityTypes.LITTLE_GREBE.get(), LittleGrebeEntity.setCustomAttributes().create());
 			GlobalEntityTypeAttributes.put(ModEntityTypes.LITTLE_GREBE_CHICK.get(), LittleGrebeChickEntity.setCustomAttributes().create());
-			GlobalEntityTypeAttributes.put(ModEntityTypes.LIZARD.get(), LittleGrebeChickEntity.setCustomAttributes().create());
+			GlobalEntityTypeAttributes.put(ModEntityTypes.LIZARD.get(), LizardEntity.setCustomAttributes().create());
 		});
 	}
 

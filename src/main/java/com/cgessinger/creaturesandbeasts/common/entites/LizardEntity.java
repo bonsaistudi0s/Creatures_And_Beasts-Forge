@@ -1,5 +1,6 @@
 package com.cgessinger.creaturesandbeasts.common.entites;
 
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -10,11 +11,14 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import software.bernie.geckolib.animation.builder.AnimationBuilder;
 import software.bernie.geckolib.animation.controller.EntityAnimationController;
 import software.bernie.geckolib.entity.IAnimatedEntity;
@@ -28,6 +32,8 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity
 	EntityAnimationManager manager = new EntityAnimationManager();
 	EntityAnimationController<LizardEntity> controller = new EntityAnimationController<>(this, "moveController", 2.0F, this::animationPredicate);
 	private static final DataParameter<Integer> LIZARD_VARIANT = EntityDataManager.createKey(LizardEntity.class, DataSerializers.VARINT);
+	private boolean partyLizard;
+	private BlockPos jukeboxPosition;
 
 	public LizardEntity (EntityType<? extends AnimalEntity> type, World worldIn)
 	{
@@ -36,7 +42,8 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity
 	}
 
 	@Override
-	protected void registerData() {
+	protected void registerData ()
+	{
 		super.registerData();
 		this.dataManager.register(LIZARD_VARIANT, 0);
 	}
@@ -45,19 +52,16 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity
 	public ILivingEntityData onInitialSpawn (IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag)
 	{
 		Biome.Category biomeCategory = worldIn.getBiome(this.getPosition()).getCategory();
-		if(dataTag != null && dataTag.contains("variant"))
+		if (dataTag != null && dataTag.contains("variant"))
 		{
 			setVariant(dataTag.getInt("variant"));
-		}
-		else if (biomeCategory.equals(Biome.Category.DESERT) || biomeCategory.equals(Biome.Category.MESA))
+		} else if (biomeCategory.equals(Biome.Category.DESERT) || biomeCategory.equals(Biome.Category.MESA))
 		{
 			setVariant(this.getRNG().nextInt(2));
-		}
-		else if (biomeCategory.equals(Biome.Category.JUNGLE))
+		} else if (biomeCategory.equals(Biome.Category.JUNGLE))
 		{
 			setVariant(this.getRNG().nextInt(2) + 2);
-		}
-		else
+		} else
 		{
 			setVariant(this.getRNG().nextInt(4));
 		}
@@ -65,18 +69,34 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity
 		return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
 	}
 
-	private <E extends Entity> boolean animationPredicate(AnimationTestEvent<E> event)
+	private <E extends Entity> boolean animationPredicate (AnimationTestEvent<E> event)
 	{
 		if (event.isWalking())
 		{
 			this.controller.setAnimation((new AnimationBuilder()).addAnimation("WALK"));
+			return true;
+		} else if (isPartying())
+		{
+			this.controller.setAnimation((new AnimationBuilder()).addAnimation("DANCE"));
 			return true;
 		}
 		return false;
 	}
 
 	@Override
-	protected void registerGoals() {
+	public void livingTick ()
+	{
+		if (this.jukeboxPosition == null || !this.jukeboxPosition.withinDistance(this.getPositionVec(), 3.46D) || !this.world.getBlockState(this.jukeboxPosition).isIn(Blocks.JUKEBOX))
+		{
+			this.partyLizard = false;
+			this.jukeboxPosition = null;
+		}
+		super.livingTick();
+	}
+
+	@Override
+	protected void registerGoals ()
+	{
 		this.goalSelector.addGoal(0, new SwimGoal(this));
 		this.goalSelector.addGoal(1, new PanicGoal(this, 1.25D));
 		this.goalSelector.addGoal(3, new BreedGoal(this, 1.0D));
@@ -85,10 +105,9 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity
 		this.goalSelector.addGoal(8, new LookRandomlyGoal(this));
 	}
 
-	public static AttributeModifierMap.MutableAttribute setCustomAttributes()
+	public static AttributeModifierMap.MutableAttribute setCustomAttributes ()
 	{
-		return MobEntity.func_233666_p_()
-				.createMutableAttribute(Attributes.MAX_HEALTH, 20.0D) // Max Health
+		return MobEntity.func_233666_p_().createMutableAttribute(Attributes.MAX_HEALTH, 20.0D) // Max Health
 				.createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.4D); // Movement Speed
 	}
 
@@ -116,7 +135,7 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity
 	public void readAdditional (CompoundNBT compound)
 	{
 		super.readAdditional(compound);
-		if(compound.contains("variant"))
+		if (compound.contains("variant"))
 		{
 			setVariant(compound.getInt("variant"));
 		}
@@ -130,5 +149,19 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity
 	public void setVariant (int variant)
 	{
 		this.dataManager.set(LIZARD_VARIANT, variant);
+	}
+
+	@Override
+	@OnlyIn(Dist.CLIENT)
+	public void setPartying (BlockPos pos, boolean isPartying)
+	{
+		this.jukeboxPosition = pos;
+		this.partyLizard = isPartying;
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	public boolean isPartying ()
+	{
+		return this.partyLizard;
 	}
 }
