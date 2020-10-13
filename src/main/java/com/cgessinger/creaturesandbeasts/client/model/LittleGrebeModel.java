@@ -83,8 +83,8 @@ public class LittleGrebeModel<L extends AnimalEntity> extends EntityModel<Little
 	@Override
 	public void setRotationAngles (LittleGrebeEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
 	{
-		this.Head.rotateAngleX = headPitch * ((float)Math.PI / 270F);
-		this.Head.rotateAngleY = netHeadYaw * ((float)Math.PI / 270F);
+		this.Head.rotateAngleX = headPitch * ((float)Math.PI / 180F);
+		this.Head.rotateAngleY = netHeadYaw * ((float)Math.PI / 180F);
 		this.Neck.rotateAngleX = this.bone.rotateAngleX;
 		this.Neck.rotateAngleY = this.bone.rotateAngleY;
 		this.Rleg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;

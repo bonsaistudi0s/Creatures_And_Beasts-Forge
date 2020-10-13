@@ -1,6 +1,7 @@
 package com.cgessinger.creaturesandbeasts.common.entites;
 
 import net.minecraft.entity.AgeableEntity;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
@@ -32,13 +33,14 @@ public abstract class AbstractGrebeEntity extends AnimalEntity
 		this.setPathPriority(PathNodeType.WATER, 10.0F);
 	}
 
-	static public AttributeModifierMap.MutableAttribute setCustomAttributes()
+	static public AttributeModifierMap.MutableAttribute setCustomAttributes ()
 	{
 		return MobEntity.func_233666_p_();
 	}
 
 	@Override
-	protected void registerGoals() {
+	protected void registerGoals ()
+	{
 		this.goalSelector.addGoal(0, new SwimGoal(this));
 		this.goalSelector.addGoal(1, new RandomWalkingGoal(this, 1.0D));
 		this.goalSelector.addGoal(2, new PanicGoal(this, 1.0D));
@@ -50,7 +52,7 @@ public abstract class AbstractGrebeEntity extends AnimalEntity
 	}
 
 	@Override
-	public void livingTick()
+	public void livingTick ()
 	{
 		super.livingTick();
 		this.oFlap = this.wingRotation;
@@ -83,5 +85,47 @@ public abstract class AbstractGrebeEntity extends AnimalEntity
 	public boolean onLivingFall (float distance, float damageMultiplier)
 	{
 		return false;
+	}
+
+	/**
+	 * Rewrite of the original @applyEntityCollision with code cleanup and ability to be pushed when mounted
+	 */
+	@Override
+	public void applyEntityCollision (Entity entityIn)
+	{
+		if (!this.isRidingSameEntity(entityIn))
+		{
+			if (!entityIn.noClip && !this.noClip)
+			{
+				double d0 = entityIn.getPosX() - this.getPosX();
+				double d1 = entityIn.getPosZ() - this.getPosZ();
+				double d2 = MathHelper.absMax(d0, d1);
+				if (d2 >= 0.01D)
+				{
+					d2 = MathHelper.sqrt(d2);
+					double d3 = 1.0D / d2;
+					if (d3 > 1.0D)
+					{
+						d3 = 1.0D;
+					}
+
+					d0 = d0 / d2 * d3 * 0.05D - this.entityCollisionReduction;
+					d1 = d1 / d2 * d3 * 0.05D - this.entityCollisionReduction;
+					this.addVelocity(-d0, 0.0D, -d1);
+
+					if (!entityIn.isBeingRidden())
+					{
+						entityIn.addVelocity(d0, 0.0D, d1);
+					}
+				}
+
+			}
+		}
+	}
+
+	@Override
+	public boolean isBeingRidden ()
+	{
+		return super.isBeingRidden();
 	}
 }
