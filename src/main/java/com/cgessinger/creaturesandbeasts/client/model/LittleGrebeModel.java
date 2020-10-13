@@ -83,8 +83,9 @@ public class LittleGrebeModel<L extends AnimalEntity> extends EntityModel<Little
 	@Override
 	public void setRotationAngles (LittleGrebeEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
 	{
+		float max = 90 * ((float)Math.PI / 180F);
 		this.Head.rotateAngleX = headPitch * ((float)Math.PI / 180F);
-		this.Head.rotateAngleY = netHeadYaw * ((float)Math.PI / 180F);
+		this.Head.rotateAngleY = limitInRange(netHeadYaw * ((float)Math.PI / 180F), -max, max);
 		this.Neck.rotateAngleX = this.bone.rotateAngleX;
 		this.Neck.rotateAngleY = this.bone.rotateAngleY;
 		this.Rleg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
@@ -97,5 +98,10 @@ public class LittleGrebeModel<L extends AnimalEntity> extends EntityModel<Little
 	public void render (MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
 	{
 		bone.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn);
+	}
+
+	private float limitInRange(float value, float min, float max)
+	{
+		return Math.min((Math.max(value, min)), max);
 	}
 }

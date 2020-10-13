@@ -122,10 +122,4 @@ public abstract class AbstractGrebeEntity extends AnimalEntity
 			}
 		}
 	}
-
-	@Override
-	public boolean isBeingRidden ()
-	{
-		return super.isBeingRidden();
-	}
 }
