@@ -45,10 +45,10 @@ public class MountAdultGoal extends Goal
 			{
 				this.childAnimal.startRiding(closestEntity);
 			}
-			else if (dist <= 2)
+			else if (dist <= 1.5)
 			{
 				this.childAnimal.getLookController().setLookPosition(closestEntity.getPositionVec());
-				this.childAnimal.moveRelative(0.1F, this.childAnimal.getLookVec());
+				this.childAnimal.moveRelative(0.2F, this.childAnimal.getLookVec());
 			}
 		}
 	}
