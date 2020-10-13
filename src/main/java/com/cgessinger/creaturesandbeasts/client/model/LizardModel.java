@@ -124,4 +124,14 @@ public class LizardModel<T extends LizardEntity> extends AnimatedEntityModel<Liz
 			this.setRotationAngle(bone8, 0.2182F, 0.0F, 0.0F);
 		}
 	}
+
+	@Override
+	public void setRotationAngles (LizardEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+	{
+		if(!entityIn.isSad())
+		{
+			this.bone8.rotateAngleX = headPitch * ((float)Math.PI / 180F);
+			this.bone8.rotateAngleY = netHeadYaw * ((float)Math.PI / 180F);
+		}
+	}
 }
