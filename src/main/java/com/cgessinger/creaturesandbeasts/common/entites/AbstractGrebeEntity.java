@@ -1,5 +1,6 @@
 package com.cgessinger.creaturesandbeasts.common.entites;
 
+import com.cgessinger.creaturesandbeasts.common.goals.SmoothSwimGoal;
 import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -44,12 +45,12 @@ public abstract class AbstractGrebeEntity extends AnimalEntity
 	@Override
 	protected void registerGoals ()
 	{
-		this.goalSelector.addGoal(0, new SwimGoal(this));
+		this.goalSelector.addGoal(0, new SmoothSwimGoal(this));
 		this.goalSelector.addGoal(1, new RandomWalkingGoal(this, 1.0D));
 		this.goalSelector.addGoal(2, new PanicGoal(this, 1.0D));
 		this.goalSelector.addGoal(3, new TemptGoal(this, 1.0D, false, TEMPTATION_ITEMS));
 		this.goalSelector.addGoal(4, new FindWaterGoal(this));
-		this.goalSelector.addGoal(5, new RandomSwimmingGoal(this, 1.0D, 120));
+		this.goalSelector.addGoal(1, new RandomSwimmingGoal(this, 1.0D, 120));
 		this.goalSelector.addGoal(6, new LookAtGoal(this, PlayerEntity.class, 6.0F));
 		this.goalSelector.addGoal(7, new LookRandomlyGoal(this));
 	}
