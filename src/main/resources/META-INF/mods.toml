@@ -17,7 +17,7 @@ issueTrackerURL="https://github.com/CGessinger/Creatures-And-Beasts-Minecraft-Mo
 # The modid of the mod
 modId="cnb" #mandatory
 # The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
-version="1.16.2-1.1.1" #mandatory
+version="1.16.2-1.1.2" #mandatory
  # A display name for the mod
 displayName="Creatures and Beasts" #mandatory
 # A URL to query for updates for this mod. See the JSON update specification <here>
@@ -25,7 +25,7 @@ updateJSONURL="http://myurl.me/" #optional
 # A URL for the "homepage" for this mod, displayed in the mod UI
 displayURL="https://github.com/CGessinger/Creatures-And-Beasts-Minecraft-Mod" #optional
 # A file name (in the root of the mod JAR) containing a logo for display
-logoFile="examplemod.png" #optional
+logoFile="logo.png" #optional
 # A text field displayed in the mod UI
 credits="Thanks for this minecraft mod goes to Joosh and everyone who contributed to the project" #optional
 # A text field displayed in the mod UI
@@ -53,3 +53,10 @@ This is a simple minecraft mod which adds tons of new creatures. It is designed 
     versionRange="[1.16.2]"
     ordering="NONE"
     side="BOTH"
+
+[[dependencies.examplemod]]
+    modId="geckolib"
+    mandatory=true
+    versionRange="[1.16.3]"
+    ordering="NONE"
+    side="CLIENT"
