@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
 public class LizardEntity extends AnimalEntity implements IAnimatedEntity
 {
 	EntityAnimationManager manager = new EntityAnimationManager();
-	EntityAnimationController<LizardEntity> controller = new EntityAnimationController<>(this, "moveController", 2.0F, this::animationPredicate);
+	EntityAnimationController<LizardEntity> controller = new EntityAnimationController<>(this, "moveController", 0.1F, this::animationPredicate);
 	private static final DataParameter<Integer> LIZARD_VARIANT = EntityDataManager.createKey(LizardEntity.class, DataSerializers.VARINT);
 	private boolean partyLizard;
 	private BlockPos jukeboxPosition;
@@ -87,10 +87,6 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity
 		if (event.isWalking())
 		{
 			this.controller.setAnimation((new AnimationBuilder()).addAnimation("WALK"));
-			return true;
-		} else if (isPartying())
-		{
-			this.controller.setAnimation((new AnimationBuilder()).addAnimation("DANCE"));
 			return true;
 		}
 		return false;

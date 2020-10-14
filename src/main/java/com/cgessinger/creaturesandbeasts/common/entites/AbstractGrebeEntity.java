@@ -96,16 +96,6 @@ public abstract class AbstractGrebeEntity extends AnimalEntity
 		return SoundEvents.ENTITY_CHICKEN_AMBIENT;
 	}
 
-	@Override
-	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
-		return SoundEvents.ENTITY_CHICKEN_HURT;
-	}
-
-	@Override
-	protected SoundEvent getDeathSound() {
-		return SoundEvents.ENTITY_CHICKEN_DEATH;
-	}
-
 	/**
 	 * Rewrite of the original @applyEntityCollision with code cleanup and ability to be pushed when mounted
 	 */
