@@ -91,11 +91,6 @@ public abstract class AbstractGrebeEntity extends AnimalEntity
 		return false;
 	}
 
-	@Override
-	protected SoundEvent getAmbientSound() {
-		return SoundEvents.ENTITY_CHICKEN_AMBIENT;
-	}
-
 	/**
 	 * Rewrite of the original @applyEntityCollision with code cleanup and ability to be pushed when mounted
 	 */
