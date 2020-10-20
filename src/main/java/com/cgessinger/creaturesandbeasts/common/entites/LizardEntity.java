@@ -72,9 +72,9 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity
 			variant = this.getRNG().nextInt(4);
 		}
 		// 1/10 chance to change variant to sad lizard variant
-		if(this.getRNG().nextInt(4) == 1)
+		if(this.getRNG().nextInt(10) == 1)
 		{
-			variant += 3;  // Skip the first 4 entries in texture list to get to sad lizard textures (look at lizard render)
+			variant += 4;  // Skip the first 4 entries in texture list to get to sad lizard textures (look at lizard render)
 		}
 
 		setVariant(variant);
