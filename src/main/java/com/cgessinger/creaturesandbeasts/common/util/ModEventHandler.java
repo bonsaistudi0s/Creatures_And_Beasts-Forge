@@ -23,7 +23,7 @@ public class ModEventHandler
 		if(event.getEntityLiving() instanceof LittleGrebeEntity && event.getSpawnReason() == SpawnReason.CHUNK_GENERATION)
 		{
 			IWorld world = event.getWorld();
-			int rndInt = event.getEntityLiving().getRNG().nextInt(6);
+			int rndInt = event.getEntityLiving().getRNG().nextInt(2);
 			if(!world.isRemote() && rndInt == 0)
 			{
 				LittleGrebeChickEntity child = ModEntityTypes.LITTLE_GREBE_CHICK.get().create(event.getEntityLiving().getEntityWorld());
