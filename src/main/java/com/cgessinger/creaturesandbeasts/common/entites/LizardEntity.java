@@ -130,7 +130,7 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity
 
 	public static AttributeModifierMap.MutableAttribute setCustomAttributes ()
 	{
-		return MobEntity.func_233666_p_().createMutableAttribute(Attributes.MAX_HEALTH, 20.0D) // Max Health
+		return MobEntity.func_233666_p_().createMutableAttribute(Attributes.MAX_HEALTH, 12.0D) // Max Health
 				.createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.4D); // Movement Speed
 	}
 
