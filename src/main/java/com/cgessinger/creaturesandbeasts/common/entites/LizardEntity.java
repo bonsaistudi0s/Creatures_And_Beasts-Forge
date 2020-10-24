@@ -1,5 +1,7 @@
 package com.cgessinger.creaturesandbeasts.common.entites;
 
+import com.cgessinger.creaturesandbeasts.common.init.ModItems;
+import com.cgessinger.creaturesandbeasts.common.interfaces.IModNetable;
 import com.cgessinger.creaturesandbeasts.common.items.AppleSliceItem;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
@@ -13,6 +15,8 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.particles.IParticleData;
+import net.minecraft.particles.ParticleType;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
@@ -33,7 +37,7 @@ import software.bernie.geckolib.manager.EntityAnimationManager;
 
 import javax.annotation.Nullable;
 
-public class LizardEntity extends AnimalEntity implements IAnimatedEntity
+public class LizardEntity extends AnimalEntity implements IAnimatedEntity, IModNetable
 {
 	EntityAnimationManager manager = new EntityAnimationManager();
 	EntityAnimationController<LizardEntity> controller = new EntityAnimationController<>(this, "moveController", 0.1F, this::animationPredicate);
@@ -113,7 +117,7 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity
 		{
 			this.setVariant(this.getVariant()-4);
 			item.shrink(1);
-			spawnLoveParticles();
+			spawnParticles(ParticleTypes.HEART);
 			return ActionResultType.SUCCESS;
 		}
 		return result;
@@ -176,13 +180,13 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity
 		this.dataManager.set(LIZARD_VARIANT, variant);
 	}
 
-	private void spawnLoveParticles()
+	public void spawnParticles(IParticleData data)
 	{
 		for(int i = 0; i < 7; ++i) {
 			double d0 = this.rand.nextGaussian() * 0.02D;
 			double d1 = this.rand.nextGaussian() * 0.02D;
 			double d2 = this.rand.nextGaussian() * 0.02D;
-			this.world.addParticle(ParticleTypes.HEART, this.getPosXRandom(1.0D), this.getPosYRandom() + 0.5D, this.getPosZRandom(1.0D), d0, d1, d2);
+			this.world.addParticle(data, this.getPosXRandom(1.0D), this.getPosYRandom() + 0.5D, this.getPosZRandom(1.0D), d0, d1, d2);
 		}
 	}
 
@@ -203,5 +207,17 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity
 	public boolean isSad()
 	{
 		return this.dataManager.get(LIZARD_VARIANT) > 3;
+	}
+
+	@Override
+	public ItemStack getItem ()
+	{
+		return new ItemStack(ModItems.LIZARD_SPAWN_EGG.get());
+	}
+
+	@Override
+	public void spawnParticleFeedback ()
+	{
+		spawnParticles(ParticleTypes.HAPPY_VILLAGER);
 	}
 }
