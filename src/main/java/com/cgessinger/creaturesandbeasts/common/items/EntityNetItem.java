@@ -24,10 +24,14 @@ public class EntityNetItem extends Item
 		if(target instanceof IModNetable && target.isAlive())
 		{
 			IModNetable entity = (IModNetable) target;
-			playerIn.addItemStackToInventory(entity.getItem());
-			entity.spawnParticleFeedback();
-			target.remove();
-			return ActionResultType.SUCCESS;
+			ItemStack itemstack = entity.getItem();
+			if(itemstack != null)
+			{
+				playerIn.addItemStackToInventory(itemstack);
+				entity.spawnParticleFeedback();
+				target.remove();
+				return ActionResultType.SUCCESS;
+			}
 		}
 		return ActionResultType.FAIL;
 	}

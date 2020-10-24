@@ -213,10 +213,15 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity, IModN
 	@Override
 	public ItemStack getItem ()
 	{
-		Item item = ModItems.LIZARD_SPAWN_MAP.get(this.getVariant()).get();
-		ItemStack stack = new ItemStack(item);
-		stack.getOrCreateTag().putInt("variant", this.getVariant());
-		return stack;
+		int variant = this.getVariant();
+		if(!(variant > 3))
+		{
+			Item item = ModItems.LIZARD_SPAWN_MAP.get(variant).get();
+			ItemStack stack = new ItemStack(item);
+			stack.getOrCreateTag().putInt("variant", variant);
+			return stack;
+		}
+		return null;
 	}
 
 	@Override
