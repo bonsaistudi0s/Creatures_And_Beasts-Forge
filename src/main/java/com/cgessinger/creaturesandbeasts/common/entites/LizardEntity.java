@@ -10,6 +10,7 @@ import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
@@ -212,7 +213,10 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity, IModN
 	@Override
 	public ItemStack getItem ()
 	{
-		return new ItemStack(ModItems.LIZARD_SPAWN_EGG.get());
+		Item item = ModItems.LIZARD_SPAWN_MAP.get(this.getVariant()).get();
+		ItemStack stack = new ItemStack(item);
+		stack.getOrCreateTag().putInt("variant", this.getVariant());
+		return stack;
 	}
 
 	@Override
