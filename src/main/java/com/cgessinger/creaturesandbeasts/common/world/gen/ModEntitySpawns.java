@@ -32,7 +32,7 @@ public class ModEntitySpawns
 			}
 			else if (category.equals(Biome.Category.DESERT) || category.equals(Biome.Category.MESA) || category.equals(Biome.Category.JUNGLE))
 			{
-				MobSpawnInfo.Spawners info = new MobSpawnInfo.Spawners(ModEntityTypes.LIZARD.get(), 80, 1, 4);
+				MobSpawnInfo.Spawners info = new MobSpawnInfo.Spawners(ModEntityTypes.LIZARD.get(), 50, 1, 4);
 				addMobSpawnToBiome(biome, EntityClassification.CREATURE, info);
 			}
 		}
