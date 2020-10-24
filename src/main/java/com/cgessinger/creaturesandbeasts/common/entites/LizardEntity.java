@@ -13,6 +13,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
@@ -112,6 +113,7 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity
 		{
 			this.setVariant(this.getVariant()-4);
 			item.shrink(1);
+			spawnLoveParticles();
 			return ActionResultType.SUCCESS;
 		}
 		return result;
@@ -172,6 +174,16 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity
 	public void setVariant (int variant)
 	{
 		this.dataManager.set(LIZARD_VARIANT, variant);
+	}
+
+	private void spawnLoveParticles()
+	{
+		for(int i = 0; i < 7; ++i) {
+			double d0 = this.rand.nextGaussian() * 0.02D;
+			double d1 = this.rand.nextGaussian() * 0.02D;
+			double d2 = this.rand.nextGaussian() * 0.02D;
+			this.world.addParticle(ParticleTypes.HEART, this.getPosXRandom(1.0D), this.getPosYRandom() + 0.5D, this.getPosZRandom(1.0D), d0, d1, d2);
+		}
 	}
 
 	@Override
