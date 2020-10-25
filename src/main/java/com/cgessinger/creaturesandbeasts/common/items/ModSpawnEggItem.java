@@ -3,14 +3,17 @@ package com.cgessinger.creaturesandbeasts.common.items;
 import net.minecraft.block.DispenserBlock;
 import net.minecraft.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.dispenser.IBlockSource;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.item.SpawnEggItem;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
@@ -34,14 +37,13 @@ public class ModSpawnEggItem extends SpawnEggItem
 	}
 
 	@Override
-	public ActionResultType onItemUse (ItemUseContext context)
+	public void inventoryTick (ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected)
 	{
-		if(this.variant != -1)
+		if(this.variant != -1 && !stack.getOrCreateTag().contains("variant"))
 		{
-			ItemStack stack = context.getItem();
 			stack.getOrCreateTag().putInt("variant", this.variant);
 		}
-		return super.onItemUse(context);
+		super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
 	}
 
 	public static void initSpawnEggs ()
