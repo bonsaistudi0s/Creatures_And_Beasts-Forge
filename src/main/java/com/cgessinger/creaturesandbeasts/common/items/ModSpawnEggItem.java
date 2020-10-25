@@ -6,8 +6,10 @@ import net.minecraft.dispenser.IBlockSource;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.item.SpawnEggItem;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.fml.RegistryObject;
@@ -22,12 +24,24 @@ public class ModSpawnEggItem extends SpawnEggItem
 {
 	protected static final List<ModSpawnEggItem> UNADDED_EGGS = new ArrayList<>();
 	private final Lazy<? extends EntityType<?>> entityTypeSupplier;
+	private int variant = -1;
 
 	public ModSpawnEggItem (final RegistryObject<? extends EntityType<?>> entityTypeSupplier, int primaryColorIn, int secondaryColorIn, Properties builder)
 	{
 		super(null, primaryColorIn, secondaryColorIn, builder);
 		this.entityTypeSupplier = Lazy.of(entityTypeSupplier::get);
 		UNADDED_EGGS.add(this);
+	}
+
+	@Override
+	public ActionResultType onItemUse (ItemUseContext context)
+	{
+		if(this.variant != -1)
+		{
+			ItemStack stack = context.getItem();
+			stack.getOrCreateTag().putInt("variant", this.variant);
+		}
+		return super.onItemUse(context);
 	}
 
 	public static void initSpawnEggs ()
@@ -58,5 +72,11 @@ public class ModSpawnEggItem extends SpawnEggItem
 	public EntityType<?> getType (@Nullable CompoundNBT p_208076_1_)
 	{
 		return this.entityTypeSupplier.get();
+	}
+
+	public ModSpawnEggItem spawnsVariant(int variant)
+	{
+		this.variant = variant;
+		return this;
 	}
 }

@@ -25,16 +25,16 @@ public class ModItems
 
 	public static Map<Integer, RegistryObject<ModSpawnEggItem>> LIZARD_SPAWN_MAP = new HashMap<>();
 	public static RegistryObject<ModSpawnEggItem> LIZARD_ITEM_0 = ITEMS.register("lizard_item_0",
-			() -> new ModSpawnEggItem(ModEntityTypes.LIZARD,0x00FFFFFF, 0x00FFFFFF, new Item.Properties().group(CreaturesAndBeasts.TAB)));
+			() -> new ModSpawnEggItem(ModEntityTypes.LIZARD,0x00FFFFFF, 0x00FFFFFF, new Item.Properties().group(CreaturesAndBeasts.TAB)).spawnsVariant(0));
 
 	public static RegistryObject<ModSpawnEggItem> LIZARD_ITEM_1 = ITEMS.register("lizard_item_1",
-			() -> new ModSpawnEggItem(ModEntityTypes.LIZARD,0x00FFFFFF, 0x00FFFFFF, new Item.Properties().group(CreaturesAndBeasts.TAB)));
+			() -> new ModSpawnEggItem(ModEntityTypes.LIZARD,0x00FFFFFF, 0x00FFFFFF, new Item.Properties().group(CreaturesAndBeasts.TAB)).spawnsVariant(1));
 
 	public static RegistryObject<ModSpawnEggItem> LIZARD_ITEM_2 = ITEMS.register("lizard_item_2",
-			() -> new ModSpawnEggItem(ModEntityTypes.LIZARD,0x00FFFFFF, 0x00FFFFFF, new Item.Properties().group(CreaturesAndBeasts.TAB)));
+			() -> new ModSpawnEggItem(ModEntityTypes.LIZARD,0x00FFFFFF, 0x00FFFFFF, new Item.Properties().group(CreaturesAndBeasts.TAB)).spawnsVariant(2));
 
 	public static RegistryObject<ModSpawnEggItem> LIZARD_ITEM_3 = ITEMS.register("lizard_item_3",
-			() -> new ModSpawnEggItem(ModEntityTypes.LIZARD,0x00FFFFFF, 0x00FFFFFF, new Item.Properties().group(CreaturesAndBeasts.TAB)));
+			() -> new ModSpawnEggItem(ModEntityTypes.LIZARD,0x00FFFFFF, 0x00FFFFFF, new Item.Properties().group(CreaturesAndBeasts.TAB)).spawnsVariant(3));
 
 	static {
 		LIZARD_SPAWN_MAP.put(0, LIZARD_ITEM_0);

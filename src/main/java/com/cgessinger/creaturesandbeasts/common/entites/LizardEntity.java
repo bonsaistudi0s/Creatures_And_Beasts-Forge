@@ -64,9 +64,11 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity, IModN
 	{
 		Biome.Category biomeCategory = worldIn.getBiome(this.getPosition()).getCategory();
 		int variant;
+		boolean forceNotSad = false;
 		if (dataTag != null && dataTag.contains("variant"))
 		{
 			variant = dataTag.getInt("variant");
+			forceNotSad = true;
 		} else if (biomeCategory.equals(Biome.Category.DESERT) || biomeCategory.equals(Biome.Category.MESA))
 		{
 			variant = this.getRNG().nextInt(2);
@@ -78,7 +80,7 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity, IModN
 			variant = this.getRNG().nextInt(4);
 		}
 		// 1/10 chance to change variant to sad lizard variant
-		if(this.getRNG().nextInt(10) == 1)
+		if(!forceNotSad && this.getRNG().nextInt(10) == 1)
 		{
 			variant += 4;  // Skip the first 4 entries in texture list to get to sad lizard textures (look at lizard render)
 		}
