@@ -35,6 +35,11 @@ public class ModEntitySpawns
 				MobSpawnInfo.Spawners info = new MobSpawnInfo.Spawners(ModEntityTypes.LIZARD.get(), 50, 1, 4);
 				addMobSpawnToBiome(biome, EntityClassification.CREATURE, info);
 			}
+			else if(category.equals(Biome.Category.NETHER))
+			{
+				MobSpawnInfo.Spawners info = new MobSpawnInfo.Spawners(ModEntityTypes.CYNDERSHELL.get(), 50, 1, 4);
+				addMobSpawnToBiome(biome, EntityClassification.CREATURE, info);
+			}
 		}
 	}
 
