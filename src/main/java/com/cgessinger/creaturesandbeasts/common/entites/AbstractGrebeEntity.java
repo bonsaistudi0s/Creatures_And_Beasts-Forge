@@ -91,6 +91,12 @@ public abstract class AbstractGrebeEntity extends AnimalEntity
 		return false;
 	}
 
+	@Override
+	protected float getSoundVolume ()
+	{
+		return 0.6F;
+	}
+
 	/**
 	 * Rewrite of the original @applyEntityCollision with code cleanup and ability to be pushed when mounted
 	 */

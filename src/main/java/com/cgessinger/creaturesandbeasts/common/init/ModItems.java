@@ -22,7 +22,6 @@ public class ModItems
 	public static RegistryObject<ModSpawnEggItem> LIZARD_SPAWN_EGG = ITEMS.register("lizard_spawn_egg",
 			() -> new ModSpawnEggItem(ModEntityTypes.LIZARD,0x00FFFFFF, 0x00FFFFFF, new Item.Properties().group(CreaturesAndBeasts.TAB)));
 
-
 	public static Map<Integer, RegistryObject<ModSpawnEggItem>> LIZARD_SPAWN_MAP = new HashMap<>();
 	public static RegistryObject<ModSpawnEggItem> LIZARD_ITEM_0 = ITEMS.register("lizard_item_0",
 			() -> new ModSpawnEggItem(ModEntityTypes.LIZARD,0x00FFFFFF, 0x00FFFFFF, new Item.Properties().group(CreaturesAndBeasts.TAB)).spawnsVariant(0));
@@ -45,4 +44,5 @@ public class ModItems
 
 	public static final RegistryObject<AppleSliceItem> APPLE_SLICE = ITEMS.register("apple_slice", AppleSliceItem::new);
 	public static final RegistryObject<EntityNetItem> ENTITY_NET = ITEMS.register("entity_net", EntityNetItem::new);
+	public static final RegistryObject<Item> CYNDERSHELL_SHELL_SHARD = ITEMS.register("cyndershell_shell_shard", () -> new Item(new Item.Properties().group(CreaturesAndBeasts.TAB)));
 }
