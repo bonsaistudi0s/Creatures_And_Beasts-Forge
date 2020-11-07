@@ -8,9 +8,23 @@
         "stream": true
       },
       {
-        "name": "cnb:entity/entity.little_grebe_chick.ambient1",
+        "name": "cnb:entity/entity.little_grebe_chick.ambient_1",
+        "stream": true
+      }
+    ]
+  },
+  "entity.little_grebe.ambient": {
+    "category": "entity",
+    "subtitle": "entity.little_grebe.ambient",
+    "sounds": [
+      {
+        "name": "cnb:entity/entity.little_grebe.ambient",
+        "stream": true
+      },
+      {
+        "name": "cnb:entity/entity.little_grebe.ambient_1",
         "stream": true
       }
     ]
   }
-}s
+}

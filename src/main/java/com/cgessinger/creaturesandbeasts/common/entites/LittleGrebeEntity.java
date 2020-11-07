@@ -1,12 +1,14 @@
 package com.cgessinger.creaturesandbeasts.common.entites;
 
 import com.cgessinger.creaturesandbeasts.common.init.ModEntityTypes;
+import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 
@@ -59,5 +61,12 @@ public class LittleGrebeEntity extends AbstractGrebeEntity
 	public boolean isChild ()
 	{
 		return false;
+	}
+
+	@Nullable
+	@Override
+	protected SoundEvent getAmbientSound ()
+	{
+		return ModSoundEventTypes.LITTLE_GREBE_AMBIENT.get();
 	}
 }
