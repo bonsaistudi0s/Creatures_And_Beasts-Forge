@@ -5,6 +5,7 @@ import com.cgessinger.creaturesandbeasts.common.entites.LittleGrebeEntity;
 import com.cgessinger.creaturesandbeasts.common.entites.LizardEntity;
 import com.cgessinger.creaturesandbeasts.common.init.ModEntityTypes;
 import com.cgessinger.creaturesandbeasts.common.init.ModItems;
+import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
 import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -30,6 +31,7 @@ public class CreaturesAndBeasts
 		// Register the doClientStuff method for modloading
 		eventBus.addListener(this::doClientStuff);
 
+		ModSoundEventTypes.SOUND_EVENTS.register(eventBus);
 		ModEntityTypes.ENTITY_TYPES.register(eventBus);
 		ModItems.ITEMS.register(eventBus);
 		MinecraftForge.EVENT_BUS.register(this);

@@ -1,0 +1,16 @@
+{
+  "entity.little_grebe_chick.ambient": {
+    "category": "entity",
+    "subtitle": "entity.little_grebe_chick.ambient",
+    "sounds": [
+      {
+        "name": "cnb:entity/entity.little_grebe_chick.ambient",
+        "stream": true
+      },
+      {
+        "name": "cnb:entity/entity.little_grebe_chick.ambient1",
+        "stream": true
+      }
+    ]
+  }
+}s

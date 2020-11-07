@@ -2,11 +2,13 @@ package com.cgessinger.creaturesandbeasts.common.entites;
 
 import com.cgessinger.creaturesandbeasts.common.goals.MountAdultGoal;
 import com.cgessinger.creaturesandbeasts.common.init.ModEntityTypes;
+import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
@@ -63,5 +65,12 @@ public class LittleGrebeChickEntity extends AbstractGrebeEntity
 		ILivingEntityData data = super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
 		this.setGrowingAge(-800);
 		return data;
+	}
+
+	@Nullable
+	@Override
+	protected SoundEvent getAmbientSound ()
+	{
+		return ModSoundEventTypes.LITTLE_GREBE_CHICK_AMBIENT.get();
 	}
 }
