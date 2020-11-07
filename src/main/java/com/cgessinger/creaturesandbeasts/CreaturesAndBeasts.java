@@ -1,5 +1,7 @@
 package com.cgessinger.creaturesandbeasts;
 
+import com.cgessinger.creaturesandbeasts.client.render.CyndershellRender;
+import com.cgessinger.creaturesandbeasts.common.entites.CyndershellEntity;
 import com.cgessinger.creaturesandbeasts.common.entites.LittleGrebeChickEntity;
 import com.cgessinger.creaturesandbeasts.common.entites.LittleGrebeEntity;
 import com.cgessinger.creaturesandbeasts.common.entites.LizardEntity;
@@ -42,6 +44,7 @@ public class CreaturesAndBeasts
 		DeferredWorkQueue.runLater(() -> {
 			GlobalEntityTypeAttributes.put(ModEntityTypes.LITTLE_GREBE.get(), LittleGrebeEntity.setCustomAttributes().create());
 			GlobalEntityTypeAttributes.put(ModEntityTypes.LITTLE_GREBE_CHICK.get(), LittleGrebeChickEntity.setCustomAttributes().create());
+			GlobalEntityTypeAttributes.put(ModEntityTypes.CYNDERSHELL.get(), CyndershellEntity.setCustomAttributes().create());
 			GlobalEntityTypeAttributes.put(ModEntityTypes.LIZARD.get(), LizardEntity.setCustomAttributes().create());
 		});
 	}

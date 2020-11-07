@@ -1,6 +1,7 @@
 package com.cgessinger.creaturesandbeasts.client;
 
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
+import com.cgessinger.creaturesandbeasts.client.render.CyndershellRender;
 import com.cgessinger.creaturesandbeasts.client.render.LittleGrebeChickRender;
 import com.cgessinger.creaturesandbeasts.client.render.LittleGrebeRender;
 import com.cgessinger.creaturesandbeasts.client.render.LizardRender;
@@ -20,5 +21,6 @@ public class ClientEventBusSubscriber
 		RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.LITTLE_GREBE.get(), LittleGrebeRender::new);
 		RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.LITTLE_GREBE_CHICK.get(), LittleGrebeChickRender::new);
 		RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.LIZARD.get(), LizardRender::new);
+		RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.CYNDERSHELL.get(), CyndershellRender::new);
 	}
 }

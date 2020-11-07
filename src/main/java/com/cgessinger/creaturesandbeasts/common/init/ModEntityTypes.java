@@ -1,6 +1,7 @@
 package com.cgessinger.creaturesandbeasts.common.init;
 
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
+import com.cgessinger.creaturesandbeasts.common.entites.CyndershellEntity;
 import com.cgessinger.creaturesandbeasts.common.entites.LittleGrebeChickEntity;
 import com.cgessinger.creaturesandbeasts.common.entites.LittleGrebeEntity;
 import com.cgessinger.creaturesandbeasts.common.entites.LizardEntity;
@@ -30,4 +31,9 @@ public class ModEntityTypes
 			() -> EntityType.Builder.create(LizardEntity::new, EntityClassification.CREATURE)
 					.size(0.52f, 0.3f)
 					.build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "lizard").toString()));
+
+	public static final RegistryObject<EntityType<CyndershellEntity>> CYNDERSHELL = ENTITY_TYPES.register("cyndershell",
+			() -> EntityType.Builder.create(CyndershellEntity::new, EntityClassification.CREATURE)
+					.size(1.75f, 1.75f)
+					.build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "cyndershell").toString()));
 }
