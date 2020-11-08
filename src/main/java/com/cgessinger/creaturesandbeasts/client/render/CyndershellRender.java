@@ -1,6 +1,7 @@
 package com.cgessinger.creaturesandbeasts.client.render;
 
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
+import com.cgessinger.creaturesandbeasts.client.layer.CyndershellGlowLayer;
 import com.cgessinger.creaturesandbeasts.client.model.CyndershellModel;
 import com.cgessinger.creaturesandbeasts.common.entites.CyndershellEntity;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
@@ -14,6 +15,7 @@ public class CyndershellRender extends MobRenderer<CyndershellEntity, Cyndershel
 	public CyndershellRender (EntityRendererManager renderManagerIn)
 	{
 		super(renderManagerIn, new CyndershellModel<>(), 0.5F);
+		this.addLayer(new CyndershellGlowLayer(this));
 	}
 
 	@Override
