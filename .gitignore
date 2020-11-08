@@ -20,6 +20,8 @@ build
 # other
 eclipse
 run
+key.propertie
+key.properties
 
 # Files from Forge MDK
 logs/
