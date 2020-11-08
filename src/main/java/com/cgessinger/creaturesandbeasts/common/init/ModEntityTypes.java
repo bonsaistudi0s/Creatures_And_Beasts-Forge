@@ -34,6 +34,7 @@ public class ModEntityTypes
 
 	public static final RegistryObject<EntityType<CyndershellEntity>> CYNDERSHELL = ENTITY_TYPES.register("cyndershell",
 			() -> EntityType.Builder.create(CyndershellEntity::new, EntityClassification.CREATURE)
-					.size(1.75f, 1.75f)
+					.size(1.7f, 1.7f)
+					.immuneToFire()
 					.build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "cyndershell").toString()));
 }
