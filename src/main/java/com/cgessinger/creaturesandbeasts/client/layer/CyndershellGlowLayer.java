@@ -17,7 +17,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class CyndershellGlowLayer extends LayerRenderer<CyndershellEntity, CyndershellModel<CyndershellEntity>>
 {
-	private static final RenderType RENDER_TYPE = RenderType.getEntityTranslucent(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "textures/model/entity/cyndershell_glow.png"));
+	//idk why but with getEyes the glow effect also works in nether
+	private static final RenderType RENDER_TYPE = RenderType.getEyes(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "textures/model/entity/cyndershell_glow.png"));
 	private final CyndershellModel<CyndershellEntity> cyndershellModel;
 
 	public CyndershellGlowLayer (IEntityRenderer<CyndershellEntity, CyndershellModel<CyndershellEntity>> entityRendererIn)
