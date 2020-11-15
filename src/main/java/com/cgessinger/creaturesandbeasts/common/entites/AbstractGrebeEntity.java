@@ -1,77 +1,84 @@
 package com.cgessinger.creaturesandbeasts.common.entites;
 
+import java.util.Random;
+
+import javax.annotation.Nullable;
+
 import com.cgessinger.creaturesandbeasts.common.goals.SmoothSwimGoal;
+
 import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.MoverType;
+import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
-import net.minecraft.entity.ai.goal.*;
+import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.entity.ai.goal.LookAtGoal;
+import net.minecraft.entity.ai.goal.LookRandomlyGoal;
+import net.minecraft.entity.ai.goal.PanicGoal;
+import net.minecraft.entity.ai.goal.RandomWalkingGoal;
+import net.minecraft.entity.ai.goal.TemptGoal;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Items;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.pathfinding.PathNodeType;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 
-import javax.annotation.Nullable;
-
-public abstract class AbstractGrebeEntity extends AnimalEntity
+public abstract class AbstractGrebeEntity extends AnimalEntity 
 {
-	public static final Ingredient TEMPTATION_ITEMS = Ingredient.fromItems(Items.COD, Items.SALMON, Items.TROPICAL_FISH);
+	private static final DataParameter<BlockPos> TRAVEL_POS = EntityDataManager.createKey(AbstractGrebeEntity.class, DataSerializers.BLOCK_POS);
+	public static final Ingredient TEMPTATION_ITEMS = Ingredient.fromItems(Items.COD, Items.SALMON,
+			Items.TROPICAL_FISH);
 	public float wingRotation;
 	public float destPos;
 	public float oFlapSpeed;
 	public float oFlap;
 	public float wingRotDelta = 1.0F;
 
-	public AbstractGrebeEntity (EntityType<? extends AnimalEntity> type, World worldIn)
-	{
+	public AbstractGrebeEntity(EntityType<? extends AnimalEntity> type, World worldIn) {
 		super(type, worldIn);
 		this.setPathPriority(PathNodeType.WATER, 10.0F);
 	}
 
-	static public AttributeModifierMap.MutableAttribute setCustomAttributes ()
-	{
+	static public AttributeModifierMap.MutableAttribute setCustomAttributes() {
 		return MobEntity.func_233666_p_();
 	}
 
 	@Override
-	protected void registerGoals ()
-	{
+	protected void registerGoals() {
 		this.goalSelector.addGoal(0, new SmoothSwimGoal(this));
-		this.goalSelector.addGoal(1, new RandomWalkingGoal(this, 1.0D));
 		this.goalSelector.addGoal(2, new PanicGoal(this, 1.0D));
 		this.goalSelector.addGoal(3, new TemptGoal(this, 1.0D, false, TEMPTATION_ITEMS));
-		this.goalSelector.addGoal(4, new FindWaterGoal(this));
-		this.goalSelector.addGoal(1, new RandomSwimmingGoal(this, 1.0D, 120));
-		this.goalSelector.addGoal(6, new LookAtGoal(this, PlayerEntity.class, 6.0F));
-		this.goalSelector.addGoal(7, new LookRandomlyGoal(this));
+		this.goalSelector.addGoal(2, new LookAtGoal(this, PlayerEntity.class, 6.0F));
+		this.goalSelector.addGoal(2, new LookRandomlyGoal(this));
+	    this.goalSelector.addGoal(7, new AbstractGrebeEntity.TravelGoal(this, 0.8D));
+	    this.goalSelector.addGoal(9, new AbstractGrebeEntity.WanderGoal(this, 1.0D, 100));
 	}
 
 	@Override
-	public void livingTick ()
-	{
+	public void livingTick() {
 		super.livingTick();
 		this.oFlap = this.wingRotation;
 		this.oFlapSpeed = this.destPos;
-		this.destPos = (float) ((double) this.destPos + (double) (this.onGround || this.isInWater() || this.isPassenger() ? -1 : 4) * 0.3D);
+		this.destPos = (float) ((double) this.destPos
+				+ (double) (this.onGround || this.isInWater() || this.isPassenger() ? -1 : 4) * 0.3D);
 		this.destPos = MathHelper.clamp(this.destPos, 0.0F, 1.0F);
-		if (!this.onGround && this.wingRotDelta < 1.0F && !this.isInWater() && !this.isPassenger())
-		{
+		if (!this.onGround && this.wingRotDelta < 1.0F && !this.isInWater() && !this.isPassenger()) {
 			this.wingRotDelta = 1.0F;
 		}
 
 		this.wingRotDelta *= 0.9F;
 		Vector3d motion = this.getMotion();
-		if (!this.onGround && motion.y < 0.0D)
-		{
+		if (!this.onGround && motion.y < 0.0D) {
 			this.setMotion(motion.mul(1.0D, 0.6D, 1.0D));
 		}
 
@@ -80,42 +87,35 @@ public abstract class AbstractGrebeEntity extends AnimalEntity
 
 	@Nullable
 	@Override
-	public AgeableEntity func_241840_a (ServerWorld p_241840_1_, AgeableEntity p_241840_2_)
-	{
+	public AgeableEntity func_241840_a(ServerWorld p_241840_1_, AgeableEntity p_241840_2_) {
 		return null;
 	}
 
 	@Override
-	public boolean onLivingFall (float distance, float damageMultiplier)
-	{
+	public boolean onLivingFall(float distance, float damageMultiplier) {
 		return false;
 	}
 
 	@Override
-	protected float getSoundVolume ()
-	{
+	protected float getSoundVolume() {
 		return 0.6F;
 	}
 
 	/**
-	 * Rewrite of the original @applyEntityCollision with code cleanup and ability to be pushed when mounted
+	 * Rewrite of the original @applyEntityCollision with code cleanup and ability
+	 * to be pushed when mounted
 	 */
 	@Override
-	public void applyEntityCollision (Entity entityIn)
-	{
-		if (!this.isRidingSameEntity(entityIn))
-		{
-			if (!entityIn.noClip && !this.noClip)
-			{
+	public void applyEntityCollision(Entity entityIn) {
+		if (!this.isRidingSameEntity(entityIn)) {
+			if (!entityIn.noClip && !this.noClip) {
 				double d0 = entityIn.getPosX() - this.getPosX();
 				double d1 = entityIn.getPosZ() - this.getPosZ();
 				double d2 = MathHelper.absMax(d0, d1);
-				if (d2 >= 0.01D)
-				{
+				if (d2 >= 0.01D) {
 					d2 = MathHelper.sqrt(d2);
 					double d3 = 1.0D / d2;
-					if (d3 > 1.0D)
-					{
+					if (d3 > 1.0D) {
 						d3 = 1.0D;
 					}
 
@@ -123,8 +123,7 @@ public abstract class AbstractGrebeEntity extends AnimalEntity
 					d1 = d1 / d2 * d3 * 0.05D - this.entityCollisionReduction;
 					this.addVelocity(-d0, 0.0D, -d1);
 
-					if (!entityIn.isBeingRidden())
-					{
+					if (!entityIn.isBeingRidden()) {
 						entityIn.addVelocity(d0, 0.0D, d1);
 					}
 				}
@@ -132,4 +131,107 @@ public abstract class AbstractGrebeEntity extends AnimalEntity
 			}
 		}
 	}
+
+	@Override
+	public boolean isPushedByWater() {
+		return false;
+	}
+	
+	private BlockPos getTravelPos() 
+	{
+		return this.dataManager.get(TRAVEL_POS);
+	}
+	
+	@Override
+	protected void registerData() {
+	      super.registerData();
+	      this.dataManager.register(TRAVEL_POS, new BlockPos(0, 2, 0));
+	}
+
+	public void travel(Vector3d travelVector) {
+		if (this.isServerWorld() && this.isInWater()) {
+			this.moveRelative(0.1F, travelVector);
+			this.move(MoverType.SELF, this.getMotion());
+			this.setMotion(this.getMotion().scale(0.5D));
+			if (this.getAttackTarget() == null) {
+				this.setMotion(this.getMotion().add(0.0D, -0.005D, 0.0D));
+			}
+		} else {
+			super.travel(travelVector);
+		}
+
+	}
+
+	   static class WanderGoal extends RandomWalkingGoal {
+	      private final AbstractGrebeEntity turtle;
+
+	      private WanderGoal(AbstractGrebeEntity turtle, double speedIn, int chance) {
+	         super(turtle, speedIn, chance);
+	         this.turtle = turtle;
+	      }
+
+	      public boolean shouldExecute() {
+	         return !this.creature.isInWater()  ? super.shouldExecute() : false;
+	      }
+	   }
+	   
+	   static class TravelGoal extends Goal {
+		      private final AbstractGrebeEntity turtle;
+		      private final double speed;
+		      private boolean field_203139_c;
+
+		      TravelGoal(AbstractGrebeEntity turtle, double speedIn) {
+		         this.turtle = turtle;
+		         this.speed = speedIn;
+		      }
+
+		      public boolean shouldExecute() {
+		         return this.turtle.isInWater();
+		      }
+
+		      public void startExecuting() {
+		         Random random = this.turtle.rand;
+		         int l = random.nextInt(9) - 4;
+		         if ((double)l + this.turtle.getPosY() > (double)(this.turtle.world.getSeaLevel())) {
+		            l = 0;
+		         }
+		         this.field_203139_c = false;
+		      }
+
+		    @SuppressWarnings("deprecation")
+			public void tick() {
+		         if (this.turtle.getNavigator().noPath()) {
+		            Vector3d vector3d = Vector3d.copyCenteredHorizontally(this.turtle.getTravelPos());
+		            Vector3d vector3d1 = RandomPositionGenerator.findRandomTargetTowardsScaled(this.turtle, 16, 3, vector3d, (double)((float)Math.PI / 10F));
+		            if (vector3d1 == null) {
+		               vector3d1 = RandomPositionGenerator.findRandomTargetBlockTowards(this.turtle, 8, 7, vector3d);
+		            }
+
+		            if (vector3d1 != null) {
+		               int i = MathHelper.floor(vector3d1.x);
+		               int j = MathHelper.floor(vector3d1.z);
+		               if (!this.turtle.world.isAreaLoaded(i - 34, 0, j - 34, i + 34, 0, j + 34)) {
+		                  vector3d1 = null;
+		               }
+		            }
+
+		            if (vector3d1 == null) {
+		               this.field_203139_c = true;
+		               return;
+		            }
+
+		            this.turtle.getNavigator().tryMoveToXYZ(vector3d1.x, vector3d1.y, vector3d1.z, this.speed);
+		         }
+
+		      }
+
+		      public boolean shouldContinueExecuting() {
+		         return !this.turtle.getNavigator().noPath() && !this.field_203139_c && !this.turtle.isInLove();
+		      }
+
+		      public void resetTask() {
+		         super.resetTask();
+		      }
+		   }
+
 }

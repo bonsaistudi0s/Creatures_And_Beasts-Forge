@@ -1,6 +1,5 @@
 package com.cgessinger.creaturesandbeasts.common.entites;
 
-import com.cgessinger.creaturesandbeasts.common.goals.SmoothSwimGoal;
 import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MobEntity;
