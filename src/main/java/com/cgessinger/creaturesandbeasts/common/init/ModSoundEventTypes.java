@@ -16,6 +16,14 @@ public class ModSoundEventTypes
 	);
 
 	public static final RegistryObject<SoundEvent> LITTLE_GREBE_CHICK_AMBIENT = SOUND_EVENTS.register("entity.little_grebe_chick.ambient", () ->
-		new SoundEvent(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "entity.little_grebe_chick.ambient"))
+			new SoundEvent(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "entity.little_grebe_chick.ambient"))
+	);
+
+	public static final RegistryObject<SoundEvent> CYNDERSHELL_AMBIENT = SOUND_EVENTS.register("entity.cyndershell.ambient", () ->
+			new SoundEvent(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "entity.cyndershell.ambient"))
+	);
+
+	public static final RegistryObject<SoundEvent> CYNDERSHELL_HURT = SOUND_EVENTS.register("entity.cyndershell.hurt", () ->
+			new SoundEvent(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "entity.cyndershell.hurt"))
 	);
 }

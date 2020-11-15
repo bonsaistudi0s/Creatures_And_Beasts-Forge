@@ -26,5 +26,29 @@
         "stream": true
       }
     ]
+  },
+  "entity.cyndershell.ambient": {
+    "category": "entity",
+    "subtitle": "entity.cyndershell.ambient",
+    "sounds": [
+      {
+        "name": "cnb:entity/entity.cyndershell.ambient",
+        "stream": true
+      },
+      {
+        "name": "cnb:entity/entity.cyndershell.ambient_1",
+        "stream": true
+      }
+    ]
+  },
+  "entity.cyndershell.hurt": {
+    "category": "entity",
+    "subtitle": "entity.cyndershell.hurt",
+    "sounds": [
+      {
+        "name": "cnb:entity/entity.cyndershell.hurt",
+        "stream": true
+      }
+    ]
   }
 }

@@ -1,6 +1,7 @@
 package com.cgessinger.creaturesandbeasts.common.entites;
 
 import com.cgessinger.creaturesandbeasts.common.goals.SmoothSwimGoal;
+import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
 import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MobEntity;
@@ -10,6 +11,8 @@ import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 
@@ -51,5 +54,25 @@ public class CyndershellEntity extends AnimalEntity
 	public AgeableEntity func_241840_a (ServerWorld p_241840_1_, AgeableEntity p_241840_2_)
 	{
 		return null;
+	}
+
+	@Nullable
+	@Override
+	protected SoundEvent getAmbientSound ()
+	{
+		return ModSoundEventTypes.CYNDERSHELL_AMBIENT.get();
+	}
+
+	@Nullable
+	@Override
+	protected SoundEvent getHurtSound (DamageSource damageSourceIn)
+	{
+		return ModSoundEventTypes.CYNDERSHELL_HURT.get();
+	}
+
+	@Override
+	protected float getSoundVolume ()
+	{
+		return super.getSoundVolume()*2;
 	}
 }
