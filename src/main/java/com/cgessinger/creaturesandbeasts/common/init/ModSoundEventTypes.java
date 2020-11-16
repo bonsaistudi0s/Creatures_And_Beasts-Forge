@@ -15,6 +15,10 @@ public class ModSoundEventTypes
 			new SoundEvent(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "entity.little_grebe.ambient"))
 	);
 
+	public static final RegistryObject<SoundEvent> LITTLE_GREBE_HURT= SOUND_EVENTS.register("entity.little_grebe.hurt", () ->
+			new SoundEvent(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "entity.little_grebe.hurt"))
+	);
+
 	public static final RegistryObject<SoundEvent> LITTLE_GREBE_CHICK_AMBIENT = SOUND_EVENTS.register("entity.little_grebe_chick.ambient", () ->
 			new SoundEvent(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "entity.little_grebe_chick.ambient"))
 	);

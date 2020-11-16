@@ -8,6 +8,7 @@ import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
@@ -68,5 +69,12 @@ public class LittleGrebeEntity extends AbstractGrebeEntity
 	protected SoundEvent getAmbientSound ()
 	{
 		return ModSoundEventTypes.LITTLE_GREBE_AMBIENT.get();
+	}
+
+	@Nullable
+	@Override
+	protected SoundEvent getHurtSound (DamageSource damageSourceIn)
+	{
+		return ModSoundEventTypes.LITTLE_GREBE_HURT.get();
 	}
 }
