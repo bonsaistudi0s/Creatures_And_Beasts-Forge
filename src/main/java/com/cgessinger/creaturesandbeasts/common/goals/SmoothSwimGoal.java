@@ -24,6 +24,6 @@ public class SmoothSwimGoal extends Goal
 	@Override
 	public void tick ()
 	{
-		this.entity.moveRelative(0.01F, new Vector3d(0, 1, 0));
+		this.entity.moveRelative(0.02F, new Vector3d(0, 1, 0));
 	}
 }
