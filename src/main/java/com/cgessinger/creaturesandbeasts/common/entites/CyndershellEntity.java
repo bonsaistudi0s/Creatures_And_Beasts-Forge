@@ -1,6 +1,5 @@
 package com.cgessinger.creaturesandbeasts.common.entites;
 
-import com.cgessinger.creaturesandbeasts.common.goals.SmoothSwimGoal;
 import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
 import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.EntityType;
@@ -38,8 +37,7 @@ public class CyndershellEntity extends AnimalEntity
 
 	static public AttributeModifierMap.MutableAttribute setCustomAttributes ()
 	{
-		return MobEntity.func_233666_p_()
-				.createMutableAttribute(Attributes.MAX_HEALTH, 80.0D) // Max Health
+		return MobEntity.func_233666_p_().createMutableAttribute(Attributes.MAX_HEALTH, 80.0D) // Max Health
 				.createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.15D); // Movement Speed
 	}
 
@@ -73,6 +71,6 @@ public class CyndershellEntity extends AnimalEntity
 	@Override
 	protected float getSoundVolume ()
 	{
-		return super.getSoundVolume()*2;
+		return super.getSoundVolume() * 2;
 	}
 }

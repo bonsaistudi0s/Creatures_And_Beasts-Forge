@@ -27,7 +27,7 @@ sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = co
 
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 minecraft {
-    mappings channel: 'snapshot', version: '20200813-1.16.1'
+    mappings channel: 'snapshot', version: '20201028-1.16.3'
     runs {
         client {
             workingDirectory project.file('run')
@@ -79,14 +79,14 @@ minecraft {
             }
         }
     }
-    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+    //accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.16.3-34.1.5'
+    minecraft 'net.minecraftforge:forge:1.16.4-35.0.18'
 
     // Geckolib for ingame animations
-    implementation fg.deobf('software.bernie.geckolib:forge-1.16.2-geckolib:2.1.0')
+    implementation fg.deobf('software.bernie.geckolib:forge-1.16.3-geckolib:2.1.2')
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..
@@ -128,7 +128,7 @@ repositories {
 }
 
 //This minifies the jsons, which makes the end jar smaller. 
-processResources { //This minifies the jsons, which makes the end jar smaller. 
+processResources {
 	doLast {
         def jsonMinifyStart = System.currentTimeMillis()
         def jsonMinified = 0
@@ -155,7 +155,7 @@ curseforge {
         releaseType = "release"
         changelogType = 'html'
         changelog = '<h2>Big Changes!</h2>'
-        addGameVersion("1.16.3")
+        addGameVersion("1.16.4")
         addGameVersion("Forge")
         addGameVersion("Java 8")
 

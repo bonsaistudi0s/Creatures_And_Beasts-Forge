@@ -6,12 +6,9 @@ import net.minecraft.dispenser.IBlockSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
 import net.minecraft.item.SpawnEggItem;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Lazy;
@@ -39,7 +36,7 @@ public class ModSpawnEggItem extends SpawnEggItem
 	@Override
 	public void inventoryTick (ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected)
 	{
-		if(this.variant != -1 && !stack.getOrCreateTag().contains("variant"))
+		if (this.variant != -1 && !stack.getOrCreateTag().contains("variant"))
 		{
 			stack.getOrCreateTag().putInt("variant", this.variant);
 		}
@@ -76,7 +73,7 @@ public class ModSpawnEggItem extends SpawnEggItem
 		return this.entityTypeSupplier.get();
 	}
 
-	public ModSpawnEggItem spawnsVariant(int variant)
+	public ModSpawnEggItem spawnsVariant (int variant)
 	{
 		this.variant = variant;
 		return this;
