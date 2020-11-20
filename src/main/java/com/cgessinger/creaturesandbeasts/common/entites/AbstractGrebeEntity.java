@@ -1,6 +1,6 @@
 package com.cgessinger.creaturesandbeasts.common.entites;
 
-import java.util.Random;
+import java.util.EnumSet;
 
 import javax.annotation.Nullable;
 
@@ -57,13 +57,13 @@ public abstract class AbstractGrebeEntity extends AnimalEntity
 	@Override
 	protected void registerGoals ()
 	{
-		this.goalSelector.addGoal(0, new SmoothSwimGoal(this));
+		this.goalSelector.addGoal(5, new SmoothSwimGoal(this));
 		this.goalSelector.addGoal(2, new PanicGoal(this, 1.0D));
 		this.goalSelector.addGoal(3, new TemptGoal(this, 1.0D, false, TEMPTATION_ITEMS));
 		this.goalSelector.addGoal(2, new LookAtGoal(this, PlayerEntity.class, 6.0F));
 		this.goalSelector.addGoal(2, new LookRandomlyGoal(this));
-		this.goalSelector.addGoal(7, new AbstractGrebeEntity.TravelGoal(this, 0.8D));
-		this.goalSelector.addGoal(9, new AbstractGrebeEntity.WanderGoal(this, 1.0D, 100));
+		this.goalSelector.addGoal(6, new AbstractGrebeEntity.SwimTravelGoal(this, 0.8D));
+		this.goalSelector.addGoal(7, new AbstractGrebeEntity.WanderGoal(this, 1.0D, 100));
 	}
 
 	@Override
@@ -184,28 +184,25 @@ public abstract class AbstractGrebeEntity extends AnimalEntity
 
 	static class WanderGoal extends RandomWalkingGoal
 	{
-		private final AbstractGrebeEntity turtle;
-
-		private WanderGoal (AbstractGrebeEntity turtle, double speedIn, int chance)
+		private WanderGoal (AbstractGrebeEntity entity, double speedIn, int chance)
 		{
-			super(turtle, speedIn, chance);
-			this.turtle = turtle;
+			super(entity, speedIn, chance);
 		}
 
 		@Override
 		public boolean shouldExecute ()
 		{
-			return !this.creature.isInWater() ? super.shouldExecute() : false;
+			return !this.creature.isInWater() && super.shouldExecute();
 		}
 	}
 
-	static class TravelGoal extends Goal
+	static class SwimTravelGoal extends Goal
 	{
 		private final AbstractGrebeEntity turtle;
 		private final double speed;
 		private boolean field_203139_c;
 
-		TravelGoal (AbstractGrebeEntity turtle, double speedIn)
+		SwimTravelGoal (AbstractGrebeEntity turtle, double speedIn)
 		{
 			this.turtle = turtle;
 			this.speed = speedIn;
@@ -220,12 +217,6 @@ public abstract class AbstractGrebeEntity extends AnimalEntity
 		@Override
 		public void startExecuting ()
 		{
-			Random random = this.turtle.rand;
-			int l = random.nextInt(9) - 4;
-			if ((double) l + this.turtle.getPosY() > (double) (this.turtle.world.getSeaLevel()))
-			{
-				l = 0;
-			}
 			this.field_203139_c = false;
 		}
 
