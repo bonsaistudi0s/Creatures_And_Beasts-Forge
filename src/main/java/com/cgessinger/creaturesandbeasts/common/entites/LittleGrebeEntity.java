@@ -1,5 +1,6 @@
 package com.cgessinger.creaturesandbeasts.common.entites;
 
+import com.cgessinger.creaturesandbeasts.common.goals.GoToWaterGoal;
 import com.cgessinger.creaturesandbeasts.common.init.ModEntityTypes;
 import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
 
@@ -37,7 +38,7 @@ public class LittleGrebeEntity extends AbstractGrebeEntity
 	{
 		super.registerGoals();
 		this.goalSelector.addGoal(2, new BreedGoal(this, 1.0D));
-		this.goalSelector.addGoal(8, new LittleGrebeEntity.GoToWaterGoal(this, 0.8D));
+		this.goalSelector.addGoal(8, new GoToWaterGoal(this, 0.8D));
 	}
 
 	@Nullable
@@ -81,41 +82,5 @@ public class LittleGrebeEntity extends AbstractGrebeEntity
 	protected SoundEvent getHurtSound (DamageSource damageSourceIn)
 	{
 		return ModSoundEventTypes.LITTLE_GREBE_HURT.get();
-	}
-
-	static class GoToWaterGoal extends MoveToBlockGoal
-	{
-		private final LittleGrebeEntity turtle;
-
-		private GoToWaterGoal (LittleGrebeEntity turtle, double speedIn)
-		{
-			super(turtle, turtle.isChild() ? 2.0D : speedIn, 24);
-			this.turtle = turtle;
-			this.field_203112_e = -1;
-		}
-
-		@Override
-		public boolean shouldContinueExecuting ()
-		{
-			return !this.turtle.isInWater() && this.timeoutCounter <= 1200 && this.shouldMoveTo(this.turtle.world, this.destinationBlock);
-		}
-
-		@Override
-		public boolean shouldExecute ()
-		{
-			return !this.turtle.isInWater();
-		}
-
-		@Override
-		public boolean shouldMove ()
-		{
-			return this.timeoutCounter % 160 == 0;
-		}
-
-		@Override
-		protected boolean shouldMoveTo (IWorldReader worldIn, BlockPos pos)
-		{
-			return worldIn.getBlockState(pos).isIn(Blocks.WATER);
-		}
 	}
 }
