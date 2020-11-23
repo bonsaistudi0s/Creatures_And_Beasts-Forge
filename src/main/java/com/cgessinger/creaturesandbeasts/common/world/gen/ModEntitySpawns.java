@@ -34,7 +34,7 @@ public class ModEntitySpawns
 		}
 		if (types.contains(BiomeDictionary.Type.NETHER))
 		{
-			base.add(new Spawners(ModEntityTypes.CYNDERSHELL.get(), 700, 1, 2));
+			base.add(new Spawners(ModEntityTypes.CYNDERSHELL.get(), 200, 1, 2));
 		}
 	}
 }

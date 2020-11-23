@@ -2,6 +2,7 @@ package com.cgessinger.creaturesandbeasts.common.init;
 
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
 import com.cgessinger.creaturesandbeasts.common.items.AppleSliceItem;
+import com.cgessinger.creaturesandbeasts.common.items.CyndershellShellShardItem;
 import com.cgessinger.creaturesandbeasts.common.items.EntityNetItem;
 import com.cgessinger.creaturesandbeasts.common.items.ModSpawnEggItem;
 import net.minecraft.item.Item;
@@ -47,5 +48,5 @@ public class ModItems
 
 	public static final RegistryObject<AppleSliceItem> APPLE_SLICE = ITEMS.register("apple_slice", AppleSliceItem::new);
 	public static final RegistryObject<EntityNetItem> ENTITY_NET = ITEMS.register("entity_net", EntityNetItem::new);
-	public static final RegistryObject<Item> CYNDERSHELL_SHELL_SHARD = ITEMS.register("cyndershell_shell_shard", () -> new Item(new Item.Properties().group(CreaturesAndBeasts.TAB)));
+	public static final RegistryObject<Item> CYNDERSHELL_SHELL_SHARD = ITEMS.register("cyndershell_shell_shard", CyndershellShellShardItem::new);
 }

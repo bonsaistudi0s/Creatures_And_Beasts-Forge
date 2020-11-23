@@ -1,5 +1,6 @@
 package com.cgessinger.creaturesandbeasts.common.util;
 
+import com.cgessinger.creaturesandbeasts.common.entites.CyndershellEntity;
 import com.cgessinger.creaturesandbeasts.common.entites.LittleGrebeChickEntity;
 import com.cgessinger.creaturesandbeasts.common.entites.LittleGrebeEntity;
 import com.cgessinger.creaturesandbeasts.common.init.ModEntityTypes;
@@ -15,6 +16,10 @@ public class ModEventHandler
 	@SubscribeEvent
 	public static void livingSpawnEvent (LivingSpawnEvent.CheckSpawn event)
 	{
+		if(event.getEntityLiving() instanceof CyndershellEntity)
+		{
+			System.out.println("Cyndershell spawned");
+		}
 		if (event.getEntityLiving() instanceof LittleGrebeEntity && event.getSpawnReason() == SpawnReason.CHUNK_GENERATION)
 		{
 			IWorld world = event.getWorld();
