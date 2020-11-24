@@ -7,8 +7,11 @@ import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.passive.AnimalEntity;
+import net.minecraft.entity.passive.StriderEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.Direction;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
@@ -75,10 +78,17 @@ public class CyndershellEntity extends AnimalEntity
 		return super.getSoundVolume() * 2;
 	}
 
-	public static boolean canAnimalSpawn(EntityType<? extends AnimalEntity> p_234361_0_, IWorld worldIn, SpawnReason p_234361_2_, BlockPos pos, Random p_234361_4_)
+	public static boolean canAnimalSpawn (EntityType<? extends AnimalEntity> p_234361_0_, IWorld worldIn, SpawnReason p_234361_2_, BlockPos pos, Random p_234361_4_)
 	{
 		System.out.println("Cyndershell spawn try -+- decision: " + worldIn.getBlockState(pos.down()).isSolid());
 		System.out.println("Position: " + pos);
-		return worldIn.getBlockState(pos.down()).isSolid();
+
+		BlockPos.Mutable blockpos$mutable = pos.toMutable();
+		do
+		{
+			blockpos$mutable.move(Direction.DOWN);
+		} while (worldIn.getBlockState(blockpos$mutable).isAir());
+
+		return !worldIn.getFluidState(blockpos$mutable).isTagged(FluidTags.LAVA);
 	}
 }
