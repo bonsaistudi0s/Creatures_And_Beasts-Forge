@@ -1,12 +1,5 @@
 package com.cgessinger.creaturesandbeasts.common.entites;
 
-import java.util.Random;
-
-import javax.annotation.Nullable;
-
-import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
-
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MobEntity;
@@ -24,8 +17,6 @@ import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 
