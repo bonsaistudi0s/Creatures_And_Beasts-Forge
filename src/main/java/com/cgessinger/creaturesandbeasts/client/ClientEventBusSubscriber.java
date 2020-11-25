@@ -34,6 +34,5 @@ public class ClientEventBusSubscriber
 	public static void onRegisterEntities(final RegistryEvent.Register<EntityType<?>> event)
 	{
 		ModSpawnEggItem.initSpawnEggs();
-		//EntitySpawnPlacementRegistry.register(ModEntityTypes.CYNDERSHELL.get(), EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, CyndershellEntity::canAnimalSpawn);
 	}
 }

@@ -16,10 +16,6 @@ public class ModEventHandler
 	@SubscribeEvent
 	public static void livingSpawnEvent (LivingSpawnEvent.CheckSpawn event)
 	{
-		if(event.getEntityLiving() instanceof CyndershellEntity)
-		{
-			System.out.println("Cyndershell spawned");
-		}
 		if (event.getEntityLiving() instanceof LittleGrebeEntity && event.getSpawnReason() == SpawnReason.CHUNK_GENERATION)
 		{
 			IWorld world = event.getWorld();

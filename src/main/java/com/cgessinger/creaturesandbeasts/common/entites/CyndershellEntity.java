@@ -2,16 +2,22 @@ package com.cgessinger.creaturesandbeasts.common.entites;
 
 import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
 import net.minecraft.block.Blocks;
-import net.minecraft.entity.*;
+import net.minecraft.entity.AgeableEntity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.Pose;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.goal.*;
+import net.minecraft.entity.ai.goal.BreedGoal;
+import net.minecraft.entity.ai.goal.LookAtGoal;
+import net.minecraft.entity.ai.goal.LookRandomlyGoal;
+import net.minecraft.entity.ai.goal.PanicGoal;
+import net.minecraft.entity.ai.goal.SwimGoal;
+import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
 import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.passive.StriderEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.tags.FluidTags;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.Direction;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
@@ -50,6 +56,14 @@ public class CyndershellEntity extends AnimalEntity
 	{
 		return this.getHeight() * 0.2F;
 	}
+	
+	/*
+	 * This sets what blocks it can't spawn on and for monsters set it to not spawn
+	 * in peaceful. You can always do light checks and time times here.
+	 */
+	public static boolean canCyndershellSpawn(EntityType<CyndershellEntity> p_234418_0_, IWorld p_234418_1_, SpawnReason p_234418_2_, BlockPos p_234418_3_, Random p_234418_4_) {
+	      return !p_234418_1_.getBlockState(p_234418_3_.down()).isIn(Blocks.NETHER_WART_BLOCK);
+	   }
 
 	@Nullable
 	@Override
@@ -76,19 +90,5 @@ public class CyndershellEntity extends AnimalEntity
 	protected float getSoundVolume ()
 	{
 		return super.getSoundVolume() * 2;
-	}
-
-	public static boolean canAnimalSpawn (EntityType<? extends AnimalEntity> p_234361_0_, IWorld worldIn, SpawnReason p_234361_2_, BlockPos pos, Random p_234361_4_)
-	{
-		System.out.println("Cyndershell spawn try -+- decision: " + worldIn.getBlockState(pos.down()).isSolid());
-		System.out.println("Position: " + pos);
-
-		BlockPos.Mutable blockpos$mutable = pos.toMutable();
-		do
-		{
-			blockpos$mutable.move(Direction.DOWN);
-		} while (worldIn.getBlockState(blockpos$mutable).isAir());
-
-		return !worldIn.getFluidState(blockpos$mutable).isTagged(FluidTags.LAVA);
 	}
 }
