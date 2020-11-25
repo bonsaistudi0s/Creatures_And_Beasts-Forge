@@ -7,6 +7,8 @@ import com.cgessinger.creaturesandbeasts.common.entites.LizardEntity;
 import com.cgessinger.creaturesandbeasts.common.init.ModEntityTypes;
 import com.cgessinger.creaturesandbeasts.common.init.ModItems;
 import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
+import com.cgessinger.creaturesandbeasts.common.world.gen.ModEntitySpawns;
+
 import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -45,6 +47,11 @@ public class CreaturesAndBeasts
 			GlobalEntityTypeAttributes.put(ModEntityTypes.CYNDERSHELL.get(), CyndershellEntity.setCustomAttributes().create());
 			GlobalEntityTypeAttributes.put(ModEntityTypes.LIZARD.get(), LizardEntity.setCustomAttributes().create());
 		});
+		/*
+		 * This registers the spawn placement settings we config for any mob that needs
+		 * it.
+		 */
+		ModEntitySpawns.EntitySpawnPlacementRegistry();
 	}
 
 	private void doClientStuff (final FMLClientSetupEvent event)
