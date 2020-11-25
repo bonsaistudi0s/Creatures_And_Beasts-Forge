@@ -1,8 +1,15 @@
 package com.cgessinger.creaturesandbeasts.common.goals;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.CreatureEntity;
+import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.util.Direction;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.vector.Vector3d;
 
 public class SmoothSwimGoal extends Goal
@@ -18,12 +25,17 @@ public class SmoothSwimGoal extends Goal
 	@Override
 	public boolean shouldExecute ()
 	{
-		return (this.entity.isInWater() && this.entity.func_233571_b_(FluidTags.WATER)+this.entity.getEyeHeight()/2.2 > this.entity.func_233579_cu_() || this.entity.isInLava());
+		return (this.entity.isInWater() && this.entity.func_233571_b_(FluidTags.WATER) + this.entity.getEyeHeight() / 2.2 > this.entity.func_233579_cu_() || this.entity.isInLava());
 	}
 
 	@Override
 	public void tick ()
 	{
-		this.entity.moveRelative(0.01F, new Vector3d(0, 1, 0));
+		this.entity.setMotion(this.entity.getMotion().add(new Vector3d(0, 0.01F, 0)));
+
+		if (this.entity.collidedHorizontally)
+		{
+			this.entity.setMotion(this.entity.getMotion().add(new Vector3d(0, 0.5F, 0)));
+		}
 	}
 }

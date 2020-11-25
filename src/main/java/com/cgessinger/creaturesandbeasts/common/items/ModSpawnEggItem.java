@@ -36,7 +36,7 @@ public class ModSpawnEggItem extends SpawnEggItem
 	@Override
 	public void inventoryTick (ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected)
 	{
-		if(this.variant != -1 && !stack.getOrCreateTag().contains("variant"))
+		if (this.variant != -1 && !stack.getOrCreateTag().contains("variant"))
 		{
 			stack.getOrCreateTag().putInt("variant", this.variant);
 		}
@@ -73,7 +73,7 @@ public class ModSpawnEggItem extends SpawnEggItem
 		return this.entityTypeSupplier.get();
 	}
 
-	public ModSpawnEggItem spawnsVariant(int variant)
+	public ModSpawnEggItem spawnsVariant (int variant)
 	{
 		this.variant = variant;
 		return this;

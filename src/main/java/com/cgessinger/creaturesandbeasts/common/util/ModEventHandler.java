@@ -13,13 +13,13 @@ import net.minecraftforge.fml.common.Mod;
 public class ModEventHandler
 {
 	@SubscribeEvent
-	public static void livingSpawnEvent(LivingSpawnEvent.CheckSpawn event)
+	public static void livingSpawnEvent (LivingSpawnEvent.CheckSpawn event)
 	{
-		if(event.getEntityLiving() instanceof LittleGrebeEntity && event.getSpawnReason() == SpawnReason.CHUNK_GENERATION)
+		if (event.getEntityLiving() instanceof LittleGrebeEntity && event.getSpawnReason() == SpawnReason.CHUNK_GENERATION)
 		{
 			IWorld world = event.getWorld();
 			int rndInt = event.getEntityLiving().getRNG().nextInt(2);
-			if(!world.isRemote() && rndInt == 0)
+			if (!world.isRemote() && rndInt == 0)
 			{
 				LittleGrebeChickEntity child = ModEntityTypes.LITTLE_GREBE_CHICK.get().create(event.getEntityLiving().getEntityWorld());
 				child.setPosition(event.getX(), event.getY(), event.getZ());

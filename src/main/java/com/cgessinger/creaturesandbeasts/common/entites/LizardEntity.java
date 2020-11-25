@@ -78,7 +78,7 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity, IModN
 			variant = this.getRNG().nextInt(4);
 		}
 		// 1/10 chance to change variant to sad lizard variant
-		if(!forceNotSad && this.getRNG().nextInt(10) == 1)
+		if (!forceNotSad && this.getRNG().nextInt(10) == 1)
 		{
 			variant += 4;  // Skip the first 4 entries in texture list to get to sad lizard textures (look at lizard render)
 		}
@@ -116,7 +116,7 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity, IModN
 		ItemStack item = player.getHeldItem(hand);
 		if (item.getItem() instanceof AppleSliceItem && this.isSad())
 		{
-			this.setVariant(this.getVariant()-4);
+			this.setVariant(this.getVariant() - 4);
 			item.shrink(1);
 			spawnParticles(ParticleTypes.HEART);
 			return ActionResultType.SUCCESS;
@@ -181,9 +181,10 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity, IModN
 		this.dataManager.set(LIZARD_VARIANT, variant);
 	}
 
-	public void spawnParticles(IParticleData data)
+	public void spawnParticles (IParticleData data)
 	{
-		for(int i = 0; i < 7; ++i) {
+		for (int i = 0; i < 7; ++i)
+		{
 			double d0 = this.rand.nextGaussian() * 0.02D;
 			double d1 = this.rand.nextGaussian() * 0.02D;
 			double d2 = this.rand.nextGaussian() * 0.02D;
@@ -205,7 +206,7 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity, IModN
 		return this.partyLizard;
 	}
 
-	public boolean isSad()
+	public boolean isSad ()
 	{
 		return this.dataManager.get(LIZARD_VARIANT) > 3;
 	}
@@ -214,7 +215,7 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity, IModN
 	public ItemStack getItem ()
 	{
 		int variant = this.getVariant();
-		if(!(variant > 3))
+		if (!(variant > 3))
 		{
 			Item item = ModItems.LIZARD_SPAWN_MAP.get(variant).get();
 			ItemStack stack = new ItemStack(item);

@@ -92,6 +92,12 @@ public class LittleGrebeModel<L extends AnimalEntity> extends EntityModel<Little
 		this.Lleg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + (float)Math.PI) * 1.4F * limbSwingAmount;
 		this.Rwing.rotateAngleZ = ageInTicks;
 		this.Lwing.rotateAngleZ = -ageInTicks;
+
+		if(entityIn.isInWater())
+		{
+			this.Rleg.rotateAngleX -= 100;
+			this.Lleg.rotateAngleX -= 100;
+		}
 	}
 
 	@Override

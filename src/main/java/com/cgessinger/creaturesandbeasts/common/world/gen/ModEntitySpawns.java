@@ -15,11 +15,11 @@ import net.minecraftforge.fml.common.Mod;
 import java.util.List;
 import java.util.Set;
 
-@Mod.EventBusSubscriber(modid= CreaturesAndBeasts.MOD_ID)
+@Mod.EventBusSubscriber(modid = CreaturesAndBeasts.MOD_ID)
 public class ModEntitySpawns
 {
 	@SubscribeEvent
-	public static void spawnEntities(BiomeLoadingEvent event)
+	public static void spawnEntities (BiomeLoadingEvent event)
 	{
 		RegistryKey<Biome> key = RegistryKey.getOrCreateKey(Registry.BIOME_KEY, event.getName());
 		Set<BiomeDictionary.Type> types = BiomeDictionary.getTypes(key);

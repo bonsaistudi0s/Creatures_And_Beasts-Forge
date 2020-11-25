@@ -128,7 +128,7 @@ repositories {
 }
 
 //This minifies the jsons, which makes the end jar smaller. 
-processResources { //This minifies the jsons, which makes the end jar smaller. 
+processResources {
 	doLast {
         def jsonMinifyStart = System.currentTimeMillis()
         def jsonMinified = 0

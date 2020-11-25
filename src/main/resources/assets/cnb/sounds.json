@@ -6,10 +6,6 @@
       {
         "name": "cnb:entity/entity.little_grebe_chick.ambient",
         "stream": true
-      },
-      {
-        "name": "cnb:entity/entity.little_grebe_chick.ambient_1",
-        "stream": true
       }
     ]
   },
@@ -23,6 +19,40 @@
       },
       {
         "name": "cnb:entity/entity.little_grebe.ambient_1",
+        "stream": true
+      }
+    ]
+  },
+  "entity.little_grebe.hurt": {
+    "category": "entity",
+    "subtitle": "entity.little_grebe.hurt",
+    "sounds": [
+      {
+        "name": "cnb:entity/entity.little_grebe.hurt",
+        "stream": true
+      }
+    ]
+  },
+  "entity.cyndershell.ambient": {
+    "category": "entity",
+    "subtitle": "entity.cyndershell.ambient",
+    "sounds": [
+      {
+        "name": "cnb:entity/entity.cyndershell.ambient",
+        "stream": true
+      },
+      {
+        "name": "cnb:entity/entity.cyndershell.ambient_1",
+        "stream": true
+      }
+    ]
+  },
+  "entity.cyndershell.hurt": {
+    "category": "entity",
+    "subtitle": "entity.cyndershell.hurt",
+    "sounds": [
+      {
+        "name": "cnb:entity/entity.cyndershell.hurt",
         "stream": true
       }
     ]
