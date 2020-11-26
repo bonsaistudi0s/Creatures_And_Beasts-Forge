@@ -20,7 +20,11 @@ import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
+import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
@@ -35,6 +39,7 @@ import software.bernie.geckolib.event.AnimationTestEvent;
 import software.bernie.geckolib.manager.EntityAnimationManager;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 public class LizardEntity extends AnimalEntity implements IAnimatedEntity, IModNetable
 {
@@ -81,6 +86,16 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity, IModN
 		if (!forceNotSad && this.getRNG().nextInt(10) == 1)
 		{
 			variant += 4;  // Skip the first 4 entries in texture list to get to sad lizard textures (look at lizard render)
+		}
+
+		if (dataTag != null && dataTag.contains("health"))
+		{
+			this.setHealth(dataTag.getFloat("health"));
+		}
+
+		if (dataTag != null && dataTag.contains("name"))
+		{
+			this.setCustomName(ITextComponent.getTextComponentOrEmpty(dataTag.getString("name")));
 		}
 
 		setVariant(variant);
@@ -219,7 +234,13 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity, IModN
 		{
 			Item item = ModItems.LIZARD_SPAWN_MAP.get(variant).get();
 			ItemStack stack = new ItemStack(item);
-			stack.getOrCreateTag().putInt("variant", variant);
+			CompoundNBT nbt = stack.getOrCreateTag();
+			nbt.putInt("variant", variant);
+			nbt.putFloat("health", this.getHealth());
+			if(this.hasCustomName())
+			{
+				nbt.putString("name", this.getCustomName().getString());
+			}
 			return stack;
 		}
 		return null;

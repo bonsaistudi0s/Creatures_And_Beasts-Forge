@@ -1,6 +1,7 @@
 package com.cgessinger.creaturesandbeasts.common.items;
 
 import net.minecraft.block.DispenserBlock;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.dispenser.IBlockSource;
 import net.minecraft.entity.Entity;
@@ -10,6 +11,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.SpawnEggItem;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.fml.RegistryObject;
@@ -77,5 +80,22 @@ public class ModSpawnEggItem extends SpawnEggItem
 	{
 		this.variant = variant;
 		return this;
+	}
+
+	@Override
+	public void addInformation (ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn)
+	{
+		if(stack.hasTag())
+		{
+			CompoundNBT nbt = stack.getTag();
+			if(nbt.contains("name"))
+			{
+				tooltip.add(new StringTextComponent("Name: " + nbt.getString("name")));
+			}
+			if(nbt.contains("health"))
+			{
+				tooltip.add(new StringTextComponent("Health: " + Math.round(nbt.getFloat("health"))));
+			}
+		}
 	}
 }
