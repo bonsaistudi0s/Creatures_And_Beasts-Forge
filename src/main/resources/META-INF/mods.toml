@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[35,)"
+loaderVersion="[34,)" #This makes the mod loadable on 1.16.3
 license="All rights reserved"
 issueTrackerURL="https://github.com/CGessinger/Creatures-And-Beasts-Minecraft-Mod/issues"
 [[mods]]
@@ -17,7 +17,7 @@ This is a simple minecraft mod which adds tons of new creatures. It is designed 
 [[dependencies.cnb]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.16.4]"
+    versionRange="[1.16.3,)" #This makes the mod loadable on 1.16.3
     ordering="NONE"
     side="BOTH"
 [[dependencies.cnb]]
