@@ -56,13 +56,15 @@ public class CyndershellEntity extends AnimalEntity
 	{
 		return this.getHeight() * 0.2F;
 	}
-	
+
 	/*
 	 * This sets what blocks it can't spawn on and for monsters set it to not spawn
 	 * in peaceful. You can always do light checks and time times here.
 	 */
 	public static boolean canCyndershellSpawn(EntityType<CyndershellEntity> p_234418_0_, IWorld p_234418_1_, SpawnReason p_234418_2_, BlockPos p_234418_3_, Random p_234418_4_) {
-	      return !p_234418_1_.getBlockState(p_234418_3_.down()).isIn(Blocks.NETHER_WART_BLOCK);
+		return !p_234418_1_.getBlockState(p_234418_3_.down()).isIn(Blocks.NETHERRACK) || !p_234418_1_.getBlockState(p_234418_3_.down()).isIn(Blocks.BASALT)
+				|| !p_234418_1_.getBlockState(p_234418_3_.down()).isIn(Blocks.WARPED_NYLIUM) || !p_234418_1_.getBlockState(p_234418_3_.down()).isIn(Blocks.CRIMSON_NYLIUM)
+				|| !p_234418_1_.getBlockState(p_234418_3_.down()).isIn(Blocks.SOUL_SOIL) || !p_234418_1_.getBlockState(p_234418_3_.down()).isIn(Blocks.SOUL_SAND);
 	   }
 
 	@Nullable
