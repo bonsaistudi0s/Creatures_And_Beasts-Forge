@@ -20,11 +20,8 @@ import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
-import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
@@ -32,19 +29,20 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import software.bernie.geckolib.animation.builder.AnimationBuilder;
-import software.bernie.geckolib.animation.controller.EntityAnimationController;
-import software.bernie.geckolib.entity.IAnimatedEntity;
-import software.bernie.geckolib.event.AnimationTestEvent;
-import software.bernie.geckolib.manager.EntityAnimationManager;
+import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.PlayState;
+import software.bernie.geckolib3.core.builder.AnimationBuilder;
+import software.bernie.geckolib3.core.controller.AnimationController;
+import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
+import software.bernie.geckolib3.core.manager.AnimationData;
+import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 import javax.annotation.Nullable;
-import java.util.List;
 
-public class LizardEntity extends AnimalEntity implements IAnimatedEntity, IModNetable
+public class LizardEntity extends AnimalEntity implements IAnimatable, IModNetable
 {
-	EntityAnimationManager manager = new EntityAnimationManager();
-	EntityAnimationController<LizardEntity> controller = new EntityAnimationController<>(this, "moveController", 0.1F, this::animationPredicate);
+	private final AnimationFactory factory = new AnimationFactory(this);
+
 	private static final DataParameter<Integer> LIZARD_VARIANT = EntityDataManager.createKey(LizardEntity.class, DataSerializers.VARINT);
 	private boolean partyLizard;
 	private BlockPos jukeboxPosition;
@@ -52,7 +50,6 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity, IModN
 	public LizardEntity (EntityType<? extends AnimalEntity> type, World worldIn)
 	{
 		super(type, worldIn);
-		getAnimationManager().addAnimationController(controller);
 	}
 
 	@Override
@@ -103,14 +100,27 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity, IModN
 		return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
 	}
 
-	private <E extends Entity> boolean animationPredicate (AnimationTestEvent<E> event)
+	private <E extends IAnimatable> PlayState animationPredicate (AnimationEvent<E> event)
 	{
-		if (event.isWalking())
+		if (event.isMoving())
 		{
-			this.controller.setAnimation((new AnimationBuilder()).addAnimation("WALK"));
-			return true;
+			event.getController().setAnimation((new AnimationBuilder().addAnimation("WALK")));
+			return PlayState.CONTINUE;
 		}
-		return false;
+		return PlayState.STOP;
+	}
+
+
+	@Override
+	public void registerControllers (AnimationData animationData)
+	{
+		animationData.addAnimationController(new AnimationController<LizardEntity>(this, "controller", 0, this::animationPredicate));
+	}
+
+	@Override
+	public AnimationFactory getFactory ()
+	{
+		return this.factory;
 	}
 
 	@Override
@@ -161,12 +171,6 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity, IModN
 	public AgeableEntity func_241840_a (ServerWorld p_241840_1_, AgeableEntity p_241840_2_)
 	{
 		return null;
-	}
-
-	@Override
-	public EntityAnimationManager getAnimationManager ()
-	{
-		return this.manager;
 	}
 
 	@Override
@@ -251,4 +255,5 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity, IModN
 	{
 		spawnParticles(ParticleTypes.HAPPY_VILLAGER);
 	}
+
 }

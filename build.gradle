@@ -86,7 +86,7 @@ dependencies {
     minecraft 'net.minecraftforge:forge:1.16.4-35.0.18'
 
     // Geckolib for ingame animations
-    implementation fg.deobf('software.bernie.geckolib:forge-1.16.3-geckolib:2.1.2')
+    implementation fg.deobf('software.bernie.geckolib:forge-1.16.4-geckolib:3.0.0-beta.10')
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..
