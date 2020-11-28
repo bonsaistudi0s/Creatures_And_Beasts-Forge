@@ -39,4 +39,9 @@ public class ModEntityTypes
 			() -> EntityType.Builder.create(FriendlySporelingEntity::new, EntityClassification.CREATURE)
 					.size(0.5f, 0.6f)
 					.build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "friendly_sporeling").toString()));
+
+	public static final RegistryObject<EntityType<HostileSporelingEntity>> HOSTILE_SPORELING = ENTITY_TYPES.register("hostile_sporeling",
+			() -> EntityType.Builder.create(HostileSporelingEntity::new, EntityClassification.MONSTER)
+					.size(0.5f, 0.6f)
+					.build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "hostile_sporeling").toString()));
 }

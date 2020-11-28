@@ -28,6 +28,7 @@ public class ClientEventBusSubscriber
 		RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.LIZARD.get(), LizardRender::new);
 		RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.CYNDERSHELL.get(), CyndershellRender::new);
 		RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.FRIENDLY_SPORELING.get(), SporelingRender::new);
+		RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.HOSTILE_SPORELING.get(), SporelingRender::new);
 	}
 
 	@SubscribeEvent
