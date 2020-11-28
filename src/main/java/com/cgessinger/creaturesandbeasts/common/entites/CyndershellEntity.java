@@ -47,8 +47,10 @@ public class CyndershellEntity extends AnimalEntity
 
 	static public AttributeModifierMap.MutableAttribute setCustomAttributes ()
 	{
-		return MobEntity.func_233666_p_().createMutableAttribute(Attributes.MAX_HEALTH, 80.0D) // Max Health
-				.createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.15D); // Movement Speed
+		return MobEntity.func_233666_p_()
+				.createMutableAttribute(Attributes.MAX_HEALTH, 80.0D)
+				.createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.15D)
+				.createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 100D);
 	}
 
 	@Override

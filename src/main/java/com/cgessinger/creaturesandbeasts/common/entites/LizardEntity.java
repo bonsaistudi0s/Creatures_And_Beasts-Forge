@@ -21,6 +21,7 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
@@ -28,18 +29,20 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import software.bernie.geckolib.animation.builder.AnimationBuilder;
-import software.bernie.geckolib.animation.controller.EntityAnimationController;
-import software.bernie.geckolib.entity.IAnimatedEntity;
-import software.bernie.geckolib.event.AnimationTestEvent;
-import software.bernie.geckolib.manager.EntityAnimationManager;
+import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.PlayState;
+import software.bernie.geckolib3.core.builder.AnimationBuilder;
+import software.bernie.geckolib3.core.controller.AnimationController;
+import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
+import software.bernie.geckolib3.core.manager.AnimationData;
+import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 import javax.annotation.Nullable;
 
-public class LizardEntity extends AnimalEntity implements IAnimatedEntity, IModNetable
+public class LizardEntity extends AnimalEntity implements IAnimatable, IModNetable
 {
-	EntityAnimationManager manager = new EntityAnimationManager();
-	EntityAnimationController<LizardEntity> controller = new EntityAnimationController<>(this, "moveController", 0.1F, this::animationPredicate);
+	private final AnimationFactory factory = new AnimationFactory(this);
+
 	private static final DataParameter<Integer> LIZARD_VARIANT = EntityDataManager.createKey(LizardEntity.class, DataSerializers.VARINT);
 	private boolean partyLizard;
 	private BlockPos jukeboxPosition;
@@ -47,7 +50,6 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity, IModN
 	public LizardEntity (EntityType<? extends AnimalEntity> type, World worldIn)
 	{
 		super(type, worldIn);
-		getAnimationManager().addAnimationController(controller);
 	}
 
 	@Override
@@ -83,19 +85,42 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity, IModN
 			variant += 4;  // Skip the first 4 entries in texture list to get to sad lizard textures (look at lizard render)
 		}
 
+		if (dataTag != null && dataTag.contains("health"))
+		{
+			this.setHealth(dataTag.getFloat("health"));
+		}
+
+		if (dataTag != null && dataTag.contains("name"))
+		{
+			this.setCustomName(ITextComponent.getTextComponentOrEmpty(dataTag.getString("name")));
+		}
+
 		setVariant(variant);
 
 		return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
 	}
 
-	private <E extends Entity> boolean animationPredicate (AnimationTestEvent<E> event)
+	private <E extends IAnimatable> PlayState animationPredicate (AnimationEvent<E> event)
 	{
-		if (event.isWalking())
+		if (event.isMoving())
 		{
-			this.controller.setAnimation((new AnimationBuilder()).addAnimation("WALK"));
-			return true;
+			event.getController().setAnimation((new AnimationBuilder().addAnimation("WALK")));
+			return PlayState.CONTINUE;
 		}
-		return false;
+		return PlayState.STOP;
+	}
+
+
+	@Override
+	public void registerControllers (AnimationData animationData)
+	{
+		animationData.addAnimationController(new AnimationController<LizardEntity>(this, "controller", 0, this::animationPredicate));
+	}
+
+	@Override
+	public AnimationFactory getFactory ()
+	{
+		return this.factory;
 	}
 
 	@Override
@@ -146,12 +171,6 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity, IModN
 	public AgeableEntity func_241840_a (ServerWorld p_241840_1_, AgeableEntity p_241840_2_)
 	{
 		return null;
-	}
-
-	@Override
-	public EntityAnimationManager getAnimationManager ()
-	{
-		return this.manager;
 	}
 
 	@Override
@@ -219,7 +238,13 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity, IModN
 		{
 			Item item = ModItems.LIZARD_SPAWN_MAP.get(variant).get();
 			ItemStack stack = new ItemStack(item);
-			stack.getOrCreateTag().putInt("variant", variant);
+			CompoundNBT nbt = stack.getOrCreateTag();
+			nbt.putInt("variant", variant);
+			nbt.putFloat("health", this.getHealth());
+			if(this.hasCustomName())
+			{
+				nbt.putString("name", this.getCustomName().getString());
+			}
 			return stack;
 		}
 		return null;
@@ -230,4 +255,5 @@ public class LizardEntity extends AnimalEntity implements IAnimatedEntity, IModN
 	{
 		spawnParticles(ParticleTypes.HAPPY_VILLAGER);
 	}
+
 }

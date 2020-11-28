@@ -21,8 +21,8 @@ This is a simple minecraft mod which adds tons of new creatures. It is designed 
     ordering="NONE"
     side="BOTH"
 [[dependencies.cnb]]
-    modId="geckolib"
+    modId="geckolib3"
     mandatory=true
-    versionRange="[2.1.2,)"
-    ordering="NONE"
+    versionRange="3.0.0-beta.8,"
+    ordering="BEFORE"
     side="BOTH"

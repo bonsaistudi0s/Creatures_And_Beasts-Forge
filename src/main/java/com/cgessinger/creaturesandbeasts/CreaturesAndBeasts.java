@@ -17,6 +17,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import software.bernie.geckolib3.GeckoLib;
 
 @Mod(CreaturesAndBeasts.MOD_ID)
 public class CreaturesAndBeasts
@@ -36,6 +37,8 @@ public class CreaturesAndBeasts
 		ModEntityTypes.ENTITY_TYPES.register(eventBus);
 		ModItems.ITEMS.register(eventBus);
 		MinecraftForge.EVENT_BUS.register(this);
+
+		GeckoLib.initialize();
 	}
 
 	private void setup (final FMLCommonSetupEvent event)
