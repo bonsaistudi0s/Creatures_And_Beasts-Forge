@@ -6,6 +6,7 @@ import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
+import software.bernie.geckolib3.model.provider.data.EntityModelData;
 
 import javax.annotation.Nullable;
 
@@ -44,7 +45,9 @@ public class LizardModel<T extends LizardEntity> extends AnimatedGeoModel<Lizard
 			head.setRotationX(0.2182F);
 			return;
 		}
-		head.setRotationX(entity.rotationPitch * ((float)Math.PI / 180F));
-		head.setRotationX(entity.rotationYawHead * ((float)Math.PI / 180F));
+
+		EntityModelData extraData = (EntityModelData) customPredicate.getExtraDataOfType(EntityModelData.class).get(0);
+		head.setRotationX(extraData.headPitch * ((float)Math.PI / 180F));
+		head.setRotationY(extraData.netHeadYaw * ((float)Math.PI / 180F));
 	}
 }
