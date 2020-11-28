@@ -1,10 +1,7 @@
 package com.cgessinger.creaturesandbeasts.common.init;
 
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
-import com.cgessinger.creaturesandbeasts.common.entites.CyndershellEntity;
-import com.cgessinger.creaturesandbeasts.common.entites.LittleGrebeChickEntity;
-import com.cgessinger.creaturesandbeasts.common.entites.LittleGrebeEntity;
-import com.cgessinger.creaturesandbeasts.common.entites.LizardEntity;
+import com.cgessinger.creaturesandbeasts.common.entites.*;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.util.ResourceLocation;
@@ -37,4 +34,9 @@ public class ModEntityTypes
 					.size(1.4f, 1.7f)
 					.immuneToFire()
 					.build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "cyndershell").toString()));
+
+	public static final RegistryObject<EntityType<FriendlySporelingEntity>> FRIENDLY_SPORELING = ENTITY_TYPES.register("friendly_sporeling",
+			() -> EntityType.Builder.create(FriendlySporelingEntity::new, EntityClassification.CREATURE)
+					.size(0.5f, 0.6f)
+					.build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "friendly_sporeling").toString()));
 }

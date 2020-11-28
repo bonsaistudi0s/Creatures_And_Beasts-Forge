@@ -1,9 +1,6 @@
 package com.cgessinger.creaturesandbeasts;
 
-import com.cgessinger.creaturesandbeasts.common.entites.CyndershellEntity;
-import com.cgessinger.creaturesandbeasts.common.entites.LittleGrebeChickEntity;
-import com.cgessinger.creaturesandbeasts.common.entites.LittleGrebeEntity;
-import com.cgessinger.creaturesandbeasts.common.entites.LizardEntity;
+import com.cgessinger.creaturesandbeasts.common.entites.*;
 import com.cgessinger.creaturesandbeasts.common.init.ModEntityTypes;
 import com.cgessinger.creaturesandbeasts.common.init.ModItems;
 import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
@@ -48,6 +45,7 @@ public class CreaturesAndBeasts
 			GlobalEntityTypeAttributes.put(ModEntityTypes.LITTLE_GREBE_CHICK.get(), LittleGrebeChickEntity.setCustomAttributes().create());
 			GlobalEntityTypeAttributes.put(ModEntityTypes.CYNDERSHELL.get(), CyndershellEntity.setCustomAttributes().create());
 			GlobalEntityTypeAttributes.put(ModEntityTypes.LIZARD.get(), LizardEntity.setCustomAttributes().create());
+			GlobalEntityTypeAttributes.put(ModEntityTypes.FRIENDLY_SPORELING.get(), FriendlySporelingEntity.setCustomAttributes().create());
 		});
 		/*
 		 * This registers the spawn placement settings we config for any mob that needs
