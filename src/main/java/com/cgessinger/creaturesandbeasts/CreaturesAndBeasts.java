@@ -47,6 +47,7 @@ public class CreaturesAndBeasts
 			GlobalEntityTypeAttributes.put(ModEntityTypes.LIZARD.get(), LizardEntity.setCustomAttributes().create());
 			GlobalEntityTypeAttributes.put(ModEntityTypes.FRIENDLY_SPORELING.get(), FriendlySporelingEntity.setCustomAttributes().create());
 			GlobalEntityTypeAttributes.put(ModEntityTypes.HOSTILE_SPORELING.get(), HostileSporelingEntity.setCustomAttributes().create());
+			GlobalEntityTypeAttributes.put(ModEntityTypes.NEUTRAL_SPORELING.get(), NeutralSporelingEntity.setCustomAttributes().create());
 		});
 		/*
 		 * This registers the spawn placement settings we config for any mob that needs
