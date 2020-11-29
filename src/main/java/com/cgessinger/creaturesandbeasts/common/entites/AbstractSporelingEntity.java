@@ -39,7 +39,10 @@ public abstract class AbstractSporelingEntity extends CreatureEntity implements 
 	@Override
 	public ILivingEntityData onInitialSpawn (IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag)
 	{
-		setSporelingType(0); // Default Color is Brown
+		if (dataTag != null && dataTag.contains("variant"))
+		{
+			this.setSporelingType(dataTag.getInt("variant"));
+		}
 		return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
 	}
 

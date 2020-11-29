@@ -22,7 +22,8 @@ public class ModItems
 
 	public static RegistryObject<ModSpawnEggItem> CYNDERSHELL_SPAWN_EGG = ITEMS.register("cyndershell_spawn_egg",
 			() -> new ModSpawnEggItem(ModEntityTypes.CYNDERSHELL,0x0D0403, 0xC64500, new Item.Properties().group(CreaturesAndBeasts.TAB)));
-	
+
+	// Lizards
 	public static RegistryObject<ModSpawnEggItem> LIZARD_SPAWN_EGG = ITEMS.register("lizard_spawn_egg",
 			() -> new ModSpawnEggItem(ModEntityTypes.LIZARD,0x00FFFFFF, 0x00FFFFFF, new Item.Properties().group(CreaturesAndBeasts.TAB)));
 
@@ -38,6 +39,25 @@ public class ModItems
 
 	public static RegistryObject<ModSpawnEggItem> LIZARD_ITEM_3 = ITEMS.register("lizard_item_3",
 			() -> new ModSpawnEggItem(ModEntityTypes.LIZARD,0x00FFFFFF, 0x00FFFFFF, new Item.Properties().group(CreaturesAndBeasts.TAB)).spawnsVariant(3));
+
+	// Sporelings
+	public static RegistryObject<ModSpawnEggItem> SPORELING_OVERWORLD_BROWN_EGG = ITEMS.register("sporeling_overworld_brown_egg",
+			() -> new ModSpawnEggItem(ModEntityTypes.FRIENDLY_SPORELING,0x00FFFFFF, 0x00FFFFFF, new Item.Properties().group(CreaturesAndBeasts.TAB)).spawnsVariant(0));
+
+	public static RegistryObject<ModSpawnEggItem> SPORELING_OVERWORLD_RED_EGG = ITEMS.register("sporeling_overworld_red_egg",
+			() -> new ModSpawnEggItem(ModEntityTypes.FRIENDLY_SPORELING,0x00FFFFFF, 0x00FFFFFF, new Item.Properties().group(CreaturesAndBeasts.TAB)).spawnsVariant(1));
+
+	public static RegistryObject<ModSpawnEggItem> SPORELING_NETHER_BROWN_EGG = ITEMS.register("sporeling_nether_brown_egg",
+			() -> new ModSpawnEggItem(ModEntityTypes.HOSTILE_SPORELING,0x00FFFFFF, 0x00FFFFFF, new Item.Properties().group(CreaturesAndBeasts.TAB)).spawnsVariant(2));
+
+	public static RegistryObject<ModSpawnEggItem> SPORELING_NETHER_RED_EGG = ITEMS.register("sporeling_nether_red_egg",
+			() -> new ModSpawnEggItem(ModEntityTypes.HOSTILE_SPORELING,0x00FFFFFF, 0x00FFFFFF, new Item.Properties().group(CreaturesAndBeasts.TAB)).spawnsVariant(3));
+
+	public static RegistryObject<ModSpawnEggItem> SPORELING_WARPED_FUNGI_EGG = ITEMS.register("sporeling_warped_fungi_egg",
+			() -> new ModSpawnEggItem(ModEntityTypes.NEUTRAL_SPORELING,0x00FFFFFF, 0x00FFFFFF, new Item.Properties().group(CreaturesAndBeasts.TAB)).spawnsVariant(4));
+
+	public static RegistryObject<ModSpawnEggItem> SPORELING_CRIMSON_FUNGUS_EGG = ITEMS.register("sporeling_crimson_fungus_egg",
+			() -> new ModSpawnEggItem(ModEntityTypes.NEUTRAL_SPORELING,0x00FFFFFF, 0x00FFFFFF, new Item.Properties().group(CreaturesAndBeasts.TAB)).spawnsVariant(5));
 
 	static {
 		LIZARD_SPAWN_MAP.put(0, LIZARD_ITEM_0);

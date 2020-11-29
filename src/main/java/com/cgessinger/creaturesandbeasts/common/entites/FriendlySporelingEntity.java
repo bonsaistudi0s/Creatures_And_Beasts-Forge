@@ -23,9 +23,8 @@ public class FriendlySporelingEntity extends AbstractSporelingEntity
 	@Override
 	public ILivingEntityData onInitialSpawn (IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag)
 	{
-		ILivingEntityData data = super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
 		this.setSporelingType(this.getRNG().nextInt(2));
-		return data;
+		return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
 	}
 
 	@Override
