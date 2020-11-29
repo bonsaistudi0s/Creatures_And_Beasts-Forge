@@ -5,6 +5,8 @@ import java.util.Set;
 
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
 import com.cgessinger.creaturesandbeasts.common.entites.CyndershellEntity;
+import com.cgessinger.creaturesandbeasts.common.entites.HostileSporelingEntity;
+import com.cgessinger.creaturesandbeasts.common.entites.NeutralSporelingEntity;
 import com.cgessinger.creaturesandbeasts.common.init.ModEntityTypes;
 
 import net.minecraft.entity.EntityClassification;
@@ -36,9 +38,19 @@ public class ModEntitySpawns
 		{
 			base.add(new Spawners(ModEntityTypes.LIZARD.get(), 50, 1, 4));
 		}
+		if(types.contains(BiomeDictionary.Type.MUSHROOM))
+		{
+			base.add(new Spawners(ModEntityTypes.FRIENDLY_SPORELING.get(), 60, 3, 5));
+		}
+		if(types.contains(BiomeDictionary.Type.SWAMP) || types.contains(BiomeDictionary.Type.FOREST) )
+		{
+			base.add(new Spawners(ModEntityTypes.FRIENDLY_SPORELING.get(), 20, 3, 5));
+		}
 		if (types.contains(BiomeDictionary.Type.NETHER))
 		{
 			base.add(new Spawners(ModEntityTypes.CYNDERSHELL.get(), 800, 1, 2));
+			base.add(new Spawners(ModEntityTypes.HOSTILE_SPORELING.get(), 40, 3, 5));
+			base.add(new Spawners(ModEntityTypes.NEUTRAL_SPORELING.get(), 40, 2, 4));
 		}
 	}
 
@@ -52,5 +64,13 @@ public class ModEntitySpawns
 		EntitySpawnPlacementRegistry.register(ModEntityTypes.CYNDERSHELL.get(),
 				EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES,
 				CyndershellEntity::canCyndershellSpawn);
+
+		EntitySpawnPlacementRegistry.register(ModEntityTypes.HOSTILE_SPORELING.get(),
+				EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES,
+				HostileSporelingEntity::canSporelingSpawn);
+
+		EntitySpawnPlacementRegistry.register(ModEntityTypes.NEUTRAL_SPORELING.get(),
+				EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES,
+				NeutralSporelingEntity::canSporelingSpawn);
 	}
 }
