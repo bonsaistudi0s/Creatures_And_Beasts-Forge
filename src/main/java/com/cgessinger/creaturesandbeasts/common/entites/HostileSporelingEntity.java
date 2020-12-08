@@ -1,17 +1,22 @@
 package com.cgessinger.creaturesandbeasts.common.entites;
 
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
-import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.*;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.Biomes;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
 import java.util.Random;
 
 public class HostileSporelingEntity extends AbstractSporelingEntity
@@ -46,6 +51,8 @@ public class HostileSporelingEntity extends AbstractSporelingEntity
 
 	public static boolean canSporelingSpawn(EntityType<HostileSporelingEntity> p_234418_0_, IWorld worldIn, SpawnReason p_234418_2_, BlockPos p_234418_3_, Random p_234418_4_)
 	{
-		return worldIn.getDifficulty() != Difficulty.PEACEFUL;
+		Optional<RegistryKey<Biome>> optional = worldIn.func_241828_r().getRegistry(Registry.BIOME_KEY).getOptionalKey(worldIn.getBiome(p_234418_3_));
+
+		return worldIn.getDifficulty() != Difficulty.PEACEFUL && (optional.isPresent() && optional.get() == Biomes.NETHER_WASTES);
 	}
 }

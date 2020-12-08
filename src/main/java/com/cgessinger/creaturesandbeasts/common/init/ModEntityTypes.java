@@ -45,7 +45,6 @@ public class ModEntityTypes
 					.size(0.5f, 0.6f)
 					.build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "hostile_sporeling").toString()));
 
-
 	public static final RegistryObject<EntityType<NeutralSporelingEntity>> NEUTRAL_SPORELING = ENTITY_TYPES.register("neutral_sporeling",
 			() -> EntityType.Builder.create(NeutralSporelingEntity::new, EntityClassification.MONSTER)
 					.size(0.5f, 0.6f)
