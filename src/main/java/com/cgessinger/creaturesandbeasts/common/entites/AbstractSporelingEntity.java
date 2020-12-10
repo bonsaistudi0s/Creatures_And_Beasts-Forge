@@ -46,7 +46,7 @@ public abstract class AbstractSporelingEntity extends CreatureEntity implements 
 		return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
 	}
 
-	private <E extends IAnimatable> PlayState animationPredicate (AnimationEvent<E> event)
+	public <E extends IAnimatable> PlayState animationPredicate (AnimationEvent<E> event)
 	{
 		return PlayState.STOP;
 	}

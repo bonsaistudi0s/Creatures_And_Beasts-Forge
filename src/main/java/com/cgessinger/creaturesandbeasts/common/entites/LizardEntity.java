@@ -102,9 +102,9 @@ public class LizardEntity extends AnimalEntity implements IAnimatable, IModNetab
 
 	private <E extends IAnimatable> PlayState animationPredicate (AnimationEvent<E> event)
 	{
-		if (event.isMoving())
+		if (!(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F))
 		{
-			event.getController().setAnimation((new AnimationBuilder().addAnimation("WALK")));
+			event.getController().setAnimation(new AnimationBuilder().addAnimation("lizard.walk", true));
 			return PlayState.CONTINUE;
 		}
 		return PlayState.STOP;

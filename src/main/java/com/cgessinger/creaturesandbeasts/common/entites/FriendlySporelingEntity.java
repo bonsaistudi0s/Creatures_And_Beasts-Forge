@@ -9,6 +9,10 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
+import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.PlayState;
+import software.bernie.geckolib3.core.builder.AnimationBuilder;
+import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 
 import javax.annotation.Nullable;
 
@@ -32,5 +36,16 @@ public class FriendlySporelingEntity extends AbstractSporelingEntity
 	{
 		super.registerGoals();
 		this.goalSelector.addGoal(1, new PanicGoal(this, 1.25D));
+	}
+
+	@Override
+	public <E extends IAnimatable> PlayState animationPredicate (AnimationEvent<E> event)
+	{
+		if (!(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F))
+		{
+			event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.walk", true));
+			return PlayState.CONTINUE;
+		}
+		return PlayState.STOP;
 	}
 }
