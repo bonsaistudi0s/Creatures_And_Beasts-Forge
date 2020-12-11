@@ -48,6 +48,11 @@ public abstract class AbstractSporelingEntity extends CreatureEntity implements 
 
 	public <E extends IAnimatable> PlayState animationPredicate (AnimationEvent<E> event)
 	{
+		if (!(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F))
+		{
+			event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.walk", true));
+			return PlayState.CONTINUE;
+		}
 		return PlayState.STOP;
 	}
 
