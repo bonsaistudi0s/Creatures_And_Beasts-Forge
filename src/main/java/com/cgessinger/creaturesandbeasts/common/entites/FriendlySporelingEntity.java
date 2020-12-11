@@ -89,15 +89,24 @@ public class FriendlySporelingEntity extends AbstractSporelingEntity
 		public boolean shouldExecute ()
 		{
 			boolean shouldExec = super.shouldExecute();
-			if(shouldExec && this.waveTimer == 0)
+			if(shouldExec && this.waveTimer == 0 && this.sporeling.getRNG().nextInt(4) == 1)
 			{
-				this.waveTimer = 30;
+				this.waveTimer = 8;
 			} else if (this.waveTimer > 0 && this.closestEntity != null)
 			{
-				this.sporeling.faceEntity(this.closestEntity, 30.0F, 30.0F);
 				this.sporeling.setWave(--this.waveTimer > 0);
 			}
 			return shouldExec;
+		}
+
+		@Override
+		public void tick ()
+		{
+			super.tick();
+			if(this.closestEntity != null)
+			{
+				this.sporeling.faceEntity(this.closestEntity, 30.0F, 30.0F);
+			}
 		}
 	}
 }
