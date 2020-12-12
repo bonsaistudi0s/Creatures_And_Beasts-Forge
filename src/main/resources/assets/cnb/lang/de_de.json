@@ -6,6 +6,12 @@
   "item.cnb.lizard_item_1": "Eidechse ",
   "item.cnb.lizard_item_2": "Eidechse",
   "item.cnb.lizard_item_3": "Eidechse",
+  "item.cnb.sporeling_overworld_brown_egg": "Brauner Overworld Sporeling",
+  "item.cnb.sporeling_overworld_red_egg": "Roter Overworld Sporeling",
+  "item.cnb.sporeling_nether_brown_egg": "Brauner Nether Sporeling",
+  "item.cnb.sporeling_nether_red_egg": "Roter Nether Sporeling",
+  "item.cnb.sporeling_warped_fungi_egg": "Warped Fungi Sporeling",
+  "item.cnb.sporeling_crimson_fungus_egg": "Crimson Fungus Sporeling",
   "item.cnb.little_grebe_spawn_egg": "Kleine Grebe Spawn Ei",
   "item.cnb.lizard_spawn_egg": "Eidechsen Spawn Ei",
   "item.cnb.cyndershell_spawn_egg": "Cyndershell Spawn Ei",
@@ -13,5 +19,8 @@
   "entity.cnb.little_grebe_chick": "Kleines Grebenjunges",
   "entity.cnb.cyndershell": "Cyndershell",
   "entity.cnb.lizard": "Eidechse",
+  "entity.cnb.friendly_sporeling": "Freundlicher Sporeling",
+  "entity.cnb.hostile_sporeling": "Feindlicher Sporeling",
+  "entity.cnb.neutral_sporeling": "Neutraler Sporeling",
   "itemGroup.cnb_tab": "Creatures And Beasts"
 }
