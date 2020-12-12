@@ -1,5 +1,6 @@
 package com.cgessinger.creaturesandbeasts.common.entites;
 
+import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.PanicGoal;
@@ -8,6 +9,8 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
@@ -71,6 +74,20 @@ public class FriendlySporelingEntity extends AbstractSporelingEntity
 			return PlayState.STOP;
 		}
 		return PlayState.CONTINUE;
+	}
+
+	@Nullable
+	@Override
+	protected SoundEvent getHurtSound (DamageSource damageSourceIn)
+	{
+		return ModSoundEventTypes.SPORELING_OVERWORLD_HURT.get();
+	}
+
+	@Nullable
+	@Override
+	protected SoundEvent getAmbientSound ()
+	{
+		return ModSoundEventTypes.SPORELING_OVERWORLD_AMBIENT.get();
 	}
 
 	static class WaveGoal extends LookAtGoal

@@ -1,5 +1,6 @@
 package com.cgessinger.creaturesandbeasts.common.entites;
 
+import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.CreatureEntity;
@@ -11,7 +12,9 @@ import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.HurtByTargetGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.RegistryKey;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.*;
@@ -70,5 +73,19 @@ public class NeutralSporelingEntity extends AbstractSporelingEntity
 		Optional<RegistryKey<Biome>> optional = worldIn.func_241828_r().getRegistry(Registry.BIOME_KEY).getOptionalKey(worldIn.getBiome(p_234418_3_));
 
 		return worldIn.getDifficulty() != Difficulty.PEACEFUL && (optional.isPresent() && (optional.get() == Biomes.CRIMSON_FOREST || optional.get() == Biomes.WARPED_FOREST));
+	}
+
+	@Nullable
+	@Override
+	protected SoundEvent getHurtSound (DamageSource damageSourceIn)
+	{
+		return ModSoundEventTypes.SPORELING_WARPED_HURT.get();
+	}
+
+	@Nullable
+	@Override
+	protected SoundEvent getAmbientSound ()
+	{
+		return ModSoundEventTypes.SPORELING_WARPED_AMBIENT.get();
 	}
 }

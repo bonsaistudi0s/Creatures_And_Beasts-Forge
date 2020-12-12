@@ -30,4 +30,28 @@ public class ModSoundEventTypes
 	public static final RegistryObject<SoundEvent> CYNDERSHELL_HURT = SOUND_EVENTS.register("entity.cyndershell.hurt", () ->
 			new SoundEvent(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "entity.cyndershell.hurt"))
 	);
+
+	public static final RegistryObject<SoundEvent> SPORELING_OVERWORLD_AMBIENT = SOUND_EVENTS.register("entity.sporeling_overworld.ambient", () ->
+			new SoundEvent(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "entity.sporeling_overworld.ambient"))
+	);
+
+	public static final RegistryObject<SoundEvent> SPORELING_OVERWORLD_HURT = SOUND_EVENTS.register("entity.sporeling_overworld.hurt", () ->
+			new SoundEvent(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "entity.sporeling_overworld.hurt"))
+	);
+
+	public static final RegistryObject<SoundEvent> SPORELING_NETHER_AMBIENT = SOUND_EVENTS.register("entity.sporeling_nether.ambient", () ->
+			new SoundEvent(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "entity.sporeling_nether.ambient"))
+	);
+
+	public static final RegistryObject<SoundEvent> SPORELING_NETHER_HURT = SOUND_EVENTS.register("entity.sporeling_nether.hurt", () ->
+			new SoundEvent(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "entity.sporeling_nether.hurt"))
+	);
+
+	public static final RegistryObject<SoundEvent> SPORELING_WARPED_AMBIENT = SOUND_EVENTS.register("entity.sporeling_warped.ambient", () ->
+			new SoundEvent(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "entity.sporeling_warped.ambient"))
+	);
+
+	public static final RegistryObject<SoundEvent> SPORELING_WARPED_HURT = SOUND_EVENTS.register("entity.sporeling_warped.hurt", () ->
+			new SoundEvent(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "entity.sporeling_warped.hurt"))
+	);
 }

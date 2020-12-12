@@ -4,7 +4,7 @@
     "subtitle": "entity.little_grebe_chick.ambient",
     "sounds": [
       {
-        "name": "cnb:entity/entity.little_grebe_chick.ambient",
+        "name": "cnb:entity/little_grebe/entity.little_grebe_chick.ambient",
         "stream": true
       }
     ]
@@ -14,11 +14,11 @@
     "subtitle": "entity.little_grebe.ambient",
     "sounds": [
       {
-        "name": "cnb:entity/entity.little_grebe.ambient",
+        "name": "cnb:entity/little_grebe/entity.little_grebe.ambient",
         "stream": true
       },
       {
-        "name": "cnb:entity/entity.little_grebe.ambient_1",
+        "name": "cnb:entity/little_grebe/entity.little_grebe.ambient_1",
         "stream": true
       }
     ]
@@ -28,7 +28,7 @@
     "subtitle": "entity.little_grebe.hurt",
     "sounds": [
       {
-        "name": "cnb:entity/entity.little_grebe.hurt",
+        "name": "cnb:entity/little_grebe/entity.little_grebe.hurt",
         "stream": true
       }
     ]
@@ -38,11 +38,11 @@
     "subtitle": "entity.cyndershell.ambient",
     "sounds": [
       {
-        "name": "cnb:entity/entity.cyndershell.ambient",
+        "name": "cnb:entity/cynderhsell/entity.cyndershell.ambient",
         "stream": true
       },
       {
-        "name": "cnb:entity/entity.cyndershell.ambient_1",
+        "name": "cnb:entity/cynderhsell/entity.cyndershell.ambient_1",
         "stream": true
       }
     ]
@@ -52,7 +52,91 @@
     "subtitle": "entity.cyndershell.hurt",
     "sounds": [
       {
-        "name": "cnb:entity/entity.cyndershell.hurt",
+        "name": "cnb:entity/cynderhsell/entity.cyndershell.hurt",
+        "stream": true
+      }
+    ]
+  },
+  "entity.sporeling_overworld.ambient": {
+    "category": "entity",
+    "subtitle": "entity.sporeling_overworld.ambient",
+    "sounds": [
+      {
+        "name": "cnb:entity/sporeling/entity.sporeling_overworld.ambient",
+        "stream": true
+      },
+      {
+        "name": "cnb:entity/sporeling/entity.sporeling_overworld.ambient_1",
+        "stream": true
+      }
+    ]
+  },
+  "entity.sporeling_overworld.hurt": {
+    "category": "entity",
+    "subtitle": "entity.sporeling_overworld.hurt",
+    "sounds": [
+      {
+        "name": "cnb:entity/sporeling/entity.sporeling_overworld.hurt",
+        "stream": true
+      },
+      {
+        "name": "cnb:entity/sporeling/entity.sporeling_overworld.hurt_1",
+        "stream": true
+      }
+    ]
+  },
+  "entity.sporeling_nether.ambient": {
+    "category": "entity",
+    "subtitle": "entity.sporeling_nether.ambient",
+    "sounds": [
+      {
+        "name": "cnb:entity/sporeling/entity.sporeling_nether.ambient",
+        "stream": true
+      },
+      {
+        "name": "cnb:entity/sporeling/entity.sporeling_nether.ambient_1",
+        "stream": true
+      }
+    ]
+  },
+  "entity.sporeling_nether.hurt": {
+    "category": "entity",
+    "subtitle": "entity.sporeling_nether.hurt",
+    "sounds": [
+      {
+        "name": "cnb:entity/sporeling/entity.sporeling_nether.hurt",
+        "stream": true
+      },
+      {
+        "name": "cnb:entity/sporeling/entity.sporeling_nether.hurt_1",
+        "stream": true
+      }
+    ]
+  },
+  "entity.sporeling_warped.ambient": {
+    "category": "entity",
+    "subtitle": "entity.sporeling_warped.ambient",
+    "sounds": [
+      {
+        "name": "cnb:entity/sporeling/entity.sporeling_warped.ambient",
+        "stream": true
+      },
+      {
+        "name": "cnb:entity/sporeling/entity.sporeling_warped.ambient_1",
+        "stream": true
+      }
+    ]
+  },
+  "entity.sporeling_warped.hurt": {
+    "category": "entity",
+    "subtitle": "entity.sporeling_warped.hurt",
+    "sounds": [
+      {
+        "name": "cnb:entity/sporeling/entity.sporeling_warped.hurt",
+        "stream": true
+      },
+      {
+        "name": "cnb:entity/sporeling/entity.sporeling_warped.hurt_1",
         "stream": true
       }
     ]
