@@ -45,16 +45,16 @@ public class ModEntitySpawns
 		}
 		if(types.contains(BiomeDictionary.Type.MUSHROOM))
 		{
-			base.add(new Spawners(ModEntityTypes.FRIENDLY_SPORELING.get(), 60, 3, 5));
+			base.add(new Spawners(ModEntityTypes.FRIENDLY_SPORELING.get(), 90, 3, 5));
 		}
 		if(types.contains(BiomeDictionary.Type.SWAMP) || types.contains(BiomeDictionary.Type.SPOOKY) )
 		{
-			base.add(new Spawners(ModEntityTypes.FRIENDLY_SPORELING.get(), 20, 3, 5));
+			base.add(new Spawners(ModEntityTypes.FRIENDLY_SPORELING.get(), 70, 3, 5));
 		}
 		if (types.contains(BiomeDictionary.Type.NETHER))
 		{
 			base.add(new Spawners(ModEntityTypes.CYNDERSHELL.get(), 200, 1, 2));
-			event.getSpawns().getSpawner(EntityClassification.MONSTER).add(new Spawners(ModEntityTypes.HOSTILE_SPORELING.get(), 100, 3, 5));
+			event.getSpawns().getSpawner(EntityClassification.MONSTER).add(new Spawners(ModEntityTypes.HOSTILE_SPORELING.get(), 80, 3, 5));
 			event.getSpawns().getSpawner(EntityClassification.MONSTER).add(new Spawners(ModEntityTypes.NEUTRAL_SPORELING.get(), 100, 2, 4));
 		}
 	}
