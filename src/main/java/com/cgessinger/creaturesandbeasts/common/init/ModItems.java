@@ -2,7 +2,7 @@ package com.cgessinger.creaturesandbeasts.common.init;
 
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
 import com.cgessinger.creaturesandbeasts.common.items.AppleSliceItem;
-import com.cgessinger.creaturesandbeasts.common.items.CyndershellShellShardItem;
+import com.cgessinger.creaturesandbeasts.common.items.CindershellShellShardItem;
 import com.cgessinger.creaturesandbeasts.common.items.EntityNetItem;
 import com.cgessinger.creaturesandbeasts.common.items.ModSpawnEggItem;
 import net.minecraft.item.Item;
@@ -20,8 +20,8 @@ public class ModItems
 	public static RegistryObject<ModSpawnEggItem> GREBE_SPAWN_EGG = ITEMS.register("little_grebe_spawn_egg",
 			() -> new ModSpawnEggItem(ModEntityTypes.LITTLE_GREBE,0x00FFFFFF, 0x00FFFFFF, new Item.Properties().group(CreaturesAndBeasts.TAB)));
 
-	public static RegistryObject<ModSpawnEggItem> CYNDERSHELL_SPAWN_EGG = ITEMS.register("cyndershell_spawn_egg",
-			() -> new ModSpawnEggItem(ModEntityTypes.CYNDERSHELL,0x0D0403, 0xC64500, new Item.Properties().group(CreaturesAndBeasts.TAB)));
+	public static RegistryObject<ModSpawnEggItem> CINDERSHELL_SPAWN_EGG = ITEMS.register("cindershell_spawn_egg",
+			() -> new ModSpawnEggItem(ModEntityTypes.CINDERSHELL,0x0D0403, 0xC64500, new Item.Properties().group(CreaturesAndBeasts.TAB)));
 
 	// Lizards
 	public static RegistryObject<ModSpawnEggItem> LIZARD_SPAWN_EGG = ITEMS.register("lizard_spawn_egg",
@@ -68,5 +68,5 @@ public class ModItems
 
 	public static final RegistryObject<AppleSliceItem> APPLE_SLICE = ITEMS.register("apple_slice", AppleSliceItem::new);
 	public static final RegistryObject<EntityNetItem> ENTITY_NET = ITEMS.register("entity_net", EntityNetItem::new);
-	public static final RegistryObject<Item> CYNDERSHELL_SHELL_SHARD = ITEMS.register("cyndershell_shell_shard", CyndershellShellShardItem::new);
+	public static final RegistryObject<Item> CINDERSHELL_SHELL_SHARD = ITEMS.register("cindershell_shell_shard", CindershellShellShardItem::new);
 }

@@ -33,26 +33,26 @@
       }
     ]
   },
-  "entity.cyndershell.ambient": {
+  "entity.cindershell.ambient": {
     "category": "entity",
-    "subtitle": "entity.cyndershell.ambient",
+    "subtitle": "entity.cindershell.ambient",
     "sounds": [
       {
-        "name": "cnb:entity/cynderhsell/entity.cyndershell.ambient",
+        "name": "cnb:entity/cindershell/entity.cindershell.ambient",
         "stream": true
       },
       {
-        "name": "cnb:entity/cynderhsell/entity.cyndershell.ambient_1",
+        "name": "cnb:entity/cindershell/entity.cindershell.ambient_1",
         "stream": true
       }
     ]
   },
-  "entity.cyndershell.hurt": {
+  "entity.cindershell.hurt": {
     "category": "entity",
-    "subtitle": "entity.cyndershell.hurt",
+    "subtitle": "entity.cindershell.hurt",
     "sounds": [
       {
-        "name": "cnb:entity/cynderhsell/entity.cyndershell.hurt",
+        "name": "cnb:entity/cindershell/entity.cindershell.hurt",
         "stream": true
       }
     ]

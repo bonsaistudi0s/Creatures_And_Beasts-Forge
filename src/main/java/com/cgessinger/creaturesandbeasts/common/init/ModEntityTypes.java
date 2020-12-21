@@ -29,11 +29,11 @@ public class ModEntityTypes
 					.size(0.52f, 0.3f)
 					.build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "lizard").toString()));
 
-	public static final RegistryObject<EntityType<CyndershellEntity>> CYNDERSHELL = ENTITY_TYPES.register("cyndershell",
-			() -> EntityType.Builder.create(CyndershellEntity::new, EntityClassification.CREATURE)
-					.size(1.4f, 1.7f)
+	public static final RegistryObject<EntityType<CindershellEntity>> CINDERSHELL = ENTITY_TYPES.register("cindershell",
+			() -> EntityType.Builder.create(CindershellEntity::new, EntityClassification.CREATURE)
+					.size(1.4f, 1.8f)
 					.immuneToFire()
-					.build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "cyndershell").toString()));
+					.build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "cindershell").toString()));
 
 	public static final RegistryObject<EntityType<FriendlySporelingEntity>> FRIENDLY_SPORELING = ENTITY_TYPES.register("friendly_sporeling",
 			() -> EntityType.Builder.create(FriendlySporelingEntity::new, EntityClassification.CREATURE)

@@ -1,6 +1,5 @@
 package com.cgessinger.creaturesandbeasts.common.util;
 
-import com.cgessinger.creaturesandbeasts.common.entites.CyndershellEntity;
 import com.cgessinger.creaturesandbeasts.common.entites.LittleGrebeChickEntity;
 import com.cgessinger.creaturesandbeasts.common.entites.LittleGrebeEntity;
 import com.cgessinger.creaturesandbeasts.common.init.ModEntityTypes;

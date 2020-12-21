@@ -23,12 +23,12 @@ public class ModSoundEventTypes
 			new SoundEvent(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "entity.little_grebe_chick.ambient"))
 	);
 
-	public static final RegistryObject<SoundEvent> CYNDERSHELL_AMBIENT = SOUND_EVENTS.register("entity.cyndershell.ambient", () ->
-			new SoundEvent(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "entity.cyndershell.ambient"))
+	public static final RegistryObject<SoundEvent> CINDERSHELL_AMBIENT = SOUND_EVENTS.register("entity.cindershell.ambient", () ->
+			new SoundEvent(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "entity.cindershell.ambient"))
 	);
 
-	public static final RegistryObject<SoundEvent> CYNDERSHELL_HURT = SOUND_EVENTS.register("entity.cyndershell.hurt", () ->
-			new SoundEvent(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "entity.cyndershell.hurt"))
+	public static final RegistryObject<SoundEvent> CINDERSHELL_HURT = SOUND_EVENTS.register("entity.cindershell.hurt", () ->
+			new SoundEvent(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "entity.cindershell.hurt"))
 	);
 
 	public static final RegistryObject<SoundEvent> SPORELING_OVERWORLD_AMBIENT = SOUND_EVENTS.register("entity.sporeling_overworld.ambient", () ->

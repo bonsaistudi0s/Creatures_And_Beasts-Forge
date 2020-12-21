@@ -27,9 +27,9 @@ import net.minecraft.world.server.ServerWorld;
 import javax.annotation.Nullable;
 import java.util.Random;
 
-public class CyndershellEntity extends AnimalEntity
+public class CindershellEntity extends AnimalEntity
 {
-	public CyndershellEntity (EntityType<? extends AnimalEntity> type, World worldIn)
+	public CindershellEntity (EntityType<? extends AnimalEntity> type, World worldIn)
 	{
 		super(type, worldIn);
 	}
@@ -63,7 +63,7 @@ public class CyndershellEntity extends AnimalEntity
 	 * This sets what blocks it can't spawn on and for monsters set it to not spawn
 	 * in peaceful. You can always do light checks and time times here.
 	 */
-	public static boolean canCyndershellSpawn(EntityType<CyndershellEntity> p_234418_0_, IWorld p_234418_1_, SpawnReason p_234418_2_, BlockPos p_234418_3_, Random p_234418_4_) {
+	public static boolean canCindershellSpawn(EntityType<CindershellEntity> p_234418_0_, IWorld p_234418_1_, SpawnReason p_234418_2_, BlockPos p_234418_3_, Random p_234418_4_) {
 		return !p_234418_1_.getBlockState(p_234418_3_.down()).isIn(Blocks.NETHERRACK) || !p_234418_1_.getBlockState(p_234418_3_.down()).isIn(Blocks.BASALT)
 				|| !p_234418_1_.getBlockState(p_234418_3_.down()).isIn(Blocks.WARPED_NYLIUM) || !p_234418_1_.getBlockState(p_234418_3_.down()).isIn(Blocks.CRIMSON_NYLIUM)
 				|| !p_234418_1_.getBlockState(p_234418_3_.down()).isIn(Blocks.SOUL_SOIL) || !p_234418_1_.getBlockState(p_234418_3_.down()).isIn(Blocks.SOUL_SAND);
@@ -80,14 +80,14 @@ public class CyndershellEntity extends AnimalEntity
 	@Override
 	protected SoundEvent getAmbientSound ()
 	{
-		return ModSoundEventTypes.CYNDERSHELL_AMBIENT.get();
+		return ModSoundEventTypes.CINDERSHELL_AMBIENT.get();
 	}
 
 	@Nullable
 	@Override
 	protected SoundEvent getHurtSound (DamageSource damageSourceIn)
 	{
-		return ModSoundEventTypes.CYNDERSHELL_HURT.get();
+		return ModSoundEventTypes.CINDERSHELL_HURT.get();
 	}
 
 	@Override

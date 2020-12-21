@@ -1,6 +1,6 @@
 package com.cgessinger.creaturesandbeasts.client.model;
 
-import com.cgessinger.creaturesandbeasts.common.entites.CyndershellEntity;
+import com.cgessinger.creaturesandbeasts.common.entites.CindershellEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.entity.model.EntityModel;
@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.util.math.MathHelper;
 
-public class CyndershellModel<L extends AnimalEntity> extends EntityModel<CyndershellEntity>
+public class CindershellModel<L extends AnimalEntity> extends EntityModel<CindershellEntity>
 {
 	private final ModelRenderer bone;
 	private final ModelRenderer bone2;
@@ -22,7 +22,7 @@ public class CyndershellModel<L extends AnimalEntity> extends EntityModel<Cynder
 	private final ModelRenderer BL;
 	private final ModelRenderer FL;
 
-	public CyndershellModel ()
+	public CindershellModel ()
 	{
 		textureWidth = 128;
 		textureHeight = 128;
@@ -92,7 +92,7 @@ public class CyndershellModel<L extends AnimalEntity> extends EntityModel<Cynder
 	}
 
 	@Override
-	public void setRotationAngles (CyndershellEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+	public void setRotationAngles (CindershellEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
 	{
 		this.Head.rotateAngleX = headPitch * ((float) Math.PI / 180F);
 		this.Head.rotateAngleY = netHeadYaw * ((float) Math.PI / 180F);

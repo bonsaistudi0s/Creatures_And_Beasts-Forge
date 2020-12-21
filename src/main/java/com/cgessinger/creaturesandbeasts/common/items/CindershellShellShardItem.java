@@ -4,9 +4,9 @@ import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-public class CyndershellShellShardItem extends Item
+public class CindershellShellShardItem extends Item
 {
-	public CyndershellShellShardItem ()
+	public CindershellShellShardItem ()
 	{
 		super(new Item.Properties().group(CreaturesAndBeasts.TAB));
 	}
