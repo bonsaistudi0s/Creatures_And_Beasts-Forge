@@ -3,14 +3,15 @@ package com.cgessinger.creaturesandbeasts.common.goals;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.ai.goal.MoveToBlockGoal;
+import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
 
 public class GoToWaterGoal extends MoveToBlockGoal
 {
-	private final CreatureEntity creature;
+	private final AnimalEntity creature;
 
-	public GoToWaterGoal (CreatureEntity creature, double speedIn)
+	public GoToWaterGoal (AnimalEntity creature, double speedIn)
 	{
 		super(creature, creature.isChild() ? 2.0D : speedIn, 24);
 		this.creature = creature;
@@ -26,7 +27,7 @@ public class GoToWaterGoal extends MoveToBlockGoal
 	@Override
 	public boolean shouldExecute ()
 	{
-		return !this.creature.isInWater();
+		return !this.creature.isInWater() && !this.creature.isInLove() && this.creature.getRNG().nextInt(200) == 0;
 	}
 
 	@Override
