@@ -1,7 +1,9 @@
 package com.cgessinger.creaturesandbeasts.common.entites;
 
 import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
+import net.minecraft.command.arguments.EntityAnchorArgument;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.controller.LookController;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.PanicGoal;
 import net.minecraft.entity.player.PlayerEntity;
@@ -11,6 +13,7 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
@@ -46,7 +49,7 @@ public class FriendlySporelingEntity extends AbstractSporelingEntity
 	{
 		super.registerGoals();
 		this.goalSelector.addGoal(1, new PanicGoal(this, 1.25D));
-		this.goalSelector.addGoal(6, new WaveGoal(this, PlayerEntity.class, 6.0F));
+		this.goalSelector.addGoal(6, new WaveGoal(this, PlayerEntity.class, 8.0F));
 	}
 
 	@Override
@@ -68,7 +71,7 @@ public class FriendlySporelingEntity extends AbstractSporelingEntity
 		{
 			if (this.dataManager.get(WAVE))
 			{
-				event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.wave", true));
+				event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.wave", false));
 				return PlayState.CONTINUE;
 			}
 			return PlayState.STOP;
@@ -117,13 +120,9 @@ public class FriendlySporelingEntity extends AbstractSporelingEntity
 		}
 
 		@Override
-		public void tick ()
+		public boolean shouldContinueExecuting ()
 		{
-			super.tick();
-			if(this.closestEntity != null)
-			{
-				this.sporeling.faceEntity(this.closestEntity, 30.0F, 30.0F);
-			}
+			return super.shouldContinueExecuting() && this.sporeling.getLookController().getIsLooking();
 		}
 	}
 }
