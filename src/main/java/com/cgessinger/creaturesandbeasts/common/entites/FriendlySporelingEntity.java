@@ -1,6 +1,7 @@
 package com.cgessinger.creaturesandbeasts.common.entites;
 
 import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
+import net.minecraft.block.Blocks;
 import net.minecraft.command.arguments.EntityAnchorArgument;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.controller.LookController;
@@ -12,17 +13,22 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.IServerWorld;
-import net.minecraft.world.World;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.world.*;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.Biomes;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
+import java.util.Random;
 
 public class FriendlySporelingEntity extends AbstractSporelingEntity
 {
@@ -124,5 +130,11 @@ public class FriendlySporelingEntity extends AbstractSporelingEntity
 		{
 			return super.shouldContinueExecuting() && this.sporeling.getLookController().getIsLooking();
 		}
+	}
+
+	public static boolean canSporelingSpawn(EntityType<FriendlySporelingEntity> p_234418_0_, IWorld worldIn, SpawnReason p_234418_2_, BlockPos pos, Random p_234418_4_)
+	{
+		return (worldIn.getBlockState(pos.down()).isIn(Blocks.MYCELIUM) || worldIn.getBlockState(pos.down()).isIn(Blocks.GRASS_BLOCK)) &&
+				worldIn.getLightSubtracted(pos, 0) > 8;
 	}
 }
