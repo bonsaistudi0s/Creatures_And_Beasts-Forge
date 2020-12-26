@@ -81,7 +81,7 @@ public abstract class AbstractSporelingEntity extends CreatureEntity implements 
 	public static AttributeModifierMap.MutableAttribute setCustomAttributes ()
 	{
 		return MobEntity.func_233666_p_()
-				.createMutableAttribute(Attributes.MAX_HEALTH, 10.0D) // Max Health
+				.createMutableAttribute(Attributes.MAX_HEALTH, 16.0D) // Max Health
 				.createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.2D); // Movement Speed
 	}
 
