@@ -109,7 +109,7 @@ public class FriendlySporelingEntity extends AbstractSporelingEntity
 		public boolean shouldExecute ()
 		{
 			boolean shouldExec = super.shouldExecute();
-			if(shouldExec && this.waveTimer == 0 && this.sporeling.getRNG().nextBoolean())
+			if(shouldExec && this.waveTimer == 0 && this.sporeling.getRNG().nextInt(5) == 0)
 			{
 				this.waveTimer = 8;
 			} else if (this.waveTimer > 0 && this.closestEntity != null)
