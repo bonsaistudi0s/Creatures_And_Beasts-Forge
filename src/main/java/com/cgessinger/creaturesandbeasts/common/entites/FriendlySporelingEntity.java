@@ -94,6 +94,13 @@ public class FriendlySporelingEntity extends AbstractSporelingEntity
 
 	@Nullable
 	@Override
+	protected SoundEvent getDeathSound ()
+	{
+		return ModSoundEventTypes.SPORELING_OVERWORLD_HURT.get();
+	}
+
+	@Nullable
+	@Override
 	protected SoundEvent getAmbientSound ()
 	{
 		return ModSoundEventTypes.SPORELING_OVERWORLD_AMBIENT.get();

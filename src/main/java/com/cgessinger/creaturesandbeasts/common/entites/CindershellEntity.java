@@ -90,6 +90,13 @@ public class CindershellEntity extends AnimalEntity
 		return ModSoundEventTypes.CINDERSHELL_HURT.get();
 	}
 
+	@Nullable
+	@Override
+	protected SoundEvent getDeathSound ()
+	{
+		return ModSoundEventTypes.CINDERSHELL_HURT.get();
+	}
+
 	@Override
 	protected float getSoundVolume ()
 	{

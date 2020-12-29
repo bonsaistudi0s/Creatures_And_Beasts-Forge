@@ -72,4 +72,11 @@ public class HostileSporelingEntity extends AbstractSporelingEntity
 	{
 		return ModSoundEventTypes.SPORELING_NETHER_AMBIENT.get();
 	}
+
+	@Nullable
+	@Override
+	protected SoundEvent getDeathSound ()
+	{
+		return ModSoundEventTypes.SPORELING_NETHER_HURT.get();
+	}
 }

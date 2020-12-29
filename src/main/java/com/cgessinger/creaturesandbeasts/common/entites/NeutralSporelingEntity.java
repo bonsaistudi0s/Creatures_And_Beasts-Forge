@@ -88,4 +88,11 @@ public class NeutralSporelingEntity extends AbstractSporelingEntity
 	{
 		return ModSoundEventTypes.SPORELING_WARPED_AMBIENT.get();
 	}
+
+	@Nullable
+	@Override
+	protected SoundEvent getDeathSound ()
+	{
+		return ModSoundEventTypes.SPORELING_WARPED_HURT.get();
+	}
 }

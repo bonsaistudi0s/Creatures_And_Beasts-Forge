@@ -83,4 +83,11 @@ public class LittleGrebeEntity extends AbstractGrebeEntity
 	{
 		return ModSoundEventTypes.LITTLE_GREBE_HURT.get();
 	}
+
+	@Nullable
+	@Override
+	protected SoundEvent getDeathSound ()
+	{
+		return ModSoundEventTypes.LITTLE_GREBE_HURT.get();
+	}
 }
