@@ -7,6 +7,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -21,6 +22,7 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
@@ -107,9 +109,13 @@ public class LizardEntity extends AnimalEntity implements IAnimatable, IModNetab
 			event.getController().setAnimation(new AnimationBuilder().addAnimation("lizard.walk", true));
 			return PlayState.CONTINUE;
 		}
+		else if (this.isPartying())
+		{
+			event.getController().setAnimation(new AnimationBuilder().addAnimation("lizard.dance", true));
+			return PlayState.CONTINUE;
+		}
 		return PlayState.STOP;
 	}
-
 
 	@Override
 	public void registerControllers (AnimationData animationData)
@@ -215,8 +221,11 @@ public class LizardEntity extends AnimalEntity implements IAnimatable, IModNetab
 	@OnlyIn(Dist.CLIENT)
 	public void setPartying (BlockPos pos, boolean isPartying)
 	{
-		this.jukeboxPosition = pos;
-		this.partyLizard = isPartying;
+		if(!this.isSad())
+		{
+			this.jukeboxPosition = pos;
+			this.partyLizard = isPartying;
+		}
 	}
 
 	@OnlyIn(Dist.CLIENT)
@@ -255,5 +264,4 @@ public class LizardEntity extends AnimalEntity implements IAnimatable, IModNetab
 	{
 		spawnParticles(ParticleTypes.HAPPY_VILLAGER);
 	}
-
 }
