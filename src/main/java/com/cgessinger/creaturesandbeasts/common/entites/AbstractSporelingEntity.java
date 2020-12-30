@@ -1,6 +1,7 @@
 package com.cgessinger.creaturesandbeasts.common.entites;
 
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
+import com.cgessinger.creaturesandbeasts.common.interfaces.IRunningEntity;
 import com.cgessinger.creaturesandbeasts.common.interfaces.ITimedAttackEntity;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
@@ -12,6 +13,7 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
@@ -22,13 +24,15 @@ import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
+import software.bernie.geckolib3.model.provider.data.EntityModelData;
 
 import javax.annotation.Nullable;
 
-public abstract class AbstractSporelingEntity extends CreatureEntity implements IAnimatable, ITimedAttackEntity
+public abstract class AbstractSporelingEntity extends CreatureEntity implements IAnimatable, ITimedAttackEntity, IRunningEntity
 {
 	private static final DataParameter<Integer> SPORELING_VARIANT = EntityDataManager.createKey(AbstractSporelingEntity.class, DataSerializers.VARINT);
 	private static final DataParameter<Boolean> ATTACKING = EntityDataManager.createKey(AbstractSporelingEntity.class, DataSerializers.BOOLEAN);
+	private static final DataParameter<Boolean> RUNNING = EntityDataManager.createKey(AbstractSporelingEntity.class, DataSerializers.BOOLEAN);
 	protected int attackTimer;
 	private final AnimationFactory factory = new AnimationFactory(this);
 
@@ -37,6 +41,7 @@ public abstract class AbstractSporelingEntity extends CreatureEntity implements 
 		super(type, worldIn);
 		this.dataManager.register(SPORELING_VARIANT, 0);
 		this.dataManager.register(ATTACKING, false);
+		this.dataManager.register(RUNNING, false);
 		this.attackTimer = 0;
 	}
 
@@ -51,11 +56,29 @@ public abstract class AbstractSporelingEntity extends CreatureEntity implements 
 		return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
 	}
 
+	@Override
+	public void travel (Vector3d travelVector)
+	{
+		if(!this.world.isRemote())
+		{
+			this.setRunning(this.getMoveHelper().getSpeed() >= this.getRunThreshold());
+		}
+		super.travel(travelVector);
+	}
+
 	public <E extends IAnimatable> PlayState animationPredicate (AnimationEvent<E> event)
 	{
 		if (!(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F))
 		{
-			event.getController().setAnimation(new AnimationBuilder().addAnimation("sporeling.walk", true));
+			if(this.isRunning())
+			{
+				System.out.println("sporeling run");
+				event.getController().setAnimation(new AnimationBuilder().addAnimation("sporeling.run", true));
+			}
+			else
+			{
+				event.getController().setAnimation(new AnimationBuilder().addAnimation("sporeling.walk", true));
+			}
 			return PlayState.CONTINUE;
 		}
 		return PlayState.STOP;
@@ -93,6 +116,24 @@ public abstract class AbstractSporelingEntity extends CreatureEntity implements 
 	public boolean isAttacking ()
 	{
 		return this.dataManager.get(ATTACKING);
+	}
+
+	@Override
+	public void setRunning (boolean running)
+	{
+		this.dataManager.set(RUNNING, running);
+	}
+
+	@Override
+	public boolean isRunning ()
+	{
+		return this.dataManager.get(RUNNING);
+	}
+
+	@Override
+	public double getRunThreshold ()
+	{
+		return 1.3D;
 	}
 
 	public static AttributeModifierMap.MutableAttribute setCustomAttributes ()

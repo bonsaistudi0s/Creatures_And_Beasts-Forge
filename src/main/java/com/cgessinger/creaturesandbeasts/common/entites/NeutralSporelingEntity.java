@@ -42,7 +42,7 @@ public class NeutralSporelingEntity extends AbstractSporelingEntity
 	protected void registerGoals ()
 	{
 		super.registerGoals();
-		this.goalSelector.addGoal(2, new TimedAttackGoal<>(this, 1.0D, false, 3));
+		this.goalSelector.addGoal(2, new TimedAttackGoal<>(this, 1.3D, false, 3));
 		this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
 	}
 
