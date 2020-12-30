@@ -34,10 +34,12 @@ public class LilytadEntity extends AnimalEntity implements IForgeShearable, IAni
 {
 	private final AnimationFactory factory = new AnimationFactory(this);
 	private static final DataParameter<Boolean> SHEARED = EntityDataManager.createKey(LilytadEntity.class, DataSerializers.BOOLEAN);
+	private int shearedTimer;
 
 	public LilytadEntity (EntityType<? extends AnimalEntity> type, World worldIn)
 	{
 		super(type, worldIn);
+		this.shearedTimer = 0;
 	}
 
 	@Override
@@ -76,6 +78,16 @@ public class LilytadEntity extends AnimalEntity implements IForgeShearable, IAni
 		this.goalSelector.addGoal(4, new LookAtGoal(this, PlayerEntity.class, 8.0F));
 		this.goalSelector.addGoal(8, new LookRandomlyGoal(this));
 		this.goalSelector.addGoal(1, new PanicGoal(this, 1.25D));
+	}
+
+	@Override
+	public void livingTick ()
+	{
+		super.livingTick();
+		if(!this.world.isRemote() && this.shearedTimer > 0)
+		{
+			this.setSheared(--this.shearedTimer > 0);
+		}
 	}
 
 	private <E extends IAnimatable> PlayState animationPredicate (AnimationEvent<E> event)
@@ -119,6 +131,7 @@ public class LilytadEntity extends AnimalEntity implements IForgeShearable, IAni
 		if (!world.isRemote)
 		{
 			this.setSheared(true);
+			this.shearedTimer = 15 * 60 * 20; // 15 min x 60 sec x 20 ticks per sec
 			java.util.List<ItemStack> items = new java.util.ArrayList<>();
 			items.add(new ItemStack(ModItems.LILYTAD_FLOWER.get()));
 
