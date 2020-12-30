@@ -14,6 +14,8 @@ public class ModEntityTypes
 	public static DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITIES, CreaturesAndBeasts.MOD_ID);
 
 	// Entity Types
+
+	/* CREATURES */
 	public static final RegistryObject<EntityType<LittleGrebeEntity>> LITTLE_GREBE = ENTITY_TYPES.register("little_grebe",
 			() -> EntityType.Builder.create(LittleGrebeEntity::new, EntityClassification.CREATURE)
 					.size(0.5f, 0.6f)
@@ -35,11 +37,17 @@ public class ModEntityTypes
 					.immuneToFire()
 					.build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "cindershell").toString()));
 
+	public static final RegistryObject<EntityType<LilytadEntity>> LILYTAD = ENTITY_TYPES.register("lilytad",
+			() -> EntityType.Builder.create(LilytadEntity::new, EntityClassification.CREATURE)
+					.size(0.5f, 0.65f)
+					.build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "lilytad").toString()));
+
 	public static final RegistryObject<EntityType<FriendlySporelingEntity>> FRIENDLY_SPORELING = ENTITY_TYPES.register("friendly_sporeling",
 			() -> EntityType.Builder.create(FriendlySporelingEntity::new, EntityClassification.CREATURE)
 					.size(0.5f, 0.65f)
 					.build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "friendly_sporeling").toString()));
 
+	/* MONSTERS */
 	public static final RegistryObject<EntityType<HostileSporelingEntity>> HOSTILE_SPORELING = ENTITY_TYPES.register("hostile_sporeling",
 			() -> EntityType.Builder.create(HostileSporelingEntity::new, EntityClassification.MONSTER)
 					.size(0.5f, 0.65f)
