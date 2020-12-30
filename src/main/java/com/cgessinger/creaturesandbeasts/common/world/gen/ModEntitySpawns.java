@@ -41,13 +41,18 @@ public class ModEntitySpawns
 		{
 			base.add(new Spawners(ModEntityTypes.LIZARD.get(), 50, 1, 4));
 		}
-		if(types.contains(BiomeDictionary.Type.MUSHROOM))
+		if (types.contains(BiomeDictionary.Type.MUSHROOM))
 		{
 			base.add(new Spawners(ModEntityTypes.FRIENDLY_SPORELING.get(), 40, 3, 5));
 		}
-		if(types.contains(BiomeDictionary.Type.SWAMP) || types.contains(BiomeDictionary.Type.SPOOKY) )
+		if (types.contains(BiomeDictionary.Type.SPOOKY))
 		{
 			base.add(new Spawners(ModEntityTypes.FRIENDLY_SPORELING.get(), 40, 3, 5));
+		}
+		if (types.contains(BiomeDictionary.Type.SWAMP))
+		{
+			base.add(new Spawners(ModEntityTypes.FRIENDLY_SPORELING.get(), 40, 3, 5));
+			base.add(new Spawners(ModEntityTypes.LILYTAD.get(), 70, 1, 1));
 		}
 		if (types.contains(BiomeDictionary.Type.NETHER))
 		{
@@ -57,27 +62,14 @@ public class ModEntitySpawns
 		}
 	}
 
-	public static void EntitySpawnPlacementRegistry() {
-		/*
-		 * This registers the entity to only spawn where it's possible, which is set by
-		 * the new method in the Entity class EX: canCindershellSpawn Only allows it
-		 * spawn everything but Netherwarts, while the placement type here always makes
-		 * sure it's on solid blocks, not lava.
-		 */
-		EntitySpawnPlacementRegistry.register(ModEntityTypes.CINDERSHELL.get(),
-				EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES,
-				CindershellEntity::canCindershellSpawn);
+	public static void EntitySpawnPlacementRegistry ()
+	{
+		EntitySpawnPlacementRegistry.register(ModEntityTypes.CINDERSHELL.get(), EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, CindershellEntity::canCindershellSpawn);
 
-		EntitySpawnPlacementRegistry.register(ModEntityTypes.HOSTILE_SPORELING.get(),
-				EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES,
-				HostileSporelingEntity::canSporelingSpawn);
+		EntitySpawnPlacementRegistry.register(ModEntityTypes.HOSTILE_SPORELING.get(), EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, HostileSporelingEntity::canSporelingSpawn);
 
-		EntitySpawnPlacementRegistry.register(ModEntityTypes.NEUTRAL_SPORELING.get(),
-				EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES,
-				NeutralSporelingEntity::canSporelingSpawn);
+		EntitySpawnPlacementRegistry.register(ModEntityTypes.NEUTRAL_SPORELING.get(), EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, NeutralSporelingEntity::canSporelingSpawn);
 
-		EntitySpawnPlacementRegistry.register(ModEntityTypes.FRIENDLY_SPORELING.get(),
-				EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES,
-				FriendlySporelingEntity::canSporelingSpawn);
+		EntitySpawnPlacementRegistry.register(ModEntityTypes.FRIENDLY_SPORELING.get(), EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, FriendlySporelingEntity::canSporelingSpawn);
 	}
 }

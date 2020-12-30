@@ -1,5 +1,6 @@
 package com.cgessinger.creaturesandbeasts.common.entites;
 
+import com.cgessinger.creaturesandbeasts.common.goals.FindWaterOneDeepGoal;
 import com.cgessinger.creaturesandbeasts.common.init.ModItems;
 import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.EntityType;
@@ -75,6 +76,7 @@ public class LilytadEntity extends AnimalEntity implements IForgeShearable, IAni
 	{
 		//this.goalSelector.addGoal(0, new SwimGoal(this));
 		//this.goalSelector.addGoal(6, new WaterAvoidingRandomWalkingGoal(this, 1.0D));
+		this.goalSelector.addGoal(1, new FindWaterOneDeepGoal(this));
 		this.goalSelector.addGoal(4, new LookAtGoal(this, PlayerEntity.class, 8.0F));
 		this.goalSelector.addGoal(8, new LookRandomlyGoal(this));
 		this.goalSelector.addGoal(1, new PanicGoal(this, 1.25D));
@@ -88,6 +90,18 @@ public class LilytadEntity extends AnimalEntity implements IForgeShearable, IAni
 		{
 			this.setSheared(--this.shearedTimer > 0);
 		}
+	}
+
+	@Override
+	public boolean canBreatheUnderwater ()
+	{
+		return true;
+	}
+
+	@Override
+	public boolean isPushedByWater ()
+	{
+		return false;
 	}
 
 	private <E extends IAnimatable> PlayState animationPredicate (AnimationEvent<E> event)
