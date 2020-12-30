@@ -52,7 +52,7 @@ public class ModEntitySpawns
 		if (types.contains(BiomeDictionary.Type.SWAMP))
 		{
 			base.add(new Spawners(ModEntityTypes.FRIENDLY_SPORELING.get(), 40, 3, 5));
-			base.add(new Spawners(ModEntityTypes.LILYTAD.get(), 70, 1, 1));
+			base.add(new Spawners(ModEntityTypes.LILYTAD.get(), 40, 1, 1));
 		}
 		if (types.contains(BiomeDictionary.Type.NETHER))
 		{
