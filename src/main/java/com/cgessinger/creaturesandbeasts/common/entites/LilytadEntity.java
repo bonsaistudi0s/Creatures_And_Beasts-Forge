@@ -3,20 +3,17 @@ package com.cgessinger.creaturesandbeasts.common.entites;
 import com.cgessinger.creaturesandbeasts.common.init.ModItems;
 import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.IShearable;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.passive.SheepEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
@@ -58,6 +55,20 @@ public class LilytadEntity extends AnimalEntity implements IForgeShearable, IAni
 	}
 
 	@Override
+	public void readAdditional (CompoundNBT compound)
+	{
+		super.readAdditional(compound);
+		compound.putBoolean("Sheared", this.getSheared());
+	}
+
+	@Override
+	public void writeAdditional (CompoundNBT compound)
+	{
+		super.writeAdditional(compound);
+		this.setSheared(compound.getBoolean("Sheared"));
+	}
+
+	@Override
 	protected void registerGoals()
 	{
 		//this.goalSelector.addGoal(0, new SwimGoal(this));
@@ -84,10 +95,15 @@ public class LilytadEntity extends AnimalEntity implements IForgeShearable, IAni
 		return null;
 	}
 
+	public boolean getSheared ()
+	{
+		return this.dataManager.get(SHEARED);
+	}
+
 	@Override
 	public boolean isShearable (@Nonnull ItemStack item, World world, BlockPos pos)
 	{
-		return !this.dataManager.get(SHEARED);
+		return !this.getSheared();
 	}
 
 	public void setSheared (boolean sheared)

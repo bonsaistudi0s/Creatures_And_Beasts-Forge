@@ -21,7 +21,13 @@ public class LilytadModel extends AnimatedGeoModel<LilytadEntity>
 	@Override
 	public ResourceLocation getTextureLocation (LilytadEntity object)
 	{
-		return new ResourceLocation(CreaturesAndBeasts.MOD_ID, "textures/model/entity/lilytad.png");
+		if(object.getSheared())
+		{
+			return new ResourceLocation(CreaturesAndBeasts.MOD_ID, "textures/model/entity/lilytad.png");
+		} else
+		{
+			return new ResourceLocation(CreaturesAndBeasts.MOD_ID, "textures/model/entity/lilytad_flower_layer.png");
+		}
 	}
 
 	@Override
