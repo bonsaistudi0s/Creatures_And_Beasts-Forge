@@ -1,10 +1,7 @@
 package com.cgessinger.creaturesandbeasts.common.init;
 
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
-import com.cgessinger.creaturesandbeasts.common.items.AppleSliceItem;
-import com.cgessinger.creaturesandbeasts.common.items.CindershellShellShardItem;
-import com.cgessinger.creaturesandbeasts.common.items.EntityNetItem;
-import com.cgessinger.creaturesandbeasts.common.items.ModSpawnEggItem;
+import com.cgessinger.creaturesandbeasts.common.items.*;
 import net.minecraft.item.Item;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
@@ -69,4 +66,5 @@ public class ModItems
 	public static final RegistryObject<AppleSliceItem> APPLE_SLICE = ITEMS.register("apple_slice", AppleSliceItem::new);
 	public static final RegistryObject<EntityNetItem> ENTITY_NET = ITEMS.register("entity_net", EntityNetItem::new);
 	public static final RegistryObject<Item> CINDERSHELL_SHELL_SHARD = ITEMS.register("cindershell_shell_shard", CindershellShellShardItem::new);
+	public static final RegistryObject<Item> LILYTAD_FLOWER = ITEMS.register("lilytad_flower", LilytadFlowerItem::new);
 }
