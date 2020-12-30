@@ -1,6 +1,7 @@
 package com.cgessinger.creaturesandbeasts.common.entites;
 
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
+import com.cgessinger.creaturesandbeasts.common.interfaces.ITimedAttackEntity;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -24,15 +25,19 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 import javax.annotation.Nullable;
 
-public abstract class AbstractSporelingEntity extends CreatureEntity implements IAnimatable
+public abstract class AbstractSporelingEntity extends CreatureEntity implements IAnimatable, ITimedAttackEntity
 {
 	private static final DataParameter<Integer> SPORELING_VARIANT = EntityDataManager.createKey(AbstractSporelingEntity.class, DataSerializers.VARINT);
+	private static final DataParameter<Boolean> ATTACKING = EntityDataManager.createKey(AbstractSporelingEntity.class, DataSerializers.BOOLEAN);
+	protected int attackTimer;
 	private final AnimationFactory factory = new AnimationFactory(this);
 
 	protected AbstractSporelingEntity (EntityType<? extends CreatureEntity> type, World worldIn)
 	{
 		super(type, worldIn);
 		this.dataManager.register(SPORELING_VARIANT, 0);
+		this.dataManager.register(ATTACKING, false);
+		this.attackTimer = 0;
 	}
 
 	@Nullable
@@ -50,7 +55,7 @@ public abstract class AbstractSporelingEntity extends CreatureEntity implements 
 	{
 		if (!(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F))
 		{
-			event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.walk", true));
+			event.getController().setAnimation(new AnimationBuilder().addAnimation("sporeling.walk", true));
 			return PlayState.CONTINUE;
 		}
 		return PlayState.STOP;
@@ -78,10 +83,21 @@ public abstract class AbstractSporelingEntity extends CreatureEntity implements 
 		this.dataManager.set(SPORELING_VARIANT, variant);
 	}
 
+	@Override
+	public void setAttacking (boolean attacking)
+	{
+		this.dataManager.set(ATTACKING, attacking);
+	}
+
+	@Override
+	public boolean isAttacking ()
+	{
+		return this.dataManager.get(ATTACKING);
+	}
+
 	public static AttributeModifierMap.MutableAttribute setCustomAttributes ()
 	{
-		return MobEntity.func_233666_p_()
-				.createMutableAttribute(Attributes.MAX_HEALTH, 16.0D) // Max Health
+		return MobEntity.func_233666_p_().createMutableAttribute(Attributes.MAX_HEALTH, 16.0D) // Max Health
 				.createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.2D); // Movement Speed
 	}
 
@@ -111,22 +127,21 @@ public abstract class AbstractSporelingEntity extends CreatureEntity implements 
 		}
 	}
 
-	public enum SporelingType{
-		OVERWORLD_BROWN(createLocation("geo/overworld_brown_sporeling.geo.json"), createLocation("textures/model/entity/sporeling_brown_overworld.png")),
-		OVERWORLD_RED(createLocation("geo/overworld_red_sporeling.geo.json"), createLocation("textures/model/entity/sporeling_red_overworld.png")),
-		NETHER_BROWN(createLocation("geo/nether_brown_sporeling.geo.json"), createLocation("textures/model/entity/sporeling_brown_nether.png")),
-		NETHER_RED(createLocation("geo/nether_red_sporeling.geo.json"), createLocation("textures/model/entity/sporeling_red_nether.png")),
-		WARPED_FUNGI(createLocation("geo/warped_fungi_sporeling.geo.json"), createLocation("textures/model/entity/sporeling_warped_fungi.png")),
-		CRIMSON_FUNGUS(createLocation("geo/warped_fungi_sporeling.geo.json"), createLocation("textures/model/entity/sporeling_crimson_fungus.png"));
+	public enum SporelingType
+	{
+		OVERWORLD_BROWN(createLocation("geo/overworld_brown_sporeling.geo.json"), createLocation("textures/model/entity/sporeling_brown_overworld.png")), OVERWORLD_RED(createLocation("geo/overworld_red_sporeling.geo.json"), createLocation("textures/model/entity/sporeling_red_overworld.png")), NETHER_BROWN(createLocation("geo/nether_brown_sporeling.geo.json"), createLocation("textures/model/entity/sporeling_brown_nether.png")), NETHER_RED(createLocation("geo/nether_red_sporeling.geo.json"), createLocation("textures/model/entity/sporeling_red_nether.png")), WARPED_FUNGI(createLocation("geo/warped_fungi_sporeling.geo.json"), createLocation("textures/model/entity/sporeling_warped_fungi.png")), CRIMSON_FUNGUS(createLocation("geo/warped_fungi_sporeling.geo.json"), createLocation("textures/model/entity/sporeling_crimson_fungus.png"));
 
 		public final ResourceLocation modelLocation;
 		public final ResourceLocation textureLocation;
-		SporelingType(ResourceLocation ml, ResourceLocation tl){
+
+		SporelingType (ResourceLocation ml, ResourceLocation tl)
+		{
 			this.modelLocation = ml;
 			this.textureLocation = tl;
 		}
 
-		private static ResourceLocation createLocation(String pathPart){
+		private static ResourceLocation createLocation (String pathPart)
+		{
 			return new ResourceLocation(CreaturesAndBeasts.MOD_ID, pathPart);
 		}
 

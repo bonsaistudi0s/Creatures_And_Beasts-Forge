@@ -1,5 +1,6 @@
 package com.cgessinger.creaturesandbeasts.common.entites;
 
+import com.cgessinger.creaturesandbeasts.common.goals.TimedAttackGoal;
 import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -21,6 +22,10 @@ import net.minecraft.world.*;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeRegistry;
 import net.minecraft.world.biome.Biomes;
+import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.PlayState;
+import software.bernie.geckolib3.core.builder.AnimationBuilder;
+import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
@@ -37,9 +42,8 @@ public class NeutralSporelingEntity extends AbstractSporelingEntity
 	protected void registerGoals ()
 	{
 		super.registerGoals();
-		this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0D, false));
+		this.goalSelector.addGoal(2, new TimedAttackGoal<>(this, 1.0D, false, 3));
 		this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-		//this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
 	}
 
 	public static AttributeModifierMap.MutableAttribute setCustomAttributes ()
@@ -66,6 +70,17 @@ public class NeutralSporelingEntity extends AbstractSporelingEntity
 			this.setSporelingType(this.getRNG().nextInt(2) + 4);
 		}
 		return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+	}
+
+	@Override
+	public <E extends IAnimatable> PlayState animationPredicate (AnimationEvent<E> event)
+	{
+		if(this.isAttacking())
+		{
+			event.getController().setAnimation(new AnimationBuilder().addAnimation("sporeling.bite"));
+			return PlayState.CONTINUE;
+		}
+		return super.animationPredicate(event);
 	}
 
 	public static boolean canSporelingSpawn(EntityType<NeutralSporelingEntity> p_234418_0_, IWorld worldIn, SpawnReason p_234418_2_, BlockPos p_234418_3_, Random p_234418_4_)

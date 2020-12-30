@@ -77,7 +77,7 @@ public class FriendlySporelingEntity extends AbstractSporelingEntity
 		{
 			if (this.dataManager.get(WAVE))
 			{
-				event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.wave", false));
+				event.getController().setAnimation(new AnimationBuilder().addAnimation("sporeling.wave", false));
 				return PlayState.CONTINUE;
 			}
 			return PlayState.STOP;

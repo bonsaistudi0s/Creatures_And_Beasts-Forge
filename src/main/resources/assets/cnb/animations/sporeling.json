@@ -1,7 +1,7 @@
 {
   "format_version": "1.8.0",
   "animations": {
-    "animation.wave": {
+    "sporeling.wave": {
       "animation_length": 2.68,
       "bones": {
         "bone": {
@@ -298,7 +298,7 @@
         }
       }
     },
-    "animation.walk": {
+    "sporeling.walk": {
       "loop": true,
       "animation_length": 0.8,
       "bones": {
@@ -428,6 +428,35 @@
           }
         }
       }
+    },
+    "sporeling.bite": {
+      "animation_length": 0.4,
+      "override_previous_animation": true,
+      "bones": {
+        "Head": {
+          "rotation": {
+            "0.0": {
+              "vector": [0, 0, 0]
+            },
+            "0.04": {
+              "vector": [15, 0, 0]
+            },
+            "0.12": {
+              "vector": [20, 0, 0]
+            },
+            "0.2": {
+              "vector": [20, 0, 0]
+            },
+            "0.28": {
+              "vector": [5, 0, 0]
+            },
+            "0.36": {
+              "vector": [0, 0, 0]
+            }
+          }
+        }
+      }
     }
-  }
+  },
+  "geckolib_format_version": 2
 }

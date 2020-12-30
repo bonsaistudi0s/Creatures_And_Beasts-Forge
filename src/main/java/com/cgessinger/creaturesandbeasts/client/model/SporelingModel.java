@@ -24,4 +24,6 @@ public class SporelingModel<T extends AbstractSporelingEntity> extends AnimatedG
 	{
 		return new ResourceLocation(CreaturesAndBeasts.MOD_ID, "animations/sporeling.json");
 	}
+
+
 }
