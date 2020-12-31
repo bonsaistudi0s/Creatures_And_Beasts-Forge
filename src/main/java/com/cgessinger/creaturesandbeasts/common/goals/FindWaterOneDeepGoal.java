@@ -1,16 +1,12 @@
 package com.cgessinger.creaturesandbeasts.common.goals;
 
-import com.cgessinger.creaturesandbeasts.common.entites.LilytadEntity;
 import net.minecraft.entity.CreatureEntity;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.goal.FindWaterGoal;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
-import java.util.List;
 
 public class FindWaterOneDeepGoal extends FindWaterGoal
 {
@@ -25,8 +21,6 @@ public class FindWaterOneDeepGoal extends FindWaterGoal
 	@Override
 	public void startExecuting ()
 	{
-		System.out.println("searching position");
-
 		int fromX = MathHelper.floor(this.creature.getPosX() - 10.0D);
 		int fromY = MathHelper.floor(this.creature.getPosY() - 3.0D);
 		int fromZ = MathHelper.floor(this.creature.getPosZ() - 10.0D);
@@ -43,7 +37,6 @@ public class FindWaterOneDeepGoal extends FindWaterGoal
 
 			if (world.getFluidState(blockpos1).isTagged(FluidTags.WATER) && world.getBlockState(blockpos1.down()).isSolid() && world.getBlockState(blockpos1.up()).isAir())
 			{
-				System.out.println("moving to water");
 				this.creature.getNavigator().tryMoveToXYZ(blockpos1.getX(), blockpos1.getY(), blockpos1.getZ(), 1.0D);
 				break;
 			}

@@ -72,7 +72,6 @@ public abstract class AbstractSporelingEntity extends CreatureEntity implements 
 		{
 			if(this.isRunning())
 			{
-				System.out.println("sporeling run");
 				event.getController().setAnimation(new AnimationBuilder().addAnimation("sporeling.run", true));
 			}
 			else

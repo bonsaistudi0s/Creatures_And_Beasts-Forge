@@ -3,11 +3,9 @@ package com.cgessinger.creaturesandbeasts.common.entites;
 import com.cgessinger.creaturesandbeasts.common.init.ModItems;
 import com.cgessinger.creaturesandbeasts.common.interfaces.IModNetable;
 import com.cgessinger.creaturesandbeasts.common.items.AppleSliceItem;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -22,15 +20,12 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -45,8 +40,8 @@ public class LizardEntity extends AnimalEntity implements IAnimatable, IModNetab
 {
 	private final AnimationFactory factory = new AnimationFactory(this);
 
+	private static final DataParameter<Boolean> PARTYING = EntityDataManager.createKey(LizardEntity.class, DataSerializers.BOOLEAN);
 	private static final DataParameter<Integer> LIZARD_VARIANT = EntityDataManager.createKey(LizardEntity.class, DataSerializers.VARINT);
-	private boolean partyLizard;
 	private BlockPos jukeboxPosition;
 
 	public LizardEntity (EntityType<? extends AnimalEntity> type, World worldIn)
@@ -59,6 +54,7 @@ public class LizardEntity extends AnimalEntity implements IAnimatable, IModNetab
 	{
 		super.registerData();
 		this.dataManager.register(LIZARD_VARIANT, 0);
+		this.dataManager.register(PARTYING, false);
 	}
 
 	@Override
@@ -102,16 +98,27 @@ public class LizardEntity extends AnimalEntity implements IAnimatable, IModNetab
 		return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
 	}
 
+	@Override
+	public void livingTick ()
+	{
+		if(this.isPartying())
+		{
+			this.navigator.clearPath();
+			this.getNavigator().setSpeed(0);
+		}
+		super.livingTick();
+	}
+
 	private <E extends IAnimatable> PlayState animationPredicate (AnimationEvent<E> event)
 	{
-		if (!(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F))
-		{
-			event.getController().setAnimation(new AnimationBuilder().addAnimation("lizard.walk", true));
-			return PlayState.CONTINUE;
-		}
-		else if (this.isPartying())
+		if (this.isPartying())
 		{
 			event.getController().setAnimation(new AnimationBuilder().addAnimation("lizard.dance", true));
+			return PlayState.CONTINUE;
+		}
+		else if (!(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F))
+		{
+			event.getController().setAnimation(new AnimationBuilder().addAnimation("lizard.walk", true));
 			return PlayState.CONTINUE;
 		}
 		return PlayState.STOP;
@@ -127,17 +134,6 @@ public class LizardEntity extends AnimalEntity implements IAnimatable, IModNetab
 	public AnimationFactory getFactory ()
 	{
 		return this.factory;
-	}
-
-	@Override
-	public void livingTick ()
-	{
-		if (this.jukeboxPosition == null || !this.jukeboxPosition.withinDistance(this.getPositionVec(), 3.46D) || !this.world.getBlockState(this.jukeboxPosition).isIn(Blocks.JUKEBOX))
-		{
-			this.partyLizard = false;
-			this.jukeboxPosition = null;
-		}
-		super.livingTick();
 	}
 
 	@Override
@@ -161,14 +157,21 @@ public class LizardEntity extends AnimalEntity implements IAnimatable, IModNetab
 		this.goalSelector.addGoal(0, new SwimGoal(this));
 		this.goalSelector.addGoal(1, new PanicGoal(this, 1.25D));
 		this.goalSelector.addGoal(3, new BreedGoal(this, 1.0D));
-		this.goalSelector.addGoal(6, new WaterAvoidingRandomWalkingGoal(this, 1.0D));
+		this.goalSelector.addGoal(6, new WaterAvoidingRandomWalkingGoal(this, 1.0D) {
+			@Override
+			public boolean shouldExecute ()
+			{
+				return !((LizardEntity)this.creature).isPartying() && super.shouldExecute();
+			}
+		});
 		this.goalSelector.addGoal(7, new LookAtGoal(this, PlayerEntity.class, 6.0F));
 		this.goalSelector.addGoal(8, new LookRandomlyGoal(this));
 	}
 
 	public static AttributeModifierMap.MutableAttribute setCustomAttributes ()
 	{
-		return MobEntity.func_233666_p_().createMutableAttribute(Attributes.MAX_HEALTH, 12.0D) // Max Health
+		return MobEntity.func_233666_p_()
+				.createMutableAttribute(Attributes.MAX_HEALTH, 12.0D) // Max Health
 				.createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.4D); // Movement Speed
 	}
 
@@ -217,21 +220,17 @@ public class LizardEntity extends AnimalEntity implements IAnimatable, IModNetab
 		}
 	}
 
-	@Override
-	@OnlyIn(Dist.CLIENT)
-	public void setPartying (BlockPos pos, boolean isPartying)
+	public void setPartying(boolean isPartying)
 	{
 		if(!this.isSad())
 		{
-			this.jukeboxPosition = pos;
-			this.partyLizard = isPartying;
+			this.dataManager.set(PARTYING, isPartying);
 		}
 	}
 
-	@OnlyIn(Dist.CLIENT)
 	public boolean isPartying ()
 	{
-		return this.partyLizard;
+		return this.dataManager.get(PARTYING);
 	}
 
 	public boolean isSad ()

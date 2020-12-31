@@ -4,7 +4,6 @@
     "lizard.walk": {
       "loop": true,
       "animation_length": 0.4,
-      "override_previous_animation": true,
       "bones": {
         "bone9": {
           "rotation": {
