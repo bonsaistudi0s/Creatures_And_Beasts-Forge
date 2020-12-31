@@ -54,4 +54,8 @@ public class ModSoundEventTypes
 	public static final RegistryObject<SoundEvent> SPORELING_WARPED_HURT = SOUND_EVENTS.register("entity.sporeling_warped.hurt", () ->
 			new SoundEvent(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "entity.sporeling_warped.hurt"))
 	);
+
+	public static final RegistryObject<SoundEvent> SPORELING_BITE = SOUND_EVENTS.register("entity.sporeling.bite", () ->
+			new SoundEvent(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "entity.sporeling.bite"))
+	);
 }

@@ -140,5 +140,15 @@
         "stream": true
       }
     ]
+  },
+  "entity.sporeling.bite": {
+    "category": "entity",
+    "subtitle": "entity.sporeling.bite",
+    "sounds": [
+      {
+        "name": "cnb:entity/sporeling/entity.sporeling.bite",
+        "stream": true
+      }
+    ]
   }
 }

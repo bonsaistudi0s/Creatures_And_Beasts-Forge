@@ -1,6 +1,7 @@
 package com.cgessinger.creaturesandbeasts.common.entites;
 
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
+import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
 import com.cgessinger.creaturesandbeasts.common.interfaces.IRunningEntity;
 import com.cgessinger.creaturesandbeasts.common.interfaces.ITimedAttackEntity;
 import net.minecraft.entity.*;
@@ -165,6 +166,13 @@ public abstract class AbstractSporelingEntity extends CreatureEntity implements 
 		{
 			setSporelingType(compound.getInt("variant"));
 		}
+	}
+
+	@Override
+	public boolean attackEntityAsMob (Entity entityIn)
+	{
+		this.playSound(ModSoundEventTypes.SPORELING_BITE.get(), this.getSoundVolume()*2, this.getSoundPitch());
+		return super.attackEntityAsMob(entityIn);
 	}
 
 	public enum SporelingType
