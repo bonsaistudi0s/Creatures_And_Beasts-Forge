@@ -2,6 +2,7 @@ package com.cgessinger.creaturesandbeasts.common.entites;
 
 import com.cgessinger.creaturesandbeasts.common.goals.FindWaterOneDeepGoal;
 import com.cgessinger.creaturesandbeasts.common.init.ModItems;
+import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
 import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MobEntity;
@@ -15,6 +16,8 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
@@ -164,5 +167,32 @@ public class LilytadEntity extends AnimalEntity implements IForgeShearable, IAni
 	public AnimationFactory getFactory ()
 	{
 		return this.factory;
+	}
+
+	@Override
+	protected float getSoundVolume ()
+	{
+		return super.getSoundVolume() * 4;
+	}
+
+	@Nullable
+	@Override
+	protected SoundEvent getHurtSound (DamageSource damageSourceIn)
+	{
+		return ModSoundEventTypes.LILYTAD_HURT.get();
+	}
+
+	@Nullable
+	@Override
+	protected SoundEvent getAmbientSound ()
+	{
+		return ModSoundEventTypes.LILYTAD_AMBIENT.get();
+	}
+
+	@Nullable
+	@Override
+	protected SoundEvent getDeathSound ()
+	{
+		return ModSoundEventTypes.LILYTAD_DEATH.get();
 	}
 }

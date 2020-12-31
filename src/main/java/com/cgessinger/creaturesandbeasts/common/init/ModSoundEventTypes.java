@@ -58,4 +58,16 @@ public class ModSoundEventTypes
 	public static final RegistryObject<SoundEvent> SPORELING_BITE = SOUND_EVENTS.register("entity.sporeling.bite", () ->
 			new SoundEvent(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "entity.sporeling.bite"))
 	);
+
+	public static final RegistryObject<SoundEvent> LILYTAD_AMBIENT = SOUND_EVENTS.register("entity.lilytad.ambient", () ->
+			new SoundEvent(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "entity.lilytad.ambient"))
+	);
+
+	public static final RegistryObject<SoundEvent> LILYTAD_HURT = SOUND_EVENTS.register("entity.lilytad.hurt", () ->
+			new SoundEvent(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "entity.lilytad.hurt"))
+	);
+
+	public static final RegistryObject<SoundEvent> LILYTAD_DEATH = SOUND_EVENTS.register("entity.lilytad.death", () ->
+			new SoundEvent(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "entity.lilytad.death"))
+	);
 }

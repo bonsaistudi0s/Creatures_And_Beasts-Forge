@@ -150,5 +150,43 @@
         "stream": true
       }
     ]
+  },
+  "entity.lilytad.ambient": {
+    "category": "entity",
+    "subtitle": "entity.lilytad.ambient",
+    "sounds": [
+      {
+        "name": "cnb:entity/lilytad/entity.lilytad.ambient",
+        "stream": true
+      },
+      {
+        "name": "cnb:entity/lilytad/entity.lilytad.ambient_1",
+        "stream": true
+      }
+    ]
+  },
+  "entity.lilytad.hurt": {
+    "category": "entity",
+    "subtitle": "entity.lilytad.hurt",
+    "sounds": [
+      {
+        "name": "cnb:entity/lilytad/entity.lilytad.hurt",
+        "stream": true
+      },
+      {
+        "name": "cnb:entity/lilytad/entity.lilytad.hurt_1",
+        "stream": true
+      }
+    ]
+  },
+  "entity.lilytad.death": {
+    "category": "entity",
+    "subtitle": "entity.lilytad.death",
+    "sounds": [
+      {
+        "name": "cnb:entity/lilytad/entity.lilytad.death",
+        "stream": true
+      }
+    ]
   }
 }

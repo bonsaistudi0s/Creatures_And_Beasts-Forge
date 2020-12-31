@@ -51,7 +51,7 @@ public class ModEventHandler
 				boolean discIn = heldItem instanceof MusicDiscItem;
 				if (discOut || discIn)
 				{
-					List<LizardEntity> lizards = event.getWorld().getEntitiesWithinAABB(LizardEntity.class, event.getPlayer().getBoundingBox().grow(50));
+					List<LizardEntity> lizards = event.getWorld().getEntitiesWithinAABB(LizardEntity.class, event.getPlayer().getBoundingBox().grow(15));
 					for (LizardEntity lizard : lizards)
 					{
 						lizard.setPartying(!discOut);
