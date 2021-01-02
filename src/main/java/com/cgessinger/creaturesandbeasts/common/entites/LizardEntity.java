@@ -6,6 +6,7 @@ import com.cgessinger.creaturesandbeasts.common.items.AppleSliceItem;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.ai.controller.LookController;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -42,11 +43,21 @@ public class LizardEntity extends AnimalEntity implements IAnimatable, IModNetab
 
 	private static final DataParameter<Boolean> PARTYING = EntityDataManager.createKey(LizardEntity.class, DataSerializers.BOOLEAN);
 	private static final DataParameter<Integer> LIZARD_VARIANT = EntityDataManager.createKey(LizardEntity.class, DataSerializers.VARINT);
-	private BlockPos jukeboxPosition;
 
 	public LizardEntity (EntityType<? extends AnimalEntity> type, World worldIn)
 	{
 		super(type, worldIn);
+		this.lookController = new LookController(this){
+			@Override
+			public void tick ()
+			{
+				LizardEntity lizard = (LizardEntity) this.mob;
+				if(lizard.shouldLookAround())
+				{
+					super.tick();
+				}
+			}
+		};
 	}
 
 	@Override
@@ -236,6 +247,11 @@ public class LizardEntity extends AnimalEntity implements IAnimatable, IModNetab
 	public boolean isSad ()
 	{
 		return this.dataManager.get(LIZARD_VARIANT) > 3;
+	}
+
+	public boolean shouldLookAround ()
+	{
+		return !this.isPartying();
 	}
 
 	@Override

@@ -8,6 +8,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.ai.controller.LookController;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -16,6 +17,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
@@ -44,6 +46,17 @@ public class LilytadEntity extends AnimalEntity implements IForgeShearable, IAni
 	{
 		super(type, worldIn);
 		this.shearedTimer = 0;
+		this.lookController = new LookController(this){
+			@Override
+			public void tick ()
+			{
+				LilytadEntity lilytad = (LilytadEntity)this.mob;
+				if(lilytad.shouldLookAround())
+				{
+					super.tick();
+				}
+			}
+		};
 	}
 
 	@Override
@@ -77,8 +90,6 @@ public class LilytadEntity extends AnimalEntity implements IForgeShearable, IAni
 	@Override
 	protected void registerGoals()
 	{
-		//this.goalSelector.addGoal(0, new SwimGoal(this));
-		//this.goalSelector.addGoal(6, new WaterAvoidingRandomWalkingGoal(this, 1.0D));
 		this.goalSelector.addGoal(1, new FindWaterOneDeepGoal(this));
 		this.goalSelector.addGoal(4, new LookAtGoal(this, PlayerEntity.class, 8.0F));
 		this.goalSelector.addGoal(8, new LookRandomlyGoal(this));
@@ -155,6 +166,11 @@ public class LilytadEntity extends AnimalEntity implements IForgeShearable, IAni
 			return items;
 		}
 		return java.util.Collections.emptyList();
+	}
+
+	public boolean shouldLookAround()
+	{
+		return !this.world.getFluidState(this.getPosition()).isTagged(FluidTags.WATER);
 	}
 
 	@Override
