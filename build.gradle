@@ -19,9 +19,9 @@ apply plugin: 'com.matthewprenger.cursegradle'
 import groovy.json.JsonSlurper
 import groovy.json.JsonOutput
 
-version = '1.0.0'
+version = '1.2.8'
 group = 'com.cgessinger.creaturesandbeasts' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = 'Creatures-and-Beasts'
+archivesBaseName = "CNB-1.16.3_4"
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
