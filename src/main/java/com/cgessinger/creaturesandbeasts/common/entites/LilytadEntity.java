@@ -1,6 +1,7 @@
 package com.cgessinger.creaturesandbeasts.common.entites;
 
 import com.cgessinger.creaturesandbeasts.common.goals.FindWaterOneDeepGoal;
+import com.cgessinger.creaturesandbeasts.common.goals.GoToWaterGoal;
 import com.cgessinger.creaturesandbeasts.common.init.ModItems;
 import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
 import net.minecraft.entity.AgeableEntity;
@@ -77,14 +78,15 @@ public class LilytadEntity extends AnimalEntity implements IForgeShearable, IAni
 	public void readAdditional (CompoundNBT compound)
 	{
 		super.readAdditional(compound);
-		compound.putBoolean("Sheared", this.getSheared());
+		this.shearedTimer = compound.getInt("ShearedTimer");
+		this.setSheared(this.shearedTimer > 0);
 	}
 
 	@Override
 	public void writeAdditional (CompoundNBT compound)
 	{
 		super.writeAdditional(compound);
-		this.setSheared(compound.getBoolean("Sheared"));
+		compound.putInt("ShearedTimer", this.shearedTimer);
 	}
 
 	@Override
