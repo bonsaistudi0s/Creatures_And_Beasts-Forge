@@ -13,5 +13,6 @@ public class SporelingRender<T extends AbstractSporelingEntity> extends GeoEntit
 	public SporelingRender (EntityRendererManager renderManager)
 	{
 		super(renderManager, new SporelingModel<>());
+		this.shadowSize = 0.4F;
 	}
 }

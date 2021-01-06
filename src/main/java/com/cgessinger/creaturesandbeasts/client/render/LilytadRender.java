@@ -17,6 +17,7 @@ public class LilytadRender extends GeoEntityRenderer<LilytadEntity>
 	public LilytadRender (EntityRendererManager renderManager)
 	{
 		super(renderManager, new LilytadModel());
+		this.shadowSize = 0.7F;
 	}
 
 	@Override

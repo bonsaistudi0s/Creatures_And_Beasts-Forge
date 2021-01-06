@@ -33,6 +33,7 @@ public class LizardRender extends GeoEntityRenderer<LizardEntity>
 				new ResourceLocation(CreaturesAndBeasts.MOD_ID, "textures/model/entity/lizard/sad_lizard_jungle.png"),
 				new ResourceLocation(CreaturesAndBeasts.MOD_ID, "textures/model/entity/lizard/sad_lizard_jungle_2.png")
 		};
+		this.shadowSize = 0.3F;
 	}
 
 	@Override

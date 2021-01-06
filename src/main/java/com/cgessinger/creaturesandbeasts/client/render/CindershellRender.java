@@ -14,7 +14,7 @@ public class CindershellRender extends MobRenderer<CindershellEntity, Cindershel
 
 	public CindershellRender (EntityRendererManager renderManagerIn)
 	{
-		super(renderManagerIn, new CindershellModel<>(), 0.5F);
+		super(renderManagerIn, new CindershellModel<>(), 0.6F);
 		this.addLayer(new CindershellGlowLayer(this));
 	}
 
