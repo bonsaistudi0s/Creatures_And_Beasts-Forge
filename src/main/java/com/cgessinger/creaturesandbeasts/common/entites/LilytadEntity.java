@@ -109,6 +109,11 @@ public class LilytadEntity extends AnimalEntity implements IForgeShearable, IAni
 	}
 
 	@Override
+	public boolean func_241845_aY() {
+		return this.isAlive();
+	}
+
+	@Override
 	public boolean canBreatheUnderwater ()
 	{
 		return true;

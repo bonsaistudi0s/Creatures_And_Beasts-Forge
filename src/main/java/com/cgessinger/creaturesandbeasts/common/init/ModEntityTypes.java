@@ -39,7 +39,7 @@ public class ModEntityTypes
 
 	public static final RegistryObject<EntityType<LilytadEntity>> LILYTAD = ENTITY_TYPES.register("lilytad",
 			() -> EntityType.Builder.create(LilytadEntity::new, EntityClassification.CREATURE)
-					.size(0.5f, 0.65f)
+					.size(0.7f, 1f)
 					.build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "lilytad").toString()));
 
 	public static final RegistryObject<EntityType<FriendlySporelingEntity>> FRIENDLY_SPORELING = ENTITY_TYPES.register("friendly_sporeling",
