@@ -8,6 +8,7 @@ import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
+import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
@@ -30,7 +31,7 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.Random;
 
-public class HostileSporelingEntity extends AbstractSporelingEntity
+public class HostileSporelingEntity extends AbstractSporelingEntity implements IMob
 {
 	public HostileSporelingEntity (EntityType<? extends CreatureEntity> type, World worldIn)
 	{
@@ -76,6 +77,12 @@ public class HostileSporelingEntity extends AbstractSporelingEntity
 		Optional<RegistryKey<Biome>> optional = worldIn.func_241828_r().getRegistry(Registry.BIOME_KEY).getOptionalKey(worldIn.getBiome(p_234418_3_));
 
 		return worldIn.getDifficulty() != Difficulty.PEACEFUL && (optional.isPresent() && optional.get() == Biomes.NETHER_WASTES);
+	}
+
+	@Override
+	protected boolean isDespawnPeaceful ()
+	{
+		return true;
 	}
 
 	@Nullable
