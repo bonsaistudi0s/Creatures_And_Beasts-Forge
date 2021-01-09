@@ -22,6 +22,7 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.JukeboxTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -136,17 +137,23 @@ public class LizardEntity extends AnimalEntity implements IAnimatable, IModNetab
 
 	private <E extends IAnimatable> PlayState animationPredicate (AnimationEvent<E> event)
 	{
-		if (this.isPartying())
+		if (!(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F))
+		{
+			event.getController().setAnimation(new AnimationBuilder().addAnimation("lizard.walk", true));
+			return PlayState.CONTINUE;
+		} else if (this.isPartying())
 		{
 			event.getController().setAnimation(new AnimationBuilder().addAnimation("lizard.dance", true));
 			return PlayState.CONTINUE;
 		}
-		else if (!(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F))
-		{
-			event.getController().setAnimation(new AnimationBuilder().addAnimation("lizard.walk", true));
-			return PlayState.CONTINUE;
-		}
 		return PlayState.STOP;
+	}
+
+	@Override
+	protected void damageEntity (DamageSource damageSrc, float damageAmount)
+	{
+		super.damageEntity(damageSrc, damageAmount);
+		this.setPartying(false, null);
 	}
 
 	@Override
