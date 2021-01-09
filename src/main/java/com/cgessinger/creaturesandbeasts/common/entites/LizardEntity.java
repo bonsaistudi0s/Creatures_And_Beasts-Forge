@@ -3,6 +3,7 @@ package com.cgessinger.creaturesandbeasts.common.entites;
 import com.cgessinger.creaturesandbeasts.common.init.ModItems;
 import com.cgessinger.creaturesandbeasts.common.interfaces.IModNetable;
 import com.cgessinger.creaturesandbeasts.common.items.AppleSliceItem;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -18,6 +19,8 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.tileentity.JukeboxTileEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -43,6 +46,8 @@ public class LizardEntity extends AnimalEntity implements IAnimatable, IModNetab
 
 	private static final DataParameter<Boolean> PARTYING = EntityDataManager.createKey(LizardEntity.class, DataSerializers.BOOLEAN);
 	private static final DataParameter<Integer> LIZARD_VARIANT = EntityDataManager.createKey(LizardEntity.class, DataSerializers.VARINT);
+
+	public BlockPos jukeboxPosition;
 
 	public LizardEntity (EntityType<? extends AnimalEntity> type, World worldIn)
 	{
@@ -112,6 +117,15 @@ public class LizardEntity extends AnimalEntity implements IAnimatable, IModNetab
 	@Override
 	public void livingTick ()
 	{
+		if(this.jukeboxPosition != null)
+		{
+			TileEntity te = this.world.getTileEntity(this.jukeboxPosition);
+			if (!this.jukeboxPosition.withinDistance(this.getPositionVec(), 10.0D) || !(te instanceof JukeboxTileEntity) || ((JukeboxTileEntity)te).getRecord() == ItemStack.EMPTY)
+			{
+				this.setPartying(false, null);
+			}
+		}
+
 		if(this.isPartying())
 		{
 			this.navigator.clearPath();
@@ -231,11 +245,12 @@ public class LizardEntity extends AnimalEntity implements IAnimatable, IModNetab
 		}
 	}
 
-	public void setPartying(boolean isPartying)
+	public void setPartying(boolean isPartying, BlockPos jukeboxPos)
 	{
 		if(!this.isSad())
 		{
 			this.dataManager.set(PARTYING, isPartying);
+			this.jukeboxPosition = jukeboxPos;
 		}
 	}
 

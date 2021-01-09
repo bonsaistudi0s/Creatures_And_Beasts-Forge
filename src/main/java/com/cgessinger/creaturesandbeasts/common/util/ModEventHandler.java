@@ -44,19 +44,12 @@ public class ModEventHandler
 	{
 			TileEntity te = event.getWorld().getTileEntity(event.getPos());
 			Item heldItem = event.getPlayer().getHeldItem(event.getHand()).getItem();
-			if (te instanceof JukeboxTileEntity)
+			if (te instanceof JukeboxTileEntity && heldItem instanceof MusicDiscItem)
 			{
-				JukeboxTileEntity box = (JukeboxTileEntity) te;
-				boolean discOut = box.getRecord() != ItemStack.EMPTY;
-				boolean discIn = heldItem instanceof MusicDiscItem;
-				if (discOut || discIn)
+				List<LizardEntity> lizards = event.getWorld().getEntitiesWithinAABB(LizardEntity.class, event.getPlayer().getBoundingBox().grow(15));
+				for (LizardEntity lizard : lizards)
 				{
-					List<LizardEntity> lizards = event.getWorld().getEntitiesWithinAABB(LizardEntity.class, event.getPlayer().getBoundingBox().grow(15));
-					for (LizardEntity lizard : lizards)
-					{
-						lizard.setPartying(!discOut);
-						/* If discOut is false, disIn must be true. If dicOut is true, discIn will not be checked anymore. So !discOut is enough */
-					}
+					lizard.setPartying(true, event.getPos());
 				}
 			}
 	}
