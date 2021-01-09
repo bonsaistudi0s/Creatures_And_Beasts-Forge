@@ -93,9 +93,22 @@ public class LilytadEntity extends AnimalEntity implements IForgeShearable, IAni
 	protected void registerGoals()
 	{
 		this.goalSelector.addGoal(1, new FindWaterOneDeepGoal(this));
-		this.goalSelector.addGoal(4, new LookAtGoal(this, PlayerEntity.class, 8.0F));
-		this.goalSelector.addGoal(8, new LookRandomlyGoal(this));
-		this.goalSelector.addGoal(1, new PanicGoal(this, 1.25D));
+		this.goalSelector.addGoal(2, new RandomWalkingGoal(this, 1.0D){
+			@Override
+			public boolean shouldExecute ()
+			{
+				return !this.creature.world.getFluidState(this.creature.getPosition()).isTagged(FluidTags.WATER) && super.shouldExecute();
+			}
+
+			@Override
+			public boolean shouldContinueExecuting ()
+			{
+				return !this.creature.world.getFluidState(this.creature.getPosition()).isTagged(FluidTags.WATER) && super.shouldContinueExecuting();
+			}
+		});
+		this.goalSelector.addGoal(3, new LookAtGoal(this, PlayerEntity.class, 8.0F));
+		this.goalSelector.addGoal(3, new LookRandomlyGoal(this));
+		this.goalSelector.addGoal(2, new PanicGoal(this, 1.25D));
 	}
 
 	@Override
