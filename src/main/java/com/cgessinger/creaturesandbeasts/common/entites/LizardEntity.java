@@ -1,5 +1,6 @@
 package com.cgessinger.creaturesandbeasts.common.entites;
 
+import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
 import com.cgessinger.creaturesandbeasts.common.init.ModItems;
 import com.cgessinger.creaturesandbeasts.common.interfaces.IModNetable;
 import com.cgessinger.creaturesandbeasts.common.items.AppleSliceItem;
@@ -20,7 +21,9 @@ import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
@@ -36,12 +39,14 @@ import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 
 public class LizardEntity extends AnimalEntity implements IAnimatable, IModNetable
 {
 	private final AnimationFactory factory = new AnimationFactory(this);
 
 	private static final DataParameter<Boolean> PARTYING = EntityDataManager.createKey(LizardEntity.class, DataSerializers.BOOLEAN);
+	private static final DataParameter<Boolean> SAD = EntityDataManager.createKey(LizardEntity.class, DataSerializers.BOOLEAN);
 	private static final DataParameter<Integer> LIZARD_VARIANT = EntityDataManager.createKey(LizardEntity.class, DataSerializers.VARINT);
 
 	public LizardEntity (EntityType<? extends AnimalEntity> type, World worldIn)
@@ -66,33 +71,27 @@ public class LizardEntity extends AnimalEntity implements IAnimatable, IModNetab
 		super.registerData();
 		this.dataManager.register(LIZARD_VARIANT, 0);
 		this.dataManager.register(PARTYING, false);
+		this.dataManager.register(SAD, false);
 	}
 
 	@Override
 	public ILivingEntityData onInitialSpawn (IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag)
 	{
-		Biome.Category biomeCategory = worldIn.getBiome(this.getPosition()).getCategory();
 		int variant;
 		boolean forceNotSad = false;
 		if (dataTag != null && dataTag.contains("variant"))
 		{
 			variant = dataTag.getInt("variant");
 			forceNotSad = true;
-		} else if (biomeCategory.equals(Biome.Category.DESERT) || biomeCategory.equals(Biome.Category.MESA))
-		{
-			variant = this.getRNG().nextInt(2);
-		} else if (biomeCategory.equals(Biome.Category.JUNGLE))
-		{
-			variant = this.getRNG().nextInt(2) + 2;
 		} else
 		{
-			variant = this.getRNG().nextInt(4);
+			Biome.Category biomeCategory = worldIn.getBiome(this.getPosition()).getCategory();
+			variant = getLizardTypeFromBiome(biomeCategory);
 		}
+
+		setVariant(variant);
 		// 1/10 chance to change variant to sad lizard variant
-		if (!forceNotSad && this.getRNG().nextInt(10) == 1)
-		{
-			variant += 4;  // Skip the first 4 entries in texture list to get to sad lizard textures (look at lizard render)
-		}
+		this.setSad(!forceNotSad && this.getRNG().nextInt(10) == 1);
 
 		if (dataTag != null && dataTag.contains("health"))
 		{
@@ -104,7 +103,6 @@ public class LizardEntity extends AnimalEntity implements IAnimatable, IModNetab
 			this.setCustomName(ITextComponent.getTextComponentOrEmpty(dataTag.getString("name")));
 		}
 
-		setVariant(variant);
 
 		return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
 	}
@@ -154,8 +152,8 @@ public class LizardEntity extends AnimalEntity implements IAnimatable, IModNetab
 		ItemStack item = player.getHeldItem(hand);
 		if (item.getItem() instanceof AppleSliceItem && this.isSad())
 		{
-			this.setVariant(this.getVariant() - 4);
-			item.shrink(1);
+			this.setSad(false);
+			item.shrink(player.abilities.isCreativeMode ? 0 : 1);
 			spawnParticles(ParticleTypes.HEART);
 			return ActionResultType.SUCCESS;
 		}
@@ -198,6 +196,7 @@ public class LizardEntity extends AnimalEntity implements IAnimatable, IModNetab
 	{
 		super.writeAdditional(compound);
 		compound.putInt("variant", getVariant());
+		compound.putBoolean("sad", isSad());
 	}
 
 	@Override
@@ -208,27 +207,39 @@ public class LizardEntity extends AnimalEntity implements IAnimatable, IModNetab
 		{
 			setVariant(compound.getInt("variant"));
 		}
+		if (compound.contains("sad"))
+		{
+			setSad(compound.getBoolean("sad"));
+		}
+	}
+
+	public LizardType getLizardType ()
+	{
+		return LizardType.values()[this.getVariant()];
+	}
+
+	public int getLizardTypeFromBiome (Biome.Category biomeCategory)
+	{
+		switch (biomeCategory)
+		{
+			case DESERT:
+			case MESA:
+				return this.getRNG().nextInt(2);
+			case JUNGLE:
+				return this.getRNG().nextInt(2)+2;
+			default:
+				return this.getRNG().nextInt(4);
+		}
 	}
 
 	public int getVariant ()
 	{
-		return this.dataManager.get(LIZARD_VARIANT);
+		return MathHelper.clamp(this.dataManager.get(LIZARD_VARIANT), 0, LizardType.values().length);
 	}
 
 	public void setVariant (int variant)
 	{
 		this.dataManager.set(LIZARD_VARIANT, variant);
-	}
-
-	public void spawnParticles (IParticleData data)
-	{
-		for (int i = 0; i < 7; ++i)
-		{
-			double d0 = this.rand.nextGaussian() * 0.02D;
-			double d1 = this.rand.nextGaussian() * 0.02D;
-			double d2 = this.rand.nextGaussian() * 0.02D;
-			this.world.addParticle(data, this.getPosXRandom(1.0D), this.getPosYRandom() + 0.5D, this.getPosZRandom(1.0D), d0, d1, d2);
-		}
 	}
 
 	public void setPartying(boolean isPartying)
@@ -246,7 +257,12 @@ public class LizardEntity extends AnimalEntity implements IAnimatable, IModNetab
 
 	public boolean isSad ()
 	{
-		return this.dataManager.get(LIZARD_VARIANT) > 3;
+		return this.dataManager.get(SAD);
+	}
+
+	public void setSad (boolean sad)
+	{
+		this.dataManager.set(SAD, sad);
 	}
 
 	public boolean shouldLookAround ()
@@ -254,16 +270,26 @@ public class LizardEntity extends AnimalEntity implements IAnimatable, IModNetab
 		return !this.isPartying();
 	}
 
+	public void spawnParticles (IParticleData data)
+	{
+		for (int i = 0; i < 7; ++i)
+		{
+			double d0 = this.rand.nextGaussian() * 0.02D;
+			double d1 = this.rand.nextGaussian() * 0.02D;
+			double d2 = this.rand.nextGaussian() * 0.02D;
+			this.world.addParticle(data, this.getPosXRandom(1.0D), this.getPosYRandom() + 0.5D, this.getPosZRandom(1.0D), d0, d1, d2);
+		}
+	}
+
 	@Override
 	public ItemStack getItem ()
 	{
-		int variant = this.getVariant();
-		if (!(variant > 3))
+		if (!this.isSad())
 		{
-			Item item = ModItems.LIZARD_SPAWN_MAP.get(variant).get();
-			ItemStack stack = new ItemStack(item);
+			LizardType type = this.getLizardType();
+			ItemStack stack = new ItemStack(type.getItem());
 			CompoundNBT nbt = stack.getOrCreateTag();
-			nbt.putInt("variant", variant);
+			nbt.putInt("variant", Arrays.asList(LizardType.values()).indexOf(type));
 			nbt.putFloat("health", this.getHealth());
 			if(this.hasCustomName())
 			{
@@ -278,5 +304,43 @@ public class LizardEntity extends AnimalEntity implements IAnimatable, IModNetab
 	public void spawnParticleFeedback ()
 	{
 		spawnParticles(ParticleTypes.HAPPY_VILLAGER);
+	}
+
+	public enum LizardType
+	{
+		DESERT_1(createLocation("textures/model/entity/lizard/lizard_desert.png"), createLocation("textures/model/entity/lizard/sad_lizard_desert.png"), ModItems.LIZARD_ITEM_0.get()),
+		DESERT_2(createLocation("textures/model/entity/lizard/lizard_desert_2.png"), createLocation("textures/model/entity/lizard/sad_lizard_desert_2.png"), ModItems.LIZARD_ITEM_1.get()),
+		JUNGLE_1(createLocation("textures/model/entity/lizard/lizard_jungle.png"), createLocation("textures/model/entity/lizard/sad_lizard_jungle.png"), ModItems.LIZARD_ITEM_2.get()),
+		JUNGLE_2(createLocation("textures/model/entity/lizard/lizard_jungle_2.png"), createLocation("textures/model/entity/lizard/sad_lizard_jungle_2.png"), ModItems.LIZARD_ITEM_3.get());
+
+		public final ResourceLocation textureLocation;
+		public final ResourceLocation textureLocationSad;
+		public final Item item;
+
+		LizardType (ResourceLocation tl, ResourceLocation tls, Item it)
+		{
+			this.textureLocation = tl;
+			this.textureLocationSad = tls;
+			this.item = it;
+		}
+
+		private static ResourceLocation createLocation (String pathPart)
+		{
+			return new ResourceLocation(CreaturesAndBeasts.MOD_ID, pathPart);
+		}
+
+		public ResourceLocation getTextureLocation (boolean sad)
+		{
+			if(sad)
+			{
+				return textureLocationSad;
+			}
+			return textureLocation;
+		}
+
+		public Item getItem ()
+		{
+			return item;
+		}
 	}
 }

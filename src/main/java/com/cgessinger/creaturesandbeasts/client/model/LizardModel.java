@@ -25,7 +25,7 @@ public class LizardModel<T extends LizardEntity> extends AnimatedGeoModel<Lizard
 	@Override
 	public ResourceLocation getTextureLocation (LizardEntity object)
 	{
-		return new ResourceLocation(CreaturesAndBeasts.MOD_ID, "textures/model/entity/lizard/lizard_desert.png");
+		return object.getLizardType().getTextureLocation(object.isSad());
 	}
 
 	@Override

@@ -59,13 +59,6 @@ public class ModItems
 	public static RegistryObject<ModSpawnEggItem> SPORELING_CRIMSON_FUNGUS_EGG = ITEMS.register("sporeling_crimson_fungus_egg",
 			() -> new ModSpawnEggItem(ModEntityTypes.NEUTRAL_SPORELING,0x9E1104, 0xF88539, new Item.Properties().group(CreaturesAndBeasts.TAB)).spawnsVariant(5));
 
-	static {
-		LIZARD_SPAWN_MAP.put(0, LIZARD_ITEM_0);
-		LIZARD_SPAWN_MAP.put(1, LIZARD_ITEM_1);
-		LIZARD_SPAWN_MAP.put(2, LIZARD_ITEM_2);
-		LIZARD_SPAWN_MAP.put(3, LIZARD_ITEM_3);
-	}
-
 	public static final RegistryObject<AppleSliceItem> APPLE_SLICE = ITEMS.register("apple_slice", AppleSliceItem::new);
 	public static final RegistryObject<EntityNetItem> ENTITY_NET = ITEMS.register("entity_net", EntityNetItem::new);
 	public static final RegistryObject<Item> CINDERSHELL_SHELL_SHARD = ITEMS.register("cindershell_shell_shard", CindershellShellShardItem::new);
