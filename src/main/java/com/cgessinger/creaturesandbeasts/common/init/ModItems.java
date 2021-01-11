@@ -27,7 +27,6 @@ public class ModItems
 	public static RegistryObject<ModSpawnEggItem> LIZARD_SPAWN_EGG = ITEMS.register("lizard_spawn_egg",
 			() -> new ModSpawnEggItem(ModEntityTypes.LIZARD,0x00FFFFFF, 0x00FFFFFF, new Item.Properties().group(CreaturesAndBeasts.TAB)));
 
-	public static Map<Integer, RegistryObject<ModSpawnEggItem>> LIZARD_SPAWN_MAP = new HashMap<>();
 	public static RegistryObject<ModSpawnEggItem> LIZARD_ITEM_0 = ITEMS.register("lizard_item_0",
 			() -> new ModSpawnEggItem(ModEntityTypes.LIZARD,0x00FFFFFF, 0x00FFFFFF, new Item.Properties().group(CreaturesAndBeasts.TAB)).spawnsVariant(0));
 

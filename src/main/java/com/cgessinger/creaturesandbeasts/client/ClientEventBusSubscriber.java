@@ -18,8 +18,7 @@ public class ClientEventBusSubscriber
 	@SubscribeEvent
 	public static void onClientSetup (FMLClientSetupEvent event)
 	{
-		RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.LITTLE_GREBE.get(), LittleGrebeRender::new);
-		RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.LITTLE_GREBE_CHICK.get(), LittleGrebeChickRender::new);
+		RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.LITTLE_GREBE.get(), GrebeRender::new);
 		RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.LIZARD.get(), LizardRender::new);
 		RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.CINDERSHELL.get(), CindershellRender::new);
 		RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.LILYTAD.get(), LilytadRender::new);

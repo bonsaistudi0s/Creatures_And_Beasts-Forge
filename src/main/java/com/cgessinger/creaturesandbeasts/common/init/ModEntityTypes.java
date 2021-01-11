@@ -16,15 +16,10 @@ public class ModEntityTypes
 	// Entity Types
 
 	/* CREATURES */
-	public static final RegistryObject<EntityType<LittleGrebeEntity>> LITTLE_GREBE = ENTITY_TYPES.register("little_grebe",
-			() -> EntityType.Builder.create(LittleGrebeEntity::new, EntityClassification.CREATURE)
+	public static final RegistryObject<EntityType<GrebeEntity>> LITTLE_GREBE = ENTITY_TYPES.register("little_grebe",
+			() -> EntityType.Builder.create(GrebeEntity::new, EntityClassification.CREATURE)
 					.size(0.5f, 0.6f)
 					.build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "little_grebe").toString()));
-
-	public static final RegistryObject<EntityType<LittleGrebeChickEntity>> LITTLE_GREBE_CHICK = ENTITY_TYPES.register("little_grebe_chick",
-			() -> EntityType.Builder.create(LittleGrebeChickEntity::new, EntityClassification.CREATURE)
-					.size(0.5f, 0.6f)
-					.build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "little_grebe_chick").toString()));
 
 	public static final RegistryObject<EntityType<LizardEntity>> LIZARD = ENTITY_TYPES.register("lizard",
 			() -> EntityType.Builder.create(LizardEntity::new, EntityClassification.CREATURE)

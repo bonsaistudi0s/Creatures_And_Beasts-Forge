@@ -1,6 +1,6 @@
 package com.cgessinger.creaturesandbeasts.client.model;
 
-import com.cgessinger.creaturesandbeasts.common.entites.LittleGrebeEntity;
+import com.cgessinger.creaturesandbeasts.common.entites.GrebeEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.entity.model.EntityModel;
@@ -8,17 +8,15 @@ import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.util.math.MathHelper;
 
-public class LittleGrebeModel<L extends AnimalEntity> extends EntityModel<LittleGrebeEntity>
+public class LittleGrebeModel<L extends AnimalEntity> extends EntityModel<GrebeEntity>
 {
 	private final ModelRenderer bone;
-	private final ModelRenderer Lwing;
-	private final ModelRenderer Rwing;
-	private final ModelRenderer Neck;
 	private final ModelRenderer Head;
+	private final ModelRenderer Rwing;
+	private final ModelRenderer Lwing;
+	private final ModelRenderer Neck;
 	private final ModelRenderer Lleg;
-	private final ModelRenderer bone6;
 	private final ModelRenderer Rleg;
-	private final ModelRenderer bone9;
 
 	public LittleGrebeModel() {
 		textureWidth = 32;
@@ -58,7 +56,7 @@ public class LittleGrebeModel<L extends AnimalEntity> extends EntityModel<Little
 		bone.addChild(Lleg);
 		Lleg.setTextureOffset(18, 18).addBox(-0.5F, -0.505F, -0.5F, 1.0F, 4.0F, 1.0F, 0.0F, false);
 
-		bone6 = new ModelRenderer(this);
+		ModelRenderer bone6 = new ModelRenderer(this);
 		bone6.setRotationPoint(0.0F, 3.5F, 0.5F);
 		Lleg.addChild(bone6);
 		bone6.setTextureOffset(12, 12).addBox(-1.5F, -0.005F, -3.0F, 3.0F, 0.0F, 3.0F, 0.0F, false);
@@ -68,7 +66,7 @@ public class LittleGrebeModel<L extends AnimalEntity> extends EntityModel<Little
 		bone.addChild(Rleg);
 		Rleg.setTextureOffset(18, 18).addBox(-0.5F, -0.505F, -0.5F, 1.0F, 4.0F, 1.0F, 0.0F, true);
 
-		bone9 = new ModelRenderer(this);
+		ModelRenderer bone9 = new ModelRenderer(this);
 		bone9.setRotationPoint(0.0F, 3.5F, 0.5F);
 		Rleg.addChild(bone9);
 		bone9.setTextureOffset(12, 12).addBox(-1.5F, -0.005F, -3.0F, 3.0F, 0.0F, 3.0F, 0.0F, true);
@@ -81,7 +79,7 @@ public class LittleGrebeModel<L extends AnimalEntity> extends EntityModel<Little
 	}
 
 	@Override
-	public void setRotationAngles (LittleGrebeEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+	public void setRotationAngles (GrebeEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
 	{
 		float max = 90 * ((float)Math.PI / 180F);
 		this.Head.rotateAngleX = headPitch * ((float)Math.PI / 180F);

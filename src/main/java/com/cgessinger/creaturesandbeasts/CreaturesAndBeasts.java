@@ -41,8 +41,7 @@ public class CreaturesAndBeasts
 	private void setup (final FMLCommonSetupEvent event)
 	{
 		event.enqueueWork(() -> {
-			GlobalEntityTypeAttributes.put(ModEntityTypes.LITTLE_GREBE.get(), LittleGrebeEntity.setCustomAttributes().create());
-			GlobalEntityTypeAttributes.put(ModEntityTypes.LITTLE_GREBE_CHICK.get(), LittleGrebeChickEntity.setCustomAttributes().create());
+			GlobalEntityTypeAttributes.put(ModEntityTypes.LITTLE_GREBE.get(), GrebeEntity.setCustomAttributes().create());
 			GlobalEntityTypeAttributes.put(ModEntityTypes.CINDERSHELL.get(), CindershellEntity.setCustomAttributes().create());
 			GlobalEntityTypeAttributes.put(ModEntityTypes.LIZARD.get(), LizardEntity.setCustomAttributes().create());
 			GlobalEntityTypeAttributes.put(ModEntityTypes.LILYTAD.get(), LilytadEntity.setCustomAttributes().create());

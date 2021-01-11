@@ -1,41 +1,41 @@
 package com.cgessinger.creaturesandbeasts.common.entites;
 
-import java.util.EnumSet;
-
 import javax.annotation.Nullable;
 
+import com.cgessinger.creaturesandbeasts.common.goals.GoToWaterGoal;
+import com.cgessinger.creaturesandbeasts.common.goals.MountAdultGoal;
 import com.cgessinger.creaturesandbeasts.common.goals.SmoothSwimGoal;
 
-import net.minecraft.entity.AgeableEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.MoverType;
+import com.cgessinger.creaturesandbeasts.common.init.ModEntityTypes;
+import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
+import net.minecraft.entity.*;
 import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
-import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.entity.ai.goal.LookAtGoal;
-import net.minecraft.entity.ai.goal.LookRandomlyGoal;
-import net.minecraft.entity.ai.goal.PanicGoal;
-import net.minecraft.entity.ai.goal.RandomWalkingGoal;
-import net.minecraft.entity.ai.goal.TemptGoal;
+import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.pathfinding.PathNodeType;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 
-public abstract class AbstractGrebeEntity extends AnimalEntity
+public class GrebeEntity extends AnimalEntity
 {
-	private static final DataParameter<BlockPos> TRAVEL_POS = EntityDataManager.createKey(AbstractGrebeEntity.class, DataSerializers.BLOCK_POS);
+	private static final DataParameter<BlockPos> TRAVEL_POS = EntityDataManager.createKey(GrebeEntity.class, DataSerializers.BLOCK_POS);
 	public static final Ingredient TEMPTATION_ITEMS = Ingredient.fromItems(Items.COD, Items.SALMON, Items.TROPICAL_FISH);
 	public float wingRotation;
 	public float destPos;
@@ -43,7 +43,7 @@ public abstract class AbstractGrebeEntity extends AnimalEntity
 	public float oFlap;
 	public float wingRotDelta = 1.0F;
 
-	public AbstractGrebeEntity (EntityType<? extends AnimalEntity> type, World worldIn)
+	public GrebeEntity (EntityType<? extends AnimalEntity> type, World worldIn)
 	{
 		super(type, worldIn);
 		this.setPathPriority(PathNodeType.WATER, 10.0F);
@@ -51,19 +51,41 @@ public abstract class AbstractGrebeEntity extends AnimalEntity
 
 	static public AttributeModifierMap.MutableAttribute setCustomAttributes ()
 	{
-		return MobEntity.func_233666_p_();
+		return MobEntity.func_233666_p_()
+				.createMutableAttribute(Attributes.MAX_HEALTH, 10.0D) // Max Health
+				.createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.25D); // Movement Speed
+	}
+
+	@Override
+	public ILivingEntityData onInitialSpawn (IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag)
+	{
+		if (spawnDataIn == null)
+		{
+			spawnDataIn = new AgeableEntity.AgeableData(0.6F);
+		}
+
+		return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
 	}
 
 	@Override
 	protected void registerGoals ()
 	{
-		this.goalSelector.addGoal(5, new SmoothSwimGoal(this));
-		this.goalSelector.addGoal(2, new PanicGoal(this, 1.0D));
-		this.goalSelector.addGoal(3, new TemptGoal(this, 1.0D, false, TEMPTATION_ITEMS));
-		this.goalSelector.addGoal(2, new LookAtGoal(this, PlayerEntity.class, 6.0F));
-		this.goalSelector.addGoal(2, new LookRandomlyGoal(this));
-		this.goalSelector.addGoal(6, new AbstractGrebeEntity.SwimTravelGoal(this, 1.0D));
-		this.goalSelector.addGoal(7, new AbstractGrebeEntity.WanderGoal(this, 1.0D, 2));
+		this.goalSelector.addGoal(1, new MountAdultGoal(this, 1.2D));
+		this.goalSelector.addGoal(2, new SmoothSwimGoal(this));
+		this.goalSelector.addGoal(3, new PanicGoal(this, 1.0D));
+		this.goalSelector.addGoal(3, new GrebeEntity.SwimTravelGoal(this, 1.0D));
+		this.goalSelector.addGoal(4, new GrebeEntity.WanderGoal(this, 1.0D, 2));
+		this.goalSelector.addGoal(5, new TemptGoal(this, 1.0D, false, TEMPTATION_ITEMS));
+		this.goalSelector.addGoal(5, new BreedGoal(this, 1.0D));
+		this.goalSelector.addGoal(6, new LookAtGoal(this, PlayerEntity.class, 6.0F));
+		this.goalSelector.addGoal(7, new LookRandomlyGoal(this));
+		this.goalSelector.addGoal(8, new GoToWaterGoal(this, 0.8D));
+	}
+
+	@Override
+	protected void collideWithNearbyEntities ()
+	{
+		super.collideWithNearbyEntities();
 	}
 
 	@Override
@@ -93,7 +115,7 @@ public abstract class AbstractGrebeEntity extends AnimalEntity
 	@Override
 	public AgeableEntity func_241840_a (ServerWorld p_241840_1_, AgeableEntity p_241840_2_)
 	{
-		return null;
+		return ModEntityTypes.LITTLE_GREBE.get().create(p_241840_1_);
 	}
 
 	@Override
@@ -106,6 +128,43 @@ public abstract class AbstractGrebeEntity extends AnimalEntity
 	protected float getSoundVolume ()
 	{
 		return 0.6F;
+	}
+
+	@Nullable
+	@Override
+	protected SoundEvent getAmbientSound ()
+	{
+		if(this.isChild())
+		{
+			return ModSoundEventTypes.LITTLE_GREBE_CHICK_AMBIENT.get();
+		}
+		return ModSoundEventTypes.LITTLE_GREBE_AMBIENT.get();
+	}
+
+	@Nullable
+	@Override
+	protected SoundEvent getHurtSound (DamageSource damageSourceIn)
+	{
+		return ModSoundEventTypes.LITTLE_GREBE_HURT.get();
+	}
+
+	@Nullable
+	@Override
+	protected SoundEvent getDeathSound ()
+	{
+		return ModSoundEventTypes.LITTLE_GREBE_HURT.get();
+	}
+
+	@Override
+	public double getMountedYOffset ()
+	{
+		return this.getHeight() * 0.3D;
+	}
+
+	@Override
+	protected void onGrowingAdult ()
+	{
+		this.stopRiding();
 	}
 
 	/**
@@ -164,6 +223,12 @@ public abstract class AbstractGrebeEntity extends AnimalEntity
 	}
 
 	@Override
+	public boolean isBreedingItem (ItemStack stack)
+	{
+		return TEMPTATION_ITEMS.test(stack);
+	}
+
+	@Override
 	public void travel (Vector3d travelVector)
 	{
 		if (this.isServerWorld() && this.isInWater())
@@ -184,7 +249,7 @@ public abstract class AbstractGrebeEntity extends AnimalEntity
 
 	static class WanderGoal extends RandomWalkingGoal
 	{
-		private WanderGoal (AbstractGrebeEntity entity, double speedIn, int chance)
+		private WanderGoal (GrebeEntity entity, double speedIn, int chance)
 		{
 			super(entity, speedIn, chance);
 		}
@@ -198,11 +263,11 @@ public abstract class AbstractGrebeEntity extends AnimalEntity
 
 	static class SwimTravelGoal extends Goal
 	{
-		private final AbstractGrebeEntity turtle;
+		private final GrebeEntity turtle;
 		private final double speed;
 		private boolean field_203139_c;
 
-		SwimTravelGoal (AbstractGrebeEntity turtle, double speedIn)
+		SwimTravelGoal (GrebeEntity turtle, double speedIn)
 		{
 			this.turtle = turtle;
 			this.speed = speedIn;
@@ -221,7 +286,6 @@ public abstract class AbstractGrebeEntity extends AnimalEntity
 		}
 
 		@Override
-		@SuppressWarnings("deprecation")
 		public void tick ()
 		{
 			if (this.turtle.getNavigator().noPath())

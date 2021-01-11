@@ -1,17 +1,17 @@
 package com.cgessinger.creaturesandbeasts.client.model;
 
-import com.cgessinger.creaturesandbeasts.common.entites.LittleGrebeChickEntity;
+import com.cgessinger.creaturesandbeasts.common.entites.GrebeEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.util.math.MathHelper;
 
-public class LittleGrebeChickModel <T extends LittleGrebeChickEntity> extends EntityModel<LittleGrebeChickEntity>
+public class LittleGrebeChickModel <T extends AnimalEntity> extends EntityModel<GrebeEntity>
 {
 	private final ModelRenderer bone;
 	private final ModelRenderer Head;
-	private final ModelRenderer bone2;
 	private final ModelRenderer Rwing;
 	private final ModelRenderer Lwing;
 	private final ModelRenderer Lleg;
@@ -32,7 +32,7 @@ public class LittleGrebeChickModel <T extends LittleGrebeChickEntity> extends En
 		setRotationAngle(Head, -0.0436F, 0.0F, 0.0F);
 		Head.setTextureOffset(0, 9).addBox(-1.5F, -3.0F, -1.0F, 3.0F, 3.0F, 3.0F, 0.0F, false);
 
-		bone2 = new ModelRenderer(this);
+		ModelRenderer bone2 = new ModelRenderer(this);
 		bone2.setRotationPoint(0.0F, 0.0F, 0.0F);
 		Head.addChild(bone2);
 		bone2.setTextureOffset(0, 0).addBox(-0.5F, -1.3F, 1.5F, 1.0F, 1.0F, 2.0F, 0.0F, false);
@@ -61,7 +61,7 @@ public class LittleGrebeChickModel <T extends LittleGrebeChickEntity> extends En
 	}
 
 	@Override
-	public void setRotationAngles (LittleGrebeChickEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+	public void setRotationAngles (GrebeEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
 	{
 		this.Head.rotateAngleX = -headPitch * ((float)Math.PI / 180F);
 		this.Head.rotateAngleY = netHeadYaw * ((float)Math.PI / 180F);
