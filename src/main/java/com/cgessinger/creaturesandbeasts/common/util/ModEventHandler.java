@@ -13,6 +13,7 @@ import net.minecraft.tileentity.JukeboxTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IWorld;
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -44,13 +45,25 @@ public class ModEventHandler
 	{
 			TileEntity te = event.getWorld().getTileEntity(event.getPos());
 			Item heldItem = event.getPlayer().getHeldItem(event.getHand()).getItem();
-			if (te instanceof JukeboxTileEntity && heldItem instanceof MusicDiscItem)
+			if (te instanceof JukeboxTileEntity)
 			{
-				List<LizardEntity> lizards = event.getWorld().getEntitiesWithinAABB(LizardEntity.class, event.getPlayer().getBoundingBox().grow(15));
-				for (LizardEntity lizard : lizards)
+				JukeboxTileEntity box = (JukeboxTileEntity) te;
+				boolean discOut = box.getRecord() != ItemStack.EMPTY;
+				boolean discIn = heldItem instanceof MusicDiscItem;
+				if (discOut || discIn)
 				{
-					lizard.setPartying(true, event.getPos());
+					List<LizardEntity> lizards = event.getWorld().getEntitiesWithinAABB(LizardEntity.class, event.getPlayer().getBoundingBox().grow(15));
+					for (LizardEntity lizard : lizards)
+					{
+						lizard.setPartying(!discOut);
+						/* If discOut is false, disIn must be true. If dicOut is true, discIn will not be checked anymore. So !discOut is enough */
+					}
 				}
 			}
+	}
+
+	@SubscribeEvent
+	public static void onAnvilChange (AnvilUpdateEvent event)
+	{
 	}
 }
