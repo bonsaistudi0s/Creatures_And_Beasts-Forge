@@ -1,6 +1,7 @@
 package com.cgessinger.creaturesandbeasts;
 
 import com.cgessinger.creaturesandbeasts.common.entites.*;
+import com.cgessinger.creaturesandbeasts.common.init.ModBlockRegistry;
 import com.cgessinger.creaturesandbeasts.common.init.ModEntityTypes;
 import com.cgessinger.creaturesandbeasts.common.init.ModItems;
 import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
@@ -32,6 +33,7 @@ public class CreaturesAndBeasts
 
 		ModSoundEventTypes.SOUND_EVENTS.register(eventBus);
 		ModEntityTypes.ENTITY_TYPES.register(eventBus);
+		ModBlockRegistry.BLOCKS.register(eventBus);
 		ModItems.ITEMS.register(eventBus);
 		MinecraftForge.EVENT_BUS.register(this);
 

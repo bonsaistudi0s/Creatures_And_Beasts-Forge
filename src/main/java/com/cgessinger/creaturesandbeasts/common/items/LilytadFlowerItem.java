@@ -1,17 +1,20 @@
 package com.cgessinger.creaturesandbeasts.common.items;
 
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
+import com.cgessinger.creaturesandbeasts.common.init.ModBlockRegistry;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Food;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-public class LilytadFlowerItem extends Item
+public class LilytadFlowerItem extends BlockItem
 {
 	public LilytadFlowerItem ()
 	{
-		super(new Item.Properties()
+		super(ModBlockRegistry.LILYTAD_FLOWER.get(),
+				new Item.Properties()
 				.group(CreaturesAndBeasts.TAB)
 				.food(new Food.Builder()
 						.hunger(4)
