@@ -19,7 +19,6 @@ public class LilytadFlowerBlock extends FlowerBlock
 				5,
 				AbstractBlock.Properties.create(Material.PLANTS).doesNotBlockMovement().zeroHardnessAndResistance().sound(SoundType.PLANT)
 		);
-
 	}
 
 	@Override

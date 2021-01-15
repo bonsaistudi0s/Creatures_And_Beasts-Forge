@@ -6,6 +6,8 @@ import com.cgessinger.creaturesandbeasts.common.init.ModEntityTypes;
 import com.cgessinger.creaturesandbeasts.common.init.ModItems;
 import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
 import com.cgessinger.creaturesandbeasts.common.world.gen.ModEntitySpawns;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -61,6 +63,7 @@ public class CreaturesAndBeasts
 
 	private void doClientStuff (final FMLClientSetupEvent event)
 	{
+		RenderTypeLookup.setRenderLayer(ModBlockRegistry.LILYTAD_FLOWER.get(), RenderType.getCutout());
 	}
 
 	public static final ItemGroup TAB = new ItemGroup("cnb_tab")
