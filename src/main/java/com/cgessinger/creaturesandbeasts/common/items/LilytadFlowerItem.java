@@ -2,11 +2,9 @@ package com.cgessinger.creaturesandbeasts.common.items;
 
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
 import com.cgessinger.creaturesandbeasts.common.init.ModBlockRegistry;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Food;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.world.World;
 
 public class LilytadFlowerItem extends BlockItem
@@ -29,5 +27,11 @@ public class LilytadFlowerItem extends BlockItem
 	{
 		entityLiving.heal(4);
 		return super.onItemUseFinish(stack, worldIn, entityLiving);
+	}
+
+	@Override
+	protected boolean canPlace (BlockItemUseContext p_195944_1_, BlockState p_195944_2_)
+	{
+		return false;
 	}
 }

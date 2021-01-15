@@ -63,7 +63,7 @@ public class CreaturesAndBeasts
 
 	private void doClientStuff (final FMLClientSetupEvent event)
 	{
-		RenderTypeLookup.setRenderLayer(ModBlockRegistry.LILYTAD_FLOWER.get(), RenderType.getCutout());
+		RenderTypeLookup.setRenderLayer(ModBlockRegistry.POTTED_LILYTAD_FLOWER.get(), RenderType.getCutout());
 	}
 
 	public static final ItemGroup TAB = new ItemGroup("cnb_tab")
