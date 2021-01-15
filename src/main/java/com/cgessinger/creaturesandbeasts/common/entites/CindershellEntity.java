@@ -102,4 +102,19 @@ public class CindershellEntity extends AnimalEntity
 	{
 		return super.getSoundVolume() * 2;
 	}
+
+	@Override
+	public int getTalkInterval() {
+		return 120;
+	}
+
+	@Override
+	public boolean canDespawn(double distanceToClosestPlayer) {
+		return false;
+	}
+
+	@Override
+	public boolean onLivingFall(float distance, float damageMultiplier) {
+		return false;
+	}
 }
