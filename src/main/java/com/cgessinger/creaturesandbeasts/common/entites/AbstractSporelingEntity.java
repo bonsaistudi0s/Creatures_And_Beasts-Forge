@@ -7,6 +7,7 @@ import com.cgessinger.creaturesandbeasts.common.interfaces.ITimedAttackEntity;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.ai.controller.BodyController;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -82,6 +83,12 @@ public abstract class AbstractSporelingEntity extends CreatureEntity implements 
 			return PlayState.CONTINUE;
 		}
 		return PlayState.STOP;
+	}
+
+	@Override
+	protected BodyController createBodyController ()
+	{
+		return super.createBodyController();
 	}
 
 	@Override
@@ -173,6 +180,12 @@ public abstract class AbstractSporelingEntity extends CreatureEntity implements 
 	{
 		this.playSound(ModSoundEventTypes.SPORELING_BITE.get(), this.getSoundVolume()*2, this.getSoundPitch());
 		return super.attackEntityAsMob(entityIn);
+	}
+
+	@Override
+	public int getHorizontalFaceSpeed ()
+	{
+		return 5;
 	}
 
 	public enum SporelingType

@@ -39,17 +39,17 @@ public class ModEntityTypes
 
 	public static final RegistryObject<EntityType<FriendlySporelingEntity>> FRIENDLY_SPORELING = ENTITY_TYPES.register("friendly_sporeling",
 			() -> EntityType.Builder.create(FriendlySporelingEntity::new, EntityClassification.CREATURE)
-					.size(0.5f, 0.65f)
+					.size(0.52f, 0.67f)
 					.build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "friendly_sporeling").toString()));
 
 	/* MONSTERS */
 	public static final RegistryObject<EntityType<HostileSporelingEntity>> HOSTILE_SPORELING = ENTITY_TYPES.register("hostile_sporeling",
 			() -> EntityType.Builder.create(HostileSporelingEntity::new, EntityClassification.MONSTER)
-					.size(0.5f, 0.65f)
+					.size(0.52f, 0.67f)
 					.build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "hostile_sporeling").toString()));
 
 	public static final RegistryObject<EntityType<NeutralSporelingEntity>> NEUTRAL_SPORELING = ENTITY_TYPES.register("neutral_sporeling",
 			() -> EntityType.Builder.create(NeutralSporelingEntity::new, EntityClassification.MONSTER)
-					.size(0.5f, 0.65f)
+					.size(0.52f, 0.67f)
 					.build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "neutral_sporeling").toString()));
 }

@@ -33,6 +33,7 @@ public class TimedAttackGoal<E extends CreatureEntity & ITimedAttackEntity> exte
 	@Override
 	protected void checkAndPerformAttack (LivingEntity enemy, double distToEnemySqr)
 	{
+		this.attacker.setAttacking(false);
 		double d0 = this.getAttackReachSqr(enemy);
 		if (this.attacker.world.getDifficulty() != Difficulty.PEACEFUL &&  distToEnemySqr <= d0 && func_234041_j_() <= 0 && this.attackTimer <= 0)
 		{

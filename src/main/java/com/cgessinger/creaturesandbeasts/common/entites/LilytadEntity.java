@@ -5,6 +5,7 @@ import com.cgessinger.creaturesandbeasts.common.goals.GoToWaterGoal;
 import com.cgessinger.creaturesandbeasts.common.init.ModItems;
 import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
 import net.minecraft.entity.AgeableEntity;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
@@ -20,8 +21,10 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityPredicates;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.IForgeShearable;
@@ -119,6 +122,38 @@ public class LilytadEntity extends AnimalEntity implements IForgeShearable, IAni
 		{
 			this.setSheared(--this.shearedTimer > 0);
 		}
+	}
+
+	@Override
+	protected void collideWithNearbyEntities()
+	{
+		List<Entity> list = this.world.getEntitiesInAABBexcluding(this, this.getBoundingBox().grow(0.2, 0, 0.2), EntityPredicates.pushableBy(this));
+		if (!list.isEmpty())
+		{
+			int i = this.world.getGameRules().getInt(GameRules.MAX_ENTITY_CRAMMING);
+			if (i > 0 && list.size() > i - 1 && this.rand.nextInt(4) == 0)
+			{
+				int j = 0;
+
+				for (Entity entity : list)
+				{
+					if (!entity.isPassenger())
+					{
+						++j;
+					}
+				}
+
+				if (j > i - 1) {
+					this.attackEntityFrom(DamageSource.CRAMMING, 6.0F);
+				}
+			}
+
+			for (Entity entity : list)
+			{
+				this.collideWithEntity(entity);
+			}
+		}
+
 	}
 
 	@Override

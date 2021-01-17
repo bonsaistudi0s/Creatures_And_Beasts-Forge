@@ -4,9 +4,11 @@ import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
 import net.minecraft.block.Blocks;
 import net.minecraft.command.arguments.EntityAnchorArgument;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.controller.BodyController;
 import net.minecraft.entity.ai.controller.LookController;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.PanicGoal;
+import net.minecraft.entity.monster.ShulkerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
@@ -40,6 +42,18 @@ public class FriendlySporelingEntity extends AbstractSporelingEntity
 	{
 		super(type, worldIn);
 		this.wave = false;
+	}
+
+	@Override
+	public void livingTick ()
+	{
+		super.livingTick();
+
+		if(this.dataManager.get(WAVE))
+		{
+			this.navigator.clearPath();
+			this.getNavigator().setSpeed(0);
+		}
 	}
 
 	@Nullable
