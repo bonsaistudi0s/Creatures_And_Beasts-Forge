@@ -17,78 +17,78 @@ public class CindershellModel<L extends AnimalEntity> extends EntityModel<Cinder
 	private final ModelRenderer bone4;
 	private final ModelRenderer Tail;
 	private final ModelRenderer bone3;
-	private final ModelRenderer FR;
-	private final ModelRenderer BR;
 	private final ModelRenderer BL;
+	private final ModelRenderer BR;
 	private final ModelRenderer FL;
+	private final ModelRenderer FR;
 
-	public CindershellModel ()
-	{
+	public CindershellModel() {
 		textureWidth = 128;
 		textureHeight = 128;
 
 		bone = new ModelRenderer(this);
 		bone.setRotationPoint(0.0F, 24.0F, 0.0F);
-		bone.setTextureOffset(63, 0).addBox(-7.0F, -29.0F, -7.0F, 14.0F, 3.0F, 14.0F, 0.0F, false);
-		bone.setTextureOffset(0, 0).addBox(-10.0F, -26.0F, -12.0F, 20.0F, 15.0F, 23.0F, 0.0F, false);
-		bone.setTextureOffset(0, 38).addBox(-11.0F, -14.0F, -13.0F, 22.0F, 4.0F, 25.0F, 0.0F, false);
-		bone.setTextureOffset(79, 67).addBox(-6.0F, -15.0F, -14.0F, 12.0F, 6.0F, 5.0F, 0.0F, false);
+		bone.setTextureOffset(0, 38).addBox(-7.0F, -23.0F, -7.0F, 14.0F, 3.0F, 14.0F, 0.0F, false);
+		bone.setTextureOffset(0, 0).addBox(-10.0F, -20.0F, -12.0F, 20.0F, 15.0F, 23.0F, 0.0F, false);
 
 		bone2 = new ModelRenderer(this);
 		bone2.setRotationPoint(0.0F, 0.0F, 0.0F);
 		bone.addChild(bone2);
-		bone2.setTextureOffset(0, 67).addBox(-8.0F, -11.0F, -11.0F, 16.0F, 6.0F, 21.0F, 0.0F, false);
+		
 
 		Head = new ModelRenderer(this);
 		Head.setRotationPoint(0.0F, -10.0F, -10.0F);
 		bone2.addChild(Head);
-
+		
 
 		Jaw = new ModelRenderer(this);
-		Jaw.setRotationPoint(0.0F, 1.0F, 0.0F);
+		Jaw.setRotationPoint(0.0F, 0.3F, -2.1F);
 		Head.addChild(Jaw);
 		setRotationAngle(Jaw, 0.1745F, 0.0F, 0.0F);
-		Jaw.setTextureOffset(53, 67).addBox(-3.5F, -2.0F, -12.5F, 7.0F, 4.0F, 12.0F, 0.0F, false);
+		Jaw.setTextureOffset(44, 44).addBox(-3.5F, -1.0F, -10.77F, 7.0F, 4.0F, 12.0F, 0.0F, false);
 
 		bone4 = new ModelRenderer(this);
 		bone4.setRotationPoint(0.0F, 0.0F, 0.0F);
 		Head.addChild(bone4);
 		setRotationAngle(bone4, 0.0873F, 0.0F, 0.0F);
-		bone4.setTextureOffset(14, 14).addBox(-1.0F, -6.0F, -11.0F, 2.0F, 3.0F, 2.0F, 0.0F, false);
-		bone4.setTextureOffset(0, 38).addBox(-1.5F, -4.0F, -11.5F, 3.0F, 1.0F, 3.0F, 0.0F, false);
-		bone4.setTextureOffset(69, 38).addBox(-3.0F, -3.0F, -12.0F, 6.0F, 4.0F, 12.0F, 0.0F, false);
+		bone4.setTextureOffset(0, 8).addBox(-1.5F, -6.0F, -11.0F, 3.0F, 3.0F, 3.0F, 0.0F, false);
+		bone4.setTextureOffset(0, 55).addBox(-3.0F, -2.98F, -12.0F, 6.0F, 4.0F, 12.0F, 0.0F, false);
 
 		Tail = new ModelRenderer(this);
 		Tail.setRotationPoint(0.0F, -9.0F, 9.0F);
 		bone.addChild(Tail);
-
+		
 
 		bone3 = new ModelRenderer(this);
 		bone3.setRotationPoint(0.0F, 0.0F, 1.0F);
 		Tail.addChild(bone3);
 		setRotationAngle(bone3, -0.0873F, 0.0F, 0.0F);
-		bone3.setTextureOffset(74, 83).addBox(-4.0F, -3.0F, -1.0F, 8.0F, 5.0F, 8.0F, 0.0F, false);
-		bone3.setTextureOffset(0, 13).addBox(-2.0F, -3.0F, 7.0F, 4.0F, 2.0F, 6.0F, 0.0F, false);
-
-		FR = new ModelRenderer(this);
-		FR.setRotationPoint(-7.0F, -8.0F, -6.5F);
-		bone.addChild(FR);
-		FR.setTextureOffset(0, 0).addBox(-2.0F, 0.0F, -2.5F, 5.0F, 8.0F, 5.0F, 0.0F, false);
-
-		BR = new ModelRenderer(this);
-		BR.setRotationPoint(-8.0F, -8.0F, 5.5F);
-		bone.addChild(BR);
-		BR.setTextureOffset(0, 0).addBox(-1.0F, 0.0F, -2.5F, 5.0F, 8.0F, 5.0F, 0.0F, false);
+		bone3.setTextureOffset(36, 60).addBox(-4.0F, -3.0F, -1.0F, 8.0F, 5.0F, 8.0F, 0.0F, false);
+		bone3.setTextureOffset(0, 0).addBox(-2.0F, -3.0F, 7.0F, 4.0F, 2.0F, 6.0F, 0.0F, false);
 
 		BL = new ModelRenderer(this);
-		BL.setRotationPoint(7.0F, -8.0F, 5.5F);
+		BL.setRotationPoint(9.0F, -8.0F, 9.5F);
 		bone.addChild(BL);
-		BL.setTextureOffset(0, 0).addBox(-3.0F, 0.0F, -2.5F, 5.0F, 8.0F, 5.0F, 0.0F, false);
+		setRotationAngle(BL, 0.0F, 0.0F, -0.0873F);
+		BL.setTextureOffset(63, 0).addBox(-3.0F, -1.0F, -3.5F, 6.0F, 9.0F, 6.0F, 0.0F, false);
+
+		BR = new ModelRenderer(this);
+		BR.setRotationPoint(-9.0F, -8.0F, 9.5F);
+		bone.addChild(BR);
+		setRotationAngle(BR, 0.0F, 0.0F, 0.0873F);
+		BR.setTextureOffset(63, 0).addBox(-3.0F, -1.0F, -3.5F, 6.0F, 9.0F, 6.0F, 0.0F, true);
 
 		FL = new ModelRenderer(this);
-		FL.setRotationPoint(9.0F, -8.0F, -6.5F);
+		FL.setRotationPoint(9.0F, -8.0F, -11.5F);
 		bone.addChild(FL);
-		FL.setTextureOffset(0, 0).addBox(-5.0F, 0.0F, -2.5F, 5.0F, 8.0F, 5.0F, 0.0F, false);
+		setRotationAngle(FL, -0.0873F, 0.0F, -0.0873F);
+		FL.setTextureOffset(63, 0).addBox(-4.0F, -1.0F, -2.5F, 6.0F, 9.0F, 6.0F, 0.0F, false);
+
+		FR = new ModelRenderer(this);
+		FR.setRotationPoint(-9.0F, -8.0F, -11.5F);
+		bone.addChild(FR);
+		setRotationAngle(FR, -0.0873F, 0.0F, 0.0873F);
+		FR.setTextureOffset(64, 1).addBox(-2.0F, -1.0F, -1.5F, 6.0F, 9.0F, 5.0F, 0.0F, true);
 	}
 
 	@Override
