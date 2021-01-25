@@ -94,10 +94,10 @@ public class GrebeEntity extends AnimalEntity
 	public void setGrowingAge (int age)
 	{
 		super.setGrowingAge(age);
-		if(isChild() && this.getAttribute(Attributes.MAX_HEALTH).getValue() > 2.5D)
+		if(isChild() && this.getAttribute(Attributes.MAX_HEALTH).getValue() > 5.0F)
 		{
 			Multimap<Attribute, AttributeModifier> multimap = HashMultimap.create();
-			multimap.put(Attributes.MAX_HEALTH, new AttributeModifier(this.healthReductionUUID, "yeti_health_reduction", -17.5D, AttributeModifier.Operation.ADDITION));
+			multimap.put(Attributes.MAX_HEALTH, new AttributeModifier(this.healthReductionUUID, "yeti_health_reduction", -5.0F, AttributeModifier.Operation.ADDITION));
 			this.getAttributeManager().reapplyModifiers(multimap);
 			this.setHealth(5.0F);
 		}

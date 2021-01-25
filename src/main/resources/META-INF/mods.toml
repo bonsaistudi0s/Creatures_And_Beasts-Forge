@@ -1,13 +1,13 @@
 modLoader="javafml"
 loaderVersion="[34,)"
 license="All rights reserved"
-issueTrackerURL="https://github.com/CGessinger/Creatures-And-Beasts-Minecraft-Mod/issues"
+issueTrackerURL="https://github.com/CGessinger/Creatures_And_Beasts-Forge/issues"
 [[mods]]
 modId="cnb"
 version="${file.jarVersion}"
 displayName="Creatures and Beasts"
 updateJSONURL="http://myurl.me/"
-displayURL="https://github.com/CGessinger/Creatures-And-Beasts-Minecraft-Mod"
+displayURL="https://github.com/CGessinger/Creatures_And_Beasts-Forge"
 logoFile="logo.png"
 credits="Thanks for this minecraft mod goes to the authors, Azure Doom, and everyone who contributed to the project"
 authors="Joosh, CGessinger"
@@ -17,9 +17,17 @@ This is a simple minecraft mod which adds tons of new creatures. It is designed 
 [[dependencies.cnb]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.16.3,]"
+    versionRange="[1.16.4,]"
     ordering="NONE"
     side="BOTH"
+
+[[dependencies.cnb]]
+    modId="forge"
+    mandatory=true
+    versionRange="[35.1.17,]"
+    ordering="NONE"
+    side="BOTH"
+
 [[dependencies.cnb]]
     modId="geckolib3"
     mandatory=true

@@ -42,6 +42,7 @@ public class ModEventHandler
 			}
 	}
 
+	@SubscribeEvent
 	public static void getItemAttributes (ItemAttributeModifierEvent event)
 	{
 		ItemStack input = event.getItemStack();
