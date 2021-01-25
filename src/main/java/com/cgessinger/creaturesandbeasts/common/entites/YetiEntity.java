@@ -1,8 +1,11 @@
 package com.cgessinger.creaturesandbeasts.common.entites;
 
 import com.cgessinger.creaturesandbeasts.common.init.ModEntityTypes;
+import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.*;
 import net.minecraft.entity.ai.goal.*;
@@ -13,8 +16,11 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.RangedInteger;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.TickRangeConverter;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
@@ -219,6 +225,33 @@ public class YetiEntity extends AnimalEntity implements IAnimatable, IMob, IAnge
 	public UUID getAngerTarget() 
 	{
 		return this.angerTarget;
+	}
+
+	@Override
+	protected void playStepSound(BlockPos pos, BlockState blockIn) 
+	{
+		if (!blockIn.getMaterial().isLiquid())
+		{
+			this.playSound(ModSoundEventTypes.YETI_STEP.get(), this.getSoundVolume() * 0.3F, this.getSoundPitch());
+		}
+	}
+
+	@Override
+	protected SoundEvent getAmbientSound() 
+	{
+		return ModSoundEventTypes.YETI_AMBIENT.get();
+	}
+
+	@Override
+	protected SoundEvent getDeathSound() 
+	{
+		return ModSoundEventTypes.YETI_HURT.get();
+	}
+
+	@Override
+	protected SoundEvent getHurtSound (DamageSource damageSourceIn) 
+	{
+		return ModSoundEventTypes.YETI_HURT.get();
 	}
 
 	class YetiAttackGoal extends Goal 

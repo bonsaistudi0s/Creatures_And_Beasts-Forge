@@ -70,4 +70,16 @@ public class ModSoundEventTypes
 	public static final RegistryObject<SoundEvent> LILYTAD_DEATH = SOUND_EVENTS.register("entity.lilytad.death", () ->
 			new SoundEvent(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "entity.lilytad.death"))
 	);
+
+	public static final RegistryObject<SoundEvent> YETI_AMBIENT = SOUND_EVENTS.register("entity.yeti.ambient", () ->
+			new SoundEvent(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "entity.yeti.ambient"))
+	);
+
+	public static final RegistryObject<SoundEvent> YETI_HURT = SOUND_EVENTS.register("entity.yeti.hurt", () ->
+			new SoundEvent(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "entity.yeti.hurt"))
+	);
+
+	public static final RegistryObject<SoundEvent> YETI_STEP = SOUND_EVENTS.register("entity.yeti.step", () ->
+			new SoundEvent(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "entity.yeti.step"))
+	);
 }
