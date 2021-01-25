@@ -1,5 +1,7 @@
 package com.cgessinger.creaturesandbeasts.common.entites;
 
+import java.util.UUID;
+
 import javax.annotation.Nullable;
 
 import com.cgessinger.creaturesandbeasts.common.goals.GoToWaterGoal;
@@ -8,8 +10,13 @@ import com.cgessinger.creaturesandbeasts.common.goals.SmoothSwimGoal;
 
 import com.cgessinger.creaturesandbeasts.common.init.ModEntityTypes;
 import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.RandomPositionGenerator;
+import net.minecraft.entity.ai.attributes.Attribute;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.*;
@@ -35,6 +42,7 @@ import net.minecraft.world.server.ServerWorld;
 
 public class GrebeEntity extends AnimalEntity
 {
+	private final UUID healthReductionUUID = UUID.fromString("189faad9-35de-4e15-a598-82d147b996d7");
 	private static final DataParameter<BlockPos> TRAVEL_POS = EntityDataManager.createKey(GrebeEntity.class, DataSerializers.BLOCK_POS);
 	public static final Ingredient TEMPTATION_ITEMS = Ingredient.fromItems(Items.COD, Items.SALMON, Items.TROPICAL_FISH);
 	public float wingRotation;
@@ -83,9 +91,16 @@ public class GrebeEntity extends AnimalEntity
 	}
 
 	@Override
-	protected void collideWithNearbyEntities ()
+	public void setGrowingAge (int age)
 	{
-		super.collideWithNearbyEntities();
+		super.setGrowingAge(age);
+		if(isChild() && this.getAttribute(Attributes.MAX_HEALTH).getValue() > 2.5D)
+		{
+			Multimap<Attribute, AttributeModifier> multimap = HashMultimap.create();
+			multimap.put(Attributes.MAX_HEALTH, new AttributeModifier(this.healthReductionUUID, "yeti_health_reduction", -17.5D, AttributeModifier.Operation.ADDITION));
+			this.getAttributeManager().reapplyModifiers(multimap);
+			this.setHealth(5.0F);
+		}
 	}
 
 	@Override
@@ -165,6 +180,8 @@ public class GrebeEntity extends AnimalEntity
 	protected void onGrowingAdult ()
 	{
 		this.stopRiding();
+		this.getAttribute(Attributes.MAX_HEALTH).removeModifier(this.healthReductionUUID);
+		this.setHealth(10.0F);
 	}
 
 	/**
