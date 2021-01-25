@@ -12,6 +12,7 @@ import com.cgessinger.creaturesandbeasts.common.init.ModEntityTypes;
 
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntitySpawnPlacementRegistry;
+import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
@@ -60,6 +61,10 @@ public class ModEntitySpawns
 			event.getSpawns().getSpawner(EntityClassification.MONSTER).add(new Spawners(ModEntityTypes.HOSTILE_SPORELING.get(), 30, 3, 5));
 			event.getSpawns().getSpawner(EntityClassification.MONSTER).add(new Spawners(ModEntityTypes.NEUTRAL_SPORELING.get(), 30, 2, 4));
 		}
+		if(types.contains(BiomeDictionary.Type.SNOWY))
+		{
+			base.add(new Spawners(ModEntityTypes.YETI.get(), 3, 2, 3));
+		}
 	}
 
 	public static void EntitySpawnPlacementRegistry ()
@@ -71,5 +76,7 @@ public class ModEntitySpawns
 		EntitySpawnPlacementRegistry.register(ModEntityTypes.NEUTRAL_SPORELING.get(), EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, NeutralSporelingEntity::canSporelingSpawn);
 
 		EntitySpawnPlacementRegistry.register(ModEntityTypes.FRIENDLY_SPORELING.get(), EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, FriendlySporelingEntity::canSporelingSpawn);
+		
+		EntitySpawnPlacementRegistry.register(ModEntityTypes.YETI.get(), EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, AnimalEntity::canAnimalSpawn);
 	}
 }

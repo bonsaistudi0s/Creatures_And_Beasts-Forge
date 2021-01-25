@@ -1,10 +1,8 @@
 package com.cgessinger.creaturesandbeasts.common.goals;
 
 import com.cgessinger.creaturesandbeasts.common.entites.GrebeEntity;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.util.EntityPredicates;
 
 import java.util.List;
 

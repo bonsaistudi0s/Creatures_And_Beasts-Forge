@@ -1,7 +1,6 @@
 package com.cgessinger.creaturesandbeasts.common.entites;
 
 import com.cgessinger.creaturesandbeasts.common.goals.FindWaterOneDeepGoal;
-import com.cgessinger.creaturesandbeasts.common.goals.GoToWaterGoal;
 import com.cgessinger.creaturesandbeasts.common.init.ModItems;
 import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
 import net.minecraft.entity.AgeableEntity;
@@ -210,7 +209,6 @@ public class LilytadEntity extends AnimalEntity implements IForgeShearable, IAni
 	@Override
 	public List<ItemStack> onSheared (@Nullable PlayerEntity player, @Nonnull ItemStack item, World world, BlockPos pos, int fortune)
 	{
-		//world.playMovingSound(null, this, SoundEvents.ENTITY_SHEEP_SHEAR, player == null ? SoundCategory.BLOCKS : SoundCategory.PLAYERS, 1.0F, 1.0F);
 		if (!world.isRemote)
 		{
 			this.setSheared(true);

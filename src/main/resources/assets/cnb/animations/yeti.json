@@ -1,0 +1,437 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"yeti.walk": {
+			"loop": true,
+			"animation_length": 1.04,
+			"bones": {
+				"bone": {
+					"rotation": {
+						"0.0": {
+							"vector": [
+								1.5,
+								0,
+								0
+							]
+						},
+						"0.24": {
+							"vector": [
+								0,
+								0,
+								0
+							],
+							"easing": "easeInOutSine"
+						},
+						"0.52": {
+							"vector": [
+								1.5,
+								0,
+								0
+							],
+							"easing": "easeInOutSine"
+						},
+						"0.8": {
+							"vector": [
+								0,
+								0,
+								0
+							],
+							"easing": "easeInOutSine"
+						},
+						"1.04": {
+							"vector": [
+								1.5,
+								0,
+								0
+							],
+							"easing": "easeInOutSine"
+						}
+					}
+				},
+				"Head": {
+					"rotation": {
+						"0.0": {
+							"vector": [
+								0,
+								0,
+								0
+							]
+						},
+						"0.28": {
+							"vector": [
+								7,
+								0,
+								0
+							],
+							"easing": "easeInOutSine"
+						},
+						"0.52": {
+							"vector": [
+								0,
+								0,
+								0
+							],
+							"easing": "easeInOutSine"
+						},
+						"0.8": {
+							"vector": [
+								7,
+								0,
+								0
+							],
+							"easing": "easeInOutSine"
+						},
+						"1.04": {
+							"vector": [
+								0,
+								0,
+								0
+							],
+							"easing": "easeInOutSine"
+						}
+					}
+				},
+				"RightArm": {
+					"rotation": {
+						"0.0": {
+							"vector": [
+								-37.5,
+								0,
+								0
+							]
+						},
+						"0.52": {
+							"vector": [
+								12.5,
+								0,
+								0
+							],
+							"easing": "easeInOutSine"
+						},
+						"1.04": {
+							"vector": [
+								-37.5,
+								0,
+								0
+							],
+							"easing": "easeInOutSine"
+						}
+					}
+				},
+				"LeftArm": {
+					"rotation": {
+						"0.0": {
+							"vector": [
+								12.5,
+								0,
+								0
+							]
+						},
+						"0.52": {
+							"vector": [
+								-37.5,
+								0,
+								0
+							],
+							"easing": "easeInOutSine"
+						},
+						"1.04": {
+							"vector": [
+								12.5,
+								0,
+								0
+							],
+							"easing": "easeInOutSine"
+						}
+					}
+				},
+				"RLeg": {
+					"rotation": {
+						"0.0": {
+							"vector": [
+								12.5,
+								0,
+								0
+							]
+						},
+						"0.52": {
+							"vector": [
+								-30,
+								0,
+								0
+							],
+							"easing": "easeInOutSine"
+						},
+						"1.04": {
+							"vector": [
+								12.5,
+								0,
+								0
+							],
+							"easing": "easeInOutSine"
+						}
+					}
+				},
+				"Lleg": {
+					"rotation": {
+						"0.0": {
+							"vector": [
+								-30,
+								0,
+								0
+							]
+						},
+						"0.52": {
+							"vector": [
+								12.5,
+								0,
+								0
+							],
+							"easing": "easeInOutSine"
+						},
+						"1.04": {
+							"vector": [
+								-30,
+								0,
+								0
+							],
+							"easing": "easeInOutSine"
+						}
+					}
+				}
+			}
+		},
+		"yeti.aggro": {
+			"animation_length": 1.16,
+			"bones": {
+				"bone": {
+					"rotation": {
+						"0.0": {
+							"vector": [
+								0,
+								0,
+								0
+							]
+						},
+						"0.4": {
+							"vector": [
+								0,
+								0,
+								0
+							],
+							"easing": "easeOutQuad"
+						}
+					}
+				},
+				"Body": {
+					"rotation": {
+						"0.0": {
+							"vector": [
+								0,
+								0,
+								0
+							]
+						},
+						"0.4": {
+							"vector": [
+								-30,
+								0,
+								0
+							],
+							"easing": "easeInOutQuad"
+						}
+					}
+				},
+				"Head2": {
+					"rotation": {
+						"0.0": {
+							"vector": [
+								0,
+								0,
+								0
+							]
+						},
+						"0.4": {
+							"vector": [
+								22.5,
+								0,
+								0
+							],
+							"easing": "easeOutQuad"
+						}
+					}
+				},
+				"RightArm": {
+					"rotation": {
+						"0.0": {
+							"vector": [
+								0,
+								0,
+								0
+							]
+						},
+						"0.4": {
+							"vector": [
+								-115,
+								22.5,
+								0
+							],
+							"easing": "easeInOutCubic"
+						}
+					}
+				},
+				"LeftArm": {
+					"rotation": {
+						"0.0": {
+							"vector": [
+								0,
+								0,
+								0
+							]
+						},
+						"0.4": {
+							"vector": [
+								-115,
+								-25,
+								0
+							],
+							"easing": "easeInOutCubic"
+						}
+					}
+				}
+			}
+		},
+		"yeti.attack": {
+			"animation_length": 1.16,
+			"bones": {
+				"Body": {
+					"rotation": {
+						"0.12": {
+							"vector": [
+								10,
+								0,
+								0
+							],
+							"easing": "easeInCubic"
+						},
+						"0.24": {
+							"vector": [
+								7.5,
+								0,
+								0
+							]
+						},
+						"0.6": {
+							"vector": [
+								0,
+								0,
+								0
+							],
+							"easing": "easeInOutQuint"
+						}
+					}
+				},
+				"Head2": {
+					"rotation": {
+						"0.12": {
+							"vector": [
+								-5,
+								0,
+								0
+							],
+							"easing": "easeInOutCubic"
+						},
+						"0.36": {
+							"vector": [
+								22.5,
+								0,
+								0
+							],
+							"easing": "easeOutQuart"
+						},
+						"0.6": {
+							"vector": [
+								0,
+								0,
+								0
+							],
+							"easing": "easeInOutCubic"
+						}
+					}
+				},
+				"RightArm": {
+					"rotation": {
+						"0.0": {
+							"vector": [
+								-140,
+								22.5,
+								0
+							]
+						},
+						"0.16": {
+							"vector": [
+								-52.5,
+								22.5,
+								0
+							]
+						},
+						"0.32": {
+							"vector": [
+								-57.5,
+								22.5,
+								0
+							]
+						},
+						"0.6": {
+							"vector": [
+								0,
+								0,
+								0
+							],
+							"easing": "easeInOutCubic"
+						}
+					}
+				},
+				"LeftArm": {
+					"rotation": {
+						"0.0": {
+							"vector": [
+								-140,
+								-25,
+								0
+							]
+						},
+						"0.24": {
+							"vector": [
+								-52.5,
+								-22.5,
+								0
+							],
+							"easing": "easeInOutQuad"
+						},
+						"0.32": {
+							"vector": [
+								-55,
+								-25,
+								0
+							]
+						},
+						"0.48": {
+							"vector": [
+								0,
+								0,
+								0
+							],
+							"easing": "easeInOutCubic"
+						}
+					}
+				}
+			}
+		}
+	},
+	"geckolib_format_version": 2,
+	"geometry.animations": {
+		"texturewidth": 64,
+		"textureheight": 64
+	}
+}

@@ -52,4 +52,9 @@ public class ModEntityTypes
 			() -> EntityType.Builder.create(NeutralSporelingEntity::new, EntityClassification.MONSTER)
 					.size(0.52f, 0.67f)
 					.build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "neutral_sporeling").toString()));
+
+	public static final RegistryObject<EntityType<YetiEntity>> YETI = ENTITY_TYPES.register("yeti",
+			() -> EntityType.Builder.create(YetiEntity::new, EntityClassification.MONSTER)
+					.size(1.4f, 1.9f)
+					.build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "yeti").toString()));
 }

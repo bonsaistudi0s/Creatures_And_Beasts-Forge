@@ -7,9 +7,6 @@ import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class ModItems
 {
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, CreaturesAndBeasts.MOD_ID);
@@ -21,7 +18,10 @@ public class ModItems
 			() -> new ModSpawnEggItem(ModEntityTypes.CINDERSHELL,0x0D0403, 0xC64500, new Item.Properties().group(CreaturesAndBeasts.TAB)));
 
 	public static RegistryObject<ModSpawnEggItem> LILYTAD_SPAWN_EGG = ITEMS.register("lilytad_spawn_egg",
-			() -> new ModSpawnEggItem(ModEntityTypes.LILYTAD,0x37702e, 0x102417, new Item.Properties().group(CreaturesAndBeasts.TAB)));
+			() -> new ModSpawnEggItem(ModEntityTypes.LILYTAD,0x37702E, 0x102417, new Item.Properties().group(CreaturesAndBeasts.TAB)));
+
+	public static RegistryObject<ModSpawnEggItem> YETI_SPAWN_EGG = ITEMS.register("yeti_spawn_egg",
+			() -> new ModSpawnEggItem(ModEntityTypes.YETI,0xD7E1E7, 0x887E96, new Item.Properties().group(CreaturesAndBeasts.TAB)));
 
 	// Lizards
 	public static RegistryObject<ModSpawnEggItem> LIZARD_SPAWN_EGG = ITEMS.register("lizard_spawn_egg",
@@ -60,6 +60,8 @@ public class ModItems
 
 	public static final RegistryObject<AppleSliceItem> APPLE_SLICE = ITEMS.register("apple_slice", AppleSliceItem::new);
 	public static final RegistryObject<EntityNetItem> ENTITY_NET = ITEMS.register("entity_net", EntityNetItem::new);
-	public static final RegistryObject<Item> CINDERSHELL_SHELL_SHARD = ITEMS.register("cindershell_shell_shard", CindershellShellShardItem::new);
-	public static final RegistryObject<Item> LILYTAD_FLOWER = ITEMS.register("lilytad_flower", LilytadFlowerItem::new);
+	public static final RegistryObject<CindershellShellShardItem> CINDERSHELL_SHELL_SHARD = ITEMS.register("cindershell_shell_shard", CindershellShellShardItem::new);
+	public static final RegistryObject<LilytadFlowerItem> LILYTAD_FLOWER = ITEMS.register("lilytad_flower", LilytadFlowerItem::new);
+	public static final RegistryObject<Item> YETI_ANTLER = ITEMS.register("yeti_antler", () -> new Item(new Item.Properties().group(CreaturesAndBeasts.TAB)));
+	public static final RegistryObject<Item> YETI_HIDE = ITEMS.register("yeti_hide", () -> new Item(new Item.Properties().group(CreaturesAndBeasts.TAB)));
 }

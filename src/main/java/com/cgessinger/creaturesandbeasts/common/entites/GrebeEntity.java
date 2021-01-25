@@ -174,32 +174,28 @@ public class GrebeEntity extends AnimalEntity
 	@Override
 	public void applyEntityCollision (Entity entityIn)
 	{
-		if (!this.isRidingSameEntity(entityIn))
+		if (!this.isRidingSameEntity(entityIn) && !entityIn.noClip && !this.noClip)
 		{
-			if (!entityIn.noClip && !this.noClip)
+			double d0 = entityIn.getPosX() - this.getPosX();
+			double d1 = entityIn.getPosZ() - this.getPosZ();
+			double d2 = MathHelper.absMax(d0, d1);
+			if (d2 >= 0.01D)
 			{
-				double d0 = entityIn.getPosX() - this.getPosX();
-				double d1 = entityIn.getPosZ() - this.getPosZ();
-				double d2 = MathHelper.absMax(d0, d1);
-				if (d2 >= 0.01D)
+				d2 = MathHelper.sqrt(d2);
+				double d3 = 1.0D / d2;
+				if (d3 > 1.0D)
 				{
-					d2 = MathHelper.sqrt(d2);
-					double d3 = 1.0D / d2;
-					if (d3 > 1.0D)
-					{
-						d3 = 1.0D;
-					}
-
-					d0 = d0 / d2 * d3 * 0.05D - this.entityCollisionReduction;
-					d1 = d1 / d2 * d3 * 0.05D - this.entityCollisionReduction;
-					this.addVelocity(-d0, 0.0D, -d1);
-
-					if (!entityIn.isBeingRidden())
-					{
-						entityIn.addVelocity(d0, 0.0D, d1);
-					}
+					d3 = 1.0D;
 				}
 
+				d0 = d0 / d2 * d3 * 0.05D - this.entityCollisionReduction;
+				d1 = d1 / d2 * d3 * 0.05D - this.entityCollisionReduction;
+				this.addVelocity(-d0, 0.0D, -d1);
+
+				if (!entityIn.isBeingRidden())
+				{
+					entityIn.addVelocity(d0, 0.0D, d1);
+				}
 			}
 		}
 	}
