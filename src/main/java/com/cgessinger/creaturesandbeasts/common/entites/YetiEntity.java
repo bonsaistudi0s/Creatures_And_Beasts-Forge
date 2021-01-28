@@ -237,21 +237,29 @@ public class YetiEntity extends AnimalEntity implements IAnimatable, IMob, IAnge
 	}
 
 	@Override
+	protected float getSoundPitch() 
+	{
+		float pitch = super.getSoundPitch();
+		return this.isChild() ? pitch * 1.5F : pitch;
+	 }
+  
+
+	@Override
 	protected SoundEvent getAmbientSound() 
 	{
-		return ModSoundEventTypes.YETI_AMBIENT.get();
+		return this.isChild() ? null : ModSoundEventTypes.YETI_AMBIENT.get();
 	}
 
 	@Override
 	protected SoundEvent getDeathSound() 
 	{
-		return ModSoundEventTypes.YETI_HURT.get();
+		return this.isChild() ? null : ModSoundEventTypes.YETI_HURT.get();
 	}
 
 	@Override
 	protected SoundEvent getHurtSound (DamageSource damageSourceIn) 
 	{
-		return ModSoundEventTypes.YETI_HURT.get();
+		return this.isChild() ? null : ModSoundEventTypes.YETI_HURT.get();
 	}
 
 	class YetiAttackGoal extends Goal 

@@ -81,6 +81,7 @@ public class GrebeEntity extends AnimalEntity
 		this.goalSelector.addGoal(1, new MountAdultGoal(this, 1.2D));
 		this.goalSelector.addGoal(2, new SmoothSwimGoal(this));
 		this.goalSelector.addGoal(3, new PanicGoal(this, 1.0D));
+		this.goalSelector.addGoal(3, new FollowParentGoal(this, 1.25D));
 		this.goalSelector.addGoal(3, new GrebeEntity.SwimTravelGoal(this, 1.0D));
 		this.goalSelector.addGoal(4, new GrebeEntity.WanderGoal(this, 1.0D, 2));
 		this.goalSelector.addGoal(5, new TemptGoal(this, 1.0D, false, TEMPTATION_ITEMS));

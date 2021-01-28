@@ -1,5 +1,6 @@
 {
     "block.cnb.lilytad_flower_block": "Цветок кувшиночки",
+    "block.cnb.potted_lilytad_flower": "Цветок кувшиночки в горшке",
     "entity.cnb.cindershell": "Пепельный панцирь",
     "entity.cnb.friendly_sporeling": "Дружелюбный грибочек",
     "entity.cnb.hostile_sporeling": "Агрессивный грибочек",
@@ -8,6 +9,7 @@
     "entity.cnb.lizard": "Ящерица",
     "entity.cnb.neutral_sporeling": "Нейтральный грибочек",
     "entity.cnb.yeti": "Йети",
+    "entity.cnb.lilytad": "Кувшиночка",
     "item.cnb.apple_slice": "Ломтики яблока",
     "item.cnb.cindershell_shell_shard": "Осколок пепельного панциря",
     "item.cnb.cindershell_spawn_egg": "Яйцо призыва пепельного панциря",

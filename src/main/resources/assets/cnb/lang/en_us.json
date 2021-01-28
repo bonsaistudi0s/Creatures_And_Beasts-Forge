@@ -2,6 +2,7 @@
   "item.cnb.cindershell_shell_shard": "Cindershell Shell Shard",
   "item.cnb.apple_slice": "Apple Slices",
   "block.cnb.lilytad_flower_block": "Lilytad Flower",
+  "block.cnb.potted_lilytad_flower": "Potted Lilytad Flower",
   "item.cnb.entity_net": "Net",
   "item.cnb.yeti_antler": "Yeti Antler",
   "item.cnb.yeti_hide": "Yeti Hide",
@@ -28,5 +29,6 @@
   "entity.cnb.hostile_sporeling": "Hostile Sporeling",
   "entity.cnb.neutral_sporeling": "Neutral Sporeling",
   "entity.cnb.yeti": "Yeti",
+  "entity.cnb.lilytad": "Lilytad",
   "itemGroup.cnb_tab": "Creatures And Beasts"
 }

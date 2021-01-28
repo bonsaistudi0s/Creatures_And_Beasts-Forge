@@ -28,29 +28,29 @@ public class ModEntityTypes
 
 	public static final RegistryObject<EntityType<CindershellEntity>> CINDERSHELL = ENTITY_TYPES.register("cindershell",
 			() -> EntityType.Builder.create(CindershellEntity::new, EntityClassification.CREATURE)
-					.size(1.4f, 1.7f)
+					.size(1.25f, 1.45f)
 					.immuneToFire()
 					.build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "cindershell").toString()));
 
 	public static final RegistryObject<EntityType<LilytadEntity>> LILYTAD = ENTITY_TYPES.register("lilytad",
 			() -> EntityType.Builder.create(LilytadEntity::new, EntityClassification.CREATURE)
-					.size(0.7f, 1f)
+					.size(0.7f, 0.7f)
 					.build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "lilytad").toString()));
 
 	public static final RegistryObject<EntityType<FriendlySporelingEntity>> FRIENDLY_SPORELING = ENTITY_TYPES.register("friendly_sporeling",
 			() -> EntityType.Builder.create(FriendlySporelingEntity::new, EntityClassification.CREATURE)
-					.size(0.52f, 0.67f)
+					.size(0.6f, 0.85f)
 					.build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "friendly_sporeling").toString()));
 
 	/* MONSTERS */
 	public static final RegistryObject<EntityType<HostileSporelingEntity>> HOSTILE_SPORELING = ENTITY_TYPES.register("hostile_sporeling",
 			() -> EntityType.Builder.create(HostileSporelingEntity::new, EntityClassification.MONSTER)
-					.size(0.52f, 0.67f)
+					.size(0.6f, 0.85f)
 					.build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "hostile_sporeling").toString()));
 
 	public static final RegistryObject<EntityType<NeutralSporelingEntity>> NEUTRAL_SPORELING = ENTITY_TYPES.register("neutral_sporeling",
 			() -> EntityType.Builder.create(NeutralSporelingEntity::new, EntityClassification.MONSTER)
-					.size(0.52f, 0.67f)
+					.size(0.6f, 0.85f)
 					.build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "neutral_sporeling").toString()));
 
 	public static final RegistryObject<EntityType<YetiEntity>> YETI = ENTITY_TYPES.register("yeti",

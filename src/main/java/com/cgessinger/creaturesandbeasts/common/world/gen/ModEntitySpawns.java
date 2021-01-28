@@ -58,12 +58,12 @@ public class ModEntitySpawns
 		if (types.contains(BiomeDictionary.Type.NETHER))
 		{
 			base.add(new Spawners(ModEntityTypes.CINDERSHELL.get(), 200, 1, 2));
-			event.getSpawns().getSpawner(EntityClassification.MONSTER).add(new Spawners(ModEntityTypes.HOSTILE_SPORELING.get(), 30, 3, 5));
-			event.getSpawns().getSpawner(EntityClassification.MONSTER).add(new Spawners(ModEntityTypes.NEUTRAL_SPORELING.get(), 30, 2, 4));
+			event.getSpawns().getSpawner(EntityClassification.MONSTER).add(new Spawners(ModEntityTypes.HOSTILE_SPORELING.get(), 10, 3, 5));
+			event.getSpawns().getSpawner(EntityClassification.MONSTER).add(new Spawners(ModEntityTypes.NEUTRAL_SPORELING.get(), 10, 2, 4));
 		}
 		if(types.contains(BiomeDictionary.Type.SNOWY))
 		{
-			base.add(new Spawners(ModEntityTypes.YETI.get(), 3, 2, 3));
+			base.add(new Spawners(ModEntityTypes.YETI.get(), 1, 2, 3));
 		}
 	}
 
