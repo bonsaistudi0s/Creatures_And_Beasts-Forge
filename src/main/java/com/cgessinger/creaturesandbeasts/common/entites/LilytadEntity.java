@@ -241,7 +241,7 @@ public class LilytadEntity extends AnimalEntity implements IForgeShearable, IAni
 	@Override
 	protected float getSoundVolume ()
 	{
-		return super.getSoundVolume() * 4;
+		return super.getSoundVolume();
 	}
 
 	@Nullable

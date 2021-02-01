@@ -53,13 +53,13 @@ public class ModEntitySpawns
 		if (types.contains(BiomeDictionary.Type.SWAMP))
 		{
 			base.add(new Spawners(ModEntityTypes.FRIENDLY_SPORELING.get(), 40, 3, 5));
-			base.add(new Spawners(ModEntityTypes.LILYTAD.get(), 70, 1, 1));
+			base.add(new Spawners(ModEntityTypes.LILYTAD.get(), 35, 1, 1));
 		}
 		if (types.contains(BiomeDictionary.Type.NETHER))
 		{
 			base.add(new Spawners(ModEntityTypes.CINDERSHELL.get(), 200, 1, 2));
-			event.getSpawns().getSpawner(EntityClassification.MONSTER).add(new Spawners(ModEntityTypes.HOSTILE_SPORELING.get(), 10, 3, 5));
-			event.getSpawns().getSpawner(EntityClassification.MONSTER).add(new Spawners(ModEntityTypes.NEUTRAL_SPORELING.get(), 10, 2, 4));
+			event.getSpawns().getSpawner(EntityClassification.MONSTER).add(new Spawners(ModEntityTypes.HOSTILE_SPORELING.get(), 5, 3, 5));
+			event.getSpawns().getSpawner(EntityClassification.MONSTER).add(new Spawners(ModEntityTypes.NEUTRAL_SPORELING.get(), 5, 2, 4));
 		}
 		if(types.contains(BiomeDictionary.Type.SNOWY))
 		{
@@ -67,7 +67,7 @@ public class ModEntitySpawns
 		}
 	}
 
-	public static void EntitySpawnPlacementRegistry ()
+	public static void entitySpawnPlacementRegistry ()
 	{
 		EntitySpawnPlacementRegistry.register(ModEntityTypes.CINDERSHELL.get(), EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, CindershellEntity::canCindershellSpawn);
 

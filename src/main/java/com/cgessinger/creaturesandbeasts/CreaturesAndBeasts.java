@@ -58,7 +58,7 @@ public class CreaturesAndBeasts
 		 * This registers the spawn placement settings we config for any mob that needs
 		 * it.
 		 */
-		ModEntitySpawns.EntitySpawnPlacementRegistry();
+		ModEntitySpawns.entitySpawnPlacementRegistry();
 	}
 
 	private void doClientStuff (final FMLClientSetupEvent event)

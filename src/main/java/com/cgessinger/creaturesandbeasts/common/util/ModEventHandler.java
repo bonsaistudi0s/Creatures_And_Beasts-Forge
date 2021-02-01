@@ -7,6 +7,7 @@ import com.google.common.collect.Multimap;
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.Item;
@@ -17,13 +18,13 @@ import net.minecraft.tileentity.JukeboxTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.stream.Stream;
 
 @Mod.EventBusSubscriber
 public class ModEventHandler {
@@ -47,12 +48,30 @@ public class ModEventHandler {
 	* (Needed for Netherite items to update attributes when upgraded in smithing table)
 	*/
 	@SubscribeEvent
-	public static void onItemTooltipEvent (ItemTooltipEvent event)
+	public static void onPlayerTick (TickEvent.PlayerTickEvent event)
 	{
-		ItemStack input = event.getItemStack();
+		if(event.player.world.isRemote())
+			return;
+
+		PlayerInventory inv = event.player.inventory;
+		Stream<ItemStack> playerItems = Stream.concat(inv.armorInventory.stream(), inv.mainInventory.stream());
+		Stream<ItemStack> conatinerItems = Stream.empty();
+		if(event.player.openContainer != null)
+			conatinerItems = event.player.openContainer.getInventory().stream();
+
+		Stream.concat(playerItems, conatinerItems).forEach(stack -> {
+			if(stack.getItem() instanceof ArmorItem)
+			{
+				checkAndUpdateItemArmor(stack);
+			}
+		});
+		
+	}
+
+	private static void checkAndUpdateItemArmor (ItemStack input)
+	{
 		if(input.hasTag() && input.getTag().contains("hide_amount"))
-		{
-			
+		{			
 			if(input.getTag().contains("AttributeModifiers", 9))
 				input.removeChildTag("AttributeModifiers");
 			
