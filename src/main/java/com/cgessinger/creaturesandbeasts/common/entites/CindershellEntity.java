@@ -1,5 +1,6 @@
 package com.cgessinger.creaturesandbeasts.common.entites;
 
+import com.cgessinger.creaturesandbeasts.common.config.CNBConfig;
 import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.AgeableEntity;
@@ -59,15 +60,10 @@ public class CindershellEntity extends AnimalEntity
 		return this.getHeight() * 0.2F;
 	}
 
-	/*
-	 * This sets what blocks it can't spawn on and for monsters set it to not spawn
-	 * in peaceful. You can always do light checks and time times here.
-	 */
-	public static boolean canCindershellSpawn(EntityType<CindershellEntity> p_234418_0_, IWorld p_234418_1_, SpawnReason p_234418_2_, BlockPos p_234418_3_, Random p_234418_4_) {
-		return !p_234418_1_.getBlockState(p_234418_3_.down()).isIn(Blocks.NETHERRACK) || !p_234418_1_.getBlockState(p_234418_3_.down()).isIn(Blocks.BASALT)
-				|| !p_234418_1_.getBlockState(p_234418_3_.down()).isIn(Blocks.WARPED_NYLIUM) || !p_234418_1_.getBlockState(p_234418_3_.down()).isIn(Blocks.CRIMSON_NYLIUM)
-				|| !p_234418_1_.getBlockState(p_234418_3_.down()).isIn(Blocks.SOUL_SOIL) || !p_234418_1_.getBlockState(p_234418_3_.down()).isIn(Blocks.SOUL_SAND);
-	   }
+	public static boolean canCindershellSpawn(EntityType<CindershellEntity> p_234418_0_, IWorld p_234418_1_, SpawnReason p_234418_2_, BlockPos p_234418_3_, Random p_234418_4_) 
+    {
+		return true;
+    }
 
 	@Nullable
 	@Override
@@ -117,4 +113,15 @@ public class CindershellEntity extends AnimalEntity
 	public boolean onLivingFall(float distance, float damageMultiplier) {
 		return false;
 	}
+    
+    @Override
+    public void checkDespawn() 
+    {
+        if(!CNBConfig.ServerConfig.CINDERSHELL_CONFIG.shouldExist)
+        {
+            this.remove();
+            return;
+        }
+        super.checkDespawn();
+    }
 }

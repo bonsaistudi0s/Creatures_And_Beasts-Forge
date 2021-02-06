@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import com.cgessinger.creaturesandbeasts.common.config.CNBConfig;
 import com.cgessinger.creaturesandbeasts.common.goals.GoToWaterGoal;
 import com.cgessinger.creaturesandbeasts.common.goals.MountAdultGoal;
 import com.cgessinger.creaturesandbeasts.common.goals.SmoothSwimGoal;
@@ -260,6 +261,17 @@ public class GrebeEntity extends AnimalEntity
 		}
 
 	}
+
+    @Override
+    public void checkDespawn() 
+    {
+        if(!CNBConfig.ServerConfig.GREBE_CONFIG.shouldExist)
+        {
+            this.remove();
+            return;
+        }
+        super.checkDespawn();
+    }
 
 	static class WanderGoal extends RandomWalkingGoal
 	{

@@ -1,71 +1,60 @@
 package com.cgessinger.creaturesandbeasts.common.world.gen;
 
-import java.util.List;
-import java.util.Set;
-
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
+import com.cgessinger.creaturesandbeasts.common.config.EntityConfig;
+import com.cgessinger.creaturesandbeasts.common.config.CNBConfig.ServerConfig;
 import com.cgessinger.creaturesandbeasts.common.entites.CindershellEntity;
 import com.cgessinger.creaturesandbeasts.common.entites.FriendlySporelingEntity;
 import com.cgessinger.creaturesandbeasts.common.entites.HostileSporelingEntity;
 import com.cgessinger.creaturesandbeasts.common.entites.NeutralSporelingEntity;
 import com.cgessinger.creaturesandbeasts.common.init.ModEntityTypes;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntitySpawnPlacementRegistry;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraft.world.biome.MobSpawnInfo.Spawners;
 import net.minecraft.world.gen.Heightmap;
-import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = CreaturesAndBeasts.MOD_ID)
-public class ModEntitySpawns
+public class ModEntitySpawns 
 {
-	@SubscribeEvent
+
+    @SubscribeEvent
 	public static void spawnEntities (BiomeLoadingEvent event)
 	{
-		RegistryKey<Biome> key = RegistryKey.getOrCreateKey(Registry.BIOME_KEY, event.getName());
-		Set<BiomeDictionary.Type> types = BiomeDictionary.getTypes(key);
+        String biomeName = event.getName().toString();
 
-		//Biome.Category category = event.getCategory();
-		List<Spawners> base = event.getSpawns().getSpawner(EntityClassification.CREATURE);
-		if (types.contains(BiomeDictionary.Type.RIVER))
-		{
-			base.add(new Spawners(ModEntityTypes.LITTLE_GREBE.get(), 30, 2, 3));
-		}
-		if (types.contains(BiomeDictionary.Type.SANDY) || types.contains(BiomeDictionary.Type.MESA) || types.contains(BiomeDictionary.Type.JUNGLE))
-		{
-			base.add(new Spawners(ModEntityTypes.LIZARD.get(), 50, 1, 4));
-		}
-		if (types.contains(BiomeDictionary.Type.MUSHROOM))
-		{
-			base.add(new Spawners(ModEntityTypes.FRIENDLY_SPORELING.get(), 40, 3, 5));
-		}
-		if (types.contains(BiomeDictionary.Type.SPOOKY))
-		{
-			base.add(new Spawners(ModEntityTypes.FRIENDLY_SPORELING.get(), 40, 3, 5));
-		}
-		if (types.contains(BiomeDictionary.Type.SWAMP))
-		{
-			base.add(new Spawners(ModEntityTypes.FRIENDLY_SPORELING.get(), 40, 3, 5));
-			base.add(new Spawners(ModEntityTypes.LILYTAD.get(), 35, 1, 1));
-		}
-		if (types.contains(BiomeDictionary.Type.NETHER))
-		{
-			base.add(new Spawners(ModEntityTypes.CINDERSHELL.get(), 200, 1, 2));
-			event.getSpawns().getSpawner(EntityClassification.MONSTER).add(new Spawners(ModEntityTypes.HOSTILE_SPORELING.get(), 5, 3, 5));
-			event.getSpawns().getSpawner(EntityClassification.MONSTER).add(new Spawners(ModEntityTypes.NEUTRAL_SPORELING.get(), 5, 2, 4));
-		}
-		if(types.contains(BiomeDictionary.Type.SNOWY))
-		{
-			base.add(new Spawners(ModEntityTypes.YETI.get(), 1, 2, 3));
-		}
+        checkAndAddSpawn(event, biomeName, ServerConfig.GREBE_CONFIG, ModEntityTypes.LITTLE_GREBE.get(), EntityClassification.CREATURE, 2, 3);
+
+        checkAndAddSpawn(event, biomeName, ServerConfig.LIZARD_CONFIG, ModEntityTypes.LIZARD.get(), EntityClassification.CREATURE, 1, 4);
+
+        checkAndAddSpawn(event, biomeName, ServerConfig.CINDERSHELL_CONFIG, ModEntityTypes.CINDERSHELL.get(), EntityClassification.MONSTER, 1, 2);
+
+        checkAndAddSpawn(event, biomeName, ServerConfig.FRIENDLY_SPORELING_CONFIG, ModEntityTypes.FRIENDLY_SPORELING.get(), EntityClassification.CREATURE, 3, 5);
+
+        checkAndAddSpawn(event, biomeName, ServerConfig.HOSTILE_SPORELING_CONFIG, ModEntityTypes.HOSTILE_SPORELING.get(), EntityClassification.MONSTER, 2, 4);
+
+        checkAndAddSpawn(event, biomeName, ServerConfig.NEUTRAL_SPORELING_CONFIG, ModEntityTypes.NEUTRAL_SPORELING.get(), EntityClassification.MONSTER, 2, 4);
+
+        checkAndAddSpawn(event, biomeName, ServerConfig.LILYTAD_CONFIG, ModEntityTypes.LILYTAD.get(), EntityClassification.CREATURE, 1, 1);
+
+        checkAndAddSpawn(event, biomeName, ServerConfig.YETI_CONFIG, ModEntityTypes.YETI.get(), EntityClassification.CREATURE, 2, 3);
 	}
+
+    private static void checkAndAddSpawn (BiomeLoadingEvent event, String biomeName, EntityConfig config, EntityType<? extends Entity> type, EntityClassification classification, int min, int max)
+    {
+        if(config.spawnBiomes.contains(biomeName))
+        {
+            MobSpawnInfo.Spawners spawnInfo = new Spawners(type, config.spawnRate, min, max);
+            event.getSpawns().getSpawner(classification).add(spawnInfo);
+        }
+    }
 
 	public static void entitySpawnPlacementRegistry ()
 	{

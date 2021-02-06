@@ -1,5 +1,6 @@
 package com.cgessinger.creaturesandbeasts.common.entites;
 
+import com.cgessinger.creaturesandbeasts.common.config.CNBConfig;
 import com.cgessinger.creaturesandbeasts.common.goals.TimedAttackGoal;
 import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
 import net.minecraft.entity.CreatureEntity;
@@ -81,9 +82,7 @@ public class NeutralSporelingEntity extends AbstractSporelingEntity
 
 	public static boolean canSporelingSpawn(EntityType<NeutralSporelingEntity> p_234418_0_, IWorld worldIn, SpawnReason p_234418_2_, BlockPos p_234418_3_, Random p_234418_4_)
 	{
-		Optional<RegistryKey<Biome>> optional = worldIn.func_241828_r().getRegistry(Registry.BIOME_KEY).getOptionalKey(worldIn.getBiome(p_234418_3_));
-
-		return worldIn.getDifficulty() != Difficulty.PEACEFUL && (optional.isPresent() && (optional.get() == Biomes.CRIMSON_FOREST || optional.get() == Biomes.WARPED_FOREST));
+		return worldIn.getDifficulty() != Difficulty.PEACEFUL;
 	}
 
 	@Nullable
@@ -106,4 +105,15 @@ public class NeutralSporelingEntity extends AbstractSporelingEntity
 	{
 		return ModSoundEventTypes.SPORELING_WARPED_HURT.get();
 	}
+
+    @Override
+    public void checkDespawn() 
+    {
+        if(!CNBConfig.ServerConfig.NEUTRAL_SPORELING_CONFIG.shouldExist)
+        {
+            this.remove();
+            return;
+        }
+        super.checkDespawn();
+    }
 }

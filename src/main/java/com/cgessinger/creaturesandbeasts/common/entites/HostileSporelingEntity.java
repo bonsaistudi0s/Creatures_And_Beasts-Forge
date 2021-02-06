@@ -1,5 +1,6 @@
 package com.cgessinger.creaturesandbeasts.common.entites;
 
+import com.cgessinger.creaturesandbeasts.common.config.CNBConfig;
 import com.cgessinger.creaturesandbeasts.common.goals.TimedAttackGoal;
 import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
 import net.minecraft.entity.*;
@@ -100,4 +101,15 @@ public class HostileSporelingEntity extends AbstractSporelingEntity implements I
 	{
 		return ModSoundEventTypes.SPORELING_NETHER_HURT.get();
 	}
+
+    @Override
+    public void checkDespawn() 
+    {
+        if(!CNBConfig.ServerConfig.HOSTILE_SPORELING_CONFIG.shouldExist)
+        {
+            this.remove();
+            return;
+        }
+        super.checkDespawn();
+    }
 }

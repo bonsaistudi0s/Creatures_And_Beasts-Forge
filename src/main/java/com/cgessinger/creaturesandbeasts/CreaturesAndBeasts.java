@@ -1,5 +1,6 @@
 package com.cgessinger.creaturesandbeasts;
 
+import com.cgessinger.creaturesandbeasts.common.config.CNBConfig;
 import com.cgessinger.creaturesandbeasts.common.entites.*;
 import com.cgessinger.creaturesandbeasts.common.init.ModBlockRegistry;
 import com.cgessinger.creaturesandbeasts.common.init.ModEntityTypes;
@@ -13,7 +14,9 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig.Type;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -26,6 +29,8 @@ public class CreaturesAndBeasts
 
 	public CreaturesAndBeasts ()
 	{
+		ModLoadingContext.get().registerConfig(Type.COMMON, CNBConfig.COMMON_SPEC);
+
 		IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
 		// Register the setup method for modloading

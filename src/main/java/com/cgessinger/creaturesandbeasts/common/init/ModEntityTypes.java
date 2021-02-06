@@ -27,7 +27,7 @@ public class ModEntityTypes
 					.build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "lizard").toString()));
 
 	public static final RegistryObject<EntityType<CindershellEntity>> CINDERSHELL = ENTITY_TYPES.register("cindershell",
-			() -> EntityType.Builder.create(CindershellEntity::new, EntityClassification.CREATURE)
+			() -> EntityType.Builder.create(CindershellEntity::new, EntityClassification.MONSTER)
 					.size(1.25f, 1.45f)
 					.immuneToFire()
 					.build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "cindershell").toString()));

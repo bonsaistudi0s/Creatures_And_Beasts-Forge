@@ -1,6 +1,7 @@
 package com.cgessinger.creaturesandbeasts.common.entites;
 
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
+import com.cgessinger.creaturesandbeasts.common.config.CNBConfig;
 import com.cgessinger.creaturesandbeasts.common.init.ModItems;
 import com.cgessinger.creaturesandbeasts.common.interfaces.IModNetable;
 import com.cgessinger.creaturesandbeasts.common.items.AppleSliceItem;
@@ -326,6 +327,17 @@ public class LizardEntity extends AnimalEntity implements IAnimatable, IModNetab
 	{
 		spawnParticles(ParticleTypes.HAPPY_VILLAGER);
 	}
+
+    @Override
+    public void checkDespawn() 
+    {
+        if(!CNBConfig.ServerConfig.LIZARD_CONFIG.shouldExist)
+        {
+            this.remove();
+            return;
+        }
+        super.checkDespawn();
+    }
 
 	public enum LizardType
 	{

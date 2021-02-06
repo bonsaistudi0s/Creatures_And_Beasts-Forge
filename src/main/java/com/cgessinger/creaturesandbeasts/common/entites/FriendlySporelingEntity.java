@@ -1,5 +1,6 @@
 package com.cgessinger.creaturesandbeasts.common.entites;
 
+import com.cgessinger.creaturesandbeasts.common.config.CNBConfig;
 import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
@@ -107,6 +108,17 @@ public class FriendlySporelingEntity extends AbstractSporelingEntity
 	{
 		return ModSoundEventTypes.SPORELING_OVERWORLD_AMBIENT.get();
 	}
+
+    @Override
+    public void checkDespawn() 
+    {
+        if(!CNBConfig.ServerConfig.FRIENDLY_SPORELING_CONFIG.shouldExist)
+        {
+            this.remove();
+            return;
+        }
+        super.checkDespawn();
+    }
 
 	static class WaveGoal extends LookAtGoal
 	{

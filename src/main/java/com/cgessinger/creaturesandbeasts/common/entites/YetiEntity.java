@@ -1,5 +1,6 @@
 package com.cgessinger.creaturesandbeasts.common.entites;
 
+import com.cgessinger.creaturesandbeasts.common.config.CNBConfig;
 import com.cgessinger.creaturesandbeasts.common.init.ModEntityTypes;
 import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
 import com.google.common.collect.HashMultimap;
@@ -261,6 +262,17 @@ public class YetiEntity extends AnimalEntity implements IAnimatable, IMob, IAnge
 	{
 		return this.isChild() ? null : ModSoundEventTypes.YETI_HURT.get();
 	}
+
+    @Override
+    public void checkDespawn() 
+    {
+        if(!CNBConfig.ServerConfig.YETI_CONFIG.shouldExist)
+        {
+            this.remove();
+            return;
+        }
+        super.checkDespawn();
+    }
 
 	class YetiAttackGoal extends Goal 
 	{
