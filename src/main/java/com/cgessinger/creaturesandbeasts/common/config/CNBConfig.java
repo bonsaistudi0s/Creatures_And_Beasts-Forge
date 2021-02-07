@@ -37,44 +37,44 @@ public class CNBConfig
         public static EntityConfig LILYTAD_CONFIG;
         public static EntityConfig YETI_CONFIG;
 
+        public static OtherConfig<Integer> HIDE_AMOUNT;
+        public static OtherConfig<Double> HIDE_MULTIPLIER;
+        public static OtherConfig<Integer> HIDE_COST;
+
         public ServerConfig(ForgeConfigSpec.Builder builder) 
         {
             builder.push(CreaturesAndBeasts.MOD_ID).comment("Creatures And Beasts common config");
             
-            GREBE_CONFIG = createConfigForEntity(builder, "grebe", true, 300, 
+            builder.push(CreaturesAndBeasts.MOD_ID + "_entity").comment("Creatures And Beasts Entity Config");
+            GREBE_CONFIG = EntityConfig.createConfigForEntity(builder, "grebe", true, 300, 
                 Lists.newArrayList("minecraft:frozen_river", "minecraft:river"));
-            LIZARD_CONFIG = createConfigForEntity(builder, "lizard", true, 50, 
+            LIZARD_CONFIG = EntityConfig.createConfigForEntity(builder, "lizard", true, 50, 
                 Lists.newArrayList("minecraft:badlands", "minecraft:wooded_badlands_plateau", "minecraft:badlands_plateau", "minecraft:desert", "minecraft:desert_hills", "minecraft:desert_lakes"));
-            CINDERSHELL_CONFIG = createConfigForEntity(builder, "cindershell", true, 10, 
+            CINDERSHELL_CONFIG = EntityConfig.createConfigForEntity(builder, "cindershell", true, 10, 
                 Lists.newArrayList("minecraft:soul_sand_valley", "minecraft:crimson_forest", "minecraft:warped_forest", "minecraft:basalt_deltas", "minecraft:nether_wastes"));
-            FRIENDLY_SPORELING_CONFIG = createConfigForEntity(builder, "friendly_sporeling", true, 40,
+            FRIENDLY_SPORELING_CONFIG = EntityConfig.createConfigForEntity(builder, "friendly_sporeling", true, 40,
                 Lists.newArrayList("minecraft:mushroom_fields", "minecraft:mushroom_field_shore", "minecraft:dark_forest", "minecraft:swamp", "minecraft:swamp_hills"));
-            HOSTILE_SPORELING_CONFIG = createConfigForEntity(builder, "hostile_sporeling", true, 10,
+            HOSTILE_SPORELING_CONFIG = EntityConfig.createConfigForEntity(builder, "hostile_sporeling", true, 10,
                 Lists.newArrayList("minecraft:soul_sand_valley", "minecraft:basalt_deltas", "minecraft:nether_wastes"));
-            NEUTRAL_SPORELING_CONFIG = createConfigForEntity(builder, "neutral_sporeling", true, 5,
+            NEUTRAL_SPORELING_CONFIG = EntityConfig.createConfigForEntity(builder, "neutral_sporeling", true, 5,
                 Lists.newArrayList("minecraft:crimson_forest", "minecraft:warped_forest"));
-            LILYTAD_CONFIG = createConfigForEntity(builder, "lilytad", true, 35, 
+            LILYTAD_CONFIG = EntityConfig.createConfigForEntity(builder, "lilytad", true, 35, 
                 Lists.newArrayList("minecraft:swamp", "minecraft:swamp_hills"));
-            YETI_CONFIG = createConfigForEntity(builder, "yeti", true, 1, 
+            YETI_CONFIG = EntityConfig.createConfigForEntity(builder, "yeti", true, 1, 
                 Lists.newArrayList("minecraft:snowy_tundra", "minecraft:snowy_mountains", "minecraft:snowy_taiga", "minecraft:snowy_taiga_hills", "minecraft:ice_spikes", "minecraft:snowy_taiga_mountains"));
 
             builder.pop();
+
+            builder.push(CreaturesAndBeasts.MOD_ID + "_other").comment("Creatures And Beasts Other Config");
+
+            HIDE_AMOUNT = OtherConfig.with(builder, "Define how often items can be reinforced with the yeti hide", "hide amount", 5);
+            HIDE_MULTIPLIER = OtherConfig.with(builder, "Define the yeti hide reinforcement multiplier. The armor attribute value will be multiplied with this value each time", "hide multiplier", 1.01D);
+            HIDE_COST = OtherConfig.with(builder, "Define amount of xp needed to upgrade armor with yeti hide", "hide cost", 1);
+
+            builder.pop();
+
+            builder.pop();
         }
-    }
-
-    public static EntityConfig createConfigForEntity(ForgeConfigSpec.Builder builder, String name, Boolean dfActive, int dfWeight, List<String> dfBiomes)
-    {
-        ForgeConfigSpec.ConfigValue<Boolean> active = builder.comment(
-                "This defines whether or not the " + name + "s should exist (default: " + dfActive + ", when changing this to false EVERY entity of this type will be deleted!)")
-                .translation("cnb.configgui." + name + "_active").define(name + " Active", dfActive);
-
-        ForgeConfigSpec.ConfigValue<Integer> spawnWeight = builder.comment("This defines the spawn rate of the " + name + "s (default: " + dfWeight + ")")
-                .translation("cnb.configgui." + name+ "_weight").define(name + " SpawnWeight", dfWeight);
-
-        ForgeConfigSpec.ConfigValue<List<? extends String>> biomes = builder.comment("This defines in which biome the " + name + "s will spawn")
-                .translation("cnb.configgui." + name + "_biomes").defineList(name + " Biomes", dfBiomes, o -> o instanceof String);
-
-        return new EntityConfig(active, spawnWeight, biomes);
     }
 
     public static void bakeConfig() 
@@ -87,6 +87,10 @@ public class CNBConfig
         ServerConfig.NEUTRAL_SPORELING_CONFIG.bake();
         ServerConfig.LILYTAD_CONFIG.bake();
         ServerConfig.YETI_CONFIG.bake();
+
+        ServerConfig.HIDE_AMOUNT.bake();
+        ServerConfig.HIDE_MULTIPLIER.bake();
+        ServerConfig.HIDE_COST.bake();
     }
 
     @SubscribeEvent

@@ -28,4 +28,19 @@ public class EntityConfig
         this.spawnRate = spawnWeight.get();
         this.spawnBiomes = biomes.get();
     }
+
+    public static EntityConfig createConfigForEntity(ForgeConfigSpec.Builder builder, String name, Boolean dfActive, int dfWeight, List<String> dfBiomes)
+    {
+        ForgeConfigSpec.ConfigValue<Boolean> active = builder.comment(
+                "This defines whether or not the " + name + "s should exist (default: " + dfActive + ", when changing this to false EVERY entity of this type will be deleted!)")
+                .translation("cnb.configgui." + name + "_active").define(name + " active", dfActive);
+
+        ForgeConfigSpec.ConfigValue<Integer> spawnWeight = builder.comment("This defines the spawn rate of the " + name + "s (default: " + dfWeight + ")")
+                .translation("cnb.configgui." + name+ "_weight").define(name + " spawn weight", dfWeight);
+
+        ForgeConfigSpec.ConfigValue<List<? extends String>> biomes = builder.comment("This defines which biomes the " + name + "s will spawn in")
+                .translation("cnb.configgui." + name + "_biomes").defineList(name + " biomes", dfBiomes, o -> o instanceof String);
+
+        return new EntityConfig(active, spawnWeight, biomes);
+    }
 }

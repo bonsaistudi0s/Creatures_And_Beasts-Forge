@@ -1,5 +1,7 @@
 package com.cgessinger.creaturesandbeasts.common.util;
 
+import com.cgessinger.creaturesandbeasts.common.config.CNBConfig;
+import com.cgessinger.creaturesandbeasts.common.config.CNBConfig.ServerConfig;
 import com.cgessinger.creaturesandbeasts.common.entites.LizardEntity;
 import com.cgessinger.creaturesandbeasts.common.init.ModItems;
 import com.google.common.collect.Multimap;
@@ -85,7 +87,7 @@ public class ModEventHandler {
 					AttributeModifier modifier = entry.getValue();
 					if(entry.getKey().equals(Attributes.ARMOR))
 					{
-						modifier = new AttributeModifier(modifier.getID(), modifier.getName(), modifier.getAmount() * Math.pow(1.01D, hideAmount), modifier.getOperation());
+						modifier = new AttributeModifier(modifier.getID(), modifier.getName(), modifier.getAmount() * Math.pow(ServerConfig.HIDE_MULTIPLIER.value, hideAmount), modifier.getOperation());
 					}
 					input.addAttributeModifier(entry.getKey(), modifier, slot);
 				}
@@ -127,12 +129,12 @@ public class ModEventHandler {
 			{
 				hideAmount += nbt.getInt("hide_amount");
 
-				if(hideAmount > 5)
+				if(hideAmount > ServerConfig.HIDE_AMOUNT.value)
 					return;
 			}
 			
 			nbt.putInt("hide_amount", hideAmount);
-			event.setCost(1);
+			event.setCost(ServerConfig.HIDE_COST.value);
 			event.setMaterialCost(1);
 			event.setOutput(output);
 		}
