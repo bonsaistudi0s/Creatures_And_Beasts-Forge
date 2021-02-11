@@ -1,6 +1,5 @@
 package com.cgessinger.creaturesandbeasts.common.util;
 
-import com.cgessinger.creaturesandbeasts.common.config.CNBConfig;
 import com.cgessinger.creaturesandbeasts.common.config.CNBConfig.ServerConfig;
 import com.cgessinger.creaturesandbeasts.common.entites.LizardEntity;
 import com.cgessinger.creaturesandbeasts.common.init.ModItems;

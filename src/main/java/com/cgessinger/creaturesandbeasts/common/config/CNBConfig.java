@@ -5,8 +5,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.config.ModConfig;
 
-import java.util.List;
-
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
 import com.google.common.collect.Lists;
 
@@ -36,6 +34,7 @@ public class CNBConfig
         public static EntityConfig NEUTRAL_SPORELING_CONFIG;
         public static EntityConfig LILYTAD_CONFIG;
         public static EntityConfig YETI_CONFIG;
+        public static OtherConfig<Float> YETI_PROP;
 
         public static OtherConfig<Integer> HIDE_AMOUNT;
         public static OtherConfig<Double> HIDE_MULTIPLIER;
@@ -46,7 +45,7 @@ public class CNBConfig
             builder.push(CreaturesAndBeasts.MOD_ID).comment("Creatures And Beasts common config");
             
             builder.push(CreaturesAndBeasts.MOD_ID + "_entity").comment("Creatures And Beasts Entity Config");
-            GREBE_CONFIG = EntityConfig.createConfigForEntity(builder, "grebe", true, 300, 
+            GREBE_CONFIG = EntityConfig.createConfigForEntity(builder, "grebe", true, 30, 
                 Lists.newArrayList("minecraft:frozen_river", "minecraft:river"));
             LIZARD_CONFIG = EntityConfig.createConfigForEntity(builder, "lizard", true, 50, 
                 Lists.newArrayList("minecraft:badlands", "minecraft:wooded_badlands_plateau", "minecraft:badlands_plateau", "minecraft:desert", "minecraft:desert_hills", "minecraft:desert_lakes"));
@@ -62,6 +61,9 @@ public class CNBConfig
                 Lists.newArrayList("minecraft:swamp", "minecraft:swamp_hills"));
             YETI_CONFIG = EntityConfig.createConfigForEntity(builder, "yeti", true, 1, 
                 Lists.newArrayList("minecraft:snowy_tundra", "minecraft:snowy_mountains", "minecraft:snowy_taiga", "minecraft:snowy_taiga_hills", "minecraft:ice_spikes", "minecraft:snowy_taiga_mountains"));
+            YETI_PROP = OtherConfig.withRange(builder, 
+                "Define extra chance to spawn yeti. Each time a yeti should spawn it checks random.nextFloat() >= value. Increase this value up to 1.0 to make yetis more rare",
+                "yeti chance", 0.7F, 0F, 1F, Float.class);
 
             builder.pop();
 
@@ -87,6 +89,7 @@ public class CNBConfig
         ServerConfig.NEUTRAL_SPORELING_CONFIG.bake();
         ServerConfig.LILYTAD_CONFIG.bake();
         ServerConfig.YETI_CONFIG.bake();
+        ServerConfig.YETI_PROP.bake();
 
         ServerConfig.HIDE_AMOUNT.bake();
         ServerConfig.HIDE_MULTIPLIER.bake();

@@ -22,4 +22,9 @@ public class OtherConfig<T>
     {
         return new OtherConfig<>(builder.comment(comment + " (default: " + value + ")").define(name, value));
     }
+
+    public static <E extends Comparable<? super E>> OtherConfig<E> withRange (ForgeConfigSpec.Builder builder, String comment, String name, E value, E min, E max, Class<E> type)
+    {
+        return new OtherConfig<>(builder.comment(comment + " (default: " + value + ")").defineInRange(name, value, min, max, type));
+    }
 }

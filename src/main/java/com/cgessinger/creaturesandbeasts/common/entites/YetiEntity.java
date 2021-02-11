@@ -1,8 +1,11 @@
 package com.cgessinger.creaturesandbeasts.common.entites;
 
 import com.cgessinger.creaturesandbeasts.common.config.CNBConfig;
+import com.cgessinger.creaturesandbeasts.common.config.CNBConfig.ServerConfig;
+import com.cgessinger.creaturesandbeasts.common.goals.TimedAttackGoal;
 import com.cgessinger.creaturesandbeasts.common.init.ModEntityTypes;
 import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
+import com.cgessinger.creaturesandbeasts.common.interfaces.ITimedAttackEntity;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
@@ -25,6 +28,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import software.bernie.geckolib3.core.IAnimatable;
@@ -36,15 +40,18 @@ import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 import javax.annotation.Nullable;
+
+import java.util.Random;
 import java.util.UUID;
 import java.util.function.Predicate;
 
-public class YetiEntity extends AnimalEntity implements IAnimatable, IMob, IAngerable
+public class YetiEntity extends AnimalEntity implements IAnimatable, IMob, IAngerable, ITimedAttackEntity
 {
 	private final AnimationFactory factory = new AnimationFactory(this);
 
 	private final UUID healthReductionUUID = UUID.fromString("189faad9-35de-4e15-a598-82d147b996d7");
 	private static final DataParameter<Boolean> ATTACKING = EntityDataManager.createKey(AbstractSporelingEntity.class, DataSerializers.BOOLEAN);
+	private static final DataParameter<Boolean> RAISING = EntityDataManager.createKey(AbstractSporelingEntity.class, DataSerializers.BOOLEAN);
 
 	private static final RangedInteger angerRandom = TickRangeConverter.convertRange(20, 39);
 	private int angerTime;
@@ -82,6 +89,7 @@ public class YetiEntity extends AnimalEntity implements IAnimatable, IMob, IAnge
 	{
 		super.registerData();
 		this.dataManager.register(ATTACKING, false);
+		this.dataManager.register(RAISING, false);
 	}
 
 	@Override
@@ -106,12 +114,12 @@ public class YetiEntity extends AnimalEntity implements IAnimatable, IMob, IAnge
 
 	private <E extends IAnimatable> PlayState animationPredicate (AnimationEvent<E> event)
 	{
-		if (this.isAggressive() && this.isAttacking())
+		if (this.isAttacking())
 		{
 			event.getController().setAnimation(new AnimationBuilder().addAnimation("yeti.attack", false));
 			return PlayState.CONTINUE;
 		}
-		else if (this.isAggressive())
+		else if (this.isRaising())
 		{
 			event.getController().setAnimation(new AnimationBuilder().addAnimation("yeti.aggro", false));
 			return PlayState.CONTINUE;
@@ -137,7 +145,7 @@ public class YetiEntity extends AnimalEntity implements IAnimatable, IMob, IAnge
 	{
 		super.registerGoals();
 		this.goalSelector.addGoal(1, new SwimGoal(this));
-		this.goalSelector.addGoal(2, new YetiEntity.YetiAttackGoal(this, 1.2F));
+		this.goalSelector.addGoal(3, new TimedAttackGoal<>(this, 1.2D, false, 60));
 		this.goalSelector.addGoal(3, new FollowParentGoal(this, 1.25D));
 		this.goalSelector.addGoal(4, new LookAtGoal(this, PlayerEntity.class, 12.0F));
 		this.goalSelector.addGoal(5, new LookRandomlyGoal(this));
@@ -160,17 +168,6 @@ public class YetiEntity extends AnimalEntity implements IAnimatable, IMob, IAnge
 		return this.factory;
 	}
 
-	@Override
-	public void livingTick() 
-	{
-		super.livingTick();
-		if(this.isAggressive())
-		{
-			this.navigator.clearPath();
-			this.getNavigator().setSpeed(0);
-		}
-	}
-
 	public void setAttacking(boolean attack)
 	{
 		this.dataManager.set(ATTACKING, attack);
@@ -179,6 +176,16 @@ public class YetiEntity extends AnimalEntity implements IAnimatable, IMob, IAnge
 	public boolean isAttacking ()
 	{
 		return this.dataManager.get(ATTACKING);
+	}
+
+    public void raise (boolean raise)
+    {
+		this.dataManager.set(RAISING, raise);
+    }
+
+    public boolean isRaising ()
+	{
+		return this.dataManager.get(RAISING);
 	}
 
 	public void executeAttack ()
@@ -274,49 +281,44 @@ public class YetiEntity extends AnimalEntity implements IAnimatable, IMob, IAnge
         super.checkDespawn();
     }
 
-	class YetiAttackGoal extends Goal 
-	{
-		public final YetiEntity yeti;
-		public final float speed;
-		private int attackTimer;
+    public static boolean canYetiSpawn(EntityType<? extends AnimalEntity> animal, IWorld worldIn, SpawnReason reason, BlockPos pos, Random random) 
+    {
+        return random.nextFloat() >= ServerConfig.YETI_PROP.value && AnimalEntity.canAnimalSpawn(animal, worldIn, reason, pos, random);
+    }
 
-		public YetiAttackGoal (YetiEntity yeti, float speedIn)
-		{
-			this.yeti = yeti;
-			this.speed = speedIn;
-		}
+    class YetiAttackGoal extends TimedAttackGoal<YetiEntity>
+    {
+        public YetiAttackGoal(YetiEntity attacker, double speedIn, boolean useLongMemory, int animationTime) 
+        {
+            super(attacker, speedIn, useLongMemory, animationTime);
+        }
+        
+        @Override
+        protected void checkAndPerformAttack(LivingEntity enemy, double distToEnemySqr) 
+        {
+            if(YetiEntity.this.world.getDifficulty() != Difficulty.PEACEFUL && func_234041_j_() <= 0)
+            {
+                double d0 = this.getAttackReachSqr(enemy);
+                if (distToEnemySqr <= d0 && YetiEntity.this.isRaising())
+                {
+                    this.func_234039_g_();
+                    YetiEntity.this.raise(false);
+                    YetiEntity.this.setAttacking(true);
+                    this.attacker.attackEntityAsMob(enemy);
+                } else if (distToEnemySqr <= d0 * 2)
+                {
+                    YetiEntity.this.raise(true);
+                }
+            }
+        }
 
-		@Override
-		public boolean shouldExecute() 
-		{
-			if(this.yeti.getAttackTarget() != null && !this.yeti.isChild() && this.yeti.getRNG().nextFloat() <= 0.70F)
-			{
-				this.yeti.getNavigator().setPath(this.yeti.getNavigator().getPathToEntity(this.yeti.getAttackTarget(), 0), this.speed);
-				return true;
-			}
-			return false;
-		}
-		
-		@Override
-		public void tick() 
-		{
-			if(this.attackTimer > 0)
-			{
-				this.attackTimer--;
-				if(this.attackTimer == 10)
-				{
-					this.yeti.executeAttack();
-				}
-
-				this.yeti.setAttacking(this.attackTimer <= 20 && this.attackTimer > 0);
-				this.yeti.setAggroed(this.attackTimer > 0);
-			}
-			else if (this.yeti.getBoundingBox().intersects(this.yeti.getAttackTarget().getBoundingBox().grow(0.7f)) && !this.yeti.isAggressive() && this.yeti.world.getDifficulty() != Difficulty.PEACEFUL)
-			{
-				this.attackTimer = 17;
-			}
-		}
-	}
+        @Override
+        public void resetTask() 
+        {
+            super.resetTask();
+            YetiEntity.this.raise(false);
+        }
+    }
 
 	class AttackPlayerGoal extends NearestAttackableTargetGoal<PlayerEntity>
 	{

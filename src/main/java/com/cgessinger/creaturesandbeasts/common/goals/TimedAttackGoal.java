@@ -8,38 +8,37 @@ import net.minecraft.world.Difficulty;
 
 public class TimedAttackGoal<E extends CreatureEntity & ITimedAttackEntity> extends MeleeAttackGoal
 {
-	private int attackTimer;
-	private final E attacker;
-	private final int animationTime;
+    protected int animationTime;
+    protected E entity;
 
 	public TimedAttackGoal (E attacker, double speedIn, boolean useLongMemory, int animationTime)
 	{
 		super(attacker, speedIn, useLongMemory);
-		this.attackTimer = 0;
-		this.attacker = attacker;
-		this.animationTime = animationTime;
-	}
-
-	@Override
-	public boolean shouldExecute ()
-	{
-		if (this.attackTimer > 0)
-		{
-			this.attacker.setAttacking(--this.attackTimer > 0);
-		}
-		return super.shouldExecute();
+        this.animationTime = animationTime;
+        this.entity = attacker;
 	}
 
 	@Override
 	protected void checkAndPerformAttack (LivingEntity enemy, double distToEnemySqr)
 	{
-		this.attacker.setAttacking(false);
 		double d0 = this.getAttackReachSqr(enemy);
-		if (this.attacker.world.getDifficulty() != Difficulty.PEACEFUL &&  distToEnemySqr <= d0 && func_234041_j_() <= 0 && this.attackTimer <= 0)
+		if (entity.world.getDifficulty() != Difficulty.PEACEFUL &&  distToEnemySqr <= d0 && func_234041_j_() <= 0)
 		{
-			this.attackTimer = this.animationTime;
-			this.attacker.setAttacking(this.attackTimer > 0);
-			super.checkAndPerformAttack(enemy, distToEnemySqr);
+            this.func_234039_g_();
+			entity.setAttacking(true);
+            this.attacker.attackEntityAsMob(enemy);
 		}
 	}
+
+    protected void func_234039_g_ () 
+    {
+        this.field_234037_i_ = animationTime;
+    }
+
+    @Override
+    public void resetTask() 
+    {
+        super.resetTask();
+		this.entity.setAttacking(false);
+    }
 }
