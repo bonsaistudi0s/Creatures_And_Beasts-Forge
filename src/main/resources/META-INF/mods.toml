@@ -12,7 +12,7 @@ logoFile="logo.png"
 credits="Thanks for this minecraft mod goes to the authors, Azure Doom, and everyone who contributed to the project"
 authors="Joosh, CGessinger"
 description='''
-This is a simple minecraft mod which adds tons of new creatures. It is designed to make minecraft feel more alive and enhance the survival experience!
+Creatures and Beasts is a vanilla-style creature mod which fills each biome with new mobs, from the oceans of the overworld to the void of the end
 '''
 [[dependencies.cnb]]
     modId="minecraft"

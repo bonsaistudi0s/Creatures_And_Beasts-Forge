@@ -19,7 +19,7 @@ apply plugin: 'com.matthewprenger.cursegradle'
 import groovy.json.JsonSlurper
 import groovy.json.JsonOutput
 
-version = '1.2.9.1'
+version = '1.2.10'
 group = 'com.cgessinger.creaturesandbeasts' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "CNB-1.16.3_4"
 
