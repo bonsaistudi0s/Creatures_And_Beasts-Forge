@@ -17,13 +17,14 @@ public class LizardRender extends GeoEntityRenderer<LizardEntity>
 {
 	public LizardRender (EntityRendererManager renderManagerIn)
 	{
-		super(renderManagerIn, new LizardModel<>());
+		super(renderManagerIn, new LizardModel());
 		this.shadowSize = 0.3F;
 	}
 
 	@Override
 	public void renderEarly (LizardEntity animatable, MatrixStack stackIn, float ticks, @Nullable IRenderTypeBuffer renderTypeBuffer, @Nullable IVertexBuilder vertexBuilder, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float partialTicks)
 	{
-		stackIn.scale(0.8F, 0.8F, 0.8F);
+        float scale = animatable.isChild() ? 0.4F : 0.8F;
+		stackIn.scale(scale, scale, scale);
 	}
 }

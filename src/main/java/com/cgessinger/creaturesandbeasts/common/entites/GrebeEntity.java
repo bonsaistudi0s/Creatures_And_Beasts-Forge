@@ -58,7 +58,7 @@ public class GrebeEntity extends AnimalEntity
 		this.setPathPriority(PathNodeType.WATER, 10.0F);
 	}
 
-	static public AttributeModifierMap.MutableAttribute setCustomAttributes ()
+	public static AttributeModifierMap.MutableAttribute setCustomAttributes ()
 	{
 		return MobEntity.func_233666_p_()
 				.createMutableAttribute(Attributes.MAX_HEALTH, 10.0D) // Max Health

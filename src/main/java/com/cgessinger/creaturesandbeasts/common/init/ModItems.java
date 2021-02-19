@@ -59,6 +59,7 @@ public class ModItems
 			() -> new ModSpawnEggItem(ModEntityTypes.NEUTRAL_SPORELING,0x9E1104, 0xF88539, new Item.Properties().group(CreaturesAndBeasts.TAB)).spawnsVariant(5));
 
 	public static final RegistryObject<AppleSliceItem> APPLE_SLICE = ITEMS.register("apple_slice", AppleSliceItem::new);
+	public static final RegistryObject<LizardEgg> LIZARD_EGG = ITEMS.register("lizard_egg", LizardEgg::new);
 	public static final RegistryObject<EntityNetItem> ENTITY_NET = ITEMS.register("entity_net", EntityNetItem::new);
 	public static final RegistryObject<CindershellShellShardItem> CINDERSHELL_SHELL_SHARD = ITEMS.register("cindershell_shell_shard", CindershellShellShardItem::new);
 	public static final RegistryObject<LilytadFlowerItem> LILYTAD_FLOWER = ITEMS.register("lilytad_flower", LilytadFlowerItem::new);

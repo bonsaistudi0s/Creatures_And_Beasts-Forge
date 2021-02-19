@@ -10,7 +10,7 @@ import software.bernie.geckolib3.model.provider.data.EntityModelData;
 
 import javax.annotation.Nullable;
 
-public class LizardModel<T extends LizardEntity> extends AnimatedGeoModel<LizardEntity>
+public class LizardModel extends AnimatedGeoModel<LizardEntity>
 {
 	public LizardModel ()
 	{

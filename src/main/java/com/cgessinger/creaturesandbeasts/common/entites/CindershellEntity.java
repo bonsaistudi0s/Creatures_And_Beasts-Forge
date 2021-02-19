@@ -2,7 +2,6 @@ package com.cgessinger.creaturesandbeasts.common.entites;
 
 import com.cgessinger.creaturesandbeasts.common.config.CNBConfig;
 import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MobEntity;
@@ -46,7 +45,7 @@ public class CindershellEntity extends AnimalEntity
 		this.goalSelector.addGoal(8, new LookRandomlyGoal(this));
 	}
 
-	static public AttributeModifierMap.MutableAttribute setCustomAttributes ()
+	public static AttributeModifierMap.MutableAttribute setCustomAttributes ()
 	{
 		return MobEntity.func_233666_p_()
 				.createMutableAttribute(Attributes.MAX_HEALTH, 80.0D)

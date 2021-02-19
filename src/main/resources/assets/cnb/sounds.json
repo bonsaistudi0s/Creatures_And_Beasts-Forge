@@ -1,238 +1,248 @@
 {
-  "entity.little_grebe_chick.ambient": {
-    "category": "entity",
-    "subtitle": "entity.little_grebe_chick.ambient",
-    "sounds": [
-      {
-        "name": "cnb:entity/little_grebe/entity.little_grebe_chick.ambient",
-        "stream": true
-      }
-    ]
-  },
-  "entity.little_grebe.ambient": {
-    "category": "entity",
-    "subtitle": "entity.little_grebe.ambient",
-    "sounds": [
-      {
-        "name": "cnb:entity/little_grebe/entity.little_grebe.ambient",
-        "stream": true
-      },
-      {
-        "name": "cnb:entity/little_grebe/entity.little_grebe.ambient_1",
-        "stream": true
-      }
-    ]
-  },
-  "entity.little_grebe.hurt": {
-    "category": "entity",
-    "subtitle": "entity.little_grebe.hurt",
-    "sounds": [
-      {
-        "name": "cnb:entity/little_grebe/entity.little_grebe.hurt",
-        "stream": true
-      }
-    ]
-  },
-  "entity.cindershell.ambient": {
-    "category": "entity",
-    "subtitle": "entity.cindershell.ambient",
-    "sounds": [
-      {
-        "name": "cnb:entity/cindershell/entity.cindershell.ambient",
-        "stream": true
-      },
-      {
-        "name": "cnb:entity/cindershell/entity.cindershell.ambient_1",
-        "stream": true
-      }
-    ]
-  },
-  "entity.cindershell.hurt": {
-    "category": "entity",
-    "subtitle": "entity.cindershell.hurt",
-    "sounds": [
-      {
-        "name": "cnb:entity/cindershell/entity.cindershell.hurt",
-        "stream": true
-      }
-    ]
-  },
-  "entity.sporeling_overworld.ambient": {
-    "category": "entity",
-    "subtitle": "entity.sporeling_overworld.ambient",
-    "sounds": [
-      {
-        "name": "cnb:entity/sporeling/entity.sporeling_overworld.ambient",
-        "stream": true
-      },
-      {
-        "name": "cnb:entity/sporeling/entity.sporeling_overworld.ambient_1",
-        "stream": true
-      }
-    ]
-  },
-  "entity.sporeling_overworld.hurt": {
-    "category": "entity",
-    "subtitle": "entity.sporeling_overworld.hurt",
-    "sounds": [
-      {
-        "name": "cnb:entity/sporeling/entity.sporeling_overworld.hurt",
-        "stream": true
-      },
-      {
-        "name": "cnb:entity/sporeling/entity.sporeling_overworld.hurt_1",
-        "stream": true
-      }
-    ]
-  },
-  "entity.sporeling_nether.ambient": {
-    "category": "entity",
-    "subtitle": "entity.sporeling_nether.ambient",
-    "sounds": [
-      {
-        "name": "cnb:entity/sporeling/entity.sporeling_nether.ambient",
-        "stream": true
-      },
-      {
-        "name": "cnb:entity/sporeling/entity.sporeling_nether.ambient_1",
-        "stream": true
-      }
-    ]
-  },
-  "entity.sporeling_nether.hurt": {
-    "category": "entity",
-    "subtitle": "entity.sporeling_nether.hurt",
-    "sounds": [
-      {
-        "name": "cnb:entity/sporeling/entity.sporeling_nether.hurt",
-        "stream": true
-      },
-      {
-        "name": "cnb:entity/sporeling/entity.sporeling_nether.hurt_1",
-        "stream": true
-      }
-    ]
-  },
-  "entity.sporeling_warped.ambient": {
-    "category": "entity",
-    "subtitle": "entity.sporeling_warped.ambient",
-    "sounds": [
-      {
-        "name": "cnb:entity/sporeling/entity.sporeling_warped.ambient",
-        "stream": true
-      },
-      {
-        "name": "cnb:entity/sporeling/entity.sporeling_warped.ambient_1",
-        "stream": true
-      }
-    ]
-  },
-  "entity.sporeling_warped.hurt": {
-    "category": "entity",
-    "subtitle": "entity.sporeling_warped.hurt",
-    "sounds": [
-      {
-        "name": "cnb:entity/sporeling/entity.sporeling_warped.hurt",
-        "stream": true
-      },
-      {
-        "name": "cnb:entity/sporeling/entity.sporeling_warped.hurt_1",
-        "stream": true
-      }
-    ]
-  },
-  "entity.sporeling.bite": {
-    "category": "entity",
-    "subtitle": "entity.sporeling.bite",
-    "sounds": [
-      {
-        "name": "cnb:entity/sporeling/entity.sporeling.bite",
-        "stream": true
-      }
-    ]
-  },
-  "entity.lilytad.ambient": {
-    "category": "entity",
-    "subtitle": "entity.lilytad.ambient",
-    "sounds": [
-      {
-        "name": "cnb:entity/lilytad/entity.lilytad.ambient",
-        "stream": true
-      },
-      {
-        "name": "cnb:entity/lilytad/entity.lilytad.ambient_1",
-        "stream": true
-      }
-    ]
-  },
-  "entity.lilytad.hurt": {
-    "category": "entity",
-    "subtitle": "entity.lilytad.hurt",
-    "sounds": [
-      {
-        "name": "cnb:entity/lilytad/entity.lilytad.hurt",
-        "stream": true
-      },
-      {
-        "name": "cnb:entity/lilytad/entity.lilytad.hurt_1",
-        "stream": true
-      }
-    ]
-  },
-  "entity.lilytad.death": {
-    "category": "entity",
-    "subtitle": "entity.lilytad.death",
-    "sounds": [
-      {
-        "name": "cnb:entity/lilytad/entity.lilytad.death",
-        "stream": true
-      }
-    ]
-  },
-  "entity.yeti.ambient": {
-    "category": "entity",
-    "subtitle": "entity.yeti.ambient",
-    "sounds": [
-      {
-        "name": "cnb:entity/yeti/entity.yeti.ambient",
-        "stream": true
-      },
-      {
-        "name": "cnb:entity/yeti/entity.yeti.ambient_1",
-        "stream": true
-      },
-      {
-        "name": "cnb:entity/yeti/entity.yeti.ambient_2",
-        "stream": true
-      }
-    ]
-  },
-  "entity.yeti.hurt": {
-    "category": "entity",
-    "subtitle": "entity.yeti.hurt",
-    "sounds": [
-      {
-        "name": "cnb:entity/yeti/entity.yeti.hurt",
-        "stream": true
-      },
-      {
-        "name": "cnb:entity/yeti/entity.yeti.hurt_1",
-        "stream": true
-      }
-    ]
-  },
-  "entity.yeti.step": {
-    "category": "entity",
-    "subtitle": "entity.yeti.step",
-    "sounds": [
-      {
-        "name": "cnb:entity/yeti/entity.yeti.step",
-        "stream": true
-      },
-      {
-        "name": "cnb:entity/yeti/entity.yeti.step_1",
-        "stream": true
-      }
-    ]
-  }
+    "entity.little_grebe_chick.ambient": {
+        "category": "entity",
+        "subtitle": "entity.little_grebe_chick.ambient",
+        "sounds": [
+            {
+                "name": "cnb:entity/little_grebe/entity.little_grebe_chick.ambient",
+                "stream": true
+            }
+        ]
+    },
+    "entity.little_grebe.ambient": {
+        "category": "entity",
+        "subtitle": "entity.little_grebe.ambient",
+        "sounds": [
+            {
+                "name": "cnb:entity/little_grebe/entity.little_grebe.ambient",
+                "stream": true
+            },
+            {
+                "name": "cnb:entity/little_grebe/entity.little_grebe.ambient_1",
+                "stream": true
+            }
+        ]
+    },
+    "entity.little_grebe.hurt": {
+        "category": "entity",
+        "subtitle": "entity.little_grebe.hurt",
+        "sounds": [
+            {
+                "name": "cnb:entity/little_grebe/entity.little_grebe.hurt",
+                "stream": true
+            }
+        ]
+    },
+    "entity.cindershell.ambient": {
+        "category": "entity",
+        "subtitle": "entity.cindershell.ambient",
+        "sounds": [
+            {
+                "name": "cnb:entity/cindershell/entity.cindershell.ambient",
+                "stream": true
+            },
+            {
+                "name": "cnb:entity/cindershell/entity.cindershell.ambient_1",
+                "stream": true
+            }
+        ]
+    },
+    "entity.cindershell.hurt": {
+        "category": "entity",
+        "subtitle": "entity.cindershell.hurt",
+        "sounds": [
+            {
+                "name": "cnb:entity/cindershell/entity.cindershell.hurt",
+                "stream": true
+            }
+        ]
+    },
+    "entity.sporeling_overworld.ambient": {
+        "category": "entity",
+        "subtitle": "entity.sporeling_overworld.ambient",
+        "sounds": [
+            {
+                "name": "cnb:entity/sporeling/entity.sporeling_overworld.ambient",
+                "stream": true
+            },
+            {
+                "name": "cnb:entity/sporeling/entity.sporeling_overworld.ambient_1",
+                "stream": true
+            }
+        ]
+    },
+    "entity.sporeling_overworld.hurt": {
+        "category": "entity",
+        "subtitle": "entity.sporeling_overworld.hurt",
+        "sounds": [
+            {
+                "name": "cnb:entity/sporeling/entity.sporeling_overworld.hurt",
+                "stream": true
+            },
+            {
+                "name": "cnb:entity/sporeling/entity.sporeling_overworld.hurt_1",
+                "stream": true
+            }
+        ]
+    },
+    "entity.sporeling_nether.ambient": {
+        "category": "entity",
+        "subtitle": "entity.sporeling_nether.ambient",
+        "sounds": [
+            {
+                "name": "cnb:entity/sporeling/entity.sporeling_nether.ambient",
+                "stream": true
+            },
+            {
+                "name": "cnb:entity/sporeling/entity.sporeling_nether.ambient_1",
+                "stream": true
+            }
+        ]
+    },
+    "entity.sporeling_nether.hurt": {
+        "category": "entity",
+        "subtitle": "entity.sporeling_nether.hurt",
+        "sounds": [
+            {
+                "name": "cnb:entity/sporeling/entity.sporeling_nether.hurt",
+                "stream": true
+            },
+            {
+                "name": "cnb:entity/sporeling/entity.sporeling_nether.hurt_1",
+                "stream": true
+            }
+        ]
+    },
+    "entity.sporeling_warped.ambient": {
+        "category": "entity",
+        "subtitle": "entity.sporeling_warped.ambient",
+        "sounds": [
+            {
+                "name": "cnb:entity/sporeling/entity.sporeling_warped.ambient",
+                "stream": true
+            },
+            {
+                "name": "cnb:entity/sporeling/entity.sporeling_warped.ambient_1",
+                "stream": true
+            }
+        ]
+    },
+    "entity.sporeling_warped.hurt": {
+        "category": "entity",
+        "subtitle": "entity.sporeling_warped.hurt",
+        "sounds": [
+            {
+                "name": "cnb:entity/sporeling/entity.sporeling_warped.hurt",
+                "stream": true
+            },
+            {
+                "name": "cnb:entity/sporeling/entity.sporeling_warped.hurt_1",
+                "stream": true
+            }
+        ]
+    },
+    "entity.sporeling.bite": {
+        "category": "entity",
+        "subtitle": "entity.sporeling.bite",
+        "sounds": [
+            {
+                "name": "cnb:entity/sporeling/entity.sporeling.bite",
+                "stream": true
+            }
+        ]
+    },
+    "entity.lilytad.ambient": {
+        "category": "entity",
+        "subtitle": "entity.lilytad.ambient",
+        "sounds": [
+            {
+                "name": "cnb:entity/lilytad/entity.lilytad.ambient",
+                "stream": true
+            },
+            {
+                "name": "cnb:entity/lilytad/entity.lilytad.ambient_1",
+                "stream": true
+            }
+        ]
+    },
+    "entity.lilytad.hurt": {
+        "category": "entity",
+        "subtitle": "entity.lilytad.hurt",
+        "sounds": [
+            {
+                "name": "cnb:entity/lilytad/entity.lilytad.hurt",
+                "stream": true
+            },
+            {
+                "name": "cnb:entity/lilytad/entity.lilytad.hurt_1",
+                "stream": true
+            }
+        ]
+    },
+    "entity.lilytad.death": {
+        "category": "entity",
+        "subtitle": "entity.lilytad.death",
+        "sounds": [
+            {
+                "name": "cnb:entity/lilytad/entity.lilytad.death",
+                "stream": true
+            }
+        ]
+    },
+    "entity.yeti.ambient": {
+        "category": "entity",
+        "subtitle": "entity.yeti.ambient",
+        "sounds": [
+            {
+                "name": "cnb:entity/yeti/entity.yeti.ambient",
+                "stream": true
+            },
+            {
+                "name": "cnb:entity/yeti/entity.yeti.ambient_1",
+                "stream": true
+            },
+            {
+                "name": "cnb:entity/yeti/entity.yeti.ambient_2",
+                "stream": true
+            }
+        ]
+    },
+    "entity.yeti.hurt": {
+        "category": "entity",
+        "subtitle": "entity.yeti.hurt",
+        "sounds": [
+            {
+                "name": "cnb:entity/yeti/entity.yeti.hurt",
+                "stream": true
+            },
+            {
+                "name": "cnb:entity/yeti/entity.yeti.hurt_1",
+                "stream": true
+            }
+        ]
+    },
+    "entity.yeti.step": {
+        "category": "entity",
+        "subtitle": "entity.yeti.step",
+        "sounds": [
+            {
+                "name": "cnb:entity/yeti/entity.yeti.step",
+                "stream": true
+            },
+            {
+                "name": "cnb:entity/yeti/entity.yeti.step_1",
+                "stream": true
+            }
+        ]
+    },
+    "entity.lizard.egg_hatch": {
+        "category": "block",
+        "subtitle": "entity.lizard.egg_hatch",
+        "sounds": [
+            {
+                "name": "cnb:entity/lizard/entity.lizard.egg_hatch",
+                "stream": true
+            }
+        ]
+    }
 }

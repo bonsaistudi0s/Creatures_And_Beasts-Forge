@@ -2,6 +2,8 @@ package com.cgessinger.creaturesandbeasts.common.init;
 
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
 import com.cgessinger.creaturesandbeasts.common.entites.*;
+import com.cgessinger.creaturesandbeasts.common.entites.projectiles.LizardEggEntity;
+
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.util.ResourceLocation;
@@ -59,4 +61,10 @@ public class ModEntityTypes
 			() -> EntityType.Builder.create(YetiEntity::new, EntityClassification.MONSTER)
 					.size(1.4f, 1.9f)
 					.build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "yeti").toString()));
+
+    /* PROJECTILES */
+    public static final RegistryObject<EntityType<LizardEggEntity>> LIZARD_EGG = ENTITY_TYPES.register("lizard_egg",
+			() -> EntityType.Builder.<LizardEggEntity>create(LizardEggEntity::new, EntityClassification.MISC)
+					.size(0.25f, 0.25f).trackingRange(4).func_233608_b_(10)
+					.build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "lizard_egg").toString()));
 }

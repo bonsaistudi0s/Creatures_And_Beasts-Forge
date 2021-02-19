@@ -2,8 +2,11 @@ package com.cgessinger.creaturesandbeasts.client;
 
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
 import com.cgessinger.creaturesandbeasts.client.render.*;
+import com.cgessinger.creaturesandbeasts.common.entites.projectiles.LizardEggEntity;
 import com.cgessinger.creaturesandbeasts.common.init.ModEntityTypes;
 import com.cgessinger.creaturesandbeasts.common.items.ModSpawnEggItem;
+
+import net.minecraft.client.renderer.entity.SpriteRenderer;
 import net.minecraft.entity.EntityType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.RegistryEvent;
@@ -26,6 +29,8 @@ public class ClientEventBusSubscriber
 		RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.HOSTILE_SPORELING.get(), SporelingRender::new);
 		RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.NEUTRAL_SPORELING.get(), SporelingRender::new);
 		RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.YETI.get(), YetiRender::new);
+		RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.LIZARD_EGG.get(), 
+            manager -> new SpriteRenderer<LizardEggEntity>(manager, event.getMinecraftSupplier().get().getItemRenderer()));
 	}
 
 	@SubscribeEvent
