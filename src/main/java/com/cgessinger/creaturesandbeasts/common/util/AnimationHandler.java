@@ -1,17 +1,16 @@
 package com.cgessinger.creaturesandbeasts.common.util;
 
-import software.bernie.geckolib3.core.IAnimatable;
-
 import java.util.Optional;
 
 import com.cgessinger.creaturesandbeasts.common.interfaces.IAnimationHolder;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.AnimalEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.world.server.ServerWorld;
 
-public class AnimationHandler <T extends Entity & IAnimatable & IAnimationHolder<T>>
+public class AnimationHandler <T extends Entity & IAnimationHolder<T>>
 {
     public final T entity;
     private final int animationLength;
@@ -83,12 +82,14 @@ public class AnimationHandler <T extends Entity & IAnimatable & IAnimationHolder
         public boolean isBreedData;
         public ServerWorld world;
         public AnimalEntity entity;
+        public ItemStack stack;
 
         public ExecutionData (DataBuilder builder)
         {
             this.isBreedData = builder.isBreedData;
             this.world = builder.world;
             this.entity = builder.entity;
+            this.stack = builder.stack;
         }
 
         public static DataBuilder create () 
@@ -107,6 +108,7 @@ public class AnimationHandler <T extends Entity & IAnimatable & IAnimationHolder
         private boolean isBreedData = false;
         private ServerWorld world;
         private AnimalEntity entity;
+        private ItemStack stack;
 
         public DataBuilder isBreed ()
         {
@@ -123,6 +125,12 @@ public class AnimationHandler <T extends Entity & IAnimatable & IAnimationHolder
         public DataBuilder withEntity (AnimalEntity entity)
         {
             this.entity = entity;
+            return this;
+        }
+
+        public DataBuilder withItemStack (ItemStack stack)
+        {
+            this.stack = stack;
             return this;
         }
 
