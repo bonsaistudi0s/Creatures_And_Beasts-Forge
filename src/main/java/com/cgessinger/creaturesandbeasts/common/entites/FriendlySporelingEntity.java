@@ -155,6 +155,7 @@ public class FriendlySporelingEntity
         {
             this.triggerItemPickupTrigger( itemEntity );
             this.setItemStackToSlot( EquipmentSlotType.MAINHAND, stack );
+            this.setHolding(stack);
             itemEntity.remove();
             this.animationHandler.startAnimation(ExecutionData.create().withItemStack(stack).build());
         }
@@ -163,7 +164,6 @@ public class FriendlySporelingEntity
     @Override
     public boolean canPickUpItem( ItemStack itemstackIn )
     {
-        System.out.println(this.hasItemInSlot(EquipmentSlotType.MAINHAND));
         if ( !this.hasItemInSlot(EquipmentSlotType.MAINHAND) )
         {
             if ( itemstackIn.isEnchanted() )
@@ -214,6 +214,7 @@ public class FriendlySporelingEntity
             }
 
             this.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
+            this.setHolding(ItemStack.EMPTY);
             this.entityDropItem(stack);
         }
     }

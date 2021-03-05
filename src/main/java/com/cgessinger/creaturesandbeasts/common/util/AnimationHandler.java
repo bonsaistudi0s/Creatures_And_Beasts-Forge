@@ -13,13 +13,13 @@ import net.minecraft.world.server.ServerWorld;
 public class AnimationHandler <T extends Entity & IAnimationHolder<T>>
 {
     public final T entity;
-    private final int animationLength;
-    private final int breakpoint;
-    private final int delay;
+    protected final int animationLength;
+    protected final int breakpoint;
+    protected final int delay;
     public Optional<ExecutionData> data;
     public DataParameter<Boolean> animating;
     
-    private int animateTimer;
+    protected int animateTimer;
 
     public AnimationHandler (T entity, int animationLength, int breakpoint, int delay, DataParameter<Boolean> parameter)
     {

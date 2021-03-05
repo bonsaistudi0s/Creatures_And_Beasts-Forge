@@ -10,6 +10,7 @@ import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.controller.BodyController;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
@@ -34,6 +35,7 @@ public abstract class AbstractSporelingEntity extends CreatureEntity implements 
 	private static final DataParameter<Integer> SPORELING_VARIANT = EntityDataManager.createKey(AbstractSporelingEntity.class, DataSerializers.VARINT);
 	private static final DataParameter<Boolean> ATTACKING = EntityDataManager.createKey(AbstractSporelingEntity.class, DataSerializers.BOOLEAN);
 	private static final DataParameter<Boolean> RUNNING = EntityDataManager.createKey(AbstractSporelingEntity.class, DataSerializers.BOOLEAN);
+    protected static final DataParameter<ItemStack> HOLDING = EntityDataManager.createKey( FriendlySporelingEntity.class, DataSerializers.ITEMSTACK );
 	protected int attackTimer;
 	private final AnimationFactory factory = new AnimationFactory(this);
 
@@ -43,6 +45,7 @@ public abstract class AbstractSporelingEntity extends CreatureEntity implements 
 		this.dataManager.register(SPORELING_VARIANT, 0);
 		this.dataManager.register(ATTACKING, false);
 		this.dataManager.register(RUNNING, false);
+		this.dataManager.register(HOLDING, ItemStack.EMPTY);
 		this.attackTimer = 0;
 	}
 
@@ -134,6 +137,16 @@ public abstract class AbstractSporelingEntity extends CreatureEntity implements 
 	public boolean isRunning ()
 	{
 		return this.dataManager.get(RUNNING);
+	}
+
+	public void setHolding (ItemStack stack)
+	{
+		this.dataManager.set(HOLDING, stack);
+	}
+
+	public ItemStack getHolding ()
+	{
+		return this.dataManager.get(HOLDING);
 	}
 
 	@Override
