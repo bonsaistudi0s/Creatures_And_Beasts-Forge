@@ -202,7 +202,8 @@ public class FriendlySporelingEntity
                         {
                             float percent = ( this.getRNG().nextFloat() * 0.8F ) + 0.1F;
                             int damage = (int) ( percent * stack.getMaxDamage() + stack.getDamage() );
-                            stack.setDamage(Math.min(damage, (int) ( stack.getMaxDamage() * 0.9F) ) );
+                            int setDamage = Math.min(damage, (int) ( stack.getMaxDamage() * 0.9F) );
+                            stack.setDamage(Math.max(stack.getDamage(), setDamage) );
                         }
                         EnchantmentHelper.setEnchantments(map, stack);
                         break;
