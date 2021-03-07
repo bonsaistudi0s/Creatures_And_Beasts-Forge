@@ -59,7 +59,7 @@ public class ModEntityTypes
 
 	public static final RegistryObject<EntityType<YetiEntity>> YETI = ENTITY_TYPES.register("yeti",
 			() -> EntityType.Builder.create(YetiEntity::new, EntityClassification.MONSTER)
-					.size(1.4f, 1.9f)
+					.size(1.55f, 2.05f)
 					.build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "yeti").toString()));
 
     /* PROJECTILES */

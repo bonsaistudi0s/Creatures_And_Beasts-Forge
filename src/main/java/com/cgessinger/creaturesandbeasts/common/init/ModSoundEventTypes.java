@@ -83,6 +83,10 @@ public class ModSoundEventTypes
 			new SoundEvent(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "entity.yeti.step"))
 	);
 
+    public static final RegistryObject<SoundEvent> YETI_HIT = SOUND_EVENTS.register("entity.yeti.hit", () ->
+			new SoundEvent(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "entity.yeti.hit"))
+	);
+
     public static final RegistryObject<SoundEvent> LIZARD_EGG_HATCH = SOUND_EVENTS.register("entity.lizard.egg_hatch", () ->
 			new SoundEvent(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "entity.lizard.egg_hatch"))
 	);

@@ -235,6 +235,16 @@
             }
         ]
     },
+    "entity.yeti.hit": {
+        "category": "entity",
+        "subtitle": "entity.yeti.hit",
+        "sounds": [
+            {
+                "name": "cnb:entity/yeti/entity.yeti.hit",
+                "stream": true
+            }
+        ]
+    },
     "entity.lizard.egg_hatch": {
         "category": "block",
         "subtitle": "entity.lizard.egg_hatch",

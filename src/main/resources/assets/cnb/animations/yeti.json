@@ -309,6 +309,16 @@
 						}
 					}
 				}
+			},
+            "sound_effects": {
+				"0.56": {
+					"effect": "hit.ground.sound"
+				}
+			},
+			"particle_effects": {
+				"0.56": {
+					"effect": "hit.ground.particle"
+				}
 			}
 		}
 	},

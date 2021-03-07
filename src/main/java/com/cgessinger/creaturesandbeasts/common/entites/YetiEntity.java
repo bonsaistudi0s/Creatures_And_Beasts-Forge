@@ -12,6 +12,9 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.*;
 import net.minecraft.entity.ai.goal.*;
@@ -34,6 +37,8 @@ import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
 import software.bernie.geckolib3.core.controller.AnimationController;
+import software.bernie.geckolib3.core.event.ParticleKeyFrameEvent;
+import software.bernie.geckolib3.core.event.SoundKeyframeEvent;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
@@ -61,7 +66,7 @@ public class YetiEntity
     public YetiEntity( EntityType<? extends AnimalEntity> type, World worldIn )
     {
         super( type, worldIn );
-        this.animationHandler = new AnimationHandler<>( this, 35, 12, 5, ANIMATING );
+        this.animationHandler = new AnimationHandler<>( this, 35, 17, 5, ANIMATING );
     }
 
     @Override
@@ -131,6 +136,27 @@ public class YetiEntity
         return PlayState.STOP;
     }
 
+    private <E extends IAnimatable> void soundListener (SoundKeyframeEvent<E> event) 
+    {
+		ClientPlayerEntity player = Minecraft.getInstance().player;
+		player.playSound(ModSoundEventTypes.YETI_HIT.get(), 0.4F, 1F);
+	}
+
+    private <E extends IAnimatable> void particleListener (ParticleKeyFrameEvent<E> event) 
+    {
+        ParticleManager manager = Minecraft.getInstance().particles;
+        BlockPos pos = this.getPosition();
+
+        for (int x = pos.getX()-1; x <= pos.getX()+1; x++)
+        {
+            for (int z = pos.getZ()-1; z <= pos.getZ()+1; z++)
+            {
+                BlockPos newPos = new BlockPos(x, pos.getY()-1, z);
+                manager.addBlockDestroyEffects(newPos, this.world.getBlockState(newPos));
+            }
+        }
+	}
+    
     @Nullable
     @Override
     public AgeableEntity func_241840_a( ServerWorld p_241840_1_, AgeableEntity p_241840_2_ )
@@ -155,8 +181,12 @@ public class YetiEntity
     @Override
     public void registerControllers( AnimationData animationData )
     {
-        animationData.addAnimationController( new AnimationController<>( this, "controller", 0,
-                                                                         this::animationPredicate ) );
+        AnimationController<YetiEntity> controller = new AnimationController<>(this, "controller", 0, this::animationPredicate);
+
+        controller.registerSoundListener(this::soundListener);
+        controller.registerParticleListener(this::particleListener);
+
+        animationData.addAnimationController(controller);
     }
 
     @Override
