@@ -6,10 +6,16 @@ import com.cgessinger.creaturesandbeasts.common.interfaces.IAnimationHolder;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.AnimalEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.world.server.ServerWorld;
-
+/*
+* I created this class to sync activities on server side and aniamtion via geckolib on client side. But this handler is also useful for non geckolib mobs and can be used with them.
+* To use it implement IAnimationHolder return a private instance of AnimationHandler in IAnimationHolder#getAnimationHandler and do whatever in IAnimationHolder#executeBreakpoint.
+* In addition do AnimationHandler#process in the LivingTick()
+*
+*/
 public class AnimationHandler <T extends Entity & IAnimationHolder<T>>
 {
     public final T entity;
@@ -83,6 +89,7 @@ public class AnimationHandler <T extends Entity & IAnimationHolder<T>>
         public ServerWorld world;
         public AnimalEntity entity;
         public ItemStack stack;
+        public PlayerEntity player;
 
         public ExecutionData (DataBuilder builder)
         {
@@ -90,6 +97,7 @@ public class AnimationHandler <T extends Entity & IAnimationHolder<T>>
             this.world = builder.world;
             this.entity = builder.entity;
             this.stack = builder.stack;
+            this.player = builder.player;
         }
 
         public static DataBuilder create () 
@@ -109,6 +117,7 @@ public class AnimationHandler <T extends Entity & IAnimationHolder<T>>
         private ServerWorld world;
         private AnimalEntity entity;
         private ItemStack stack;
+        public PlayerEntity player;
 
         public DataBuilder isBreed ()
         {
@@ -133,6 +142,13 @@ public class AnimationHandler <T extends Entity & IAnimationHolder<T>>
             this.stack = stack;
             return this;
         }
+
+        public DataBuilder withPlayer (PlayerEntity player)
+        {
+            this.player = player;
+            return this;
+        }
+
 
         public Optional<ExecutionData> build ()
         {

@@ -1,14 +1,14 @@
 package com.cgessinger.creaturesandbeasts.client.model;
 
-import com.cgessinger.creaturesandbeasts.common.entites.GrebeEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.entity.model.EntityModel;
+import net.minecraft.entity.AgeableEntity;
 
-public class AgeableModelProvider<T extends GrebeEntity> extends EntityModel<T>
+public class AgeableModelProvider<T extends AgeableEntity> extends EntityModel<T>
 {
-	private final EntityModel<T> childModel;
-	private final EntityModel<T> adultModel;
+	public final EntityModel<T> childModel;
+	public final EntityModel<T> adultModel;
 
 	public AgeableModelProvider (EntityModel<T> childModel, EntityModel<T> adultModel)
 	{

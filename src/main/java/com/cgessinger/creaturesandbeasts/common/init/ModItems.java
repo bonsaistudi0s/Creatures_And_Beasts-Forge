@@ -2,6 +2,8 @@ package com.cgessinger.creaturesandbeasts.common.init;
 
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
 import com.cgessinger.creaturesandbeasts.common.items.*;
+
+import net.minecraft.fluid.Fluids;
 import net.minecraft.item.Item;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
@@ -14,8 +16,11 @@ public class ModItems
 	public static RegistryObject<ModSpawnEggItem> GREBE_SPAWN_EGG = ITEMS.register("little_grebe_spawn_egg",
 			() -> new ModSpawnEggItem(ModEntityTypes.LITTLE_GREBE,0x00FFFFFF, 0x00FFFFFF, new Item.Properties().group(CreaturesAndBeasts.TAB)));
 
+    public static final RegistryObject<ModEntityBucket> CINDERSHELL_BUCKET = ITEMS.register("cindershell_bucket", 
+            () -> new ModEntityBucket(ModEntityTypes.CINDERSHELL, Fluids.LAVA, new Item.Properties().group(CreaturesAndBeasts.TAB)));
+
 	public static RegistryObject<ModSpawnEggItem> CINDERSHELL_SPAWN_EGG = ITEMS.register("cindershell_spawn_egg",
-			() -> new ModSpawnEggItem(ModEntityTypes.CINDERSHELL,0x0D0403, 0xC64500, new Item.Properties().group(CreaturesAndBeasts.TAB)));
+			() -> new ModSpawnEggItem(ModEntityTypes.CINDERSHELL, 0x0D0403, 0xC64500, new Item.Properties().group(CreaturesAndBeasts.TAB)));
 
 	public static RegistryObject<ModSpawnEggItem> LILYTAD_SPAWN_EGG = ITEMS.register("lilytad_spawn_egg",
 			() -> new ModSpawnEggItem(ModEntityTypes.LILYTAD,0x37702E, 0x102417, new Item.Properties().group(CreaturesAndBeasts.TAB)));

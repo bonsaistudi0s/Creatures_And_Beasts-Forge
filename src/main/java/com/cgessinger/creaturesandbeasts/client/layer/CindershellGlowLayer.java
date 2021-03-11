@@ -1,6 +1,8 @@
 package com.cgessinger.creaturesandbeasts.client.layer;
 
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
+import com.cgessinger.creaturesandbeasts.client.model.AgeableModelProvider;
+import com.cgessinger.creaturesandbeasts.client.model.BabyCindershellModel;
 import com.cgessinger.creaturesandbeasts.client.model.CindershellModel;
 import com.cgessinger.creaturesandbeasts.common.entites.CindershellEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -15,27 +17,29 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class CindershellGlowLayer extends LayerRenderer<CindershellEntity, CindershellModel<CindershellEntity>>
+public class CindershellGlowLayer extends LayerRenderer<CindershellEntity, AgeableModelProvider<CindershellEntity>>
 {
-	//idk why but with getEyes the glow effect also works in nether
-	private static final RenderType RENDER_TYPE = RenderType.getEyes(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "textures/model/entity/cindershell_glow.png"));
-	private final CindershellModel<CindershellEntity> cindershellModel;
+	private static final RenderType RENDER_TYPE = RenderType.getEyes(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "textures/model/entity/cindershell/cindershell_glow.png"));
+	private final AgeableModelProvider<CindershellEntity> cindershellModel;
 
-	public CindershellGlowLayer (IEntityRenderer<CindershellEntity, CindershellModel<CindershellEntity>> entityRendererIn)
+	public CindershellGlowLayer (IEntityRenderer<CindershellEntity, AgeableModelProvider<CindershellEntity>> entityRendererIn)
 	{
 		super(entityRendererIn);
-		this.cindershellModel = new CindershellModel<>();
+		this.cindershellModel = new AgeableModelProvider<>( new BabyCindershellModel(), new CindershellModel() );
 	}
 
 	@Override
 	public void render (MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, CindershellEntity entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch)
 	{
-		IVertexBuilder ivertexbuilder = bufferIn.getBuffer(RENDER_TYPE);
-		this.getEntityModel().render(matrixStackIn, ivertexbuilder, 15728640, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        if(!entitylivingbaseIn.isChild())
+        {
+            IVertexBuilder ivertexbuilder = bufferIn.getBuffer(RENDER_TYPE);
+            this.getEntityModel().adultModel.render(matrixStackIn, ivertexbuilder, 15728640, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        }
 	}
 
 	@Override
-	public CindershellModel<CindershellEntity> getEntityModel ()
+	public AgeableModelProvider<CindershellEntity> getEntityModel ()
 	{
 		return this.cindershellModel;
 	}

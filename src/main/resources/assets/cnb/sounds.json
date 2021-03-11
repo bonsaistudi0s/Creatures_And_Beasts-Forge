@@ -33,6 +33,16 @@
             }
         ]
     },
+    "entity.lizard.egg_hatch": {
+        "category": "block",
+        "subtitle": "entity.lizard.egg_hatch",
+        "sounds": [
+            {
+                "name": "cnb:entity/lizard/entity.lizard.egg_hatch",
+                "stream": true
+            }
+        ]
+    },
     "entity.cindershell.ambient": {
         "category": "entity",
         "subtitle": "entity.cindershell.ambient",
@@ -53,6 +63,26 @@
         "sounds": [
             {
                 "name": "cnb:entity/cindershell/entity.cindershell.hurt",
+                "stream": true
+            }
+        ]
+    },
+    "entity.cindershell_adult.eat": {
+        "category": "entity",
+        "subtitle": "entity.cindershell.eat",
+        "sounds": [
+            {
+                "name": "cnb:entity/cindershell/entity.cindershell_adult.eat",
+                "stream": true
+            }
+        ]
+    },
+    "entity.cindershell_baby.eat": {
+        "category": "entity",
+        "subtitle": "entity.cindershell.eat",
+        "sounds": [
+            {
+                "name": "cnb:entity/cindershell/entity.cindershell_baby.eat",
                 "stream": true
             }
         ]
@@ -241,16 +271,6 @@
         "sounds": [
             {
                 "name": "cnb:entity/yeti/entity.yeti.hit",
-                "stream": true
-            }
-        ]
-    },
-    "entity.lizard.egg_hatch": {
-        "category": "block",
-        "subtitle": "entity.lizard.egg_hatch",
-        "sounds": [
-            {
-                "name": "cnb:entity/lizard/entity.lizard.egg_hatch",
                 "stream": true
             }
         ]

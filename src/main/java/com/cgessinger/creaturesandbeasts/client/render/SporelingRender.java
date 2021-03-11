@@ -11,7 +11,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
@@ -64,17 +63,5 @@ public class SporelingRender<T extends AbstractSporelingEntity> extends GeoEntit
         }
 
         super.renderRecursively( bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha );
-    }
-
-    @Override
-    protected void applyRotations( T entityLiving, MatrixStack matrixStackIn, float ageInTicks, float rotationYaw,
-                                   float partialTicks )
-    {
-        super.applyRotations( entityLiving, matrixStackIn, ageInTicks, rotationYaw, partialTicks );
-
-        if(!entityLiving.getHolding().isEmpty())
-        {
-
-        }
     }
 }
