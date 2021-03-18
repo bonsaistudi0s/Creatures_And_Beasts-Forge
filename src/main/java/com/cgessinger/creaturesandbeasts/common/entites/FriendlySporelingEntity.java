@@ -105,7 +105,7 @@ public class FriendlySporelingEntity
     {
         if ( super.animationPredicate( event ) == PlayState.STOP )
         {
-            if ( this.dataManager.get( WAVE ) )
+            if ( this.dataManager.get( WAVE ) && this.getHolding() == ItemStack.EMPTY )
             {
                 event.getController().setAnimation( new AnimationBuilder().addAnimation( "sporeling.wave", false ) );
                 return PlayState.CONTINUE;
