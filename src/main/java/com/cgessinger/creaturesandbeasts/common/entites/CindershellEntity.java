@@ -57,7 +57,7 @@ public class CindershellEntity extends AnimalEntity implements IAnimationHolder<
 	public CindershellEntity (EntityType<? extends AnimalEntity> type, World worldIn)
 	{
 		super(type, worldIn);
-        this.animationHandler = new AnimationHandler<>( this, 40, 1, 0, EAT );
+        this.animationHandler = new AnimationHandler<>( "eat_controller", this, 40, 1, 0, EAT );
 	}
 
     @Override
@@ -267,7 +267,7 @@ public class CindershellEntity extends AnimalEntity implements IAnimationHolder<
     }
 
     @Override
-    public AnimationHandler<CindershellEntity> getAnimationHandler()
+    public AnimationHandler<CindershellEntity> getAnimationHandler (String name)
     {
         return this.animationHandler;
     }

@@ -53,7 +53,7 @@ public class FriendlySporelingEntity
     {
         super( type, worldIn );
         this.setCanPickUpLoot( true );
-        this.animationHandler = new AnimationHandler<>(this, 40, 1, 0, INSPECT);
+        this.animationHandler = new AnimationHandler<>("trade_controller", this, 40, 1, 0, INSPECT);
     }
 
     @Override
@@ -221,7 +221,7 @@ public class FriendlySporelingEntity
     }
 
     @Override
-    public AnimationHandler<FriendlySporelingEntity> getAnimationHandler()
+    public AnimationHandler<FriendlySporelingEntity> getAnimationHandler (String name)
     {
         return this.animationHandler;
     }

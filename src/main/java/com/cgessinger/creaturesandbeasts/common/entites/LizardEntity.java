@@ -93,7 +93,7 @@ public class LizardEntity
                 }
             }
         };
-        this.animationHandler = new AnimationHandler<>( this, 110, 1, 0, LAY_EGG );
+        this.animationHandler = new AnimationHandler<>( "breed_controller", this, 110, 1, 0, LAY_EGG );
     }
 
     @Override
@@ -412,7 +412,7 @@ public class LizardEntity
     }
 
     @Override
-    public AnimationHandler<LizardEntity> getAnimationHandler()
+    public AnimationHandler<LizardEntity> getAnimationHandler (String name)
     {
         return this.animationHandler;
     }

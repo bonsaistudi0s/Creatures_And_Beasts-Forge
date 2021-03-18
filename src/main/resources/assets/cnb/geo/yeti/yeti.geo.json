@@ -251,6 +251,11 @@
 					]
 				},
 				{
+					"name": "itemHolder",
+					"parent": "RightArm",
+					"pivot": [-12, 27.4883, 2.8098]
+				},
+				{
 					"name": "LeftArm",
 					"parent": "Body3",
 					"pivot": [12, 37.4883, 2.8098],

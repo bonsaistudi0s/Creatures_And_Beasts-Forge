@@ -31,7 +31,7 @@ public class AnimatedBreedGoal<E extends AnimalEntity & IAnimatable & IAnimation
     @Override
     public boolean shouldExecute()
     {
-        return this.entity.getAnimationHandler().canStart() && super.shouldExecute();
+        return this.entity.getAnimationHandler("breed_controller").canStart() && super.shouldExecute();
     }
 
     @Override
@@ -51,7 +51,7 @@ public class AnimatedBreedGoal<E extends AnimalEntity & IAnimatable & IAnimation
         }
 
         
-        this.entity.getAnimationHandler().startAnimation( ExecutionData.create().isBreed().withWorld( (ServerWorld) this.world ).withEntity( this.targetMate ).build() );
+        this.entity.getAnimationHandler("breed_controller").startAnimation( ExecutionData.create().isBreed().withWorld( (ServerWorld) this.world ).withEntity( this.targetMate ).build() );
         this.entity.setGrowingAge(6000);
         this.targetMate.setGrowingAge(6000);
         this.entity.resetInLove();

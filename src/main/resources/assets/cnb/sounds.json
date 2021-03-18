@@ -274,5 +274,25 @@
                 "stream": true
             }
         ]
+    },
+    "entity.yeti_adult.eat": {
+        "category": "entity",
+        "subtitle": "entity.yeti_adult.eat",
+        "sounds": [
+            {
+                "name": "cnb:entity/yeti/entity.yeti_adult.eat",
+                "stream": true
+            }
+        ]
+    },
+    "entity.yeti_baby.eat": {
+        "category": "entity",
+        "subtitle": "entity.yeti_baby.eat",
+        "sounds": [
+            {
+                "name": "cnb:entity/yeti/entity.yeti_baby.eat",
+                "stream": true
+            }
+        ]
     }
 }

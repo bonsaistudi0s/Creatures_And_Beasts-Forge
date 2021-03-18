@@ -7,14 +7,14 @@ import com.cgessinger.creaturesandbeasts.common.util.AnimationHandler.ExecutionD
 
 import net.minecraft.entity.Entity;
 
-public interface IAnimationHolder <T extends Entity & IAnimationHolder<T>>
+public interface IAnimationHolder<T extends Entity & IAnimationHolder<T>>
 {
-    void executeBreakpoint(Optional<ExecutionData> data);
+    void executeBreakpoint( Optional<ExecutionData> data );
 
-    default Optional<ExecutionData> onAnimationInit(Optional<ExecutionData> data)
+    default Optional<ExecutionData> onAnimationInit( Optional<ExecutionData> data )
     {
         return data;
     }
 
-    AnimationHandler<T> getAnimationHandler();
+    AnimationHandler<T> getAnimationHandler( String name );
 }

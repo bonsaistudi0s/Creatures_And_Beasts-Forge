@@ -29,9 +29,9 @@ public class AnimatedAttackGoal<E extends CreatureEntity & IAnimatable & IAnimat
     {
         double d0 = this.getAttackReachSqr(enemy);
         boolean isInWater = this.entity.world.getFluidState(this.entity.getPosition().down()).isSource();
-        if (!isInWater && this.entity.world.getDifficulty() != Difficulty.PEACEFUL &&  distToEnemySqr <= d0 && func_234041_j_() <= 0 && this.entity.getAnimationHandler().canStart())
+        if (!isInWater && this.entity.world.getDifficulty() != Difficulty.PEACEFUL &&  distToEnemySqr <= d0 && func_234041_j_() <= 0 && this.entity.getAnimationHandler("attack_controller").canStart())
         {
-            this.entity.getAnimationHandler().startAnimation();
+            this.entity.getAnimationHandler("attack_controller").startAnimation();
             this.func_234039_g_();
         }            
     }

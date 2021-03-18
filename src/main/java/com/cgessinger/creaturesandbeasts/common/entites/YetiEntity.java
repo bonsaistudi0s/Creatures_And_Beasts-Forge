@@ -21,11 +21,17 @@ import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.particles.IParticleData;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.DifficultyInstance;
@@ -45,6 +51,7 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 import javax.annotation.Nullable;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
@@ -58,15 +65,26 @@ public class YetiEntity
 
     private final UUID healthReductionUUID = UUID.fromString( "189faad9-35de-4e15-a598-82d147b996d7" );
 
-    public static final DataParameter<Boolean> ANIMATING =
+    public static final DataParameter<Boolean> ATTACKING =
         EntityDataManager.createKey( YetiEntity.class, DataSerializers.BOOLEAN );
 
-    public AnimationHandler<YetiEntity> animationHandler;
+    public static final DataParameter<Boolean> EAT =
+        EntityDataManager.createKey( YetiEntity.class, DataSerializers.BOOLEAN );
+
+    public static final DataParameter<ItemStack> HOLDING =
+        EntityDataManager.createKey( YetiEntity.class, DataSerializers.ITEMSTACK );
+
+    public AnimationHandler<YetiEntity> attackHandler;
+
+    public AnimationHandler<YetiEntity> eatHandler;
+
+    public boolean isPassive;
 
     public YetiEntity( EntityType<? extends AnimalEntity> type, World worldIn )
     {
         super( type, worldIn );
-        this.animationHandler = new AnimationHandler<>( this, 35, 17, 5, ANIMATING );
+        this.attackHandler = new AnimationHandler<>( "attack_controller", this, 35, 17, 5, ATTACKING );
+        this.eatHandler = new AnimationHandler<>( "breed_controller", this, 30, 1, 20, EAT );
     }
 
     @Override
@@ -84,18 +102,21 @@ public class YetiEntity
 
     public static AttributeModifierMap.MutableAttribute setCustomAttributes()
     {
-        return MobEntity.func_233666_p_().createMutableAttribute( Attributes.MAX_HEALTH, 80.0D )
-        .createMutableAttribute( Attributes.MOVEMENT_SPEED,0.3D )
-        .createMutableAttribute( Attributes.ATTACK_DAMAGE, 16.0D )
-        .createMutableAttribute( Attributes.ATTACK_SPEED, 0.1D )
-        .createMutableAttribute( Attributes.KNOCKBACK_RESISTANCE, 0.7D );
+        return MobEntity.func_233666_p_().createMutableAttribute( Attributes.MAX_HEALTH,
+                                                                  80.0D ).createMutableAttribute( Attributes.MOVEMENT_SPEED,
+                                                                                                  0.3D ).createMutableAttribute( Attributes.ATTACK_DAMAGE,
+                                                                                                                                 16.0D ).createMutableAttribute( Attributes.ATTACK_SPEED,
+                                                                                                                                                                 0.1D ).createMutableAttribute( Attributes.KNOCKBACK_RESISTANCE,
+                                                                                                                                                                                                0.7D );
     }
 
     @Override
     protected void registerData()
     {
         super.registerData();
-        this.dataManager.register( ANIMATING, false );
+        this.dataManager.register( ATTACKING, false );
+        this.dataManager.register( EAT, false );
+        this.dataManager.register( HOLDING, ItemStack.EMPTY );
     }
 
     @Override
@@ -118,11 +139,36 @@ public class YetiEntity
     {
         this.getAttribute( Attributes.MAX_HEALTH ).removeModifier( this.healthReductionUUID );
         this.setHealth( 80.0F );
+        this.isPassive = false;
+    }
+
+    @Override
+    public void writeAdditional( CompoundNBT compound )
+    {
+        super.writeAdditional( compound );
+        compound.putBoolean( "passive", this.isPassive );
+    }
+
+    @Override
+    public void readAdditional( CompoundNBT compound )
+    {
+        super.readAdditional( compound );
+
+        if ( compound.contains( "passive" ) )
+        {
+            this.isPassive = compound.getBoolean( "passive" );
+        }
     }
 
     private <E extends IAnimatable> PlayState animationPredicate( AnimationEvent<E> event )
     {
-        if ( this.dataManager.get( ANIMATING ) )
+        if ( this.dataManager.get( EAT ) )
+        {
+            event.getController().setAnimation( new AnimationBuilder().addAnimation( this.isChild() ? "yeti_baby.eat"
+                            : "yeti_adult.eat", false ) );
+            return PlayState.CONTINUE;
+        }
+        else if ( this.dataManager.get( ATTACKING ) )
         {
             event.getController().setAnimation( new AnimationBuilder().addAnimation( "yeti.attack", false ) );
             return PlayState.CONTINUE;
@@ -136,27 +182,34 @@ public class YetiEntity
         return PlayState.STOP;
     }
 
-    private <E extends IAnimatable> void soundListener (SoundKeyframeEvent<E> event) 
+    private <E extends IAnimatable> void soundListener( SoundKeyframeEvent<E> event )
     {
-		ClientPlayerEntity player = Minecraft.getInstance().player;
-		player.playSound(ModSoundEventTypes.YETI_HIT.get(), 0.4F, 1F);
-	}
+        ClientPlayerEntity player = Minecraft.getInstance().player;
+        player.playSound( ModSoundEventTypes.YETI_HIT.get(), 0.4F, 1F );
+    }
 
-    private <E extends IAnimatable> void particleListener (ParticleKeyFrameEvent<E> event) 
+    private <E extends IAnimatable> void particleListener( ParticleKeyFrameEvent<E> event )
     {
         ParticleManager manager = Minecraft.getInstance().particles;
         BlockPos pos = this.getPosition();
 
-        for (int x = pos.getX()-1; x <= pos.getX()+1; x++)
+        if ( "hit.ground.particle".equals( event.effect ) )
         {
-            for (int z = pos.getZ()-1; z <= pos.getZ()+1; z++)
+            for ( int x = pos.getX() - 1; x <= pos.getX() + 1; x++ )
             {
-                BlockPos newPos = new BlockPos(x, pos.getY()-1, z);
-                manager.addBlockDestroyEffects(newPos, this.world.getBlockState(newPos));
+                for ( int z = pos.getZ() - 1; z <= pos.getZ() + 1; z++ )
+                {
+                    BlockPos newPos = new BlockPos( x, pos.getY() - 1, z );
+                    manager.addBlockDestroyEffects( newPos, this.world.getBlockState( newPos ) );
+                }
             }
         }
-	}
-    
+        else if ( "eat.particle".equals( event.effect ) )
+        {
+            spawnParticles( ParticleTypes.HAPPY_VILLAGER );
+        }
+    }
+
     @Nullable
     @Override
     public AgeableEntity func_241840_a( ServerWorld p_241840_1_, AgeableEntity p_241840_2_ )
@@ -169,11 +222,25 @@ public class YetiEntity
     {
         super.registerGoals();
         this.goalSelector.addGoal( 1, new SwimGoal( this ) );
-        this.goalSelector.addGoal( 2, new AnimatedAttackGoal<YetiEntity>( this, 1.2D, true ) );
+        this.goalSelector.addGoal( 1, new BreedGoal( this, 1.0D ) );
+        this.goalSelector.addGoal( 2, new AnimatedAttackGoal<YetiEntity>( this, 1.2D, true )
+        {
+            @Override
+            public boolean shouldContinueExecuting()
+            {
+                return super.shouldContinueExecuting() && !( (YetiEntity) this.attacker ).isPassive;
+            }
+
+            @Override
+            public boolean shouldExecute()
+            {
+                return super.shouldExecute() && !( (YetiEntity) this.attacker ).isPassive;
+            }
+        } );
         this.goalSelector.addGoal( 3, new FollowParentGoal( this, 1.25D ) );
         this.goalSelector.addGoal( 4, new LookAtGoal( this, PlayerEntity.class, 12.0F ) );
         this.goalSelector.addGoal( 5, new LookRandomlyGoal( this ) );
-        this.goalSelector.addGoal( 6, new WaterAvoidingRandomWalkingGoal( this, 1.0D, 60 ) );
+        this.goalSelector.addGoal( 6, new WaterAvoidingRandomWalkingGoal( this, 1.0D, 0.01F ) );
         this.targetSelector.addGoal( 1, new HurtByTargetGoal( this ) );
         this.targetSelector.addGoal( 2, new YetiEntity.AttackPlayerGoal() );
     }
@@ -181,18 +248,29 @@ public class YetiEntity
     @Override
     public void registerControllers( AnimationData animationData )
     {
-        AnimationController<YetiEntity> controller = new AnimationController<>(this, "controller", 0, this::animationPredicate);
+        AnimationController<YetiEntity> controller =
+            new AnimationController<>( this, "controller", 0, this::animationPredicate );
 
-        controller.registerSoundListener(this::soundListener);
-        controller.registerParticleListener(this::particleListener);
+        controller.registerSoundListener( this::soundListener );
+        controller.registerParticleListener( this::particleListener );
 
-        animationData.addAnimationController(controller);
+        animationData.addAnimationController( controller );
+    }
+
+    public boolean isEating()
+    {
+        return this.dataManager.get( EAT );
     }
 
     @Override
-    public AnimationHandler<YetiEntity> getAnimationHandler()
+    public AnimationHandler<YetiEntity> getAnimationHandler( String name )
     {
-        return this.animationHandler;
+        if ( name.equals( "attack_controller" ) )
+        {
+            return this.attackHandler;
+        }
+
+        return this.eatHandler;
     }
 
     @Override
@@ -200,7 +278,13 @@ public class YetiEntity
     {
         super.livingTick();
 
-        this.animationHandler.process();
+        if ( this.dataManager.get( EAT ) )
+        {
+            this.navigator.clearPath();
+        }
+
+        this.attackHandler.process();
+        this.eatHandler.process();
     }
 
     @Override
@@ -231,13 +315,119 @@ public class YetiEntity
     @Override
     public void executeBreakpoint( Optional<ExecutionData> data )
     {
-        this.executeAttack();
+        if ( data.isPresent() )
+        {
+            ExecutionData execData = data.get();
+            if ( execData.name.equals( this.attackHandler.name ) )
+            {
+                this.executeAttack();
+            }
+            else if ( execData.name.equals( this.eatHandler.name ) )
+            {
+                if ( this.isChild() )
+                {
+                    this.ageUp( (int) ( -this.getGrowingAge() / 20F * 0.1F ), true );
+                }
+                else if ( this.getHolding().getItem() == Items.SWEET_BERRIES )
+                {
+                    this.setInLove( execData.player );
+                }
+                else
+                {
+                    this.setAttackTarget( null );
+                    this.isPassive = true;
+                }
+                this.setHolding( ItemStack.EMPTY );
+            }
+        }
+    }
+
+    public void setHolding( ItemStack stack )
+    {
+        this.dataManager.set( HOLDING, stack );
+    }
+
+    public ItemStack getHolding()
+    {
+        return this.dataManager.get( HOLDING );
+    }
+
+    public ActionResultType tryStartEat( PlayerEntity player, ItemStack stack )
+    {
+        if ( stack.getItem() == Items.SWEET_BERRIES
+                        || stack.getItem() == Items.MELON_SLICE && this.eatHandler.canStart() )
+        {
+
+            if ( this.world.isRemote )
+                return ActionResultType.CONSUME;
+
+            if ( ( !this.world.isRemote && this.getGrowingAge() == 0 && this.canFallInLove() ) || this.isChild()
+                            || stack.getItem() == Items.MELON_SLICE )
+            {
+                this.setHolding( stack );
+                this.consumeItemFromStack( player, stack );
+                this.eatHandler.startAnimation( ExecutionData.create().withPlayer( player ).build() );
+                SoundEvent sound =
+                    this.isChild() ? ModSoundEventTypes.YETI_BABY_EAT.get() : ModSoundEventTypes.YETI_ADULT_EAT.get();
+                this.playSound( sound, 1.1F, 1F );
+                return ActionResultType.SUCCESS;
+            }
+        }
+        return ActionResultType.PASS;
+    }
+
+    @Override
+    public ActionResultType func_230254_b_( PlayerEntity player, Hand hand ) // on right click
+    {
+        super.func_230254_b_( player, hand );
+
+        ItemStack item = player.getHeldItem( hand );
+        return this.tryStartEat( player, item );
+    }
+
+    @Override
+    public boolean isBreedingItem( ItemStack stack )
+    {
+        return false;
+    }
+
+    public void spawnParticles( IParticleData data )
+    {
+        for ( int i = 0; i < 7; ++i )
+        {
+            double d0 = this.rand.nextGaussian() * 0.02D;
+            double d1 = this.rand.nextGaussian() * 0.02D;
+            double d2 = this.rand.nextGaussian() * 0.02D;
+            this.world.addParticle( data, this.getPosXRandom( 1.0D ), this.getPosYRandom() + 0.5D,
+                                    this.getPosZRandom( 1.0D ), d0, d1, d2 );
+        }
     }
 
     @Override
     public boolean canDespawn( double distanceToClosestPlayer )
     {
         return false;
+    }
+
+    @Override
+    public boolean attackEntityFrom( DamageSource source, float amount )
+    {
+        if ( this.isChild() )
+        {
+            List<YetiEntity> list =
+                this.world.getEntitiesWithinAABB( this.getClass(), this.getBoundingBox().grow( 8.0D, 4.0D, 8.0D ) );
+
+            for ( YetiEntity yeti : list )
+            {
+                if ( !yeti.isChild() )
+                {
+                    yeti.isPassive = false;
+                    break;
+                }
+            }
+        }
+        this.isPassive = false;
+        return super.attackEntityFrom( source, amount );
     }
 
     @Override
@@ -310,7 +500,7 @@ public class YetiEntity
                                                                                                                             4.0D,
                                                                                                                             8.0D ) ) )
                 {
-                    if ( yeti.isChild() )
+                    if ( yeti.isChild() && !YetiEntity.this.isPassive )
                     {
                         return true;
                     }

@@ -22,12 +22,13 @@ public class AnimationHandler <T extends Entity & IAnimationHolder<T>>
     protected final int animationLength;
     protected final int breakpoint;
     protected final int delay;
+    public final String name;
     public Optional<ExecutionData> data;
     public DataParameter<Boolean> animating;
     
     protected int animateTimer;
 
-    public AnimationHandler (T entity, int animationLength, int breakpoint, int delay, DataParameter<Boolean> parameter)
+    public AnimationHandler (String name, T entity, int animationLength, int breakpoint, int delay, DataParameter<Boolean> parameter)
     {
         this.entity = entity;
         this.animateTimer = 0;
@@ -35,7 +36,8 @@ public class AnimationHandler <T extends Entity & IAnimationHolder<T>>
         this.breakpoint = breakpoint;
         this.animating = parameter;
         this.delay = delay;
-        this.data = Optional.empty();
+        this.name = name;
+        this.data = ExecutionData.EMPTY();
     }
 
     public void process()
@@ -48,8 +50,9 @@ public class AnimationHandler <T extends Entity & IAnimationHolder<T>>
 
             if(this.animateTimer == this.breakpoint + this.delay)
             {
+                this.data.get().name = this.name;
                 this.entity.executeBreakpoint(this.data);
-                this.data = Optional.empty();
+                this.data = ExecutionData.EMPTY();
             }
         }
     }
@@ -65,7 +68,7 @@ public class AnimationHandler <T extends Entity & IAnimationHolder<T>>
 
     public void startAnimation ()
     {
-        this.startAnimation(Optional.empty());
+        this.startAnimation(ExecutionData.EMPTY());
     }
 
     public boolean canStart ()
@@ -90,6 +93,7 @@ public class AnimationHandler <T extends Entity & IAnimationHolder<T>>
         public AnimalEntity entity;
         public ItemStack stack;
         public PlayerEntity player;
+        public String name;
 
         public ExecutionData (DataBuilder builder)
         {
@@ -98,6 +102,7 @@ public class AnimationHandler <T extends Entity & IAnimationHolder<T>>
             this.entity = builder.entity;
             this.stack = builder.stack;
             this.player = builder.player;
+            this.name = "";
         }
 
         public static DataBuilder create () 
@@ -107,7 +112,7 @@ public class AnimationHandler <T extends Entity & IAnimationHolder<T>>
 
         public static Optional<ExecutionData> EMPTY ()
         {
-            return Optional.empty();
+            return ExecutionData.create().build();
         }
     }
 

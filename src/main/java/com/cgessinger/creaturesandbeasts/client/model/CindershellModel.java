@@ -111,7 +111,7 @@ public class CindershellModel
         this.FL.rotateAngleX = MathHelper.cos( limbSwing * 0.6662F ) * 2 * limbSwingAmount;
         this.Tail.rotateAngleX = MathHelper.cos( ageInTicks / 15 ) * 0.15F;
         
-        if (entityIn.getAnimationHandler().isAnimating())
+        if (entityIn.getAnimationHandler("eat_controller").isAnimating())
         {
             this.Head.rotateAngleX = MathHelper.cos( ageInTicks / 3 ) * 0.07F;
         }
