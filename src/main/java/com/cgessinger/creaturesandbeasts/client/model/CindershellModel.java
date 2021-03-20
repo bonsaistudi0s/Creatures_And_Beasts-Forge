@@ -14,11 +14,11 @@ public class CindershellModel
 
     private final ModelRenderer bone2;
 
-    private final ModelRenderer Head;
+    public final ModelRenderer Head;
 
     private final ModelRenderer Jaw;
 
-    private final ModelRenderer bone4;
+    public final ModelRenderer bone4;
 
     private final ModelRenderer Tail;
 

@@ -2,6 +2,7 @@ package com.cgessinger.creaturesandbeasts.client.render;
 
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
 import com.cgessinger.creaturesandbeasts.client.layer.CindershellGlowLayer;
+import com.cgessinger.creaturesandbeasts.client.layer.CindershellItemLayer;
 import com.cgessinger.creaturesandbeasts.client.model.AgeableModelProvider;
 import com.cgessinger.creaturesandbeasts.client.model.BabyCindershellModel;
 import com.cgessinger.creaturesandbeasts.client.model.CindershellModel;
@@ -24,6 +25,7 @@ public class CindershellRender
         super( renderManagerIn, new AgeableModelProvider<>( new BabyCindershellModel(), new CindershellModel() ),
                0.6F );
         this.addLayer(new CindershellGlowLayer(this));
+        this.addLayer(new CindershellItemLayer(this));
     }
 
     @Override

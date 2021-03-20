@@ -24,6 +24,7 @@ import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
@@ -50,7 +51,11 @@ import java.util.Random;
 public class CindershellEntity extends AnimalEntity implements IAnimationHolder<CindershellEntity>
 {
     private static final DataParameter<Boolean> EAT =
-        EntityDataManager.createKey( LizardEntity.class, DataSerializers.BOOLEAN );
+        EntityDataManager.createKey( CindershellEntity.class, DataSerializers.BOOLEAN );
+
+    
+    public static final DataParameter<ItemStack> HOLDING =
+        EntityDataManager.createKey( CindershellEntity.class, DataSerializers.ITEMSTACK );
 
     private final AnimationHandler<CindershellEntity> animationHandler;
 
@@ -65,6 +70,7 @@ public class CindershellEntity extends AnimalEntity implements IAnimationHolder<
     {
         super.registerData();
         this.dataManager.register(EAT, false);
+        this.dataManager.register( HOLDING, ItemStack.EMPTY );
     }
 
 	@Override
@@ -136,6 +142,16 @@ public class CindershellEntity extends AnimalEntity implements IAnimationHolder<
 	public static boolean canCindershellSpawn(EntityType<CindershellEntity> p_234418_0_, IWorld p_234418_1_, SpawnReason p_234418_2_, BlockPos p_234418_3_, Random p_234418_4_) 
     {
 		return true;
+    }
+
+    public void setHolding( ItemStack stack )
+    {
+        this.dataManager.set( HOLDING, stack );
+    }
+
+    public ItemStack getHolding()
+    {
+        return this.dataManager.get( HOLDING );
     }
 
 	@Nullable
@@ -214,6 +230,7 @@ public class CindershellEntity extends AnimalEntity implements IAnimationHolder<
                 this.consumeItemFromStack(player, stack);
                 this.animationHandler.startAnimation(ExecutionData.create().withPlayer(player).build());
                 this.playSound(ModSoundEventTypes.CINDERSHELL_ADULT_EAT.get(), 1.2F, 1F);
+                this.setHolding(stack);
                 return ActionResultType.SUCCESS;
             }
     
@@ -262,7 +279,8 @@ public class CindershellEntity extends AnimalEntity implements IAnimationHolder<
     {
         if ( data.isPresent() && data.get().player != null )
         {
-            this.setInLove(data.get().player);
+            this.setInLove( data.get().player );
+            this.setHolding(ItemStack.EMPTY);
         }
     }
 
