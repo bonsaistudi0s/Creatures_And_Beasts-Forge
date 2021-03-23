@@ -64,6 +64,7 @@ public class YetiEntity
     private final AnimationFactory factory = new AnimationFactory( this );
 
     private final UUID healthReductionUUID = UUID.fromString( "189faad9-35de-4e15-a598-82d147b996d7" );
+    private final float babyHealth = 20.0F;
 
     public static final DataParameter<Boolean> ATTACKING =
         EntityDataManager.createKey( YetiEntity.class, DataSerializers.BOOLEAN );
@@ -84,7 +85,7 @@ public class YetiEntity
     {
         super( type, worldIn );
         this.attackHandler = new AnimationHandler<>( "attack_controller", this, 35, 17, 5, ATTACKING );
-        this.eatHandler = new AnimationHandler<>( "breed_controller", this, 30, 1, 20, EAT );
+        this.eatHandler = new AnimationHandler<>( "breed_controller", this, 40, 10, 20, EAT );
     }
 
     @Override
@@ -120,26 +121,25 @@ public class YetiEntity
     }
 
     @Override
-    public void setGrowingAge( int age )
-    {
-        super.setGrowingAge( age );
-        if ( isChild() && this.getAttribute( Attributes.MAX_HEALTH ).getValue() > 20.0D )
-        {
-            Multimap<Attribute, AttributeModifier> multimap = HashMultimap.create();
-            multimap.put( Attributes.MAX_HEALTH,
-                          new AttributeModifier( this.healthReductionUUID, "yeti_health_reduction", -60,
-                                                 AttributeModifier.Operation.ADDITION ) );
-            this.getAttributeManager().reapplyModifiers( multimap );
-            this.setHealth( 20.0F );
-        }
-    }
+	public void setGrowingAge (int age)
+	{
+		super.setGrowingAge(age);
+        double MAX_HEALTH = this.getAttribute(Attributes.MAX_HEALTH).getValue();
+		if(isChild() && MAX_HEALTH > this.babyHealth)
+		{
+			Multimap<Attribute, AttributeModifier> multimap = HashMultimap.create();
+			multimap.put(Attributes.MAX_HEALTH, new AttributeModifier(this.healthReductionUUID, "yeti_health_reduction", this.babyHealth - MAX_HEALTH, AttributeModifier.Operation.ADDITION));
+			this.getAttributeManager().reapplyModifiers(multimap);
+			this.setHealth(this.babyHealth);
+		}
+	}
 
     @Override
     protected void onGrowingAdult()
     {
-        this.getAttribute( Attributes.MAX_HEALTH ).removeModifier( this.healthReductionUUID );
-        this.setHealth( 80.0F );
-        this.isPassive = false;
+        super.onGrowingAdult();
+		this.getAttribute(Attributes.MAX_HEALTH).removeModifier(this.healthReductionUUID);
+		this.setHealth((float) this.getAttribute(Attributes.MAX_HEALTH).getValue());
     }
 
     @Override
@@ -354,8 +354,8 @@ public class YetiEntity
 
     public ActionResultType tryStartEat( PlayerEntity player, ItemStack stack )
     {
-        if ( stack.getItem() == Items.SWEET_BERRIES
-                        || stack.getItem() == Items.MELON_SLICE && this.eatHandler.canStart() )
+        if ( ( stack.getItem() == Items.SWEET_BERRIES
+                        || stack.getItem() == Items.MELON_SLICE ) && this.eatHandler.canStart() )
         {
 
             if ( this.world.isRemote )
@@ -368,7 +368,7 @@ public class YetiEntity
                 this.consumeItemFromStack( player, stack );
                 this.eatHandler.startAnimation( ExecutionData.create().withPlayer( player ).build() );
                 SoundEvent sound =
-                    this.isChild() ? ModSoundEventTypes.YETI_BABY_EAT.get() : ModSoundEventTypes.YETI_ADULT_EAT.get();
+                this.isChild() ? ModSoundEventTypes.YETI_BABY_EAT.get() : ModSoundEventTypes.YETI_ADULT_EAT.get();
                 this.playSound( sound, 1.1F, 1F );
                 return ActionResultType.SUCCESS;
             }
@@ -478,8 +478,7 @@ public class YetiEntity
     public static boolean canYetiSpawn( EntityType<? extends AnimalEntity> animal, IWorld worldIn, SpawnReason reason,
                                         BlockPos pos, Random random )
     {
-        return random.nextFloat() >= ServerConfig.YETI_PROP.value
-                        && AnimalEntity.canAnimalSpawn( animal, worldIn, reason, pos, random );
+        return random.nextDouble() >= ServerConfig.YETI_PROP.value;
     }
 
     class AttackPlayerGoal

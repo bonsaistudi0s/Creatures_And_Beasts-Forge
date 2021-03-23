@@ -41,6 +41,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.server.ServerWorld;
@@ -55,6 +56,7 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.Random;
 
 public class LizardEntity
     extends AnimalEntity
@@ -362,7 +364,7 @@ public class LizardEntity
     @Override
     public ItemStack getItem()
     {
-        if ( !this.isSad() )
+        if ( !this.isSad() && !this.isChild() )
         {
             LizardType type = this.getLizardType();
             ItemStack stack = new ItemStack( type.getItem() );
@@ -415,6 +417,12 @@ public class LizardEntity
     public AnimationHandler<LizardEntity> getAnimationHandler (String name)
     {
         return this.animationHandler;
+    }
+
+    public static boolean canLizardSpawn( EntityType<LizardEntity> animal, IWorld worldIn,
+                                             SpawnReason reason, BlockPos pos, Random randomIn )
+    {
+        return worldIn.getLightSubtracted(pos, 0) > 8;
     }
 
     public enum LizardType

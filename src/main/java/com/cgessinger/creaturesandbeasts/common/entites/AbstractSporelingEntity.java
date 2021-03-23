@@ -200,6 +200,12 @@ public abstract class AbstractSporelingEntity extends CreatureEntity implements 
 		return 5;
 	}
 
+    @Override
+    public boolean canDespawn( double distanceToClosestPlayer )
+    {
+        return false;
+    }
+
 	public enum SporelingType
 	{
 		OVERWORLD_BROWN(createLocation("geo/overworld_brown_sporeling.geo.json"), createLocation("textures/model/entity/sporeling_brown_overworld.png")), OVERWORLD_RED(createLocation("geo/overworld_red_sporeling.geo.json"), createLocation("textures/model/entity/sporeling_red_overworld.png")), NETHER_BROWN(createLocation("geo/nether_brown_sporeling.geo.json"), createLocation("textures/model/entity/sporeling_brown_nether.png")), NETHER_RED(createLocation("geo/nether_red_sporeling.geo.json"), createLocation("textures/model/entity/sporeling_red_nether.png")), WARPED_FUNGI(createLocation("geo/warped_fungi_sporeling.geo.json"), createLocation("textures/model/entity/sporeling_warped_fungi.png")), CRIMSON_FUNGUS(createLocation("geo/warped_fungi_sporeling.geo.json"), createLocation("textures/model/entity/sporeling_crimson_fungus.png"));

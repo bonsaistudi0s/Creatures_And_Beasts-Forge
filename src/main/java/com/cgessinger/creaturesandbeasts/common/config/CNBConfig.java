@@ -23,7 +23,6 @@ public class CNBConfig
         COMMON = specPair.getLeft();
     }
 
-    // Doesn't need to be an inner class
     public static class ServerConfig 
     {
         public static EntityConfig GREBE_CONFIG;
@@ -34,7 +33,7 @@ public class CNBConfig
         public static EntityConfig NEUTRAL_SPORELING_CONFIG;
         public static EntityConfig LILYTAD_CONFIG;
         public static EntityConfig YETI_CONFIG;
-        public static OtherConfig<Float> YETI_PROP;
+        public static OtherConfig<Double> YETI_PROP;
 
         public static OtherConfig<Integer> HIDE_AMOUNT;
         public static OtherConfig<Double> HIDE_MULTIPLIER;
@@ -63,7 +62,7 @@ public class CNBConfig
                 Lists.newArrayList("minecraft:snowy_tundra", "minecraft:snowy_mountains", "minecraft:snowy_taiga", "minecraft:snowy_taiga_hills", "minecraft:ice_spikes", "minecraft:snowy_taiga_mountains"));
             YETI_PROP = OtherConfig.withRange(builder, 
                 "Define extra chance to spawn yeti. Each time a yeti should spawn it checks random.nextFloat() >= value. Increase this value up to 1.0 to make yetis more rare",
-                "yeti chance", 0.7F, 0F, 1F, Float.class);
+                "yeti chance", 0.5D, 0D, 1D, Double.class);
 
             builder.pop();
 

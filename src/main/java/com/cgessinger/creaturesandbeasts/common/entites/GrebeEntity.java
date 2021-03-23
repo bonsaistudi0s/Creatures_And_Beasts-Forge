@@ -1,5 +1,6 @@
 package com.cgessinger.creaturesandbeasts.common.entites;
 
+import java.util.Random;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
@@ -38,12 +39,14 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 
 public class GrebeEntity extends AnimalEntity
 {
 	private final UUID healthReductionUUID = UUID.fromString("189faad9-35de-4e15-a598-82d147b996d7");
+    private final float babyHealth = 5.0F;
 	private static final DataParameter<BlockPos> TRAVEL_POS = EntityDataManager.createKey(GrebeEntity.class, DataSerializers.BLOCK_POS);
 	public static final Ingredient TEMPTATION_ITEMS = Ingredient.fromItems(Items.COD, Items.SALMON, Items.TROPICAL_FISH);
 	public float wingRotation;
@@ -96,13 +99,22 @@ public class GrebeEntity extends AnimalEntity
 	public void setGrowingAge (int age)
 	{
 		super.setGrowingAge(age);
-		if(isChild() && this.getAttribute(Attributes.MAX_HEALTH).getValue() > 5.0F)
+        double MAX_HEALTH = this.getAttribute(Attributes.MAX_HEALTH).getValue();
+		if(isChild() && MAX_HEALTH > this.babyHealth)
 		{
 			Multimap<Attribute, AttributeModifier> multimap = HashMultimap.create();
-			multimap.put(Attributes.MAX_HEALTH, new AttributeModifier(this.healthReductionUUID, "yeti_health_reduction", -5.0F, AttributeModifier.Operation.ADDITION));
+			multimap.put(Attributes.MAX_HEALTH, new AttributeModifier(this.healthReductionUUID, "yeti_health_reduction", this.babyHealth - MAX_HEALTH, AttributeModifier.Operation.ADDITION));
 			this.getAttributeManager().reapplyModifiers(multimap);
-			this.setHealth(5.0F);
+			this.setHealth(this.babyHealth);
 		}
+	}
+    
+	@Override
+	protected void onGrowingAdult ()
+	{
+		this.stopRiding();
+		this.getAttribute(Attributes.MAX_HEALTH).removeModifier(this.healthReductionUUID);
+		this.setHealth((float) this.getAttribute(Attributes.MAX_HEALTH).getValue());
 	}
 
 	@Override
@@ -176,14 +188,6 @@ public class GrebeEntity extends AnimalEntity
 	public double getMountedYOffset ()
 	{
 		return this.getHeight() * 0.3D;
-	}
-
-	@Override
-	protected void onGrowingAdult ()
-	{
-		this.stopRiding();
-		this.getAttribute(Attributes.MAX_HEALTH).removeModifier(this.healthReductionUUID);
-		this.setHealth(10.0F);
 	}
 
 	/**
@@ -271,6 +275,12 @@ public class GrebeEntity extends AnimalEntity
             return;
         }
         super.checkDespawn();
+    }
+
+    public static boolean canGrebeSpawn( EntityType<GrebeEntity> animal, IWorld worldIn,
+                                             SpawnReason reason, BlockPos pos, Random randomIn )
+    {
+        return worldIn.getLightSubtracted(pos, 0) > 8;
     }
 
 	static class WanderGoal extends RandomWalkingGoal

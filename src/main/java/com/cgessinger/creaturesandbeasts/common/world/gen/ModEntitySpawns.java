@@ -5,8 +5,12 @@ import com.cgessinger.creaturesandbeasts.common.config.EntityConfig;
 import com.cgessinger.creaturesandbeasts.common.config.CNBConfig.ServerConfig;
 import com.cgessinger.creaturesandbeasts.common.entites.CindershellEntity;
 import com.cgessinger.creaturesandbeasts.common.entites.FriendlySporelingEntity;
+import com.cgessinger.creaturesandbeasts.common.entites.GrebeEntity;
 import com.cgessinger.creaturesandbeasts.common.entites.HostileSporelingEntity;
+import com.cgessinger.creaturesandbeasts.common.entites.LilytadEntity;
+import com.cgessinger.creaturesandbeasts.common.entites.LizardEntity;
 import com.cgessinger.creaturesandbeasts.common.entites.NeutralSporelingEntity;
+import com.cgessinger.creaturesandbeasts.common.entites.YetiEntity;
 import com.cgessinger.creaturesandbeasts.common.init.ModEntityTypes;
 
 import net.minecraft.entity.Entity;
@@ -58,6 +62,10 @@ public class ModEntitySpawns
 
 	public static void entitySpawnPlacementRegistry ()
 	{
+		EntitySpawnPlacementRegistry.register(ModEntityTypes.LITTLE_GREBE.get(), EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, GrebeEntity::canGrebeSpawn);
+
+		EntitySpawnPlacementRegistry.register(ModEntityTypes.LIZARD.get(), EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, LizardEntity::canLizardSpawn);
+
 		EntitySpawnPlacementRegistry.register(ModEntityTypes.CINDERSHELL.get(), EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, CindershellEntity::canCindershellSpawn);
 
 		EntitySpawnPlacementRegistry.register(ModEntityTypes.HOSTILE_SPORELING.get(), EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, HostileSporelingEntity::canSporelingSpawn);
@@ -65,7 +73,9 @@ public class ModEntitySpawns
 		EntitySpawnPlacementRegistry.register(ModEntityTypes.NEUTRAL_SPORELING.get(), EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, NeutralSporelingEntity::canSporelingSpawn);
 
 		EntitySpawnPlacementRegistry.register(ModEntityTypes.FRIENDLY_SPORELING.get(), EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, FriendlySporelingEntity::canSporelingSpawn);
+        
+		EntitySpawnPlacementRegistry.register(ModEntityTypes.LILYTAD.get(), EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, LilytadEntity::canLilytadSpawn);
 		
-		EntitySpawnPlacementRegistry.register(ModEntityTypes.YETI.get(), EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, AnimalEntity::canAnimalSpawn);
+		EntitySpawnPlacementRegistry.register(ModEntityTypes.YETI.get(), EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, YetiEntity::canYetiSpawn);
 	}
 }

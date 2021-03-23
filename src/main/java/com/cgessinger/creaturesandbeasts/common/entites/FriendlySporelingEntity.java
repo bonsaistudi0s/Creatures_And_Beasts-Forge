@@ -13,6 +13,7 @@ import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.PanicGoal;
 import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
@@ -263,11 +264,9 @@ public class FriendlySporelingEntity
         }
     }
 
-    public static boolean canSporelingSpawn( EntityType<FriendlySporelingEntity> p_234418_0_, IWorld worldIn,
-                                             SpawnReason p_234418_2_, BlockPos pos, Random p_234418_4_ )
+    public static boolean canSporelingSpawn( EntityType<FriendlySporelingEntity> animal, IWorld worldIn,
+                                             SpawnReason reason, BlockPos pos, Random randomIn )
     {
-        return ( worldIn.getBlockState( pos.down() ).isIn( Blocks.MYCELIUM )
-                        || worldIn.getBlockState( pos.down() ).isIn( Blocks.GRASS_BLOCK ) )
-                        && worldIn.getLightSubtracted( pos, 0 ) > 8;
+        return worldIn.getLightSubtracted(pos, 0) > 8;
     }
 }

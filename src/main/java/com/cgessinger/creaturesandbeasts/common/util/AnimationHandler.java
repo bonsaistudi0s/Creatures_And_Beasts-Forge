@@ -11,7 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.world.server.ServerWorld;
 /*
-* I created this class to sync activities on server side and aniamtion via geckolib on client side. But this handler is also useful for non geckolib mobs and can be used with them.
+* I created this class to sync activities on server side and animation via geckolib on client side. But this handler is also useful for non geckolib mobs and can be used with them.
 * To use it implement IAnimationHolder return a private instance of AnimationHandler in IAnimationHolder#getAnimationHandler and do whatever in IAnimationHolder#executeBreakpoint.
 * In addition do AnimationHandler#process in the LivingTick()
 *

@@ -7,6 +7,8 @@ import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
 import com.cgessinger.creaturesandbeasts.common.interfaces.IAnimationHolder;
 import com.cgessinger.creaturesandbeasts.common.util.AnimationHandler;
 import com.cgessinger.creaturesandbeasts.common.util.AnimationHandler.ExecutionData;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 
 import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.EntityType;
@@ -14,6 +16,8 @@ import net.minecraft.entity.ILivingEntityData;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.Pose;
 import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.ai.attributes.Attribute;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.BreedGoal;
@@ -24,7 +28,6 @@ import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
@@ -47,12 +50,15 @@ import javax.annotation.Nullable;
 
 import java.util.Optional;
 import java.util.Random;
+import java.util.UUID;
 
 public class CindershellEntity extends AnimalEntity implements IAnimationHolder<CindershellEntity>
 {
+	private final UUID healthReductionUUID = UUID.fromString("189faad9-35de-4e15-a598-82d147b996d7");
+    private final float babyHealth = 10.0F;
+
     private static final DataParameter<Boolean> EAT =
         EntityDataManager.createKey( CindershellEntity.class, DataSerializers.BOOLEAN );
-
     
     public static final DataParameter<ItemStack> HOLDING =
         EntityDataManager.createKey( CindershellEntity.class, DataSerializers.ITEMSTACK );
@@ -131,6 +137,28 @@ public class CindershellEntity extends AnimalEntity implements IAnimationHolder<
     {
         super.livingTick();
         this.animationHandler.process();
+    }
+
+    @Override
+	public void setGrowingAge (int age)
+	{
+		super.setGrowingAge(age);
+        double MAX_HEALTH = this.getAttribute(Attributes.MAX_HEALTH).getValue();
+		if(isChild() && MAX_HEALTH > this.babyHealth)
+		{
+			Multimap<Attribute, AttributeModifier> multimap = HashMultimap.create();
+			multimap.put(Attributes.MAX_HEALTH, new AttributeModifier(this.healthReductionUUID, "yeti_health_reduction", this.babyHealth - MAX_HEALTH, AttributeModifier.Operation.ADDITION));
+			this.getAttributeManager().reapplyModifiers(multimap);
+			this.setHealth(this.babyHealth);
+		}
+	}
+
+    @Override
+    protected void onGrowingAdult()
+    {
+        super.onGrowingAdult();
+		this.getAttribute(Attributes.MAX_HEALTH).removeModifier(this.healthReductionUUID);
+		this.setHealth((float) this.getAttribute(Attributes.MAX_HEALTH).getValue());
     }
 
 	@Override
