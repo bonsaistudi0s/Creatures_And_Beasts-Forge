@@ -71,7 +71,6 @@ public class LizardEggEntity
             if ( this.rand.nextFloat() > 0.3F )
             {
                 BlockPos pos = this.getPosition();
-                this.world.playSound( null, pos, ModSoundEventTypes.LIZARD_EGG_HATCH.get(), SoundCategory.BLOCKS, 1.0F, 0F);
                 LizardEntity lizard = ModEntityTypes.LIZARD.get().create( this.world );
                 lizard.setGrowingAge( -24000 );
                 lizard.setLocationAndAngles( this.getPosX(), this.getPosY(), this.getPosZ(), this.rotationYaw, 0.0F );

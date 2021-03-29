@@ -64,6 +64,7 @@ public class YetiEntity
     private final AnimationFactory factory = new AnimationFactory( this );
 
     private final UUID healthReductionUUID = UUID.fromString( "189faad9-35de-4e15-a598-82d147b996d7" );
+
     private final float babyHealth = 20.0F;
 
     public static final DataParameter<Boolean> ATTACKING =
@@ -121,25 +122,27 @@ public class YetiEntity
     }
 
     @Override
-	public void setGrowingAge (int age)
-	{
-		super.setGrowingAge(age);
-        double MAX_HEALTH = this.getAttribute(Attributes.MAX_HEALTH).getValue();
-		if(isChild() && MAX_HEALTH > this.babyHealth)
-		{
-			Multimap<Attribute, AttributeModifier> multimap = HashMultimap.create();
-			multimap.put(Attributes.MAX_HEALTH, new AttributeModifier(this.healthReductionUUID, "yeti_health_reduction", this.babyHealth - MAX_HEALTH, AttributeModifier.Operation.ADDITION));
-			this.getAttributeManager().reapplyModifiers(multimap);
-			this.setHealth(this.babyHealth);
-		}
-	}
+    public void setGrowingAge( int age )
+    {
+        super.setGrowingAge( age );
+        double MAX_HEALTH = this.getAttribute( Attributes.MAX_HEALTH ).getValue();
+        if ( isChild() && MAX_HEALTH > this.babyHealth )
+        {
+            Multimap<Attribute, AttributeModifier> multimap = HashMultimap.create();
+            multimap.put( Attributes.MAX_HEALTH,
+                          new AttributeModifier( this.healthReductionUUID, "yeti_health_reduction",
+                                                 this.babyHealth - MAX_HEALTH, AttributeModifier.Operation.ADDITION ) );
+            this.getAttributeManager().reapplyModifiers( multimap );
+            this.setHealth( this.babyHealth );
+        }
+    }
 
     @Override
     protected void onGrowingAdult()
     {
         super.onGrowingAdult();
-		this.getAttribute(Attributes.MAX_HEALTH).removeModifier(this.healthReductionUUID);
-		this.setHealth((float) this.getAttribute(Attributes.MAX_HEALTH).getValue());
+        this.getAttribute( Attributes.MAX_HEALTH ).removeModifier( this.healthReductionUUID );
+        this.setHealth( (float) this.getAttribute( Attributes.MAX_HEALTH ).getValue() );
     }
 
     @Override
@@ -179,7 +182,8 @@ public class YetiEntity
             return PlayState.CONTINUE;
         }
 
-        return PlayState.STOP;
+        event.getController().setAnimation( new AnimationBuilder().addAnimation( "yeti.idle", false ) );
+        return PlayState.CONTINUE;
     }
 
     private <E extends IAnimatable> void soundListener( SoundKeyframeEvent<E> event )
@@ -354,26 +358,36 @@ public class YetiEntity
 
     public ActionResultType tryStartEat( PlayerEntity player, ItemStack stack )
     {
-        if ( ( stack.getItem() == Items.SWEET_BERRIES
-                        || stack.getItem() == Items.MELON_SLICE ) && this.eatHandler.canStart() )
+        if ( this.world.isRemote )
+            return ActionResultType.CONSUME;
+
+        if ( this.eatHandler.canStart() )
         {
-
-            if ( this.world.isRemote )
-                return ActionResultType.CONSUME;
-
-            if ( ( !this.world.isRemote && this.getGrowingAge() == 0 && this.canFallInLove() ) || this.isChild()
-                            || stack.getItem() == Items.MELON_SLICE )
+            if ( stack.getItem() == Items.MELON_SLICE && !this.isPassive )
             {
-                this.setHolding( stack );
-                this.consumeItemFromStack( player, stack );
-                this.eatHandler.startAnimation( ExecutionData.create().withPlayer( player ).build() );
-                SoundEvent sound =
-                this.isChild() ? ModSoundEventTypes.YETI_BABY_EAT.get() : ModSoundEventTypes.YETI_ADULT_EAT.get();
-                this.playSound( sound, 1.1F, 1F );
-                return ActionResultType.SUCCESS;
+                return this.startEat( player, stack );
+            }
+            else if ( stack.getItem() == Items.SWEET_BERRIES )
+            {
+                if ( ( this.getGrowingAge() == 0 && this.canFallInLove() ) || this.isChild() )
+                {
+                    return this.startEat( player, stack );
+                }
             }
         }
         return ActionResultType.PASS;
+    }
+
+    private ActionResultType startEat( PlayerEntity player, ItemStack stack )
+    {
+        this.setHolding( stack );
+        this.consumeItemFromStack( player, stack );
+        this.eatHandler.startAnimation( ExecutionData.create().withPlayer( player ).build() );
+        SoundEvent sound =
+            this.isChild() ? ModSoundEventTypes.YETI_BABY_EAT.get() : ModSoundEventTypes.YETI_ADULT_EAT.get();
+        this.playSound( sound, 1.1F, 1F );
+        return ActionResultType.SUCCESS;
+
     }
 
     @Override

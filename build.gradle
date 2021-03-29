@@ -19,9 +19,9 @@ apply plugin: 'com.matthewprenger.cursegradle'
 import groovy.json.JsonSlurper
 import groovy.json.JsonOutput
 
-version = '1.2.10'
+version = '1.2.11'
 group = 'com.cgessinger.creaturesandbeasts' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "CNB-1.16.3_4"
+archivesBaseName = "CNB-1.16.3_5"
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
@@ -86,7 +86,7 @@ dependencies {
     minecraft 'net.minecraftforge:forge:1.16.4-35.1.37'
 
     // Geckolib for ingame animations
-    implementation fg.deobf('software.bernie.geckolib:forge-1.16.4-geckolib:3.0.15')
+    implementation fg.deobf('software.bernie.geckolib:forge-1.16.4-geckolib:3.0.0')
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..

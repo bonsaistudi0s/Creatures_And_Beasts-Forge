@@ -6,14 +6,12 @@ import com.cgessinger.creaturesandbeasts.common.interfaces.IAnimationHolder;
 import com.cgessinger.creaturesandbeasts.common.util.AnimationHandler;
 import com.cgessinger.creaturesandbeasts.common.util.AnimationHandler.ExecutionData;
 
-import net.minecraft.block.Blocks;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.PanicGoal;
 import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
@@ -152,7 +150,7 @@ public class FriendlySporelingEntity
     protected void updateEquipmentIfNeeded( ItemEntity itemEntity )
     {
         ItemStack stack = itemEntity.getItem();
-        if ( this.canPickUpItem( stack ) )
+        if ( this.canPickUpItem( stack ) && this.animationHandler.canStart() )
         {
             this.triggerItemPickupTrigger( itemEntity );
             this.setItemStackToSlot( EquipmentSlotType.MAINHAND, stack );

@@ -611,7 +611,12 @@
 					"effect": "eat.particle"
 				}
 			}
-		}
+		},
+        "yeti.idle": {
+			"animation_length": 0.00,
+			"bones": {
+            }
+        }
 	},
 	"geckolib_format_version": 2,
 	"geometry.animations": {

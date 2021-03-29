@@ -1,7 +1,6 @@
 package com.cgessinger.creaturesandbeasts.common.entites;
 
 import com.cgessinger.creaturesandbeasts.common.config.CNBConfig;
-import com.cgessinger.creaturesandbeasts.common.config.CNBConfig.ServerConfig;
 import com.cgessinger.creaturesandbeasts.common.goals.FindWaterOneDeepGoal;
 import com.cgessinger.creaturesandbeasts.common.init.ModItems;
 import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
@@ -241,12 +240,6 @@ public class LilytadEntity extends AnimalEntity implements IForgeShearable, IAni
 	public AnimationFactory getFactory ()
 	{
 		return this.factory;
-	}
-
-	@Override
-	protected float getSoundVolume ()
-	{
-		return super.getSoundVolume();
 	}
 
 	@Nullable
