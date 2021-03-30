@@ -144,23 +144,23 @@ processResources {
     }
 }
 
-//curseforge {
-//    def curseProp = new Properties()
-//    File secretPropsFile = file("key.properties")
-//    curseProp.load(secretPropsFile.newInputStream())
-//
-//    project {
-//        apiKey = curseProp.getProperty('curseKey')
-//        id = "414401"
-//        releaseType = "release"
-//        changelogType = 'html'
-//        changelog = '<h2>Big Changes!</h2>'
-//        addGameVersion("1.16.4")
-//        addGameVersion("Forge")
-//        addGameVersion("Java 8")
-//
-//        relations {
-//            requiredDependency 'geckolib'     
-//        }
-//    }
-//}
+curseforge {
+    def curseProp = new Properties()
+    File secretPropsFile = file("key.properties")
+    curseProp.load(secretPropsFile.newInputStream())
+
+    project {
+        apiKey = curseProp.getProperty('curseKey')
+        id = "414401"
+        releaseType = "release"
+        changelogType = 'html'
+        changelog = '<h2>Big Changes!</h2>'
+        addGameVersion("1.16.4")
+        addGameVersion("Forge")
+        addGameVersion("Java 8")
+
+        relations {
+            requiredDependency 'geckolib'     
+        }
+    }
+}
