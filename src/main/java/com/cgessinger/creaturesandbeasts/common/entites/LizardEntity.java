@@ -52,6 +52,9 @@ import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
+import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
+import net.minecraft.tags.ITag;
+import net.minecraft.tags.ItemTags;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -62,6 +65,8 @@ public class LizardEntity
     extends AnimalEntity
     implements IAnimatable, IModNetable, IAnimationHolder<LizardEntity>
 {
+    private final ResourceLocation APPLE_SLICE = new ResourceLocation(CreaturesAndBeasts.MOD_ID, "apple_slice");
+    
     private final AnimationFactory factory = new AnimationFactory( this );
 
     private static final DataParameter<Boolean> PARTYING =
@@ -218,7 +223,9 @@ public class LizardEntity
     {
         ActionResultType result = super.func_230254_b_( player, hand );
         ItemStack item = player.getHeldItem( hand );
-        if ( item.getItem() instanceof AppleSliceItem && this.isSad() )
+        ITag<Item> apple_slice = ItemTags.getCollection().get(APPLE_SLICE);
+        boolean has_slices = apple_slice == null ? item.getItem() instanceof AppleSliceItem : apple_slice.contains(item.getItem());
+        if( has_slices && this.isSad() )
         {
             this.setSad( false );
             item.shrink( player.abilities.isCreativeMode ? 0 : 1 );
@@ -346,7 +353,8 @@ public class LizardEntity
     @Override
     public boolean isBreedingItem( ItemStack stack )
     {
-        return stack.getItem() instanceof AppleSliceItem;
+        ITag<Item> apple_slice = ItemTags.getCollection().get(APPLE_SLICE);
+        return apple_slice == null ? stack.getItem() instanceof AppleSliceItem : apple_slice.contains(stack.getItem());
     }
 
     public void spawnParticles( IParticleData data )
