@@ -1,13 +1,13 @@
 modLoader="javafml"
-loaderVersion="[34,)"
-license="All rights reserved"
-issueTrackerURL="https://github.com/CGessinger/Creatures_And_Beasts-Forge/issues"
+loaderVersion="[40,)"
+license="All Rights Reserved"
+issueTrackerURL="https://github.com/CreaturesAndBeasts/Creatures_And_Beasts-Forge/issues"
 [[mods]]
 modId="cnb"
 version="${file.jarVersion}"
 displayName="Creatures and Beasts"
-updateJSONURL="http://myurl.me/"
-displayURL="https://github.com/CGessinger/Creatures_And_Beasts-Forge"
+# updateJSONURL="http://myurl.me/"
+displayURL="https://github.com/CreaturesAndBeasts/Creatures_And_Beasts-Forge"
 logoFile="logo.png"
 credits="Thanks for this minecraft mod goes to the authors, Azure Doom, and everyone who contributed to the project"
 authors="Joosh, CGessinger"
@@ -17,13 +17,13 @@ Creatures and Beasts is a vanilla-style creature mod which fills each biome with
 [[dependencies.cnb]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.16.3,]"
+    versionRange="[1.18.2,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.cnb]]
     modId="geckolib3"
     mandatory=true
-    versionRange="3.0.0-beta.8,"
+    versionRange="[3.0.0,)"
     ordering="BEFORE"
     side="BOTH"
