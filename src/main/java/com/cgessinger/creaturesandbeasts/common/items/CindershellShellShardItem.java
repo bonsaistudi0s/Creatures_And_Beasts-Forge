@@ -3,6 +3,7 @@ package com.cgessinger.creaturesandbeasts.common.items;
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeType;
 
 public class CindershellShellShardItem extends Item
 {
@@ -12,7 +13,7 @@ public class CindershellShellShardItem extends Item
 	}
 
 	@Override
-	public int getBurnTime (ItemStack itemStack)
+	public int getBurnTime (ItemStack itemStack, RecipeType<?> recipeType)
 	{
 		return 6400;
 	}

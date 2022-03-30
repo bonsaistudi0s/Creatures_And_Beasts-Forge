@@ -7,6 +7,7 @@ import com.cgessinger.creaturesandbeasts.client.model.LittleGrebeModel;
 import com.cgessinger.creaturesandbeasts.common.entites.GrebeEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -19,9 +20,9 @@ public class GrebeRender extends MobRenderer<GrebeEntity, AgeableModelProvider<G
 	protected static final ResourceLocation CHILD_TEXTURE = new ResourceLocation(CreaturesAndBeasts.MOD_ID, "textures/model/entity/little_grebe_chick.png");
 	protected static final ResourceLocation TEXTURE = new ResourceLocation(CreaturesAndBeasts.MOD_ID, "textures/model/entity/little_grebe.png");
 
-	public GrebeRender (EntityRenderDispatcher renderManagerIn)
+	public GrebeRender (EntityRendererProvider.Context context)
 	{
-		super(renderManagerIn, new AgeableModelProvider<>(new LittleGrebeChickModel<>(), new LittleGrebeModel<>()), 0.2F);
+		super(context, new AgeableModelProvider<>(new LittleGrebeChickModel<>(), new LittleGrebeModel<>()), 0.2F);
 	}
 
 	@Override

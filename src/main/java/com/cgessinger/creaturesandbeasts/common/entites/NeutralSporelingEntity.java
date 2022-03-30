@@ -2,23 +2,29 @@ package com.cgessinger.creaturesandbeasts.common.entites;
 
 import com.cgessinger.creaturesandbeasts.common.config.CNBConfig;
 import com.cgessinger.creaturesandbeasts.common.goals.TimedAttackGoal;
+import com.cgessinger.creaturesandbeasts.common.init.ModEntityTypes;
 import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
-import net.minecraft.world.entity.PathfinderMob;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.SpawnGroupData;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
-import net.minecraft.world.*;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.Difficulty;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
+import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -27,10 +33,6 @@ import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.Random;
-
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.ServerLevelAccessor;
 
 public class NeutralSporelingEntity extends AbstractSporelingEntity
 {
@@ -47,18 +49,20 @@ public class NeutralSporelingEntity extends AbstractSporelingEntity
 		this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
 	}
 
-	public static AttributeSupplier.Builder setCustomAttributes ()
-	{
-		return AbstractSporelingEntity.setCustomAttributes()
-				.add(Attributes.FOLLOW_RANGE, 35.0D)
-				.add(Attributes.ATTACK_DAMAGE, 3.0D);
-	}
+    @SubscribeEvent
+    public static void onEntityAttributeModification(EntityAttributeModificationEvent event)
+    {
+        event.add(ModEntityTypes.NEUTRAL_SPORELING.get(), Attributes.MAX_HEALTH, 16.0D);
+        event.add(ModEntityTypes.NEUTRAL_SPORELING.get(), Attributes.MOVEMENT_SPEED, 0.2D);
+        event.add(ModEntityTypes.NEUTRAL_SPORELING.get(), Attributes.FOLLOW_RANGE, 35.0D);
+        event.add(ModEntityTypes.NEUTRAL_SPORELING.get(), Attributes.ATTACK_DAMAGE, 3.0D);
+    }
 
 	@Nullable
 	@Override
 	public SpawnGroupData finalizeSpawn (ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, MobSpawnType reason, @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag)
 	{
-		Optional<ResourceKey<Biome>> optional = level.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getResourceKey(level.getBiome(this.blockPosition()));
+		Optional<ResourceKey<Biome>> optional = level.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getResourceKey(level.getBiome(this.blockPosition()).value());
 
 		if (optional.isPresent() && optional.get() == Biomes.WARPED_FOREST)
 		{
@@ -115,7 +119,7 @@ public class NeutralSporelingEntity extends AbstractSporelingEntity
     {
         if(!CNBConfig.ServerConfig.NEUTRAL_SPORELING_CONFIG.shouldExist)
         {
-            this.remove();
+            this.remove(RemovalReason.DISCARDED);
             return;
         }
         super.checkDespawn();

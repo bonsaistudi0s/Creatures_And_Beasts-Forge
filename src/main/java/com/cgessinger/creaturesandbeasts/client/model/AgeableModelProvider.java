@@ -3,9 +3,9 @@ package com.cgessinger.creaturesandbeasts.client.model;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;
-import net.minecraft.world.entity.AgableMob;
+import net.minecraft.world.entity.AgeableMob;
 
-public class AgeableModelProvider<T extends AgableMob> extends EntityModel<T>
+public class AgeableModelProvider<T extends AgeableMob> extends EntityModel<T>
 {
 	public final EntityModel<T> childModel;
 	public final EntityModel<T> adultModel;

@@ -41,7 +41,7 @@ public class CindershellItemLayer
                 matrixStackIn.translate( 0, 1.7 + Mth.cos( ageInTicks / 3 ) * 0.1F, -0.6 + Mth.cos( ageInTicks / 3 ) * 0.1F );
                 matrixStackIn.mulPose( Vector3f.XP.rotationDegrees( -90.0F ) );
                 Minecraft.getInstance().getItemRenderer().renderStatic( stack, TransformType.THIRD_PERSON_LEFT_HAND,
-                                                                      packedLightIn, 0, matrixStackIn, bufferIn );
+                                                                      packedLightIn, 0, matrixStackIn, bufferIn, 0 );
                 matrixStackIn.popPose();
             }
         }

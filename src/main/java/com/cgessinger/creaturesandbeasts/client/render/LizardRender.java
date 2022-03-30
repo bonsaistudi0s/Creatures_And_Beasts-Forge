@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -16,9 +17,9 @@ import javax.annotation.Nullable;
 @OnlyIn(Dist.CLIENT)
 public class LizardRender extends GeoEntityRenderer<LizardEntity>
 {
-	public LizardRender (EntityRenderDispatcher renderManagerIn)
+	public LizardRender (EntityRendererProvider.Context context)
 	{
-		super(renderManagerIn, new LizardModel());
+		super(context, new LizardModel());
 		this.shadowRadius = 0.3F;
 	}
 

@@ -38,7 +38,7 @@ public class LizardEggBlock
     public LizardEggBlock()
     {
         super( BlockBehaviour.Properties.of( Material.EGG,
-                                                MaterialColor.SAND ).strength( 0.5F ).sound( SoundType.METAL ).harvestLevel( 1 ).randomTicks().noOcclusion() );
+                                                MaterialColor.SAND ).strength( 0.5F ).sound( SoundType.METAL ).strength(1.5F, 6.0F).randomTicks().noOcclusion() );
 
         this.registerDefaultState( this.stateDefinition.any().setValue( EGGS, Integer.valueOf( 6 ) ).setValue( VARIANT_0, 0 ).setValue( VARIANT_1, 2 ) );
     }

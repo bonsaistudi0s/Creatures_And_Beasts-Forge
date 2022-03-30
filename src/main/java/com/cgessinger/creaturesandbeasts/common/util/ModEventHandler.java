@@ -4,19 +4,18 @@ import com.cgessinger.creaturesandbeasts.common.config.CNBConfig.ServerConfig;
 import com.cgessinger.creaturesandbeasts.common.entites.LizardEntity;
 import com.cgessinger.creaturesandbeasts.common.init.ModItems;
 import com.google.common.collect.Multimap;
-
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.RecordItem;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -54,7 +53,7 @@ public class ModEventHandler {
 		if(event.player.level.isClientSide())
 			return;
 
-		Inventory inv = event.player.inventory;
+		Inventory inv = event.player.getInventory();
 		Stream<ItemStack> playerItems = Stream.concat(inv.armor.stream(), inv.items.stream());
 		Stream<ItemStack> conatinerItems = Stream.empty();
 		if(event.player.containerMenu != null)

@@ -9,45 +9,43 @@ import com.cgessinger.creaturesandbeasts.common.util.AnimationHandler;
 import com.cgessinger.creaturesandbeasts.common.util.AnimationHandler.ExecutionData;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-
-import net.minecraft.world.entity.AgableMob;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.SpawnGroupData;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.BreedGoal;
-import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
-import net.minecraft.world.entity.ai.goal.PanicGoal;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.PanicGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.Level;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import javax.annotation.Nullable;
-
 import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
@@ -101,13 +99,13 @@ public class CindershellEntity extends Animal implements IAnimationHolder<Cinder
 		this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
 	}
 
-	public static AttributeSupplier.Builder setCustomAttributes ()
-	{
-		return Mob.createMobAttributes()
-				.add(Attributes.MAX_HEALTH, 80.0D)
-				.add(Attributes.MOVEMENT_SPEED, 0.15D)
-				.add(Attributes.KNOCKBACK_RESISTANCE, 100D);
-	}
+    @SubscribeEvent
+    public static void onEntityAttributeModification(EntityAttributeModificationEvent event)
+    {
+        event.add(ModEntityTypes.CINDERSHELL.get(), Attributes.MAX_HEALTH, 80.0D);
+        event.add(ModEntityTypes.CINDERSHELL.get(), Attributes.MOVEMENT_SPEED, 0.15D);
+        event.add(ModEntityTypes.CINDERSHELL.get(), Attributes.KNOCKBACK_RESISTANCE, 100D);
+    }
 
     @Override
     public SpawnGroupData finalizeSpawn( ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, MobSpawnType reason,
@@ -184,9 +182,9 @@ public class CindershellEntity extends Animal implements IAnimationHolder<Cinder
 
 	@Nullable
 	@Override
-	public AgableMob getBreedOffspring (ServerLevel p_241840_1_, AgableMob p_241840_2_)
+	public AgeableMob getBreedOffspring (ServerLevel level, AgeableMob mob)
 	{
-		return ModEntityTypes.CINDERSHELL.get().create(p_241840_1_);
+		return ModEntityTypes.CINDERSHELL.get().create(level);
 	}
 
 	@Nullable
@@ -226,17 +224,17 @@ public class CindershellEntity extends Animal implements IAnimationHolder<Cinder
 		return false;
 	}
 
-	@Override
-	public boolean causeFallDamage(float distance, float damageMultiplier) {
-		return false;
-	}
-    
+    @Override
+    public boolean causeFallDamage(float distance, float damageMultiplier, DamageSource source) {
+        return false;
+    }
+
     @Override
     public void checkDespawn() 
     {
         if(!CNBConfig.ServerConfig.CINDERSHELL_CONFIG.shouldExist)
         {
-            this.remove();
+            this.remove(RemovalReason.DISCARDED);
             return;
         }
         super.checkDespawn();
@@ -255,7 +253,7 @@ public class CindershellEntity extends Animal implements IAnimationHolder<Cinder
             int i = this.getAge();
             if (!this.level.isClientSide && i == 0 && this.canFallInLove()) 
             {
-                this.usePlayerItem(player, stack);
+                this.usePlayerItem(player, player.getUsedItemHand(), stack);
                 this.animationHandler.startAnimation(ExecutionData.create().withPlayer(player).build());
                 this.playSound(ModSoundEventTypes.CINDERSHELL_ADULT_EAT.get(), 1.2F, 1F);
                 this.setHolding(stack);
@@ -265,7 +263,7 @@ public class CindershellEntity extends Animal implements IAnimationHolder<Cinder
             if (this.isBaby()) 
             {
                 this.playSound(ModSoundEventTypes.CINDERSHELL_BABY_EAT.get(), 1.3F, 1F);
-                this.usePlayerItem(player, stack);
+                this.usePlayerItem(player, player.getUsedItemHand(), stack);
                 this.ageUp((int)(-i / 20F * 0.1F), true);
                 return InteractionResult.sidedSuccess(this.level.isClientSide);
             }
@@ -295,7 +293,7 @@ public class CindershellEntity extends Animal implements IAnimationHolder<Cinder
             }
 
             player.setItemInHand(hand, stack);
-            this.remove();
+            this.remove(RemovalReason.DISCARDED);
             return InteractionResult.SUCCESS;
         }
 

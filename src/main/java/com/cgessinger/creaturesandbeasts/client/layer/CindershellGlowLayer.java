@@ -17,20 +17,17 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class CindershellGlowLayer extends RenderLayer<CindershellEntity, AgeableModelProvider<CindershellEntity>>
-{
+public class CindershellGlowLayer extends RenderLayer<CindershellEntity, AgeableModelProvider<CindershellEntity>> {
 	private static final RenderType RENDER_TYPE = RenderType.eyes(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "textures/model/entity/cindershell/cindershell_glow.png"));
 	private final AgeableModelProvider<CindershellEntity> cindershellModel;
 
-	public CindershellGlowLayer (RenderLayerParent<CindershellEntity, AgeableModelProvider<CindershellEntity>> entityRendererIn)
-	{
+	public CindershellGlowLayer(RenderLayerParent<CindershellEntity, AgeableModelProvider<CindershellEntity>> entityRendererIn) {
 		super(entityRendererIn);
 		this.cindershellModel = new AgeableModelProvider<>( new BabyCindershellModel(), new CindershellModel() );
 	}
 
 	@Override
-	public void render (PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn, CindershellEntity entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch)
-	{
+	public void render (PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn, CindershellEntity entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
         if(!entitylivingbaseIn.isBaby())
         {
             VertexConsumer ivertexbuilder = bufferIn.getBuffer(RENDER_TYPE);

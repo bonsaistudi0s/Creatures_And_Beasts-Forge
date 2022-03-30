@@ -27,17 +27,17 @@ public class LizardEgg
         ItemStack itemstack = playerIn.getItemInHand( handIn );
         worldIn.playSound( null, playerIn.getX(), playerIn.getY(), playerIn.getZ(),
                            SoundEvents.EGG_THROW, SoundSource.PLAYERS, 0.5F,
-                           0.4F / ( random.nextFloat() * 0.4F + 0.8F ) );
+                           0.4F / ( worldIn.random.nextFloat() * 0.4F + 0.8F ) );
         if ( !worldIn.isClientSide )
         {
             LizardEggEntity eggentity = new LizardEggEntity( worldIn, playerIn );
             eggentity.setItem( itemstack );
-            eggentity.shootFromRotation( playerIn, playerIn.xRot, playerIn.yRot, 0.0F, 1.5F, 1.0F );
+            eggentity.shootFromRotation( playerIn, playerIn.getXRot(), playerIn.getYRot(), 0.0F, 1.5F, 1.0F );
             worldIn.addFreshEntity( eggentity );
         }
 
         playerIn.awardStat( Stats.ITEM_USED.get( this ) );
-        if ( !playerIn.abilities.instabuild )
+        if ( !playerIn.getAbilities().instabuild )
         {
             itemstack.shrink( 1 );
         }

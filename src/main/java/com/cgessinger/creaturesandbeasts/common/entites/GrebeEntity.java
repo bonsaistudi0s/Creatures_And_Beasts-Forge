@@ -1,55 +1,31 @@
 package com.cgessinger.creaturesandbeasts.common.entites;
 
-import java.util.Random;
-import java.util.UUID;
-
-import javax.annotation.Nullable;
-
 import com.cgessinger.creaturesandbeasts.common.config.CNBConfig;
 import com.cgessinger.creaturesandbeasts.common.goals.GoToWaterGoal;
 import com.cgessinger.creaturesandbeasts.common.goals.MountAdultGoal;
 import com.cgessinger.creaturesandbeasts.common.goals.SmoothSwimGoal;
-
 import com.cgessinger.creaturesandbeasts.common.init.ModEntityTypes;
 import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-
-import net.minecraft.entity.*;
-import net.minecraft.world.entity.ai.util.RandomPos;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.goal.*;
-import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.core.BlockPos;
-import net.minecraft.util.Mth;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
-
-import net.minecraft.world.entity.AgableMob;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.Mth;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.BreedGoal;
 import net.minecraft.world.entity.ai.goal.FollowParentGoal;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -58,6 +34,23 @@ import net.minecraft.world.entity.ai.goal.PanicGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.TemptGoal;
+import net.minecraft.world.entity.ai.util.DefaultRandomPos;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+
+import javax.annotation.Nullable;
+import java.util.Random;
+import java.util.UUID;
 
 public class GrebeEntity extends Animal
 {
@@ -77,11 +70,11 @@ public class GrebeEntity extends Animal
 		this.setPathfindingMalus(BlockPathTypes.WATER, 10.0F);
 	}
 
-	public static AttributeSupplier.Builder setCustomAttributes ()
+    @SubscribeEvent
+	public static void onEntityAttributeModification(EntityAttributeModificationEvent event)
 	{
-		return Mob.createMobAttributes()
-				.add(Attributes.MAX_HEALTH, 10.0D) // Max Health
-				.add(Attributes.MOVEMENT_SPEED, 0.25D); // Movement Speed
+        event.add(ModEntityTypes.LITTLE_GREBE.get(), Attributes.MAX_HEALTH, 10.0D);
+        event.add(ModEntityTypes.LITTLE_GREBE.get(), Attributes.MOVEMENT_SPEED, 0.25D);
 	}
 
 	@Override
@@ -89,7 +82,7 @@ public class GrebeEntity extends Animal
 	{
 		if (spawnDataIn == null)
 		{
-			spawnDataIn = new AgableMob.AgableMobGroupData(0.6F);
+			spawnDataIn = new AgeableMobGroupData(0.6F);
 		}
 
 		return super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
@@ -104,7 +97,7 @@ public class GrebeEntity extends Animal
 		this.goalSelector.addGoal(3, new FollowParentGoal(this, 1.25D));
 		this.goalSelector.addGoal(3, new GrebeEntity.SwimTravelGoal(this, 1.0D));
 		this.goalSelector.addGoal(4, new GrebeEntity.WanderGoal(this, 1.0D, 2));
-		this.goalSelector.addGoal(5, new TemptGoal(this, 1.0D, false, TEMPTATION_ITEMS));
+		this.goalSelector.addGoal(5, new TemptGoal(this, 1.0D, TEMPTATION_ITEMS, false));
 		this.goalSelector.addGoal(5, new BreedGoal(this, 1.0D));
 		this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
 		this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
@@ -158,13 +151,13 @@ public class GrebeEntity extends Animal
 
 	@Nullable
 	@Override
-	public AgableMob getBreedOffspring (ServerLevel p_241840_1_, AgableMob p_241840_2_)
+	public AgeableMob getBreedOffspring (ServerLevel p_241840_1_, AgeableMob p_241840_2_)
 	{
 		return ModEntityTypes.LITTLE_GREBE.get().create(p_241840_1_);
 	}
 
 	@Override
-	public boolean causeFallDamage (float distance, float damageMultiplier)
+	public boolean causeFallDamage (float distance, float damageMultiplier, DamageSource source)
 	{
 		return false;
 	}
@@ -204,39 +197,6 @@ public class GrebeEntity extends Animal
 	public double getPassengersRidingOffset ()
 	{
 		return this.getBbHeight() * 0.3D;
-	}
-
-	/**
-	 * Rewrite of the original @applyEntityCollision with code cleanup and ability
-	 * to be pushed when mounted
-	 */
-	@Override
-	public void push (Entity entityIn)
-	{
-		if (!this.isPassengerOfSameVehicle(entityIn) && !entityIn.noPhysics && !this.noPhysics)
-		{
-			double d0 = entityIn.getX() - this.getX();
-			double d1 = entityIn.getZ() - this.getZ();
-			double d2 = Mth.absMax(d0, d1);
-			if (d2 >= 0.01D)
-			{
-				d2 = Mth.sqrt(d2);
-				double d3 = 1.0D / d2;
-				if (d3 > 1.0D)
-				{
-					d3 = 1.0D;
-				}
-
-				d0 = d0 / d2 * d3 * 0.05D - this.pushthrough;
-				d1 = d1 / d2 * d3 * 0.05D - this.pushthrough;
-				this.push(-d0, 0.0D, -d1);
-
-				if (!entityIn.isVehicle())
-				{
-					entityIn.push(d0, 0.0D, d1);
-				}
-			}
-		}
 	}
 
 	@Override
@@ -287,7 +247,7 @@ public class GrebeEntity extends Animal
     {
         if(!CNBConfig.ServerConfig.GREBE_CONFIG.shouldExist)
         {
-            this.remove();
+            this.remove(RemovalReason.DISCARDED);
             return;
         }
         super.checkDespawn();
@@ -343,10 +303,10 @@ public class GrebeEntity extends Animal
 			if (this.turtle.getNavigation().isDone())
 			{
 				Vec3 vector3d = Vec3.atBottomCenterOf(this.turtle.getTravelPos());
-				Vec3 vector3d1 = RandomPos.getPosTowards(this.turtle, 16, 3, vector3d, ((float) Math.PI / 10F));
+				Vec3 vector3d1 = DefaultRandomPos.getPosTowards(this.turtle, 16, 3, vector3d, ((float) Math.PI / 10F));
 				if (vector3d1 == null)
 				{
-					vector3d1 = RandomPos.getPosTowards(this.turtle, 8, 7, vector3d);
+					vector3d1 = DefaultRandomPos.getPosTowards(this.turtle, 8, 7, vector3d, ((float)Math.PI / 2F));
 				}
 
 				if (vector3d1 != null)

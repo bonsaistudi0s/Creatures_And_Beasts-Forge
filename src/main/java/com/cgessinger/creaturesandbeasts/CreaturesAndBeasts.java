@@ -1,15 +1,21 @@
 package com.cgessinger.creaturesandbeasts;
 
 import com.cgessinger.creaturesandbeasts.common.config.CNBConfig;
-import com.cgessinger.creaturesandbeasts.common.entites.*;
+import com.cgessinger.creaturesandbeasts.common.entites.CindershellEntity;
+import com.cgessinger.creaturesandbeasts.common.entites.FriendlySporelingEntity;
+import com.cgessinger.creaturesandbeasts.common.entites.GrebeEntity;
+import com.cgessinger.creaturesandbeasts.common.entites.HostileSporelingEntity;
+import com.cgessinger.creaturesandbeasts.common.entites.LilytadEntity;
+import com.cgessinger.creaturesandbeasts.common.entites.LizardEntity;
+import com.cgessinger.creaturesandbeasts.common.entites.NeutralSporelingEntity;
+import com.cgessinger.creaturesandbeasts.common.entites.YetiEntity;
 import com.cgessinger.creaturesandbeasts.common.init.ModBlockRegistry;
 import com.cgessinger.creaturesandbeasts.common.init.ModEntityTypes;
 import com.cgessinger.creaturesandbeasts.common.init.ModItems;
 import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
 import com.cgessinger.creaturesandbeasts.common.world.gen.ModEntitySpawns;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.world.entity.ai.attributes.DefaultAttributes;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
@@ -44,20 +50,22 @@ public class CreaturesAndBeasts
 		ModItems.ITEMS.register(eventBus);
 		MinecraftForge.EVENT_BUS.register(this);
 
+        MinecraftForge.EVENT_BUS.addListener(CindershellEntity::onEntityAttributeModification);
+        MinecraftForge.EVENT_BUS.addListener(FriendlySporelingEntity::onEntityAttributeModification);
+        MinecraftForge.EVENT_BUS.addListener(GrebeEntity::onEntityAttributeModification);
+        MinecraftForge.EVENT_BUS.addListener(HostileSporelingEntity::onEntityAttributeModification);
+        MinecraftForge.EVENT_BUS.addListener(LilytadEntity::onEntityAttributeModification);
+        MinecraftForge.EVENT_BUS.addListener(LizardEntity::onEntityAttributeModification);
+        MinecraftForge.EVENT_BUS.addListener(NeutralSporelingEntity::onEntityAttributeModification);
+        MinecraftForge.EVENT_BUS.addListener(YetiEntity::onEntityAttributeModification);
+
 		GeckoLib.initialize();
 	}
 
 	private void setup (final FMLCommonSetupEvent event)
 	{
 		event.enqueueWork(() -> {
-			DefaultAttributes.put(ModEntityTypes.LITTLE_GREBE.get(), GrebeEntity.setCustomAttributes().build());
-			DefaultAttributes.put(ModEntityTypes.CINDERSHELL.get(), CindershellEntity.setCustomAttributes().build());
-			DefaultAttributes.put(ModEntityTypes.LIZARD.get(), LizardEntity.setCustomAttributes().build());
-			DefaultAttributes.put(ModEntityTypes.LILYTAD.get(), LilytadEntity.setCustomAttributes().build());
-			DefaultAttributes.put(ModEntityTypes.FRIENDLY_SPORELING.get(), AbstractSporelingEntity.setCustomAttributes().build());
-			DefaultAttributes.put(ModEntityTypes.HOSTILE_SPORELING.get(), HostileSporelingEntity.setCustomAttributes().build());
-			DefaultAttributes.put(ModEntityTypes.NEUTRAL_SPORELING.get(), NeutralSporelingEntity.setCustomAttributes().build());
-			DefaultAttributes.put(ModEntityTypes.YETI.get(), YetiEntity.setCustomAttributes().build());
+
 		});
 		/*
 		 * This registers the spawn placement settings we config for any mob that needs

@@ -1,49 +1,50 @@
 package com.cgessinger.creaturesandbeasts.common.entites;
 
 import com.cgessinger.creaturesandbeasts.common.config.CNBConfig;
+import com.cgessinger.creaturesandbeasts.common.init.ModEntityTypes;
 import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
 import com.cgessinger.creaturesandbeasts.common.interfaces.IAnimationHolder;
 import com.cgessinger.creaturesandbeasts.common.util.AnimationHandler;
 import com.cgessinger.creaturesandbeasts.common.util.AnimationHandler.ExecutionData;
-
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.entity.*;
-import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.PanicGoal;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.*;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.PanicGoal;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 
 import javax.annotation.Nullable;
-import java.util.Random;
-import java.util.Map.Entry;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
-
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.PathfinderMob;
-import net.minecraft.world.entity.SpawnGroupData;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.ServerLevelAccessor;
+import java.util.Random;
 
 public class FriendlySporelingEntity
     extends AbstractSporelingEntity
@@ -62,6 +63,13 @@ public class FriendlySporelingEntity
         super( type, worldIn );
         this.setCanPickUpLoot( true );
         this.animationHandler = new AnimationHandler<>("trade_controller", this, 40, 1, 0, INSPECT);
+    }
+
+    @SubscribeEvent
+    public static void onEntityAttributeModification(EntityAttributeModificationEvent event)
+    {
+        event.add(ModEntityTypes.FRIENDLY_SPORELING.get(), Attributes.MAX_HEALTH, 16.0D);
+        event.add(ModEntityTypes.FRIENDLY_SPORELING.get(), Attributes.MOVEMENT_SPEED, 0.2D);
     }
 
     @Override
@@ -149,7 +157,7 @@ public class FriendlySporelingEntity
     {
         if ( !CNBConfig.ServerConfig.FRIENDLY_SPORELING_CONFIG.shouldExist )
         {
-            this.remove();
+            this.remove(RemovalReason.DISCARDED);
             return;
         }
         super.checkDespawn();
@@ -164,7 +172,7 @@ public class FriendlySporelingEntity
             this.onItemPickup( itemEntity );
             this.setItemSlot( EquipmentSlot.MAINHAND, stack );
             this.setHolding(stack);
-            itemEntity.remove();
+            itemEntity.remove(RemovalReason.DISCARDED);
             this.animationHandler.startAnimation(ExecutionData.create().withItemStack(stack).build());
         }
     }
@@ -267,7 +275,7 @@ public class FriendlySporelingEntity
         @Override
         public boolean canContinueToUse()
         {
-            return super.canContinueToUse() && this.sporeling.getLookControl().isHasWanted();
+            return super.canContinueToUse() && this.sporeling.getLookControl().isLookingAtTarget();
         }
     }
 

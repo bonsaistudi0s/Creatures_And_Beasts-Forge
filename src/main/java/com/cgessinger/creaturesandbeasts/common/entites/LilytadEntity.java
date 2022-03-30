@@ -2,34 +2,38 @@ package com.cgessinger.creaturesandbeasts.common.entites;
 
 import com.cgessinger.creaturesandbeasts.common.config.CNBConfig;
 import com.cgessinger.creaturesandbeasts.common.goals.FindWaterOneDeepGoal;
+import com.cgessinger.creaturesandbeasts.common.init.ModEntityTypes;
 import com.cgessinger.creaturesandbeasts.common.init.ModItems;
 import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
-import net.minecraft.world.entity.AgableMob;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.control.LookControl;
-import net.minecraft.entity.ai.goal.*;
-import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.control.LookControl;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.PanicGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.Level;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraftforge.common.IForgeShearable;
+import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -42,11 +46,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Random;
-
-import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.PanicGoal;
-import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
-import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 
 public class LilytadEntity extends Animal implements IForgeShearable, IAnimatable
 {
@@ -78,12 +77,12 @@ public class LilytadEntity extends Animal implements IForgeShearable, IAnimatabl
 		super.defineSynchedData();
 	}
 
-	public static AttributeSupplier.Builder setCustomAttributes ()
-	{
-		return Mob.createMobAttributes()
-				.add(Attributes.MAX_HEALTH, 20.0D) // Max Health
-				.add(Attributes.MOVEMENT_SPEED, 0.2D); // Movement Speed
-	}
+    @SubscribeEvent
+    public static void onEntityAttributeModification(EntityAttributeModificationEvent event)
+    {
+        event.add(ModEntityTypes.LILYTAD.get(), Attributes.MAX_HEALTH, 20.0D);
+        event.add(ModEntityTypes.LILYTAD.get(), Attributes.MOVEMENT_SPEED, 0.2D);
+    }
 
 	@Override
 	public void readAdditionalSaveData (CompoundTag compound)
@@ -193,7 +192,7 @@ public class LilytadEntity extends Animal implements IForgeShearable, IAnimatabl
 
 	@Nullable
 	@Override
-	public AgableMob getBreedOffspring (ServerLevel p_241840_1_, AgableMob p_241840_2_)
+	public AgeableMob getBreedOffspring (ServerLevel p_241840_1_, AgeableMob p_241840_2_)
 	{
 		return null;
 	}
@@ -273,7 +272,7 @@ public class LilytadEntity extends Animal implements IForgeShearable, IAnimatabl
     {
         if(!CNBConfig.ServerConfig.LILYTAD_CONFIG.shouldExist)
         {
-            this.remove();
+            this.remove(RemovalReason.DISCARDED);
             return;
         }
         super.checkDespawn();

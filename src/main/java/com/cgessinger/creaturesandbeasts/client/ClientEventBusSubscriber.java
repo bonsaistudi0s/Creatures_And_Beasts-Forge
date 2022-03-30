@@ -6,32 +6,31 @@ import com.cgessinger.creaturesandbeasts.common.entites.projectiles.LizardEggEnt
 import com.cgessinger.creaturesandbeasts.common.init.ModEntityTypes;
 import com.cgessinger.creaturesandbeasts.common.items.ModSpawnEggItem;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 @Mod.EventBusSubscriber(modid = CreaturesAndBeasts.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-public class ClientEventBusSubscriber
-{
-	@SubscribeEvent
-	public static void onClientSetup (FMLClientSetupEvent event)
-	{
-		RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.LITTLE_GREBE.get(), GrebeRender::new);
-		RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.LIZARD.get(), LizardRender::new);
-		RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.CINDERSHELL.get(), CindershellRender::new);
-		RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.LILYTAD.get(), LilytadRender::new);
-		RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.FRIENDLY_SPORELING.get(), SporelingRender::new);
-		RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.HOSTILE_SPORELING.get(), SporelingRender::new);
-		RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.NEUTRAL_SPORELING.get(), SporelingRender::new);
-		RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.YETI.get(), YetiRender::new);
-		RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.LIZARD_EGG.get(), 
-            manager -> new ThrownItemRenderer<LizardEggEntity>(manager, event.getMinecraftSupplier().get().getItemRenderer()));
-	}
+public class ClientEventBusSubscriber {
+
+    @SubscribeEvent
+    public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
+        event.registerEntityRenderer(ModEntityTypes.LITTLE_GREBE.get(), GrebeRender::new);
+        event.registerEntityRenderer(ModEntityTypes.LIZARD.get(), LizardRender::new);
+        event.registerEntityRenderer(ModEntityTypes.CINDERSHELL.get(), CindershellRender::new);
+        event.registerEntityRenderer(ModEntityTypes.LILYTAD.get(), LilytadRender::new);
+        event.registerEntityRenderer(ModEntityTypes.FRIENDLY_SPORELING.get(), SporelingRender::new);
+        event.registerEntityRenderer(ModEntityTypes.HOSTILE_SPORELING.get(), SporelingRender::new);
+        event.registerEntityRenderer(ModEntityTypes.NEUTRAL_SPORELING.get(), SporelingRender::new);
+        event.registerEntityRenderer(ModEntityTypes.YETI.get(), YetiRender::new);
+        event.registerEntityRenderer(ModEntityTypes.LIZARD_EGG.get(),
+                manager -> new ThrownItemRenderer<LizardEggEntity>(manager, 1.0F, true));
+    }
 
 	@SubscribeEvent
 	public static void onRegisterEntities(final RegistryEvent.Register<EntityType<?>> event)

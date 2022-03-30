@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -31,9 +32,9 @@ public class YetiRender<T extends YetiEntity>
 
     private boolean isChild;
 
-    public YetiRender( EntityRenderDispatcher renderManager )
+    public YetiRender(EntityRendererProvider.Context context)
     {
-        super( renderManager, new YetiModel<>() );
+        super( context, new YetiModel<>() );
         this.shadowRadius = 0.7F;
     }
 
@@ -75,7 +76,7 @@ public class YetiRender<T extends YetiEntity>
                     stack.translate( 0.25, 0.6, 0 );
                 }
                 Minecraft.getInstance().getItemRenderer().renderStatic( renderItem, TransformType.THIRD_PERSON_LEFT_HAND,
-                                                                      packedLightIn, packedOverlayIn, stack, this.rtb );
+                                                                      packedLightIn, packedOverlayIn, stack, this.rtb, 0);
                 stack.popPose();
 
                 // restore the render buffer - GeckoLib expects this state otherwise you'll have weird texture issues

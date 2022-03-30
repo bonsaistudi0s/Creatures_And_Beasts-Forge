@@ -6,7 +6,6 @@ import com.cgessinger.creaturesandbeasts.common.interfaces.IAnimationHolder;
 import com.cgessinger.creaturesandbeasts.common.util.AnimationHandler.ExecutionData;
 
 import net.minecraft.advancements.CriteriaTriggers;
-import net.minecraft.world.entity.AgableMob;
 import net.minecraft.world.entity.ai.goal.BreedGoal;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.animal.Animal;
@@ -46,8 +45,7 @@ public class AnimatedBreedGoal<E extends Animal & IAnimatable & IAnimationHolder
         if ( serverplayerentity != null )
         {
             serverplayerentity.awardStat( Stats.ANIMALS_BRED );
-            CriteriaTriggers.BRED_ANIMALS.trigger( serverplayerentity, this.entity, this.partner,
-                                                   (AgableMob) null );
+            CriteriaTriggers.BRED_ANIMALS.trigger(serverplayerentity, this.entity, this.partner, null);
         }
 
         

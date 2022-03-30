@@ -14,16 +14,15 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.common.util.Lazy;
-import net.minecraftforge.fml.RegistryObject;
 
-import net.minecraft.world.item.Item.Properties;
+import net.minecraftforge.registries.RegistryObject;
 
 public class ModEntityBucket
     extends BucketItem
 {
 	private final Lazy<? extends EntityType<?>> type;
 
-    public ModEntityBucket(final RegistryObject<? extends EntityType<?>> entityType, Fluid fluid,  Properties builder )
+    public ModEntityBucket(final RegistryObject<? extends EntityType<?>> entityType, Fluid fluid, Properties builder )
     {
         super( () -> fluid, builder );
 		this.type = Lazy.of(entityType::get);

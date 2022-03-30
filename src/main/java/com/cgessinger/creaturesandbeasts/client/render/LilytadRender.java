@@ -7,6 +7,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 
@@ -14,9 +15,9 @@ import javax.annotation.Nullable;
 
 public class LilytadRender extends GeoEntityRenderer<LilytadEntity>
 {
-	public LilytadRender (EntityRenderDispatcher renderManager)
+	public LilytadRender (EntityRendererProvider.Context context)
 	{
-		super(renderManager, new LilytadModel());
+		super(context, new LilytadModel());
 		this.shadowRadius = 0.7F;
 	}
 

@@ -10,35 +10,49 @@ import com.cgessinger.creaturesandbeasts.common.util.AnimationHandler;
 import com.cgessinger.creaturesandbeasts.common.util.AnimationHandler.ExecutionData;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.particle.ParticleEngine;
-import net.minecraft.entity.*;
-import net.minecraft.entity.ai.attributes.*;
-import net.minecraft.entity.ai.goal.*;
-import net.minecraft.world.entity.monster.Enemy;
-import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.BreedGoal;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.FollowParentGoal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -50,31 +64,11 @@ import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 import javax.annotation.Nullable;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 import java.util.function.Predicate;
-
-import net.minecraft.world.entity.AgableMob;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.SpawnGroupData;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.BreedGoal;
-import net.minecraft.world.entity.ai.goal.FloatGoal;
-import net.minecraft.world.entity.ai.goal.FollowParentGoal;
-import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
-import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
-import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
-import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 
 public class YetiEntity
     extends Animal
@@ -115,20 +109,20 @@ public class YetiEntity
 
         if ( spawnDataIn == null )
         {
-            spawnDataIn = new AgableMob.AgableMobGroupData( 1.0F );
+            spawnDataIn = new AgeableMobGroupData(1.0F);
         }
 
         return super.finalizeSpawn( worldIn, difficultyIn, reason, spawnDataIn, dataTag );
     }
 
-    public static AttributeSupplier.Builder setCustomAttributes()
+    @SubscribeEvent
+    public static void onEntityAttributeModification(EntityAttributeModificationEvent event)
     {
-        return Mob.createMobAttributes().add( Attributes.MAX_HEALTH,
-                                                                  80.0D ).add( Attributes.MOVEMENT_SPEED,
-                                                                                                  0.3D ).add( Attributes.ATTACK_DAMAGE,
-                                                                                                                                 16.0D ).add( Attributes.ATTACK_SPEED,
-                                                                                                                                                                 0.1D ).add( Attributes.KNOCKBACK_RESISTANCE,
-                                                                                                                                                                                                0.7D );
+        event.add(ModEntityTypes.YETI.get(), Attributes.MAX_HEALTH, 80.0D);
+        event.add(ModEntityTypes.YETI.get(), Attributes.MOVEMENT_SPEED, 0.3D);
+        event.add(ModEntityTypes.YETI.get(), Attributes.ATTACK_DAMAGE, 16.0D);
+        event.add(ModEntityTypes.YETI.get(), Attributes.ATTACK_SPEED, 0.1D);
+        event.add(ModEntityTypes.YETI.get(), Attributes.KNOCKBACK_RESISTANCE, 0.7D);
     }
 
     @Override
@@ -235,7 +229,7 @@ public class YetiEntity
 
     @Nullable
     @Override
-    public AgableMob getBreedOffspring( ServerLevel p_241840_1_, AgableMob p_241840_2_ )
+    public AgeableMob getBreedOffspring(ServerLevel p_241840_1_, AgeableMob p_241840_2_ )
     {
         return ModEntityTypes.YETI.get().create( p_241840_1_ );
     }
@@ -400,7 +394,7 @@ public class YetiEntity
     private InteractionResult startEat( Player player, ItemStack stack )
     {
         this.setHolding( stack );
-        this.usePlayerItem( player, stack );
+        this.usePlayerItem( player, player.getUsedItemHand(), stack );
         this.eatHandler.startAnimation( ExecutionData.create().withPlayer( player ).build() );
         SoundEvent sound =
             this.isBaby() ? ModSoundEventTypes.YETI_BABY_EAT.get() : ModSoundEventTypes.YETI_ADULT_EAT.get();
@@ -448,7 +442,7 @@ public class YetiEntity
         if ( this.isBaby() )
         {
             List<YetiEntity> list =
-                this.level.getEntitiesOfClass( this.getClass(), this.getBoundingBox().inflate( 8.0D, 4.0D, 8.0D ) );
+                this.level.getEntitiesOfClass( YetiEntity.class, this.getBoundingBox().inflate( 8.0D, 4.0D, 8.0D ) );
 
             for ( YetiEntity yeti : list )
             {
@@ -473,7 +467,7 @@ public class YetiEntity
     }
 
     @Override
-    protected float getVoicePitch()
+    public float getVoicePitch()
     {
         float pitch = super.getVoicePitch();
         return this.isBaby() ? pitch * 1.5F : pitch;
@@ -502,7 +496,7 @@ public class YetiEntity
     {
         if ( !CNBConfig.ServerConfig.YETI_CONFIG.shouldExist )
         {
-            this.remove();
+            this.remove(RemovalReason.DISCARDED);
             return;
         }
         super.checkDespawn();

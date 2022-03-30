@@ -3,24 +3,22 @@ package com.cgessinger.creaturesandbeasts.common.entites.projectiles;
 import com.cgessinger.creaturesandbeasts.common.entites.LizardEntity;
 import com.cgessinger.creaturesandbeasts.common.init.ModEntityTypes;
 import com.cgessinger.creaturesandbeasts.common.init.ModItems;
-import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
-
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ItemParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.item.Item;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.core.particles.ItemParticleOption;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.network.NetworkHooks;
 
 public class LizardEggEntity
     extends ThrowableItemProjectile
@@ -73,13 +71,13 @@ public class LizardEggEntity
                 BlockPos pos = this.blockPosition();
                 LizardEntity lizard = ModEntityTypes.LIZARD.get().create( this.level );
                 lizard.setAge( -24000 );
-                lizard.moveTo( this.getX(), this.getY(), this.getZ(), this.yRot, 0.0F );
-                lizard.setVariant(lizard.getLizardTypeFromBiome(this.level.getBiome(pos).getBiomeCategory()));
+                lizard.moveTo( this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F );
+                lizard.setVariant(lizard.getLizardTypeFromBiome(Biome.getBiomeCategory(this.level.getBiome(pos))));
                 this.level.addFreshEntity( lizard );
             }
 
             this.level.broadcastEntityEvent( this, (byte) 3 );
-            this.remove();
+            this.remove(RemovalReason.DISCARDED);
         }
 
     }
