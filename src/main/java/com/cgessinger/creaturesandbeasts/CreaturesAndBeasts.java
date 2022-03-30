@@ -1,25 +1,26 @@
 package com.cgessinger.creaturesandbeasts;
 
-import com.cgessinger.creaturesandbeasts.common.config.CNBConfig;
-import com.cgessinger.creaturesandbeasts.common.entites.CindershellEntity;
-import com.cgessinger.creaturesandbeasts.common.entites.FriendlySporelingEntity;
-import com.cgessinger.creaturesandbeasts.common.entites.GrebeEntity;
-import com.cgessinger.creaturesandbeasts.common.entites.HostileSporelingEntity;
-import com.cgessinger.creaturesandbeasts.common.entites.LilytadEntity;
-import com.cgessinger.creaturesandbeasts.common.entites.LizardEntity;
-import com.cgessinger.creaturesandbeasts.common.entites.NeutralSporelingEntity;
-import com.cgessinger.creaturesandbeasts.common.entites.YetiEntity;
-import com.cgessinger.creaturesandbeasts.common.init.ModBlockRegistry;
-import com.cgessinger.creaturesandbeasts.common.init.ModEntityTypes;
-import com.cgessinger.creaturesandbeasts.common.init.ModItems;
-import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
-import com.cgessinger.creaturesandbeasts.common.world.gen.ModEntitySpawns;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.RenderType;
+import com.cgessinger.creaturesandbeasts.client.entity.CNBClient;
+import com.cgessinger.creaturesandbeasts.config.CNBConfig;
+import com.cgessinger.creaturesandbeasts.entities.CindershellEntity;
+import com.cgessinger.creaturesandbeasts.entities.FriendlySporelingEntity;
+import com.cgessinger.creaturesandbeasts.entities.GrebeEntity;
+import com.cgessinger.creaturesandbeasts.entities.HostileSporelingEntity;
+import com.cgessinger.creaturesandbeasts.entities.LilytadEntity;
+import com.cgessinger.creaturesandbeasts.entities.LizardEntity;
+import com.cgessinger.creaturesandbeasts.entities.NeutralSporelingEntity;
+import com.cgessinger.creaturesandbeasts.entities.YetiEntity;
+import com.cgessinger.creaturesandbeasts.init.CNBBlocks;
+import com.cgessinger.creaturesandbeasts.init.CNBEntityTypes;
+import com.cgessinger.creaturesandbeasts.init.CNBItems;
+import com.cgessinger.creaturesandbeasts.init.CNBSoundEvents;
+import com.cgessinger.creaturesandbeasts.world.gen.ModEntitySpawns;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig.Type;
@@ -29,26 +30,29 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import software.bernie.geckolib3.GeckoLib;
 
 @Mod(CreaturesAndBeasts.MOD_ID)
-public class CreaturesAndBeasts
-{
-	public static final String MOD_ID = "cnb";
+public class CreaturesAndBeasts {
+    public static final String MOD_ID = "cnb";
+    public static final CreativeModeTab TAB = new CreativeModeTab("cnb_tab") {
+        @Override
+        public ItemStack makeIcon() {
+            return new ItemStack(CNBItems.GREBE_SPAWN_EGG.get());
+        }
+    };
 
-	public CreaturesAndBeasts ()
-	{
-		ModLoadingContext.get().registerConfig(Type.COMMON, CNBConfig.COMMON_SPEC);
+    public CreaturesAndBeasts() {
+        IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
-		IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        eventBus.addListener(this::commonSetup);
+        eventBus.addListener(this::clientSetup);
 
-		// Register the setup method for modloading
-		eventBus.addListener(this::setup);
-		// Register the doClientStuff method for modloading
-		eventBus.addListener(this::doClientStuff);
+        ModLoadingContext.get().registerConfig(Type.COMMON, CNBConfig.COMMON_SPEC);
 
-		ModSoundEventTypes.SOUND_EVENTS.register(eventBus);
-		ModEntityTypes.ENTITY_TYPES.register(eventBus);
-		ModBlockRegistry.BLOCKS.register(eventBus);
-		ModItems.ITEMS.register(eventBus);
-		MinecraftForge.EVENT_BUS.register(this);
+        CNBSoundEvents.SOUND_EVENTS.register(eventBus);
+        CNBEntityTypes.ENTITY_TYPES.register(eventBus);
+        CNBBlocks.BLOCKS.register(eventBus);
+        CNBItems.ITEMS.register(eventBus);
+
+        MinecraftForge.EVENT_BUS.register(this);
 
         MinecraftForge.EVENT_BUS.addListener(CindershellEntity::onEntityAttributeModification);
         MinecraftForge.EVENT_BUS.addListener(FriendlySporelingEntity::onEntityAttributeModification);
@@ -59,32 +63,14 @@ public class CreaturesAndBeasts
         MinecraftForge.EVENT_BUS.addListener(NeutralSporelingEntity::onEntityAttributeModification);
         MinecraftForge.EVENT_BUS.addListener(YetiEntity::onEntityAttributeModification);
 
-		GeckoLib.initialize();
-	}
+        GeckoLib.initialize();
+    }
 
-	private void setup (final FMLCommonSetupEvent event)
-	{
-		event.enqueueWork(() -> {
+    private void commonSetup(final FMLCommonSetupEvent event) {
+        ModEntitySpawns.entitySpawnPlacementRegistry();
+    }
 
-		});
-		/*
-		 * This registers the spawn placement settings we config for any mob that needs
-		 * it.
-		 */
-		ModEntitySpawns.entitySpawnPlacementRegistry();
-	}
-
-	private void doClientStuff (final FMLClientSetupEvent event)
-	{
-		ItemBlockRenderTypes.setRenderLayer(ModBlockRegistry.POTTED_LILYTAD_FLOWER.get(), RenderType.cutout());
-	}
-
-	public static final CreativeModeTab TAB = new CreativeModeTab("cnb_tab")
-	{
-		@Override
-		public ItemStack makeIcon ()
-		{
-			return new ItemStack(ModItems.GREBE_SPAWN_EGG.get());
-		}
-	};
+    private void clientSetup(final FMLClientSetupEvent event) {
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> CNBClient::init);
+    }
 }

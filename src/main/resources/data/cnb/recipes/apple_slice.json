@@ -5,8 +5,7 @@
       "item": "minecraft:apple"
     }
   ],
-  "result":
-  {
+  "result": {
     "item": "cnb:apple_slice",
     "count": 4
   }
