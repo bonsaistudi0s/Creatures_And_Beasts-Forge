@@ -4,20 +4,20 @@ import com.cgessinger.creaturesandbeasts.common.config.CNBConfig;
 import com.cgessinger.creaturesandbeasts.common.goals.TimedAttackGoal;
 import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
 import net.minecraft.entity.*;
-import net.minecraft.entity.ai.attributes.AttributeModifierMap;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
-import net.minecraft.entity.monster.IMob;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
 import net.minecraft.world.*;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.Biomes;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -27,11 +27,19 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.Random;
 
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.ServerLevelAccessor;
+
 public class HostileSporelingEntity
     extends AbstractSporelingEntity
-    implements IMob
+    implements Enemy
 {
-    public HostileSporelingEntity( EntityType<? extends CreatureEntity> type, World worldIn )
+    public HostileSporelingEntity( EntityType<? extends PathfinderMob> type, Level worldIn )
     {
         super( type, worldIn );
     }
@@ -41,23 +49,23 @@ public class HostileSporelingEntity
     {
         super.registerGoals();
         this.goalSelector.addGoal( 2, new TimedAttackGoal<>( this, 1.3D, false, 30 ) );
-        this.targetSelector.addGoal( 2, new NearestAttackableTargetGoal<>( this, PlayerEntity.class, true ) );
+        this.targetSelector.addGoal( 2, new NearestAttackableTargetGoal<>( this, Player.class, true ) );
     }
 
-    public static AttributeModifierMap.MutableAttribute setCustomAttributes()
+    public static AttributeSupplier.Builder setCustomAttributes()
     {
-        return AbstractSporelingEntity.setCustomAttributes().createMutableAttribute( Attributes.FOLLOW_RANGE,
-                                                                                     35.0D ).createMutableAttribute( Attributes.ATTACK_DAMAGE,
+        return AbstractSporelingEntity.setCustomAttributes().add( Attributes.FOLLOW_RANGE,
+                                                                                     35.0D ).add( Attributes.ATTACK_DAMAGE,
                                                                                                                      2.0D );
     }
 
     @Nullable
     @Override
-    public ILivingEntityData onInitialSpawn( IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
-                                             @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag )
+    public SpawnGroupData finalizeSpawn( ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, MobSpawnType reason,
+                                             @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag )
     {
-        this.setSporelingType( this.getRNG().nextInt( 2 ) + 2 );
-        return super.onInitialSpawn( worldIn, difficultyIn, reason, spawnDataIn, dataTag );
+        this.setSporelingType( this.getRandom().nextInt( 2 ) + 2 );
+        return super.finalizeSpawn( worldIn, difficultyIn, reason, spawnDataIn, dataTag );
     }
 
     @Override
@@ -71,18 +79,18 @@ public class HostileSporelingEntity
         return super.animationPredicate( event );
     }
 
-    public static boolean canSporelingSpawn( EntityType<HostileSporelingEntity> p_234418_0_, IWorld worldIn,
-                                             SpawnReason p_234418_2_, BlockPos p_234418_3_, Random p_234418_4_ )
+    public static boolean canSporelingSpawn( EntityType<HostileSporelingEntity> p_234418_0_, LevelAccessor worldIn,
+                                             MobSpawnType p_234418_2_, BlockPos p_234418_3_, Random p_234418_4_ )
     {
-        Optional<RegistryKey<Biome>> optional =
-            worldIn.func_241828_r().getRegistry( Registry.BIOME_KEY ).getOptionalKey( worldIn.getBiome( p_234418_3_ ) );
+        Optional<ResourceKey<Biome>> optional =
+            worldIn.registryAccess().registryOrThrow( Registry.BIOME_REGISTRY ).getResourceKey( worldIn.getBiome( p_234418_3_ ) );
 
         return worldIn.getDifficulty() != Difficulty.PEACEFUL && ( optional.isPresent()
                         && optional.get() != Biomes.WARPED_FOREST && optional.get() != Biomes.CRIMSON_FOREST );
     }
 
     @Override
-    protected boolean isDespawnPeaceful()
+    protected boolean shouldDespawnInPeaceful()
     {
         return true;
     }

@@ -5,18 +5,18 @@ import com.cgessinger.creaturesandbeasts.common.entites.LizardEntity;
 import com.cgessinger.creaturesandbeasts.common.init.ModItems;
 import com.google.common.collect.Multimap;
 
-import net.minecraft.entity.ai.attributes.Attribute;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.MusicDiscItem;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.JukeboxTileEntity;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.RecordItem;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -31,12 +31,12 @@ import java.util.stream.Stream;
 public class ModEventHandler {
 	@SubscribeEvent
 	public static void onBlockActivate(PlayerInteractEvent.RightClickBlock event) {
-		TileEntity te = event.getWorld().getTileEntity(event.getPos());
-		if (te instanceof JukeboxTileEntity) {
-			Item heldItem = event.getPlayer().getHeldItem(event.getHand()).getItem();
-			if (heldItem instanceof MusicDiscItem) {
-				List<LizardEntity> lizards = event.getWorld().getEntitiesWithinAABB(LizardEntity.class,
-						event.getPlayer().getBoundingBox().grow(15));
+		BlockEntity te = event.getWorld().getBlockEntity(event.getPos());
+		if (te instanceof JukeboxBlockEntity) {
+			Item heldItem = event.getPlayer().getItemInHand(event.getHand()).getItem();
+			if (heldItem instanceof RecordItem) {
+				List<LizardEntity> lizards = event.getWorld().getEntitiesOfClass(LizardEntity.class,
+						event.getPlayer().getBoundingBox().inflate(15));
 				for (LizardEntity lizard : lizards) {
 					lizard.setPartying(true, event.getPos());
 				}
@@ -51,14 +51,14 @@ public class ModEventHandler {
 	@SubscribeEvent
 	public static void onPlayerTick (TickEvent.PlayerTickEvent event)
 	{
-		if(event.player.world.isRemote())
+		if(event.player.level.isClientSide())
 			return;
 
-		PlayerInventory inv = event.player.inventory;
-		Stream<ItemStack> playerItems = Stream.concat(inv.armorInventory.stream(), inv.mainInventory.stream());
+		Inventory inv = event.player.inventory;
+		Stream<ItemStack> playerItems = Stream.concat(inv.armor.stream(), inv.items.stream());
 		Stream<ItemStack> conatinerItems = Stream.empty();
-		if(event.player.openContainer != null)
-			conatinerItems = event.player.openContainer.getInventory().stream();
+		if(event.player.containerMenu != null)
+			conatinerItems = event.player.containerMenu.getItems().stream();
 
 		Stream.concat(playerItems, conatinerItems).forEach(stack -> {
 			if(stack.getItem() instanceof ArmorItem)
@@ -74,9 +74,9 @@ public class ModEventHandler {
 		if(input.hasTag() && input.getTag().contains("hide_amount"))
 		{			
 			if(input.getTag().contains("AttributeModifiers", 9))
-				input.removeChildTag("AttributeModifiers");
+				input.removeTagKey("AttributeModifiers");
 			
-			for(EquipmentSlotType slot : EquipmentSlotType.values())
+			for(EquipmentSlot slot : EquipmentSlot.values())
 			{
 				Multimap<Attribute, AttributeModifier> modOld = input.getItem().getAttributeModifiers(slot, input);
 				int hideAmount = input.getTag().getInt("hide_amount");
@@ -86,7 +86,7 @@ public class ModEventHandler {
 					AttributeModifier modifier = entry.getValue();
 					if(entry.getKey().equals(Attributes.ARMOR))
 					{
-						modifier = new AttributeModifier(modifier.getID(), modifier.getName(), modifier.getAmount() * Math.pow(ServerConfig.HIDE_MULTIPLIER.value, hideAmount), modifier.getOperation());
+						modifier = new AttributeModifier(modifier.getId(), modifier.getName(), modifier.getAmount() * Math.pow(ServerConfig.HIDE_MULTIPLIER.value, hideAmount), modifier.getOperation());
 					}
 					input.addAttributeModifier(entry.getKey(), modifier, slot);
 				}
@@ -121,7 +121,7 @@ public class ModEventHandler {
 		if(event.getLeft().getItem() instanceof ArmorItem && event.getRight().getItem() == ModItems.YETI_HIDE.get())
 		{
 			ItemStack output = event.getLeft().copy();
-			CompoundNBT nbt = output.getOrCreateTag();
+			CompoundTag nbt = output.getOrCreateTag();
 			int hideAmount = 1;
 
 			if(nbt.contains("hide_amount"))

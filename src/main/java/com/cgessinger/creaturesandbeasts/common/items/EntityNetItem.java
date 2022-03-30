@@ -2,25 +2,25 @@ package com.cgessinger.creaturesandbeasts.common.items;
 
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
 import com.cgessinger.creaturesandbeasts.common.interfaces.IModNetable;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionHand;
 
 public class EntityNetItem extends Item
 {
 	public EntityNetItem ()
 	{
 		super(new Item.Properties()
-				.group(CreaturesAndBeasts.TAB)
-				.maxDamage(64)
+				.tab(CreaturesAndBeasts.TAB)
+				.durability(64)
 		);
 	}
 
 	@Override
-	public ActionResultType itemInteractionForEntity (ItemStack stackIn, PlayerEntity playerIn, LivingEntity target, Hand hand)
+	public InteractionResult interactLivingEntity (ItemStack stackIn, Player playerIn, LivingEntity target, InteractionHand hand)
 	{
 		if(target instanceof IModNetable && target.isAlive())
 		{
@@ -28,22 +28,22 @@ public class EntityNetItem extends Item
 			ItemStack entityItem = entity.getItem();
 			if(entityItem != null)
 			{
-				playerIn.addItemStackToInventory(entityItem);
+				playerIn.addItem(entityItem);
 				entity.spawnParticleFeedback();
 				target.remove();
-				if (!playerIn.world.isRemote()) {
-					stackIn.damageItem(1, playerIn, (p_220000_1_) -> {
-						p_220000_1_.sendBreakAnimation(hand);
+				if (!playerIn.level.isClientSide()) {
+					stackIn.hurtAndBreak(1, playerIn, (p_220000_1_) -> {
+						p_220000_1_.broadcastBreakEvent(hand);
 					});
 				}
-				return ActionResultType.SUCCESS;
+				return InteractionResult.SUCCESS;
 			}
 		}
-		return ActionResultType.FAIL;
+		return InteractionResult.FAIL;
 	}
 
 	@Override
-	public int getItemEnchantability() {
+	public int getEnchantmentValue() {
 		return 1;
 	}
 }

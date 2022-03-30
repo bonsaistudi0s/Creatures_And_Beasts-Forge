@@ -1,12 +1,12 @@
 package com.cgessinger.creaturesandbeasts.common.goals;
 
 import com.cgessinger.creaturesandbeasts.common.interfaces.ITimedAttackEntity;
-import net.minecraft.entity.CreatureEntity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.Difficulty;
 
-public class TimedAttackGoal<E extends CreatureEntity & ITimedAttackEntity> extends MeleeAttackGoal
+public class TimedAttackGoal<E extends PathfinderMob & ITimedAttackEntity> extends MeleeAttackGoal
 {
     protected int animationTime;
     protected E entity;
@@ -22,23 +22,23 @@ public class TimedAttackGoal<E extends CreatureEntity & ITimedAttackEntity> exte
 	protected void checkAndPerformAttack (LivingEntity enemy, double distToEnemySqr)
 	{
 		double d0 = this.getAttackReachSqr(enemy);
-		if (entity.world.getDifficulty() != Difficulty.PEACEFUL &&  distToEnemySqr <= d0 && func_234041_j_() <= 0)
+		if (entity.level.getDifficulty() != Difficulty.PEACEFUL &&  distToEnemySqr <= d0 && getTicksUntilNextAttack() <= 0)
 		{
-            this.func_234039_g_();
+            this.resetAttackCooldown();
 			entity.setAttacking(true);
-            this.attacker.attackEntityAsMob(enemy);
+            this.mob.doHurtTarget(enemy);
 		}
 	}
 
-    protected void func_234039_g_ () 
+    protected void resetAttackCooldown () 
     {
-        this.field_234037_i_ = animationTime;
+        this.ticksUntilNextAttack = animationTime;
     }
 
     @Override
-    public void resetTask() 
+    public void stop() 
     {
-        super.resetTask();
+        super.stop();
 		this.entity.setAttacking(false);
     }
 }

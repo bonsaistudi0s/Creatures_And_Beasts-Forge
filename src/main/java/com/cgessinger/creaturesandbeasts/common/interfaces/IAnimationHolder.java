@@ -5,7 +5,7 @@ import java.util.Optional;
 import com.cgessinger.creaturesandbeasts.common.util.AnimationHandler;
 import com.cgessinger.creaturesandbeasts.common.util.AnimationHandler.ExecutionData;
 
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.Entity;
 
 public interface IAnimationHolder<T extends Entity & IAnimationHolder<T>>
 {

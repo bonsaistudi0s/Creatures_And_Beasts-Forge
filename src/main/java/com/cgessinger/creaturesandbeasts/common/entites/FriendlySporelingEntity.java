@@ -6,24 +6,24 @@ import com.cgessinger.creaturesandbeasts.common.interfaces.IAnimationHolder;
 import com.cgessinger.creaturesandbeasts.common.util.AnimationHandler;
 import com.cgessinger.creaturesandbeasts.common.util.AnimationHandler.ExecutionData;
 
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.entity.*;
-import net.minecraft.entity.ai.goal.LookAtGoal;
-import net.minecraft.entity.ai.goal.PanicGoal;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.PanicGoal;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.*;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
@@ -36,19 +36,28 @@ import java.util.Map.Entry;
 import java.util.Map;
 import java.util.Optional;
 
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.ServerLevelAccessor;
+
 public class FriendlySporelingEntity
     extends AbstractSporelingEntity
     implements IAnimationHolder<FriendlySporelingEntity>
 {
-    private static final DataParameter<Boolean> WAVE =
-        EntityDataManager.createKey( FriendlySporelingEntity.class, DataSerializers.BOOLEAN );
+    private static final EntityDataAccessor<Boolean> WAVE =
+        SynchedEntityData.defineId( FriendlySporelingEntity.class, EntityDataSerializers.BOOLEAN );
     
-    private static final DataParameter<Boolean> INSPECT =
-        EntityDataManager.createKey( FriendlySporelingEntity.class, DataSerializers.BOOLEAN );
+    private static final EntityDataAccessor<Boolean> INSPECT =
+        SynchedEntityData.defineId( FriendlySporelingEntity.class, EntityDataSerializers.BOOLEAN );
     
     public final AnimationHandler<FriendlySporelingEntity> animationHandler;
 
-    public FriendlySporelingEntity( EntityType<? extends CreatureEntity> type, World worldIn )
+    public FriendlySporelingEntity( EntityType<? extends PathfinderMob> type, Level worldIn )
     {
         super( type, worldIn );
         this.setCanPickUpLoot( true );
@@ -56,14 +65,14 @@ public class FriendlySporelingEntity
     }
 
     @Override
-    public void livingTick()
+    public void aiStep()
     {
-        super.livingTick();
+        super.aiStep();
 
-        if ( this.dataManager.get( WAVE ) )
+        if ( this.entityData.get( WAVE ) )
         {
-            this.navigator.clearPath();
-            this.getNavigator().setSpeed( 0 );
+            this.navigation.stop();
+            this.getNavigation().setSpeedModifier( 0 );
         }
 
         this.animationHandler.process();
@@ -71,11 +80,11 @@ public class FriendlySporelingEntity
 
     @Nullable
     @Override
-    public ILivingEntityData onInitialSpawn( IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
-                                             @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag )
+    public SpawnGroupData finalizeSpawn( ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, MobSpawnType reason,
+                                             @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag )
     {
-        this.setSporelingType( this.getRNG().nextInt( 2 ) );
-        return super.onInitialSpawn( worldIn, difficultyIn, reason, spawnDataIn, dataTag );
+        this.setSporelingType( this.getRandom().nextInt( 2 ) );
+        return super.finalizeSpawn( worldIn, difficultyIn, reason, spawnDataIn, dataTag );
     }
 
     @Override
@@ -83,20 +92,20 @@ public class FriendlySporelingEntity
     {
         super.registerGoals();
         this.goalSelector.addGoal( 1, new PanicGoal( this, 1.25D ) );
-        this.goalSelector.addGoal( 6, new WaveGoal( this, PlayerEntity.class, 8.0F ) );
+        this.goalSelector.addGoal( 6, new WaveGoal( this, Player.class, 8.0F ) );
     }
 
     @Override
-    protected void registerData()
+    protected void defineSynchedData()
     {
-        super.registerData();
-        this.dataManager.register( WAVE, false );
-        this.dataManager.register( INSPECT, false );
+        super.defineSynchedData();
+        this.entityData.define( WAVE, false );
+        this.entityData.define( INSPECT, false );
     }
 
     public void setWave( boolean wave )
     {
-        this.dataManager.set( WAVE, wave );
+        this.entityData.set( WAVE, wave );
     }
 
     @Override
@@ -104,7 +113,7 @@ public class FriendlySporelingEntity
     {
         if ( super.animationPredicate( event ) == PlayState.STOP )
         {
-            if ( this.dataManager.get( WAVE ) && this.getHolding() == ItemStack.EMPTY )
+            if ( this.entityData.get( WAVE ) && this.getHolding() == ItemStack.EMPTY )
             {
                 event.getController().setAnimation( new AnimationBuilder().addAnimation( "sporeling.wave", false ) );
                 return PlayState.CONTINUE;
@@ -147,13 +156,13 @@ public class FriendlySporelingEntity
     }
 
     @Override
-    protected void updateEquipmentIfNeeded( ItemEntity itemEntity )
+    protected void pickUpItem( ItemEntity itemEntity )
     {
         ItemStack stack = itemEntity.getItem();
-        if ( this.canPickUpItem( stack ) && this.animationHandler.canStart() )
+        if ( this.canTakeItem( stack ) && this.animationHandler.canStart() )
         {
-            this.triggerItemPickupTrigger( itemEntity );
-            this.setItemStackToSlot( EquipmentSlotType.MAINHAND, stack );
+            this.onItemPickup( itemEntity );
+            this.setItemSlot( EquipmentSlot.MAINHAND, stack );
             this.setHolding(stack);
             itemEntity.remove();
             this.animationHandler.startAnimation(ExecutionData.create().withItemStack(stack).build());
@@ -161,9 +170,9 @@ public class FriendlySporelingEntity
     }
 
     @Override
-    public boolean canPickUpItem( ItemStack itemstackIn )
+    public boolean canTakeItem( ItemStack itemstackIn )
     {
-        if ( !this.hasItemInSlot(EquipmentSlotType.MAINHAND) )
+        if ( !this.hasItemInSlot(EquipmentSlot.MAINHAND) )
         {
             if ( itemstackIn.isEnchanted() )
             {
@@ -197,12 +206,12 @@ public class FriendlySporelingEntity
                     if ( entry.getKey().isCurse() )
                     {
                         map.remove(entry.getKey(), entry.getValue());
-                        if(stack.isDamageable())
+                        if(stack.isDamageableItem())
                         {
-                            float percent = ( this.getRNG().nextFloat() * 0.8F ) + 0.1F;
-                            int damage = (int) ( percent * stack.getMaxDamage() + stack.getDamage() );
+                            float percent = ( this.getRandom().nextFloat() * 0.8F ) + 0.1F;
+                            int damage = (int) ( percent * stack.getMaxDamage() + stack.getDamageValue() );
                             int setDamage = Math.min(damage, (int) ( stack.getMaxDamage() * 0.9F) );
-                            stack.setDamage(Math.max(stack.getDamage(), setDamage) );
+                            stack.setDamageValue(Math.max(stack.getDamageValue(), setDamage) );
                         }
                         EnchantmentHelper.setEnchantments(map, stack);
                         break;
@@ -213,9 +222,9 @@ public class FriendlySporelingEntity
                 stack = new ItemStack(Items.MYCELIUM, stack.getCount());
             }
 
-            this.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
+            this.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
             this.setHolding(ItemStack.EMPTY);
-            this.entityDropItem(stack);
+            this.spawnAtLocation(stack);
         }
     }
 
@@ -226,7 +235,7 @@ public class FriendlySporelingEntity
     }
 
     static class WaveGoal
-        extends LookAtGoal
+        extends LookAtPlayerGoal
     {
         private final FriendlySporelingEntity sporeling;
 
@@ -241,14 +250,14 @@ public class FriendlySporelingEntity
         }
 
         @Override
-        public boolean shouldExecute()
+        public boolean canUse()
         {
-            boolean shouldExec = super.shouldExecute();
-            if ( shouldExec && this.waveTimer == 0 && this.sporeling.getRNG().nextInt( 9 ) == 0 )
+            boolean shouldExec = super.canUse();
+            if ( shouldExec && this.waveTimer == 0 && this.sporeling.getRandom().nextInt( 9 ) == 0 )
             {
                 this.waveTimer = 8;
             }
-            else if ( this.waveTimer > 0 && this.closestEntity != null )
+            else if ( this.waveTimer > 0 && this.lookAt != null )
             {
                 this.sporeling.setWave( --this.waveTimer > 0 );
             }
@@ -256,15 +265,15 @@ public class FriendlySporelingEntity
         }
 
         @Override
-        public boolean shouldContinueExecuting()
+        public boolean canContinueToUse()
         {
-            return super.shouldContinueExecuting() && this.sporeling.getLookController().getIsLooking();
+            return super.canContinueToUse() && this.sporeling.getLookControl().isHasWanted();
         }
     }
 
-    public static boolean canSporelingSpawn( EntityType<FriendlySporelingEntity> animal, IWorld worldIn,
-                                             SpawnReason reason, BlockPos pos, Random randomIn )
+    public static boolean canSporelingSpawn( EntityType<FriendlySporelingEntity> animal, LevelAccessor worldIn,
+                                             MobSpawnType reason, BlockPos pos, Random randomIn )
     {
-        return worldIn.getLightSubtracted(pos, 0) > 8;
+        return worldIn.getRawBrightness(pos, 0) > 8;
     }
 }

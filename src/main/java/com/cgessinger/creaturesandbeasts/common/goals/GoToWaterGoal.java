@@ -1,44 +1,44 @@
 package com.cgessinger.creaturesandbeasts.common.goals;
 
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.ai.goal.MoveToBlockGoal;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorldReader;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.ai.goal.MoveToBlockGoal;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.LevelReader;
 
 // ToDo: Rework This Goal (Look at FindWaterOneDeepGoal)
 public class GoToWaterGoal extends MoveToBlockGoal
 {
-	private final AnimalEntity creature;
+	private final Animal creature;
 
-	public GoToWaterGoal (AnimalEntity creature, double speedIn)
+	public GoToWaterGoal (Animal creature, double speedIn)
 	{
-		super(creature, creature.isChild() ? 2.0D : speedIn, 24);
+		super(creature, creature.isBaby() ? 2.0D : speedIn, 24);
 		this.creature = creature;
-		this.field_203112_e = -1;
+		this.verticalSearchStart = -1;
 	}
 
 	@Override
-	public boolean shouldContinueExecuting ()
+	public boolean canContinueToUse ()
 	{
-		return !this.creature.isInWater() && this.timeoutCounter <= 1200 && this.shouldMoveTo(this.creature.world, this.destinationBlock);
+		return !this.creature.isInWater() && this.tryTicks <= 1200 && this.isValidTarget(this.creature.level, this.blockPos);
 	}
 
 	@Override
-	public boolean shouldExecute ()
+	public boolean canUse ()
 	{
-		return !this.creature.isInWater() && !this.creature.isInLove() && this.creature.getRNG().nextInt(200) == 0;
+		return !this.creature.isInWater() && !this.creature.isInLove() && this.creature.getRandom().nextInt(200) == 0;
 	}
 
 	@Override
-	public boolean shouldMove ()
+	public boolean shouldRecalculatePath ()
 	{
-		return this.timeoutCounter % 160 == 0;
+		return this.tryTicks % 160 == 0;
 	}
 
 	@Override
-	protected boolean shouldMoveTo (IWorldReader worldIn, BlockPos pos)
+	protected boolean isValidTarget (LevelReader worldIn, BlockPos pos)
 	{
-		return worldIn.getBlockState(pos).isIn(Blocks.WATER);
+		return worldIn.getBlockState(pos).is(Blocks.WATER);
 	}
 }

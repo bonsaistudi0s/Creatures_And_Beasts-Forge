@@ -4,31 +4,31 @@ import com.cgessinger.creaturesandbeasts.common.config.CNBConfig;
 import com.cgessinger.creaturesandbeasts.common.goals.FindWaterOneDeepGoal;
 import com.cgessinger.creaturesandbeasts.common.init.ModItems;
 import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
-import net.minecraft.entity.AgeableEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.ai.attributes.AttributeModifierMap;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.controller.LookController;
+import net.minecraft.world.entity.AgableMob;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.control.LookControl;
 import net.minecraft.entity.ai.goal.*;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EntityPredicates;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.GameRules;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EntitySelector;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.common.IForgeShearable;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
@@ -43,17 +43,22 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Random;
 
-public class LilytadEntity extends AnimalEntity implements IForgeShearable, IAnimatable
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.PanicGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
+
+public class LilytadEntity extends Animal implements IForgeShearable, IAnimatable
 {
 	private final AnimationFactory factory = new AnimationFactory(this);
-	private static final DataParameter<Boolean> SHEARED = EntityDataManager.createKey(LilytadEntity.class, DataSerializers.BOOLEAN);
+	private static final EntityDataAccessor<Boolean> SHEARED = SynchedEntityData.defineId(LilytadEntity.class, EntityDataSerializers.BOOLEAN);
 	private int shearedTimer;
 
-	public LilytadEntity (EntityType<? extends AnimalEntity> type, World worldIn)
+	public LilytadEntity (EntityType<? extends Animal> type, Level worldIn)
 	{
 		super(type, worldIn);
 		this.shearedTimer = 0;
-		this.lookController = new LookController(this){
+		this.lookControl = new LookControl(this){
 			@Override
 			public void tick ()
 			{
@@ -67,31 +72,31 @@ public class LilytadEntity extends AnimalEntity implements IForgeShearable, IAni
 	}
 
 	@Override
-	protected void registerData ()
+	protected void defineSynchedData ()
 	{
-		this.dataManager.register(SHEARED, false);
-		super.registerData();
+		this.entityData.define(SHEARED, false);
+		super.defineSynchedData();
 	}
 
-	public static AttributeModifierMap.MutableAttribute setCustomAttributes ()
+	public static AttributeSupplier.Builder setCustomAttributes ()
 	{
-		return MobEntity.func_233666_p_()
-				.createMutableAttribute(Attributes.MAX_HEALTH, 20.0D) // Max Health
-				.createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.2D); // Movement Speed
+		return Mob.createMobAttributes()
+				.add(Attributes.MAX_HEALTH, 20.0D) // Max Health
+				.add(Attributes.MOVEMENT_SPEED, 0.2D); // Movement Speed
 	}
 
 	@Override
-	public void readAdditional (CompoundNBT compound)
+	public void readAdditionalSaveData (CompoundTag compound)
 	{
-		super.readAdditional(compound);
+		super.readAdditionalSaveData(compound);
 		this.shearedTimer = compound.getInt("ShearedTimer");
 		this.setSheared(this.shearedTimer > 0);
 	}
 
 	@Override
-	public void writeAdditional (CompoundNBT compound)
+	public void addAdditionalSaveData (CompoundTag compound)
 	{
-		super.writeAdditional(compound);
+		super.addAdditionalSaveData(compound);
 		compound.putInt("ShearedTimer", this.shearedTimer);
 	}
 
@@ -99,42 +104,42 @@ public class LilytadEntity extends AnimalEntity implements IForgeShearable, IAni
 	protected void registerGoals()
 	{
 		this.goalSelector.addGoal(1, new FindWaterOneDeepGoal(this));
-		this.goalSelector.addGoal(2, new RandomWalkingGoal(this, 1.0D){
+		this.goalSelector.addGoal(2, new RandomStrollGoal(this, 1.0D){
 			@Override
-			public boolean shouldExecute ()
+			public boolean canUse ()
 			{
-				return !this.creature.world.getFluidState(this.creature.getPosition()).isTagged(FluidTags.WATER) && super.shouldExecute();
+				return !this.mob.level.getFluidState(this.mob.blockPosition()).is(FluidTags.WATER) && super.canUse();
 			}
 
 			@Override
-			public boolean shouldContinueExecuting ()
+			public boolean canContinueToUse ()
 			{
-				return !this.creature.world.getFluidState(this.creature.getPosition()).isTagged(FluidTags.WATER) && super.shouldContinueExecuting();
+				return !this.mob.level.getFluidState(this.mob.blockPosition()).is(FluidTags.WATER) && super.canContinueToUse();
 			}
 		});
-		this.goalSelector.addGoal(3, new LookAtGoal(this, PlayerEntity.class, 8.0F));
-		this.goalSelector.addGoal(3, new LookRandomlyGoal(this));
+		this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0F));
+		this.goalSelector.addGoal(3, new RandomLookAroundGoal(this));
 		this.goalSelector.addGoal(2, new PanicGoal(this, 1.25D));
 	}
 
 	@Override
-	public void livingTick ()
+	public void aiStep ()
 	{
-		super.livingTick();
-		if(!this.world.isRemote() && this.shearedTimer > 0)
+		super.aiStep();
+		if(!this.level.isClientSide() && this.shearedTimer > 0)
 		{
 			this.setSheared(--this.shearedTimer > 0);
 		}
 	}
 
 	@Override
-	protected void collideWithNearbyEntities()
+	protected void pushEntities()
 	{
-		List<Entity> list = this.world.getEntitiesInAABBexcluding(this, this.getBoundingBox().grow(0.2, 0, 0.2), EntityPredicates.pushableBy(this));
+		List<Entity> list = this.level.getEntities(this, this.getBoundingBox().inflate(0.2, 0, 0.2), EntitySelector.pushableBy(this));
 		if (!list.isEmpty())
 		{
-			int i = this.world.getGameRules().getInt(GameRules.MAX_ENTITY_CRAMMING);
-			if (i > 0 && list.size() > i - 1 && this.rand.nextInt(4) == 0)
+			int i = this.level.getGameRules().getInt(GameRules.RULE_MAX_ENTITY_CRAMMING);
+			if (i > 0 && list.size() > i - 1 && this.random.nextInt(4) == 0)
 			{
 				int j = 0;
 
@@ -147,20 +152,20 @@ public class LilytadEntity extends AnimalEntity implements IForgeShearable, IAni
 				}
 
 				if (j > i - 1) {
-					this.attackEntityFrom(DamageSource.CRAMMING, 6.0F);
+					this.hurt(DamageSource.CRAMMING, 6.0F);
 				}
 			}
 
 			for (Entity entity : list)
 			{
-				this.collideWithEntity(entity);
+				this.doPush(entity);
 			}
 		}
 
 	}
 
 	@Override
-	public boolean func_241845_aY() {
+	public boolean canBeCollidedWith() {
 		return this.isAlive();
 	}
 
@@ -171,14 +176,14 @@ public class LilytadEntity extends AnimalEntity implements IForgeShearable, IAni
 	}
 
 	@Override
-	public boolean isPushedByWater ()
+	public boolean isPushedByFluid ()
 	{
 		return false;
 	}
 
 	private <E extends IAnimatable> PlayState animationPredicate (AnimationEvent<E> event)
 	{
-		if (!(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F))
+		if (!(animationSpeed > -0.15F && animationSpeed < 0.15F))
 		{
 			event.getController().setAnimation(new AnimationBuilder().addAnimation("lilytad.walk", true));
 			return PlayState.CONTINUE;
@@ -188,32 +193,32 @@ public class LilytadEntity extends AnimalEntity implements IForgeShearable, IAni
 
 	@Nullable
 	@Override
-	public AgeableEntity func_241840_a (ServerWorld p_241840_1_, AgeableEntity p_241840_2_)
+	public AgableMob getBreedOffspring (ServerLevel p_241840_1_, AgableMob p_241840_2_)
 	{
 		return null;
 	}
 
 	public boolean getSheared ()
 	{
-		return this.dataManager.get(SHEARED);
+		return this.entityData.get(SHEARED);
 	}
 
 	@Override
-	public boolean isShearable (@Nonnull ItemStack item, World world, BlockPos pos)
+	public boolean isShearable (@Nonnull ItemStack item, Level world, BlockPos pos)
 	{
 		return !this.getSheared();
 	}
 
 	public void setSheared (boolean sheared)
 	{
-		this.dataManager.set(SHEARED, sheared);
+		this.entityData.set(SHEARED, sheared);
 	}
 
 	@Nonnull
 	@Override
-	public List<ItemStack> onSheared (@Nullable PlayerEntity player, @Nonnull ItemStack item, World world, BlockPos pos, int fortune)
+	public List<ItemStack> onSheared (@Nullable Player player, @Nonnull ItemStack item, Level world, BlockPos pos, int fortune)
 	{
-		if (!world.isRemote)
+		if (!world.isClientSide)
 		{
 			this.setSheared(true);
 			this.shearedTimer = 15 * 60 * 20; // 15 min x 60 sec x 20 ticks per sec
@@ -227,7 +232,7 @@ public class LilytadEntity extends AnimalEntity implements IForgeShearable, IAni
 
 	public boolean shouldLookAround()
 	{
-		return !this.world.getFluidState(this.getPosition()).isTagged(FluidTags.WATER);
+		return !this.level.getFluidState(this.blockPosition()).is(FluidTags.WATER);
 	}
 
 	@Override
@@ -274,8 +279,8 @@ public class LilytadEntity extends AnimalEntity implements IForgeShearable, IAni
         super.checkDespawn();
     }
 
-    public static boolean canLilytadSpawn( EntityType<LilytadEntity> animal, IWorld worldIn,
-                                             SpawnReason reason, BlockPos pos, Random randomIn )
+    public static boolean canLilytadSpawn( EntityType<LilytadEntity> animal, LevelAccessor worldIn,
+                                             MobSpawnType reason, BlockPos pos, Random randomIn )
     {
         return true;
     }

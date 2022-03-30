@@ -1,20 +1,22 @@
 package com.cgessinger.creaturesandbeasts.common.items;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.item.BucketItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.item.BucketItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.fml.RegistryObject;
+
+import net.minecraft.world.item.Item.Properties;
 
 public class ModEntityBucket
     extends BucketItem
@@ -28,7 +30,7 @@ public class ModEntityBucket
     }
 
     @Override
-    public void inventoryTick( ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected )
+    public void inventoryTick( ItemStack stack, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected )
     {
         if ( !stack.getOrCreateTag().contains( "age" ) )
         {
@@ -37,21 +39,21 @@ public class ModEntityBucket
         super.inventoryTick( stack, worldIn, entityIn, itemSlot, isSelected );
     }
 
-    public void onLiquidPlaced( World worldIn, ItemStack p_203792_2_, BlockPos pos )
+    public void checkExtraContent( Level worldIn, ItemStack p_203792_2_, BlockPos pos )
     {
-        if ( worldIn instanceof ServerWorld )
+        if ( worldIn instanceof ServerLevel )
         {
-            this.placeCindershell( (ServerWorld) worldIn, p_203792_2_, pos );
+            this.placeCindershell( (ServerLevel) worldIn, p_203792_2_, pos );
         }
     }
 
-    protected void playEmptySound( PlayerEntity player, IWorld worldIn, BlockPos pos )
+    protected void playEmptySound( Player player, LevelAccessor worldIn, BlockPos pos )
     {
-        worldIn.playSound( player, pos, SoundEvents.ITEM_BUCKET_EMPTY_FISH, SoundCategory.NEUTRAL, 1.0F, 1.0F );
+        worldIn.playSound( player, pos, SoundEvents.BUCKET_EMPTY_FISH, SoundSource.NEUTRAL, 1.0F, 1.0F );
     }
 
-    private void placeCindershell( ServerWorld worldIn, ItemStack stack, BlockPos pos )
+    private void placeCindershell( ServerLevel worldIn, ItemStack stack, BlockPos pos )
     {
-        this.type.get().spawn( worldIn, stack, (PlayerEntity) null, pos, SpawnReason.BUCKET, true, false );
+        this.type.get().spawn( worldIn, stack, (Player) null, pos, MobSpawnType.BUCKET, true, false );
     }
 }

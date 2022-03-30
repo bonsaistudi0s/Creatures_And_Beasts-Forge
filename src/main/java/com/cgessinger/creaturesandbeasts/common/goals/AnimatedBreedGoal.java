@@ -6,17 +6,17 @@ import com.cgessinger.creaturesandbeasts.common.interfaces.IAnimationHolder;
 import com.cgessinger.creaturesandbeasts.common.util.AnimationHandler.ExecutionData;
 
 import net.minecraft.advancements.CriteriaTriggers;
-import net.minecraft.entity.AgeableEntity;
-import net.minecraft.entity.ai.goal.BreedGoal;
-import net.minecraft.entity.item.ExperienceOrbEntity;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.world.entity.AgableMob;
+import net.minecraft.world.entity.ai.goal.BreedGoal;
+import net.minecraft.world.entity.ExperienceOrb;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
-import net.minecraft.world.GameRules;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.level.GameRules;
+import net.minecraft.server.level.ServerLevel;
 import software.bernie.geckolib3.core.IAnimatable;
 
-public class AnimatedBreedGoal<E extends AnimalEntity & IAnimatable & IAnimationHolder<E>>
+public class AnimatedBreedGoal<E extends Animal & IAnimatable & IAnimationHolder<E>>
     extends BreedGoal
 {
 
@@ -29,38 +29,38 @@ public class AnimatedBreedGoal<E extends AnimalEntity & IAnimatable & IAnimation
     }
 
     @Override
-    public boolean shouldExecute()
+    public boolean canUse()
     {
-        return this.entity.getAnimationHandler("breed_controller").canStart() && super.shouldExecute();
+        return this.entity.getAnimationHandler("breed_controller").canStart() && super.canUse();
     }
 
     @Override
-    protected void spawnBaby()
+    protected void breed()
     {
-        ServerPlayerEntity serverplayerentity = this.entity.getLoveCause();
-        if ( serverplayerentity == null && this.targetMate.getLoveCause() != null )
+        ServerPlayer serverplayerentity = this.entity.getLoveCause();
+        if ( serverplayerentity == null && this.partner.getLoveCause() != null )
         {
-            serverplayerentity = this.targetMate.getLoveCause();
+            serverplayerentity = this.partner.getLoveCause();
         }
 
         if ( serverplayerentity != null )
         {
-            serverplayerentity.addStat( Stats.ANIMALS_BRED );
-            CriteriaTriggers.BRED_ANIMALS.trigger( serverplayerentity, this.entity, this.targetMate,
-                                                   (AgeableEntity) null );
+            serverplayerentity.awardStat( Stats.ANIMALS_BRED );
+            CriteriaTriggers.BRED_ANIMALS.trigger( serverplayerentity, this.entity, this.partner,
+                                                   (AgableMob) null );
         }
 
         
-        this.entity.getAnimationHandler("breed_controller").startAnimation( ExecutionData.create().isBreed().withWorld( (ServerWorld) this.world ).withEntity( this.targetMate ).build() );
-        this.entity.setGrowingAge(6000);
-        this.targetMate.setGrowingAge(6000);
-        this.entity.resetInLove();
-        this.targetMate.resetInLove();
-        Random random = this.entity.getRNG();
-        if ( this.world.getGameRules().getBoolean( GameRules.DO_MOB_LOOT ) )
+        this.entity.getAnimationHandler("breed_controller").startAnimation( ExecutionData.create().isBreed().withWorld( (ServerLevel) this.level ).withEntity( this.partner ).build() );
+        this.entity.setAge(6000);
+        this.partner.setAge(6000);
+        this.entity.resetLove();
+        this.partner.resetLove();
+        Random random = this.entity.getRandom();
+        if ( this.level.getGameRules().getBoolean( GameRules.RULE_DOMOBLOOT ) )
         {
-            this.world.addEntity( new ExperienceOrbEntity( world, this.entity.getPosX(), this.entity.getPosY(),
-                                                           this.entity.getPosZ(), random.nextInt( 7 ) + 1 ) );
+            this.level.addFreshEntity( new ExperienceOrb( level, this.entity.getX(), this.entity.getY(),
+                                                           this.entity.getZ(), random.nextInt( 7 ) + 1 ) );
         }
     }
 }

@@ -1,19 +1,19 @@
 package com.cgessinger.creaturesandbeasts.common.items;
 
-import net.minecraft.block.DispenserBlock;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.dispenser.DefaultDispenseItemBehavior;
-import net.minecraft.dispenser.IBlockSource;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.SpawnEggItem;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.DispenserBlock;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
+import net.minecraft.core.BlockSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.SpawnEggItem;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
@@ -22,6 +22,8 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import net.minecraft.world.item.Item.Properties;
 
 public class ModSpawnEggItem extends SpawnEggItem
 {
@@ -37,7 +39,7 @@ public class ModSpawnEggItem extends SpawnEggItem
 	}
 
 	@Override
-	public void inventoryTick (ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected)
+	public void inventoryTick (ItemStack stack, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected)
 	{
 		if (this.variant != -1 && !stack.getOrCreateTag().contains("variant"))
 		{
@@ -48,15 +50,15 @@ public class ModSpawnEggItem extends SpawnEggItem
 
 	public static void initSpawnEggs ()
 	{
-		final Map<EntityType<?>, SpawnEggItem> EGGS = ObfuscationReflectionHelper.getPrivateValue(SpawnEggItem.class, null, "field_195987_b");
+		final Map<EntityType<?>, SpawnEggItem> EGGS = ObfuscationReflectionHelper.getPrivateValue(SpawnEggItem.class, null, "BY_ID");
 		DefaultDispenseItemBehavior dispenseItemBehavior = new DefaultDispenseItemBehavior()
 		{
 			@Override
-			protected ItemStack dispenseStack (IBlockSource source, ItemStack stack)
+			protected ItemStack execute (BlockSource source, ItemStack stack)
 			{
-				Direction direction = source.getBlockState().get(DispenserBlock.FACING);
+				Direction direction = source.getBlockState().getValue(DispenserBlock.FACING);
 				EntityType<?> type = ((SpawnEggItem) stack.getItem()).getType(stack.getTag());
-				type.spawn(source.getWorld(), stack, null, source.getBlockPos(), SpawnReason.DISPENSER, direction != Direction.UP, false);
+				type.spawn(source.getLevel(), stack, null, source.getPos(), MobSpawnType.DISPENSER, direction != Direction.UP, false);
 				stack.shrink(1);
 				return stack;
 			}
@@ -65,13 +67,13 @@ public class ModSpawnEggItem extends SpawnEggItem
 		for (final SpawnEggItem spawnEggItem : UNADDED_EGGS)
 		{
 			EGGS.put(spawnEggItem.getType(null), spawnEggItem);
-			DispenserBlock.registerDispenseBehavior(spawnEggItem, dispenseItemBehavior);
+			DispenserBlock.registerBehavior(spawnEggItem, dispenseItemBehavior);
 		}
 		UNADDED_EGGS.clear();
 	}
 
 	@Override
-	public EntityType<?> getType (@Nullable CompoundNBT p_208076_1_)
+	public EntityType<?> getType (@Nullable CompoundTag p_208076_1_)
 	{
 		return this.entityTypeSupplier.get();
 	}
@@ -83,18 +85,18 @@ public class ModSpawnEggItem extends SpawnEggItem
 	}
 
 	@Override
-	public void addInformation (ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn)
+	public void appendHoverText (ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn)
 	{
 		if(stack.hasTag())
 		{
-			CompoundNBT nbt = stack.getTag();
+			CompoundTag nbt = stack.getTag();
 			if(nbt.contains("name"))
 			{
-				tooltip.add(new StringTextComponent("Name: " + nbt.getString("name")));
+				tooltip.add(new TextComponent("Name: " + nbt.getString("name")));
 			}
 			if(nbt.contains("health"))
 			{
-				tooltip.add(new StringTextComponent("Health: " + Math.round(nbt.getFloat("health"))));
+				tooltip.add(new TextComponent("Health: " + Math.round(nbt.getFloat("health"))));
 			}
 		}
 	}

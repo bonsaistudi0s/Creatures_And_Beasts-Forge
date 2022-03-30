@@ -8,10 +8,10 @@ import com.cgessinger.creaturesandbeasts.common.init.ModItems;
 import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
 import com.cgessinger.creaturesandbeasts.common.world.gen.ModEntitySpawns;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.RenderTypeLookup;
-import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.world.entity.ai.attributes.DefaultAttributes;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -50,14 +50,14 @@ public class CreaturesAndBeasts
 	private void setup (final FMLCommonSetupEvent event)
 	{
 		event.enqueueWork(() -> {
-			GlobalEntityTypeAttributes.put(ModEntityTypes.LITTLE_GREBE.get(), GrebeEntity.setCustomAttributes().create());
-			GlobalEntityTypeAttributes.put(ModEntityTypes.CINDERSHELL.get(), CindershellEntity.setCustomAttributes().create());
-			GlobalEntityTypeAttributes.put(ModEntityTypes.LIZARD.get(), LizardEntity.setCustomAttributes().create());
-			GlobalEntityTypeAttributes.put(ModEntityTypes.LILYTAD.get(), LilytadEntity.setCustomAttributes().create());
-			GlobalEntityTypeAttributes.put(ModEntityTypes.FRIENDLY_SPORELING.get(), AbstractSporelingEntity.setCustomAttributes().create());
-			GlobalEntityTypeAttributes.put(ModEntityTypes.HOSTILE_SPORELING.get(), HostileSporelingEntity.setCustomAttributes().create());
-			GlobalEntityTypeAttributes.put(ModEntityTypes.NEUTRAL_SPORELING.get(), NeutralSporelingEntity.setCustomAttributes().create());
-			GlobalEntityTypeAttributes.put(ModEntityTypes.YETI.get(), YetiEntity.setCustomAttributes().create());
+			DefaultAttributes.put(ModEntityTypes.LITTLE_GREBE.get(), GrebeEntity.setCustomAttributes().build());
+			DefaultAttributes.put(ModEntityTypes.CINDERSHELL.get(), CindershellEntity.setCustomAttributes().build());
+			DefaultAttributes.put(ModEntityTypes.LIZARD.get(), LizardEntity.setCustomAttributes().build());
+			DefaultAttributes.put(ModEntityTypes.LILYTAD.get(), LilytadEntity.setCustomAttributes().build());
+			DefaultAttributes.put(ModEntityTypes.FRIENDLY_SPORELING.get(), AbstractSporelingEntity.setCustomAttributes().build());
+			DefaultAttributes.put(ModEntityTypes.HOSTILE_SPORELING.get(), HostileSporelingEntity.setCustomAttributes().build());
+			DefaultAttributes.put(ModEntityTypes.NEUTRAL_SPORELING.get(), NeutralSporelingEntity.setCustomAttributes().build());
+			DefaultAttributes.put(ModEntityTypes.YETI.get(), YetiEntity.setCustomAttributes().build());
 		});
 		/*
 		 * This registers the spawn placement settings we config for any mob that needs
@@ -68,13 +68,13 @@ public class CreaturesAndBeasts
 
 	private void doClientStuff (final FMLClientSetupEvent event)
 	{
-		RenderTypeLookup.setRenderLayer(ModBlockRegistry.POTTED_LILYTAD_FLOWER.get(), RenderType.getCutout());
+		ItemBlockRenderTypes.setRenderLayer(ModBlockRegistry.POTTED_LILYTAD_FLOWER.get(), RenderType.cutout());
 	}
 
-	public static final ItemGroup TAB = new ItemGroup("cnb_tab")
+	public static final CreativeModeTab TAB = new CreativeModeTab("cnb_tab")
 	{
 		@Override
-		public ItemStack createIcon ()
+		public ItemStack makeIcon ()
 		{
 			return new ItemStack(ModItems.GREBE_SPAWN_EGG.get());
 		}

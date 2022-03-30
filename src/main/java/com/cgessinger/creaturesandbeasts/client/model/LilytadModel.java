@@ -2,7 +2,7 @@ package com.cgessinger.creaturesandbeasts.client.model;
 
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
 import com.cgessinger.creaturesandbeasts.common.entites.LilytadEntity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 
 public class LilytadModel extends AnimatedGeoModel<LilytadEntity>

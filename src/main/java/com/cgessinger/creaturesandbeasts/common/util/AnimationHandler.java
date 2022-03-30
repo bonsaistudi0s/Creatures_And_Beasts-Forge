@@ -4,12 +4,12 @@ import java.util.Optional;
 
 import com.cgessinger.creaturesandbeasts.common.interfaces.IAnimationHolder;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.server.level.ServerLevel;
 /*
 * I created this class to sync activities on server side and animation via geckolib on client side. But this handler is also useful for non geckolib mobs and can be used with them.
 * To use it implement IAnimationHolder return a private instance of AnimationHandler in IAnimationHolder#getAnimationHandler and do whatever in IAnimationHolder#executeBreakpoint.
@@ -24,11 +24,11 @@ public class AnimationHandler <T extends Entity & IAnimationHolder<T>>
     protected final int delay;
     public final String name;
     public Optional<ExecutionData> data;
-    public DataParameter<Boolean> animating;
+    public EntityDataAccessor<Boolean> animating;
     
     protected int animateTimer;
 
-    public AnimationHandler (String name, T entity, int animationLength, int breakpoint, int delay, DataParameter<Boolean> parameter)
+    public AnimationHandler (String name, T entity, int animationLength, int breakpoint, int delay, EntityDataAccessor<Boolean> parameter)
     {
         this.entity = entity;
         this.animateTimer = 0;
@@ -42,7 +42,7 @@ public class AnimationHandler <T extends Entity & IAnimationHolder<T>>
 
     public void process()
     {
-        if(!this.entity.world.isRemote())
+        if(!this.entity.level.isClientSide())
         {
             this.animateTimer = Math.max(this.animateTimer - 1, 0);
 
@@ -78,21 +78,21 @@ public class AnimationHandler <T extends Entity & IAnimationHolder<T>>
     
     public boolean isAnimating ()
     {
-        return this.entity.getDataManager().get(this.animating);
+        return this.entity.getEntityData().get(this.animating);
     }
 
     private void setAnimating (boolean anim)
     {
-        this.entity.getDataManager().set(this.animating, anim);
+        this.entity.getEntityData().set(this.animating, anim);
     }
 
     public static class ExecutionData
     {
         public boolean isBreedData;
-        public ServerWorld world;
-        public AnimalEntity entity;
+        public ServerLevel world;
+        public Animal entity;
         public ItemStack stack;
-        public PlayerEntity player;
+        public Player player;
         public String name;
 
         public ExecutionData (DataBuilder builder)
@@ -119,10 +119,10 @@ public class AnimationHandler <T extends Entity & IAnimationHolder<T>>
     public static class DataBuilder
     {
         private boolean isBreedData = false;
-        private ServerWorld world;
-        private AnimalEntity entity;
+        private ServerLevel world;
+        private Animal entity;
         private ItemStack stack;
-        public PlayerEntity player;
+        public Player player;
 
         public DataBuilder isBreed ()
         {
@@ -130,13 +130,13 @@ public class AnimationHandler <T extends Entity & IAnimationHolder<T>>
             return this;
         }
 
-        public DataBuilder withWorld (ServerWorld world)
+        public DataBuilder withWorld (ServerLevel world)
         {
             this.world = world;
             return this;
         }
 
-        public DataBuilder withEntity (AnimalEntity entity)
+        public DataBuilder withEntity (Animal entity)
         {
             this.entity = entity;
             return this;
@@ -148,7 +148,7 @@ public class AnimationHandler <T extends Entity & IAnimationHolder<T>>
             return this;
         }
 
-        public DataBuilder withPlayer (PlayerEntity player)
+        public DataBuilder withPlayer (Player player)
         {
             this.player = player;
             return this;

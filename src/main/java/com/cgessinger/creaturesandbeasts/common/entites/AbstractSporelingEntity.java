@@ -5,21 +5,21 @@ import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
 import com.cgessinger.creaturesandbeasts.common.interfaces.IRunningEntity;
 import com.cgessinger.creaturesandbeasts.common.interfaces.ITimedAttackEntity;
 import net.minecraft.entity.*;
-import net.minecraft.entity.ai.attributes.AttributeModifierMap;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.controller.BodyController;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.control.BodyRotationControl;
 import net.minecraft.entity.ai.goal.*;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.IServerWorld;
-import net.minecraft.world.World;
+import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.Level;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -30,49 +30,60 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 import javax.annotation.Nullable;
 
-public abstract class AbstractSporelingEntity extends CreatureEntity implements IAnimatable, ITimedAttackEntity, IRunningEntity
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+
+public abstract class AbstractSporelingEntity extends PathfinderMob implements IAnimatable, ITimedAttackEntity, IRunningEntity
 {
-	private static final DataParameter<Integer> SPORELING_VARIANT = EntityDataManager.createKey(AbstractSporelingEntity.class, DataSerializers.VARINT);
-	private static final DataParameter<Boolean> ATTACKING = EntityDataManager.createKey(AbstractSporelingEntity.class, DataSerializers.BOOLEAN);
-	private static final DataParameter<Boolean> RUNNING = EntityDataManager.createKey(AbstractSporelingEntity.class, DataSerializers.BOOLEAN);
-    protected static final DataParameter<ItemStack> HOLDING = EntityDataManager.createKey( FriendlySporelingEntity.class, DataSerializers.ITEMSTACK );
+	private static final EntityDataAccessor<Integer> SPORELING_VARIANT = SynchedEntityData.defineId(AbstractSporelingEntity.class, EntityDataSerializers.INT);
+	private static final EntityDataAccessor<Boolean> ATTACKING = SynchedEntityData.defineId(AbstractSporelingEntity.class, EntityDataSerializers.BOOLEAN);
+	private static final EntityDataAccessor<Boolean> RUNNING = SynchedEntityData.defineId(AbstractSporelingEntity.class, EntityDataSerializers.BOOLEAN);
+    protected static final EntityDataAccessor<ItemStack> HOLDING = SynchedEntityData.defineId( FriendlySporelingEntity.class, EntityDataSerializers.ITEM_STACK );
 	protected int attackTimer;
 	private final AnimationFactory factory = new AnimationFactory(this);
 
-	protected AbstractSporelingEntity (EntityType<? extends CreatureEntity> type, World worldIn)
+	protected AbstractSporelingEntity (EntityType<? extends PathfinderMob> type, Level worldIn)
 	{
 		super(type, worldIn);
-		this.dataManager.register(SPORELING_VARIANT, 0);
-		this.dataManager.register(ATTACKING, false);
-		this.dataManager.register(RUNNING, false);
-		this.dataManager.register(HOLDING, ItemStack.EMPTY);
+		this.entityData.define(SPORELING_VARIANT, 0);
+		this.entityData.define(ATTACKING, false);
+		this.entityData.define(RUNNING, false);
+		this.entityData.define(HOLDING, ItemStack.EMPTY);
 		this.attackTimer = 0;
 	}
 
 	@Nullable
 	@Override
-	public ILivingEntityData onInitialSpawn (IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag)
+	public SpawnGroupData finalizeSpawn (ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, MobSpawnType reason, @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag)
 	{
 		if (dataTag != null && dataTag.contains("variant"))
 		{
 			this.setSporelingType(dataTag.getInt("variant"));
 		}
-		return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+		return super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
 	}
 
 	@Override
-	public void travel (Vector3d travelVector)
+	public void travel (Vec3 travelVector)
 	{
-		if(!this.world.isRemote())
+		if(!this.level.isClientSide())
 		{
-			this.setRunning(this.getMoveHelper().getSpeed() >= this.getRunThreshold());
+			this.setRunning(this.getMoveControl().getSpeedModifier() >= this.getRunThreshold());
 		}
 		super.travel(travelVector);
 	}
 
 	public <E extends IAnimatable> PlayState animationPredicate (AnimationEvent<E> event)
 	{
-		if (!(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F))
+		if (!(animationSpeed > -0.15F && animationSpeed < 0.15F))
 		{
 			if(this.isRunning())
 			{
@@ -88,9 +99,9 @@ public abstract class AbstractSporelingEntity extends CreatureEntity implements 
 	}
 
 	@Override
-	protected BodyController createBodyController ()
+	protected BodyRotationControl createBodyControl ()
 	{
-		return super.createBodyController();
+		return super.createBodyControl();
 	}
 
 	@Override
@@ -107,46 +118,46 @@ public abstract class AbstractSporelingEntity extends CreatureEntity implements 
 
 	public SporelingType getSporelingType ()
 	{
-		return SporelingType.values()[this.dataManager.get(SPORELING_VARIANT)];
+		return SporelingType.values()[this.entityData.get(SPORELING_VARIANT)];
 	}
 
 	public void setSporelingType (int variant)
 	{
-		this.dataManager.set(SPORELING_VARIANT, variant);
+		this.entityData.set(SPORELING_VARIANT, variant);
 	}
 
 	@Override
 	public void setAttacking (boolean attacking)
 	{
-		this.dataManager.set(ATTACKING, attacking);
+		this.entityData.set(ATTACKING, attacking);
 	}
 
 	@Override
 	public boolean isAttacking ()
 	{
-		return this.dataManager.get(ATTACKING);
+		return this.entityData.get(ATTACKING);
 	}
 
 	@Override
 	public void setRunning (boolean running)
 	{
-		this.dataManager.set(RUNNING, running);
+		this.entityData.set(RUNNING, running);
 	}
 
 	@Override
 	public boolean isRunning ()
 	{
-		return this.dataManager.get(RUNNING);
+		return this.entityData.get(RUNNING);
 	}
 
 	public void setHolding (ItemStack stack)
 	{
-		this.dataManager.set(HOLDING, stack);
+		this.entityData.set(HOLDING, stack);
 	}
 
 	public ItemStack getHolding ()
 	{
-		return this.dataManager.get(HOLDING);
+		return this.entityData.get(HOLDING);
 	}
 
 	@Override
@@ -155,32 +166,32 @@ public abstract class AbstractSporelingEntity extends CreatureEntity implements 
 		return 1.3D;
 	}
 
-	public static AttributeModifierMap.MutableAttribute setCustomAttributes ()
+	public static AttributeSupplier.Builder setCustomAttributes ()
 	{
-		return MobEntity.func_233666_p_().createMutableAttribute(Attributes.MAX_HEALTH, 16.0D) // Max Health
-				.createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.2D); // Movement Speed
+		return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 16.0D) // Max Health
+				.add(Attributes.MOVEMENT_SPEED, 0.2D); // Movement Speed
 	}
 
 	@Override
 	protected void registerGoals ()
 	{
-		this.goalSelector.addGoal(0, new SwimGoal(this));
-		this.goalSelector.addGoal(6, new WaterAvoidingRandomWalkingGoal(this, 1.0D));
-		this.goalSelector.addGoal(4, new LookAtGoal(this, PlayerEntity.class, 8.0F));
-		this.goalSelector.addGoal(8, new LookRandomlyGoal(this));
+		this.goalSelector.addGoal(0, new FloatGoal(this));
+		this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 1.0D));
+		this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0F));
+		this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
 	}
 
 	@Override
-	public void writeAdditional (CompoundNBT compound)
+	public void addAdditionalSaveData (CompoundTag compound)
 	{
-		super.writeAdditional(compound);
-		compound.putInt("variant", this.dataManager.get(SPORELING_VARIANT));
+		super.addAdditionalSaveData(compound);
+		compound.putInt("variant", this.entityData.get(SPORELING_VARIANT));
 	}
 
 	@Override
-	public void readAdditional (CompoundNBT compound)
+	public void readAdditionalSaveData (CompoundTag compound)
 	{
-		super.readAdditional(compound);
+		super.readAdditionalSaveData(compound);
 		if (compound.contains("variant"))
 		{
 			setSporelingType(compound.getInt("variant"));
@@ -188,20 +199,20 @@ public abstract class AbstractSporelingEntity extends CreatureEntity implements 
 	}
 
 	@Override
-	public boolean attackEntityAsMob (Entity entityIn)
+	public boolean doHurtTarget (Entity entityIn)
 	{
-		this.playSound(ModSoundEventTypes.SPORELING_BITE.get(), this.getSoundVolume()*2, this.getSoundPitch());
-		return super.attackEntityAsMob(entityIn);
+		this.playSound(ModSoundEventTypes.SPORELING_BITE.get(), this.getSoundVolume()*2, this.getVoicePitch());
+		return super.doHurtTarget(entityIn);
 	}
 
 	@Override
-	public int getHorizontalFaceSpeed ()
+	public int getMaxHeadYRot ()
 	{
 		return 5;
 	}
 
     @Override
-    public boolean canDespawn( double distanceToClosestPlayer )
+    public boolean removeWhenFarAway( double distanceToClosestPlayer )
     {
         return false;
     }

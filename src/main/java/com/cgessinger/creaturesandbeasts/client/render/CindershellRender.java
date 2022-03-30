@@ -7,9 +7,9 @@ import com.cgessinger.creaturesandbeasts.client.model.AgeableModelProvider;
 import com.cgessinger.creaturesandbeasts.client.model.BabyCindershellModel;
 import com.cgessinger.creaturesandbeasts.client.model.CindershellModel;
 import com.cgessinger.creaturesandbeasts.common.entites.CindershellEntity;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 public class CindershellRender
     extends MobRenderer<CindershellEntity, AgeableModelProvider<CindershellEntity>>
@@ -20,7 +20,7 @@ public class CindershellRender
     protected static final ResourceLocation BABY =
         new ResourceLocation( CreaturesAndBeasts.MOD_ID, "textures/model/entity/cindershell/baby_cindershell.png" );
 
-    public CindershellRender( EntityRendererManager renderManagerIn )
+    public CindershellRender( EntityRenderDispatcher renderManagerIn )
     {
         super( renderManagerIn, new AgeableModelProvider<>( new BabyCindershellModel(), new CindershellModel() ),
                0.6F );
@@ -29,9 +29,9 @@ public class CindershellRender
     }
 
     @Override
-    public ResourceLocation getEntityTexture( CindershellEntity entity )
+    public ResourceLocation getTextureLocation( CindershellEntity entity )
     {
-        if ( entity.isChild() )
+        if ( entity.isBaby() )
             return BABY;
 
         return ADULT;

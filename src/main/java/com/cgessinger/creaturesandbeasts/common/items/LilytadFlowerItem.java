@@ -2,10 +2,16 @@ package com.cgessinger.creaturesandbeasts.common.items;
 
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
 import com.cgessinger.creaturesandbeasts.common.init.ModBlockRegistry;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.item.*;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
+
+import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
 
 public class LilytadFlowerItem extends BlockItem
 {
@@ -13,24 +19,24 @@ public class LilytadFlowerItem extends BlockItem
 	{
 		super(ModBlockRegistry.LILYTAD_FLOWER.get(),
 				new Item.Properties()
-				.group(CreaturesAndBeasts.TAB)
-				.food(new Food.Builder()
-						.hunger(4)
-						.saturation(0.5F)
-						.setAlwaysEdible()
+				.tab(CreaturesAndBeasts.TAB)
+				.food(new FoodProperties.Builder()
+						.nutrition(4)
+						.saturationMod(0.5F)
+						.alwaysEat()
 						.build())
 		);
 	}
 
 	@Override
-	public ItemStack onItemUseFinish (ItemStack stack, World worldIn, LivingEntity entityLiving)
+	public ItemStack finishUsingItem (ItemStack stack, Level worldIn, LivingEntity entityLiving)
 	{
 		entityLiving.heal(4);
-		return super.onItemUseFinish(stack, worldIn, entityLiving);
+		return super.finishUsingItem(stack, worldIn, entityLiving);
 	}
 
 	@Override
-	protected boolean canPlace (BlockItemUseContext p_195944_1_, BlockState p_195944_2_)
+	protected boolean canPlace (BlockPlaceContext p_195944_1_, BlockState p_195944_2_)
 	{
 		return false;
 	}

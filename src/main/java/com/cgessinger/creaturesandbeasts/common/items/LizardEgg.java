@@ -3,15 +3,15 @@ package com.cgessinger.creaturesandbeasts.common.items;
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
 import com.cgessinger.creaturesandbeasts.common.entites.projectiles.LizardEggEntity;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.stats.Stats;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.world.World;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.level.Level;
 
 public class LizardEgg
     extends Item
@@ -19,29 +19,29 @@ public class LizardEgg
 
     public LizardEgg()
     {
-        super( new Item.Properties().maxStackSize( 16 ).group( CreaturesAndBeasts.TAB ) );
+        super( new Item.Properties().stacksTo( 16 ).tab( CreaturesAndBeasts.TAB ) );
     }
 
-    public ActionResult<ItemStack> onItemRightClick( World worldIn, PlayerEntity playerIn, Hand handIn )
+    public InteractionResultHolder<ItemStack> use( Level worldIn, Player playerIn, InteractionHand handIn )
     {
-        ItemStack itemstack = playerIn.getHeldItem( handIn );
-        worldIn.playSound( null, playerIn.getPosX(), playerIn.getPosY(), playerIn.getPosZ(),
-                           SoundEvents.ENTITY_EGG_THROW, SoundCategory.PLAYERS, 0.5F,
+        ItemStack itemstack = playerIn.getItemInHand( handIn );
+        worldIn.playSound( null, playerIn.getX(), playerIn.getY(), playerIn.getZ(),
+                           SoundEvents.EGG_THROW, SoundSource.PLAYERS, 0.5F,
                            0.4F / ( random.nextFloat() * 0.4F + 0.8F ) );
-        if ( !worldIn.isRemote )
+        if ( !worldIn.isClientSide )
         {
             LizardEggEntity eggentity = new LizardEggEntity( worldIn, playerIn );
             eggentity.setItem( itemstack );
-            eggentity.func_234612_a_( playerIn, playerIn.rotationPitch, playerIn.rotationYaw, 0.0F, 1.5F, 1.0F );
-            worldIn.addEntity( eggentity );
+            eggentity.shootFromRotation( playerIn, playerIn.xRot, playerIn.yRot, 0.0F, 1.5F, 1.0F );
+            worldIn.addFreshEntity( eggentity );
         }
 
-        playerIn.addStat( Stats.ITEM_USED.get( this ) );
-        if ( !playerIn.abilities.isCreativeMode )
+        playerIn.awardStat( Stats.ITEM_USED.get( this ) );
+        if ( !playerIn.abilities.instabuild )
         {
             itemstack.shrink( 1 );
         }
 
-        return ActionResult.func_233538_a_( itemstack, worldIn.isRemote() );
+        return InteractionResultHolder.sidedSuccess( itemstack, worldIn.isClientSide() );
     }
 }

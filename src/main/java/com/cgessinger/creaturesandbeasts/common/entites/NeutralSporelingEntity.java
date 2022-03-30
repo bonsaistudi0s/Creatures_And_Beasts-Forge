@@ -3,22 +3,22 @@ package com.cgessinger.creaturesandbeasts.common.entites;
 import com.cgessinger.creaturesandbeasts.common.config.CNBConfig;
 import com.cgessinger.creaturesandbeasts.common.goals.TimedAttackGoal;
 import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
-import net.minecraft.entity.CreatureEntity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.ILivingEntityData;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.ai.attributes.AttributeModifierMap;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.goal.HurtByTargetGoal;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
 import net.minecraft.world.*;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.Biomes;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -28,9 +28,13 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.Random;
 
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.ServerLevelAccessor;
+
 public class NeutralSporelingEntity extends AbstractSporelingEntity
 {
-	public NeutralSporelingEntity(EntityType<? extends CreatureEntity> type, World worldIn)
+	public NeutralSporelingEntity(EntityType<? extends PathfinderMob> type, Level worldIn)
 	{
 		super(type, worldIn);
 	}
@@ -43,18 +47,18 @@ public class NeutralSporelingEntity extends AbstractSporelingEntity
 		this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
 	}
 
-	public static AttributeModifierMap.MutableAttribute setCustomAttributes ()
+	public static AttributeSupplier.Builder setCustomAttributes ()
 	{
 		return AbstractSporelingEntity.setCustomAttributes()
-				.createMutableAttribute(Attributes.FOLLOW_RANGE, 35.0D)
-				.createMutableAttribute(Attributes.ATTACK_DAMAGE, 3.0D);
+				.add(Attributes.FOLLOW_RANGE, 35.0D)
+				.add(Attributes.ATTACK_DAMAGE, 3.0D);
 	}
 
 	@Nullable
 	@Override
-	public ILivingEntityData onInitialSpawn (IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag)
+	public SpawnGroupData finalizeSpawn (ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, MobSpawnType reason, @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag)
 	{
-		Optional<RegistryKey<Biome>> optional = world.func_241828_r().getRegistry(Registry.BIOME_KEY).getOptionalKey(world.getBiome(this.getPosition()));
+		Optional<ResourceKey<Biome>> optional = level.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getResourceKey(level.getBiome(this.blockPosition()));
 
 		if (optional.isPresent() && optional.get() == Biomes.WARPED_FOREST)
 		{
@@ -64,9 +68,9 @@ public class NeutralSporelingEntity extends AbstractSporelingEntity
 			this.setSporelingType(5);
 		} else
 		{
-			this.setSporelingType(this.getRNG().nextInt(2) + 4);
+			this.setSporelingType(this.getRandom().nextInt(2) + 4);
 		}
-		return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+		return super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
 	}
 
 	@Override
@@ -80,7 +84,7 @@ public class NeutralSporelingEntity extends AbstractSporelingEntity
 		return super.animationPredicate(event);
 	}
 
-	public static boolean canSporelingSpawn(EntityType<NeutralSporelingEntity> p_234418_0_, IWorld worldIn, SpawnReason p_234418_2_, BlockPos p_234418_3_, Random p_234418_4_)
+	public static boolean canSporelingSpawn(EntityType<NeutralSporelingEntity> p_234418_0_, LevelAccessor worldIn, MobSpawnType p_234418_2_, BlockPos p_234418_3_, Random p_234418_4_)
 	{
 		return worldIn.getDifficulty() != Difficulty.PEACEFUL;
 	}

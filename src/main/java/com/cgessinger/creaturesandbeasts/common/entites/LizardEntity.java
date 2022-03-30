@@ -13,38 +13,38 @@ import com.cgessinger.creaturesandbeasts.common.items.AppleSliceItem;
 import com.cgessinger.creaturesandbeasts.common.util.AnimationHandler;
 import com.cgessinger.creaturesandbeasts.common.util.AnimationHandler.ExecutionData;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.entity.*;
-import net.minecraft.entity.ai.attributes.AttributeModifierMap;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.controller.LookController;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.control.LookControl;
 import net.minecraft.entity.ai.goal.*;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.particles.IParticleData;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.tileentity.JukeboxTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.IServerWorld;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.server.level.ServerLevel;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -58,32 +58,43 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.Random;
 
+import net.minecraft.world.entity.AgableMob;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.PanicGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+
 public class LizardEntity
-    extends AnimalEntity
+    extends Animal
     implements IAnimatable, IModNetable, IAnimationHolder<LizardEntity>
 {
     private final AnimationFactory factory = new AnimationFactory( this );
 
-    private static final DataParameter<Boolean> PARTYING =
-        EntityDataManager.createKey( LizardEntity.class, DataSerializers.BOOLEAN );
+    private static final EntityDataAccessor<Boolean> PARTYING =
+        SynchedEntityData.defineId( LizardEntity.class, EntityDataSerializers.BOOLEAN );
 
-    private static final DataParameter<Boolean> SAD =
-        EntityDataManager.createKey( LizardEntity.class, DataSerializers.BOOLEAN );
+    private static final EntityDataAccessor<Boolean> SAD =
+        SynchedEntityData.defineId( LizardEntity.class, EntityDataSerializers.BOOLEAN );
 
-    private static final DataParameter<Integer> LIZARD_VARIANT =
-        EntityDataManager.createKey( LizardEntity.class, DataSerializers.VARINT );
+    private static final EntityDataAccessor<Integer> LIZARD_VARIANT =
+        SynchedEntityData.defineId( LizardEntity.class, EntityDataSerializers.INT );
 
-    private static final DataParameter<Boolean> LAY_EGG =
-        EntityDataManager.createKey( LizardEntity.class, DataSerializers.BOOLEAN );
+    private static final EntityDataAccessor<Boolean> LAY_EGG =
+        SynchedEntityData.defineId( LizardEntity.class, EntityDataSerializers.BOOLEAN );
 
     public BlockPos jukeboxPosition;
 
     private final AnimationHandler<LizardEntity> animationHandler;
 
-    public LizardEntity( EntityType<? extends AnimalEntity> type, World worldIn )
+    public LizardEntity( EntityType<? extends Animal> type, Level worldIn )
     {
         super( type, worldIn );
-        this.lookController = new LookController( this )
+        this.lookControl = new LookControl( this )
         {
             @Override
             public void tick()
@@ -99,18 +110,18 @@ public class LizardEntity
     }
 
     @Override
-    protected void registerData()
+    protected void defineSynchedData()
     {
-        super.registerData();
-        this.dataManager.register( LIZARD_VARIANT, 0 );
-        this.dataManager.register( PARTYING, false );
-        this.dataManager.register( SAD, false );
-        this.dataManager.register( LAY_EGG, false );
+        super.defineSynchedData();
+        this.entityData.define( LIZARD_VARIANT, 0 );
+        this.entityData.define( PARTYING, false );
+        this.entityData.define( SAD, false );
+        this.entityData.define( LAY_EGG, false );
     }
 
     @Override
-    public ILivingEntityData onInitialSpawn( IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
-                                             @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag )
+    public SpawnGroupData finalizeSpawn( ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, MobSpawnType reason,
+                                             @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag )
     {
         int variant;
         boolean forceNotSad = false;
@@ -121,13 +132,13 @@ public class LizardEntity
         }
         else
         {
-            Biome.Category biomeCategory = worldIn.getBiome( this.getPosition() ).getCategory();
+            Biome.BiomeCategory biomeCategory = worldIn.getBiome( this.blockPosition() ).getBiomeCategory();
             variant = getLizardTypeFromBiome( biomeCategory );
         }
 
         setVariant( variant );
         // 1/10 chance to change variant to sad lizard variant
-        this.setSad( !forceNotSad && this.getRNG().nextInt( 10 ) == 1 );
+        this.setSad( !forceNotSad && this.getRandom().nextInt( 10 ) == 1 );
 
         if ( dataTag != null && dataTag.contains( "health" ) )
         {
@@ -136,51 +147,51 @@ public class LizardEntity
 
         if ( dataTag != null && dataTag.contains( "name" ) )
         {
-            this.setCustomName( ITextComponent.getTextComponentOrEmpty( dataTag.getString( "name" ) ) );
+            this.setCustomName( Component.nullToEmpty( dataTag.getString( "name" ) ) );
         }
 
-        return super.onInitialSpawn( worldIn, difficultyIn, reason, spawnDataIn, dataTag );
+        return super.finalizeSpawn( worldIn, difficultyIn, reason, spawnDataIn, dataTag );
     }
 
     @Override
-    public void livingTick()
+    public void aiStep()
     {
         if ( this.jukeboxPosition != null )
         {
-            TileEntity te = this.world.getTileEntity( this.jukeboxPosition );
-            if ( !this.jukeboxPosition.withinDistance( this.getPositionVec(), 10.0D )
-                            || !( te instanceof JukeboxTileEntity )
-                            || ( (JukeboxTileEntity) te ).getRecord() == ItemStack.EMPTY )
+            BlockEntity te = this.level.getBlockEntity( this.jukeboxPosition );
+            if ( !this.jukeboxPosition.closerThan( this.position(), 10.0D )
+                            || !( te instanceof JukeboxBlockEntity )
+                            || ( (JukeboxBlockEntity) te ).getRecord() == ItemStack.EMPTY )
             {
                 this.setPartying( false, null );
             }
         }
 
-        if ( this.isPartying() || this.dataManager.get( LAY_EGG ) )
+        if ( this.isPartying() || this.entityData.get( LAY_EGG ) )
         {
-            this.navigator.clearPath();
-            this.getNavigator().setSpeed( 0 );
+            this.navigation.stop();
+            this.getNavigation().setSpeedModifier( 0 );
         }
 
-        super.livingTick();
+        super.aiStep();
 
         this.animationHandler.process();
 
-        if ( this.isAlive() && this.dataManager.get(LAY_EGG) && this.ticksExisted % 10 == 0)
+        if ( this.isAlive() && this.entityData.get(LAY_EGG) && this.tickCount % 10 == 0)
         {
-            BlockPos blockpos = this.getPosition().down();
-            this.world.playEvent( 2001, blockpos, Block.getStateId( this.world.getBlockState(blockpos) ) );
+            BlockPos blockpos = this.blockPosition().below();
+            this.level.levelEvent( 2001, blockpos, Block.getId( this.level.getBlockState(blockpos) ) );
         }
     }
 
     private <E extends IAnimatable> PlayState animationPredicate( AnimationEvent<E> event )
     {
-        if ( this.dataManager.get( LAY_EGG ) )
+        if ( this.entityData.get( LAY_EGG ) )
         {
             event.getController().setAnimation( new AnimationBuilder().addAnimation( "lizard.dig", true ) );
             return PlayState.CONTINUE;
         }
-        else if ( !( limbSwingAmount > -0.15F && limbSwingAmount < 0.15F ) )
+        else if ( !( animationSpeed > -0.15F && animationSpeed < 0.15F ) )
         {
             event.getController().setAnimation( new AnimationBuilder().addAnimation( "lizard.walk", true ) );
             return PlayState.CONTINUE;
@@ -194,9 +205,9 @@ public class LizardEntity
     }
 
     @Override
-    protected void damageEntity( DamageSource damageSrc, float damageAmount )
+    protected void actuallyHurt( DamageSource damageSrc, float damageAmount )
     {
-        super.damageEntity( damageSrc, damageAmount );
+        super.actuallyHurt( damageSrc, damageAmount );
         this.setPartying( false, null );
     }
 
@@ -214,16 +225,16 @@ public class LizardEntity
     }
 
     @Override
-    public ActionResultType func_230254_b_( PlayerEntity player, Hand hand ) // on right click
+    public InteractionResult mobInteract( Player player, InteractionHand hand ) // on right click
     {
-        ActionResultType result = super.func_230254_b_( player, hand );
-        ItemStack item = player.getHeldItem( hand );
+        InteractionResult result = super.mobInteract( player, hand );
+        ItemStack item = player.getItemInHand( hand );
         if ( item.getItem() instanceof AppleSliceItem && this.isSad() )
         {
             this.setSad( false );
-            item.shrink( player.abilities.isCreativeMode ? 0 : 1 );
+            item.shrink( player.abilities.instabuild ? 0 : 1 );
             spawnParticles( ParticleTypes.HEART );
-            return ActionResultType.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
         return result;
     }
@@ -231,32 +242,32 @@ public class LizardEntity
     @Override
     protected void registerGoals()
     {
-        this.goalSelector.addGoal( 0, new SwimGoal( this ) );
+        this.goalSelector.addGoal( 0, new FloatGoal( this ) );
         this.goalSelector.addGoal( 1, new PanicGoal( this, 1.25D ) );
         this.goalSelector.addGoal( 3, new AnimatedBreedGoal<LizardEntity>( this, 1.0D ) );
-        this.goalSelector.addGoal( 6, new WaterAvoidingRandomWalkingGoal( this, 1.0D )
+        this.goalSelector.addGoal( 6, new WaterAvoidingRandomStrollGoal( this, 1.0D )
         {
             @Override
-            public boolean shouldExecute()
+            public boolean canUse()
             {
-                return !( (LizardEntity) this.creature ).isPartying() && super.shouldExecute();
+                return !( (LizardEntity) this.mob ).isPartying() && super.canUse();
             }
         } );
-        this.goalSelector.addGoal( 7, new LookAtGoal( this, PlayerEntity.class, 6.0F ) );
-        this.goalSelector.addGoal( 8, new LookRandomlyGoal( this ) );
+        this.goalSelector.addGoal( 7, new LookAtPlayerGoal( this, Player.class, 6.0F ) );
+        this.goalSelector.addGoal( 8, new RandomLookAroundGoal( this ) );
     }
 
-    public static AttributeModifierMap.MutableAttribute setCustomAttributes()
+    public static AttributeSupplier.Builder setCustomAttributes()
     {
-        return MobEntity.func_233666_p_().createMutableAttribute( Attributes.MAX_HEALTH,
-                                                                  12.0D ).createMutableAttribute( Attributes.MOVEMENT_SPEED,
+        return Mob.createMobAttributes().add( Attributes.MAX_HEALTH,
+                                                                  12.0D ).add( Attributes.MOVEMENT_SPEED,
                                                                                                   0.4D ); // Movement
                                                                                                           // Speed
     }
 
     @Nullable
     @Override
-    public AgeableEntity func_241840_a( ServerWorld world, AgeableEntity entity )
+    public AgableMob getBreedOffspring( ServerLevel world, AgableMob entity )
     {
         LizardEntity baby = ModEntityTypes.LIZARD.get().create( world );
         baby.setVariant( ( (LizardEntity) entity ).getVariant() );
@@ -264,17 +275,17 @@ public class LizardEntity
     }
 
     @Override
-    public void writeAdditional( CompoundNBT compound )
+    public void addAdditionalSaveData( CompoundTag compound )
     {
-        super.writeAdditional( compound );
+        super.addAdditionalSaveData( compound );
         compound.putInt( "variant", getVariant() );
         compound.putBoolean( "sad", isSad() );
     }
 
     @Override
-    public void readAdditional( CompoundNBT compound )
+    public void readAdditionalSaveData( CompoundTag compound )
     {
-        super.readAdditional( compound );
+        super.readAdditionalSaveData( compound );
         if ( compound.contains( "variant" ) )
         {
             setVariant( compound.getInt( "variant" ) );
@@ -290,85 +301,85 @@ public class LizardEntity
         return LizardType.values()[this.getVariant()];
     }
 
-    public int getLizardTypeFromBiome( Biome.Category biomeCategory )
+    public int getLizardTypeFromBiome( Biome.BiomeCategory biomeCategory )
     {
         switch ( biomeCategory )
         {
             case DESERT:
             case MESA:
-                return this.getRNG().nextInt( 2 );
+                return this.getRandom().nextInt( 2 );
             case JUNGLE:
-                return this.getRNG().nextInt( 2 ) + 2;
+                return this.getRandom().nextInt( 2 ) + 2;
             default:
-                return this.getRNG().nextInt( 4 );
+                return this.getRandom().nextInt( 4 );
         }
     }
 
     public int getVariant()
     {
-        return MathHelper.clamp( this.dataManager.get( LIZARD_VARIANT ), 0, LizardType.values().length );
+        return Mth.clamp( this.entityData.get( LIZARD_VARIANT ), 0, LizardType.values().length );
     }
 
     public void setVariant( int variant )
     {
-        this.dataManager.set( LIZARD_VARIANT, variant );
+        this.entityData.set( LIZARD_VARIANT, variant );
     }
 
     public void setPartying( boolean isPartying, BlockPos jukeboxPos )
     {
         if ( !this.isSad() )
         {
-            this.dataManager.set( PARTYING, isPartying );
+            this.entityData.set( PARTYING, isPartying );
             this.jukeboxPosition = jukeboxPos;
         }
     }
 
     public boolean isPartying()
     {
-        return this.dataManager.get( PARTYING );
+        return this.entityData.get( PARTYING );
     }
 
     public boolean isSad()
     {
-        return this.dataManager.get( SAD );
+        return this.entityData.get( SAD );
     }
 
     public void setSad( boolean sad )
     {
-        this.dataManager.set( SAD, sad );
+        this.entityData.set( SAD, sad );
     }
 
     public boolean shouldLookAround()
     {
-        return !this.isPartying() && !this.dataManager.get( LAY_EGG );
+        return !this.isPartying() && !this.entityData.get( LAY_EGG );
     }
 
     @Override
-    public boolean isBreedingItem( ItemStack stack )
+    public boolean isFood( ItemStack stack )
     {
         return stack.getItem() instanceof AppleSliceItem;
     }
 
-    public void spawnParticles( IParticleData data )
+    public void spawnParticles( ParticleOptions data )
     {
         for ( int i = 0; i < 7; ++i )
         {
-            double d0 = this.rand.nextGaussian() * 0.02D;
-            double d1 = this.rand.nextGaussian() * 0.02D;
-            double d2 = this.rand.nextGaussian() * 0.02D;
-            this.world.addParticle( data, this.getPosXRandom( 1.0D ), this.getPosYRandom() + 0.5D,
-                                    this.getPosZRandom( 1.0D ), d0, d1, d2 );
+            double d0 = this.random.nextGaussian() * 0.02D;
+            double d1 = this.random.nextGaussian() * 0.02D;
+            double d2 = this.random.nextGaussian() * 0.02D;
+            this.level.addParticle( data, this.getRandomX( 1.0D ), this.getRandomY() + 0.5D,
+                                    this.getRandomZ( 1.0D ), d0, d1, d2 );
         }
     }
 
     @Override
     public ItemStack getItem()
     {
-        if ( !this.isSad() && !this.isChild() )
+        if ( !this.isSad() && !this.isBaby() )
         {
             LizardType type = this.getLizardType();
             ItemStack stack = new ItemStack( type.getItem() );
-            CompoundNBT nbt = stack.getOrCreateTag();
+            CompoundTag nbt = stack.getOrCreateTag();
             nbt.putInt( "variant", Arrays.asList( LizardType.values() ).indexOf( type ) );
             nbt.putFloat( "health", this.getHealth() );
             if ( this.hasCustomName() )
@@ -402,14 +413,14 @@ public class LizardEntity
     {
         if ( data.isPresent() && data.get().isBreedData )
         {
-            ServerWorld world = data.get().world;
+            ServerLevel world = data.get().world;
             LizardEntity lizardMate = (LizardEntity) data.get().entity;
-            BlockState state = ModBlockRegistry.LIZARD_EGGS.get().getDefaultState()
-                                    .with( LizardEggBlock.EGGS, Integer.valueOf( this.rand.nextInt( 4 ) + 3 ) )
-                                    .with( LizardEggBlock.VARIANT_0, this.getVariant() )
-                                    .with( LizardEggBlock.VARIANT_1, lizardMate.getVariant() );
+            BlockState state = ModBlockRegistry.LIZARD_EGGS.get().defaultBlockState()
+                                    .setValue( LizardEggBlock.EGGS, Integer.valueOf( this.random.nextInt( 4 ) + 3 ) )
+                                    .setValue( LizardEggBlock.VARIANT_0, this.getVariant() )
+                                    .setValue( LizardEggBlock.VARIANT_1, lizardMate.getVariant() );
 
-            world.setBlockState( this.getPosition(), state, 3 );
+            world.setBlock( this.blockPosition(), state, 3 );
         }
     }
 
@@ -419,10 +430,10 @@ public class LizardEntity
         return this.animationHandler;
     }
 
-    public static boolean canLizardSpawn( EntityType<LizardEntity> animal, IWorld worldIn,
-                                             SpawnReason reason, BlockPos pos, Random randomIn )
+    public static boolean canLizardSpawn( EntityType<LizardEntity> animal, LevelAccessor worldIn,
+                                             MobSpawnType reason, BlockPos pos, Random randomIn )
     {
-        return worldIn.getLightSubtracted(pos, 0) > 8;
+        return worldIn.getRawBrightness(pos, 0) > 8;
     }
 
     public enum LizardType

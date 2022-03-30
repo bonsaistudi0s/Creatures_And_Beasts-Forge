@@ -2,17 +2,17 @@ package com.cgessinger.creaturesandbeasts.client.render;
 
 import com.cgessinger.creaturesandbeasts.client.model.SporelingModel;
 import com.cgessinger.creaturesandbeasts.common.entites.AbstractSporelingEntity;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceLocation;
+import com.mojang.math.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import software.bernie.geckolib3.geo.render.built.GeoBone;
@@ -22,21 +22,26 @@ import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 public class SporelingRender<T extends AbstractSporelingEntity>
     extends GeoEntityRenderer<T>
 {
-    private IRenderTypeBuffer rtb;
+    private MultiBufferSource rtb;
 
     private ResourceLocation whTexture;
 
     private ItemStack heldItem;
 
-    public SporelingRender( EntityRendererManager renderManager )
+    public SporelingRender( EntityRenderDispatcher renderManager )
     {
         super( renderManager, new SporelingModel<>() );
-        this.shadowSize = 0.4F;
+        this.shadowRadius = 0.4F;
     }
 
     @Override
-    public void renderEarly( T animatable, MatrixStack stackIn, float ticks, IRenderTypeBuffer renderTypeBuffer,
-                             IVertexBuilder vertexBuilder, int packedLightIn, int packedOverlayIn, float red,
+    public ResourceLocation getTextureLocation(T entity) {
+        return getTextureLocation(entity);
+    }
+
+    @Override
+    public void renderEarly( T animatable, PoseStack stackIn, float ticks, MultiBufferSource renderTypeBuffer,
+                             VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn, float red,
                              float green, float blue, float partialTicks )
     {
         this.rtb = renderTypeBuffer;
@@ -48,21 +53,21 @@ public class SporelingRender<T extends AbstractSporelingEntity>
     }
 
     @Override
-    public void renderRecursively( GeoBone bone, MatrixStack stack, IVertexBuilder bufferIn, int packedLightIn,
+    public void renderRecursively( GeoBone bone, PoseStack stack, VertexConsumer bufferIn, int packedLightIn,
                                    int packedOverlayIn, float red, float green, float blue, float alpha )
     {
         if ( bone.getName().equals( "itemHolder" ) )
         {
-            stack.push();
-            stack.rotate( Vector3f.XP.rotationDegrees( -90 ) );
+            stack.pushPose();
+            stack.mulPose( Vector3f.XP.rotationDegrees( -90 ) );
             stack.translate( -0.3, 0, 0 );
             stack.scale( 0.5f, 0.5f, 0.5f );
-            Minecraft.getInstance().getItemRenderer().renderItem( this.heldItem, TransformType.THIRD_PERSON_LEFT_HAND,
+            Minecraft.getInstance().getItemRenderer().renderStatic( this.heldItem, TransformType.THIRD_PERSON_LEFT_HAND,
                                                                   packedLightIn, packedOverlayIn, stack, this.rtb );
-            stack.pop();
+            stack.popPose();
 
             // restore the render buffer - GeckoLib expects this state otherwise you'll have weird texture issues
-            bufferIn = rtb.getBuffer( RenderType.getEntitySmoothCutout( this.whTexture ) );
+            bufferIn = rtb.getBuffer( RenderType.entitySmoothCutout( this.whTexture ) );
         }
 
         super.renderRecursively( bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha );

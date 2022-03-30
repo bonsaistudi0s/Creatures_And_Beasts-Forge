@@ -1,34 +1,34 @@
 package com.cgessinger.creaturesandbeasts.common.goals;
 
-import net.minecraft.entity.CreatureEntity;
-import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.phys.Vec3;
 
 public class SmoothSwimGoal extends Goal
 {
-	private final CreatureEntity entity;
+	private final PathfinderMob entity;
 
-	public SmoothSwimGoal (CreatureEntity entityIn)
+	public SmoothSwimGoal (PathfinderMob entityIn)
 	{
 		this.entity = entityIn;
-		entityIn.getNavigator().setCanSwim(true);
+		entityIn.getNavigation().setCanFloat(true);
 	}
 
 	@Override
-	public boolean shouldExecute ()
+	public boolean canUse ()
 	{
-		return (this.entity.isInWater() && this.entity.func_233571_b_(FluidTags.WATER) + this.entity.getEyeHeight() / 2.2 > this.entity.func_233579_cu_() || this.entity.isInLava());
+		return (this.entity.isInWater() && this.entity.getFluidHeight(FluidTags.WATER) + this.entity.getEyeHeight() / 2.2 > this.entity.getFluidJumpThreshold() || this.entity.isInLava());
 	}
 
 	@Override
 	public void tick ()
 	{
-		this.entity.setMotion(this.entity.getMotion().add(new Vector3d(0, 0.01F, 0)));
+		this.entity.setDeltaMovement(this.entity.getDeltaMovement().add(new Vec3(0, 0.01F, 0)));
 
-		if (this.entity.collidedHorizontally)
+		if (this.entity.horizontalCollision)
 		{
-			this.entity.setMotion(this.entity.getMotion().add(new Vector3d(0, 0.5F, 0)));
+			this.entity.setDeltaMovement(this.entity.getDeltaMovement().add(new Vec3(0, 0.5F, 0)));
 		}
 	}
 }

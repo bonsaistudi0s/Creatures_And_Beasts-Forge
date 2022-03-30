@@ -5,80 +5,80 @@ import com.cgessinger.creaturesandbeasts.common.init.ModEntityTypes;
 import com.cgessinger.creaturesandbeasts.common.init.ModItems;
 import com.cgessinger.creaturesandbeasts.common.init.ModSoundEventTypes;
 
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.projectile.ProjectileItemEntity;
-import net.minecraft.item.Item;
-import net.minecraft.network.IPacket;
-import net.minecraft.particles.ItemParticleData;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.DamageSource;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
+import net.minecraft.world.item.Item;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.core.particles.ItemParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.EntityRayTraceResult;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 public class LizardEggEntity
-    extends ProjectileItemEntity
+    extends ThrowableItemProjectile
 {
-    public LizardEggEntity( EntityType<? extends LizardEggEntity> p_i50154_1_, World p_i50154_2_ )
+    public LizardEggEntity( EntityType<? extends LizardEggEntity> p_i50154_1_, Level p_i50154_2_ )
     {
         super( p_i50154_1_, p_i50154_2_ );
     }
 
-    public LizardEggEntity( World worldIn, LivingEntity throwerIn )
+    public LizardEggEntity( Level worldIn, LivingEntity throwerIn )
     {
         super( ModEntityTypes.LIZARD_EGG.get(), throwerIn, worldIn );
     }
 
-    public LizardEggEntity( World worldIn, double x, double y, double z )
+    public LizardEggEntity( Level worldIn, double x, double y, double z )
     {
         super( ModEntityTypes.LIZARD_EGG.get(), x, y, z, worldIn );
     }
 
     @OnlyIn( Dist.CLIENT )
-    public void handleStatusUpdate( byte id )
+    public void handleEntityEvent( byte id )
     {
         if ( id == 3 )
         {
             for ( int i = 0; i < 8; ++i )
             {
-                this.world.addParticle( new ItemParticleData( ParticleTypes.ITEM, this.getItem() ), this.getPosX(),
-                                        this.getPosY(), this.getPosZ(),
-                                        ( (double) this.rand.nextFloat() - 0.5D ) * 0.08D,
-                                        ( (double) this.rand.nextFloat() - 0.5D ) * 0.08D,
-                                        ( (double) this.rand.nextFloat() - 0.5D ) * 0.08D );
+                this.level.addParticle( new ItemParticleOption( ParticleTypes.ITEM, this.getItem() ), this.getX(),
+                                        this.getY(), this.getZ(),
+                                        ( (double) this.random.nextFloat() - 0.5D ) * 0.08D,
+                                        ( (double) this.random.nextFloat() - 0.5D ) * 0.08D,
+                                        ( (double) this.random.nextFloat() - 0.5D ) * 0.08D );
             }
         }
 
     }
 
-    protected void onEntityHit( EntityRayTraceResult p_213868_1_ )
+    protected void onHitEntity( EntityHitResult p_213868_1_ )
     {
-        super.onEntityHit( p_213868_1_ );
-        p_213868_1_.getEntity().attackEntityFrom( DamageSource.causeThrownDamage( this, this.func_234616_v_() ), 0.0F );
+        super.onHitEntity( p_213868_1_ );
+        p_213868_1_.getEntity().hurt( DamageSource.thrown( this, this.getOwner() ), 0.0F );
     }
 
-    protected void onImpact( RayTraceResult result )
+    protected void onHit( HitResult result )
     {
-        super.onImpact( result );
-        if ( !this.world.isRemote )
+        super.onHit( result );
+        if ( !this.level.isClientSide )
         {
-            if ( this.rand.nextFloat() > 0.3F )
+            if ( this.random.nextFloat() > 0.3F )
             {
-                BlockPos pos = this.getPosition();
-                LizardEntity lizard = ModEntityTypes.LIZARD.get().create( this.world );
-                lizard.setGrowingAge( -24000 );
-                lizard.setLocationAndAngles( this.getPosX(), this.getPosY(), this.getPosZ(), this.rotationYaw, 0.0F );
-                lizard.setVariant(lizard.getLizardTypeFromBiome(this.world.getBiome(pos).getCategory()));
-                this.world.addEntity( lizard );
+                BlockPos pos = this.blockPosition();
+                LizardEntity lizard = ModEntityTypes.LIZARD.get().create( this.level );
+                lizard.setAge( -24000 );
+                lizard.moveTo( this.getX(), this.getY(), this.getZ(), this.yRot, 0.0F );
+                lizard.setVariant(lizard.getLizardTypeFromBiome(this.level.getBiome(pos).getBiomeCategory()));
+                this.level.addFreshEntity( lizard );
             }
 
-            this.world.setEntityState( this, (byte) 3 );
+            this.level.broadcastEntityEvent( this, (byte) 3 );
             this.remove();
         }
 
@@ -90,7 +90,7 @@ public class LizardEggEntity
     }
 
     @Override
-    public IPacket<?> createSpawnPacket()
+    public Packet<?> getAddEntityPacket()
     {
         return NetworkHooks.getEntitySpawningPacket(this);
     }

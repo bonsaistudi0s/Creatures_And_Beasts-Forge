@@ -10,41 +10,41 @@ import com.cgessinger.creaturesandbeasts.common.util.AnimationHandler.ExecutionD
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
-import net.minecraft.entity.AgeableEntity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.ILivingEntityData;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.Pose;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.ai.attributes.Attribute;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.AttributeModifierMap;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.goal.BreedGoal;
-import net.minecraft.entity.ai.goal.LookAtGoal;
-import net.minecraft.entity.ai.goal.LookRandomlyGoal;
-import net.minecraft.entity.ai.goal.PanicGoal;
-import net.minecraft.entity.ai.goal.SwimGoal;
-import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.entity.AgableMob;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.BreedGoal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.PanicGoal;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.IServerWorld;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 
 import javax.annotation.Nullable;
 
@@ -52,72 +52,72 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 
-public class CindershellEntity extends AnimalEntity implements IAnimationHolder<CindershellEntity>
+public class CindershellEntity extends Animal implements IAnimationHolder<CindershellEntity>
 {
 	private final UUID healthReductionUUID = UUID.fromString("189faad9-35de-4e15-a598-82d147b996d7");
     private final float babyHealth = 10.0F;
 
-    private static final DataParameter<Boolean> EAT =
-        EntityDataManager.createKey( CindershellEntity.class, DataSerializers.BOOLEAN );
+    private static final EntityDataAccessor<Boolean> EAT =
+        SynchedEntityData.defineId( CindershellEntity.class, EntityDataSerializers.BOOLEAN );
     
-    public static final DataParameter<ItemStack> HOLDING =
-        EntityDataManager.createKey( CindershellEntity.class, DataSerializers.ITEMSTACK );
+    public static final EntityDataAccessor<ItemStack> HOLDING =
+        SynchedEntityData.defineId( CindershellEntity.class, EntityDataSerializers.ITEM_STACK );
 
     private final AnimationHandler<CindershellEntity> animationHandler;
 
-	public CindershellEntity (EntityType<? extends AnimalEntity> type, World worldIn)
+	public CindershellEntity (EntityType<? extends Animal> type, Level worldIn)
 	{
 		super(type, worldIn);
         this.animationHandler = new AnimationHandler<>( "eat_controller", this, 40, 1, 0, EAT );
 	}
 
     @Override
-    protected void registerData()
+    protected void defineSynchedData()
     {
-        super.registerData();
-        this.dataManager.register(EAT, false);
-        this.dataManager.register( HOLDING, ItemStack.EMPTY );
+        super.defineSynchedData();
+        this.entityData.define(EAT, false);
+        this.entityData.define( HOLDING, ItemStack.EMPTY );
     }
 
 	@Override
 	protected void registerGoals ()
 	{
-		this.goalSelector.addGoal(0, new SwimGoal(this));
+		this.goalSelector.addGoal(0, new FloatGoal(this));
 		this.goalSelector.addGoal(1, new PanicGoal(this, 1.25D));
 		this.goalSelector.addGoal(3, new BreedGoal(this, 1.0D)
         {
             @Override
-            protected void spawnBaby()
+            protected void breed()
             {
-                int range = this.animal.getRNG().nextInt(4) + 3;
+                int range = this.animal.getRandom().nextInt(4) + 3;
                 for (int i = 0; i <= range; i++)
                 {
-                    super.spawnBaby();
+                    super.breed();
                 }
             }
         });
-		this.goalSelector.addGoal(6, new WaterAvoidingRandomWalkingGoal(this, 1.0D));
-		this.goalSelector.addGoal(7, new LookAtGoal(this, PlayerEntity.class, 6.0F));
-		this.goalSelector.addGoal(8, new LookRandomlyGoal(this));
+		this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 1.0D));
+		this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0F));
+		this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
 	}
 
-	public static AttributeModifierMap.MutableAttribute setCustomAttributes ()
+	public static AttributeSupplier.Builder setCustomAttributes ()
 	{
-		return MobEntity.func_233666_p_()
-				.createMutableAttribute(Attributes.MAX_HEALTH, 80.0D)
-				.createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.15D)
-				.createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 100D);
+		return Mob.createMobAttributes()
+				.add(Attributes.MAX_HEALTH, 80.0D)
+				.add(Attributes.MOVEMENT_SPEED, 0.15D)
+				.add(Attributes.KNOCKBACK_RESISTANCE, 100D);
 	}
 
     @Override
-    public ILivingEntityData onInitialSpawn( IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
-                                             ILivingEntityData spawnDataIn, CompoundNBT dataTag )
+    public SpawnGroupData finalizeSpawn( ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, MobSpawnType reason,
+                                             SpawnGroupData spawnDataIn, CompoundTag dataTag )
     {
         if ( dataTag != null )
         {
             if ( dataTag.contains("age") )
             {
-                this.setGrowingAge(dataTag.getInt("age"));
+                this.setAge(dataTag.getInt("age"));
             }
             if ( dataTag.contains( "health" ) )
             {
@@ -125,38 +125,38 @@ public class CindershellEntity extends AnimalEntity implements IAnimationHolder<
             }
             if ( dataTag.contains( "name" ) )
             {
-                this.setCustomName( ITextComponent.getTextComponentOrEmpty( dataTag.getString( "name" ) ) );
+                this.setCustomName( Component.nullToEmpty( dataTag.getString( "name" ) ) );
             }
         }
 
-        return super.onInitialSpawn( worldIn, difficultyIn, reason, spawnDataIn, dataTag );
+        return super.finalizeSpawn( worldIn, difficultyIn, reason, spawnDataIn, dataTag );
     }
 
     @Override
-    public void livingTick()
+    public void aiStep()
     {
-        super.livingTick();
+        super.aiStep();
         this.animationHandler.process();
     }
 
     @Override
-	public void setGrowingAge (int age)
+	public void setAge (int age)
 	{
-		super.setGrowingAge(age);
+		super.setAge(age);
         double MAX_HEALTH = this.getAttribute(Attributes.MAX_HEALTH).getValue();
-		if(isChild() && MAX_HEALTH > this.babyHealth)
+		if(isBaby() && MAX_HEALTH > this.babyHealth)
 		{
 			Multimap<Attribute, AttributeModifier> multimap = HashMultimap.create();
 			multimap.put(Attributes.MAX_HEALTH, new AttributeModifier(this.healthReductionUUID, "yeti_health_reduction", this.babyHealth - MAX_HEALTH, AttributeModifier.Operation.ADDITION));
-			this.getAttributeManager().reapplyModifiers(multimap);
+			this.getAttributes().addTransientAttributeModifiers(multimap);
 			this.setHealth(this.babyHealth);
 		}
 	}
 
     @Override
-    protected void onGrowingAdult()
+    protected void ageBoundaryReached()
     {
-        super.onGrowingAdult();
+        super.ageBoundaryReached();
 		this.getAttribute(Attributes.MAX_HEALTH).removeModifier(this.healthReductionUUID);
 		this.setHealth((float) this.getAttribute(Attributes.MAX_HEALTH).getValue());
     }
@@ -164,27 +164,27 @@ public class CindershellEntity extends AnimalEntity implements IAnimationHolder<
 	@Override
 	public float getEyeHeight (Pose pose)
 	{
-		return this.getHeight() * 0.2F;
+		return this.getBbHeight() * 0.2F;
 	}
 
-	public static boolean canCindershellSpawn(EntityType<CindershellEntity> p_234418_0_, IWorld p_234418_1_, SpawnReason p_234418_2_, BlockPos p_234418_3_, Random p_234418_4_) 
+	public static boolean canCindershellSpawn(EntityType<CindershellEntity> p_234418_0_, LevelAccessor p_234418_1_, MobSpawnType p_234418_2_, BlockPos p_234418_3_, Random p_234418_4_) 
     {
 		return true;
     }
 
     public void setHolding( ItemStack stack )
     {
-        this.dataManager.set( HOLDING, stack );
+        this.entityData.set( HOLDING, stack );
     }
 
     public ItemStack getHolding()
     {
-        return this.dataManager.get( HOLDING );
+        return this.entityData.get( HOLDING );
     }
 
 	@Nullable
 	@Override
-	public AgeableEntity func_241840_a (ServerWorld p_241840_1_, AgeableEntity p_241840_2_)
+	public AgableMob getBreedOffspring (ServerLevel p_241840_1_, AgableMob p_241840_2_)
 	{
 		return ModEntityTypes.CINDERSHELL.get().create(p_241840_1_);
 	}
@@ -217,17 +217,17 @@ public class CindershellEntity extends AnimalEntity implements IAnimationHolder<
 	}
 
 	@Override
-	public int getTalkInterval() {
+	public int getAmbientSoundInterval() {
 		return 120;
 	}
 
 	@Override
-	public boolean canDespawn(double distanceToClosestPlayer) {
+	public boolean removeWhenFarAway(double distanceToClosestPlayer) {
 		return false;
 	}
 
 	@Override
-	public boolean onLivingFall(float distance, float damageMultiplier) {
+	public boolean causeFallDamage(float distance, float damageMultiplier) {
 		return false;
 	}
     
@@ -243,60 +243,60 @@ public class CindershellEntity extends AnimalEntity implements IAnimationHolder<
     }
 
     @Override
-    public boolean isBreedingItem( ItemStack stack )
+    public boolean isFood( ItemStack stack )
     {
         return false;
     }
 
-    public ActionResultType tryStartEat ( PlayerEntity player, ItemStack stack )
+    public InteractionResult tryStartEat ( Player player, ItemStack stack )
     {
         if ( stack.getItem() == Items.CRIMSON_FUNGUS || stack.getItem() == Items.WARPED_FUNGUS ) 
         {
-            int i = this.getGrowingAge();
-            if (!this.world.isRemote && i == 0 && this.canFallInLove()) 
+            int i = this.getAge();
+            if (!this.level.isClientSide && i == 0 && this.canFallInLove()) 
             {
-                this.consumeItemFromStack(player, stack);
+                this.usePlayerItem(player, stack);
                 this.animationHandler.startAnimation(ExecutionData.create().withPlayer(player).build());
                 this.playSound(ModSoundEventTypes.CINDERSHELL_ADULT_EAT.get(), 1.2F, 1F);
                 this.setHolding(stack);
-                return ActionResultType.SUCCESS;
+                return InteractionResult.SUCCESS;
             }
     
-            if (this.isChild()) 
+            if (this.isBaby()) 
             {
                 this.playSound(ModSoundEventTypes.CINDERSHELL_BABY_EAT.get(), 1.3F, 1F);
-                this.consumeItemFromStack(player, stack);
+                this.usePlayerItem(player, stack);
                 this.ageUp((int)(-i / 20F * 0.1F), true);
-                return ActionResultType.func_233537_a_(this.world.isRemote);
+                return InteractionResult.sidedSuccess(this.level.isClientSide);
             }
     
-            if (this.world.isRemote) 
+            if (this.level.isClientSide) 
             {
-                return ActionResultType.CONSUME;
+                return InteractionResult.CONSUME;
             }
         }
-        return ActionResultType.PASS;
+        return InteractionResult.PASS;
     }
 
     @Override
-    public ActionResultType func_230254_b_( PlayerEntity player, Hand hand ) // on right click
+    public InteractionResult mobInteract( Player player, InteractionHand hand ) // on right click
     {
-        ItemStack item = player.getHeldItem( hand );
-        if ( item.getItem() == Items.LAVA_BUCKET && this.isChild() )
+        ItemStack item = player.getItemInHand( hand );
+        if ( item.getItem() == Items.LAVA_BUCKET && this.isBaby() )
         {
             //spawnParticles( ParticleTypes.HEART );
             ItemStack stack = new ItemStack(ModItems.CINDERSHELL_BUCKET.get(), item.getCount());
-            CompoundNBT nbt = stack.getOrCreateTag();
-            nbt.putInt("age", this.getGrowingAge());
+            CompoundTag nbt = stack.getOrCreateTag();
+            nbt.putInt("age", this.getAge());
             nbt.putFloat( "health", this.getHealth() );
             if ( this.hasCustomName() )
             {
                 nbt.putString( "name", this.getCustomName().getString() );
             }
 
-            player.setHeldItem(hand, stack);
+            player.setItemInHand(hand, stack);
             this.remove();
-            return ActionResultType.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
 
         return this.tryStartEat(player, item);

@@ -13,13 +13,13 @@ import com.cgessinger.creaturesandbeasts.common.entites.NeutralSporelingEntity;
 import com.cgessinger.creaturesandbeasts.common.entites.YetiEntity;
 import com.cgessinger.creaturesandbeasts.common.init.ModEntityTypes;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityClassification;
-import net.minecraft.entity.EntitySpawnPlacementRegistry;
-import net.minecraft.entity.EntityType;
-import net.minecraft.world.biome.MobSpawnInfo;
-import net.minecraft.world.biome.MobSpawnInfo.Spawners;
-import net.minecraft.world.gen.Heightmap;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.level.biome.MobSpawnSettings;
+import net.minecraft.world.level.biome.MobSpawnSettings.SpawnerData;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -33,48 +33,48 @@ public class ModEntitySpawns
 	{
         String biomeName = event.getName().toString();
 
-        checkAndAddSpawn(event, biomeName, ServerConfig.GREBE_CONFIG, ModEntityTypes.LITTLE_GREBE.get(), EntityClassification.CREATURE, 2, 3);
+        checkAndAddSpawn(event, biomeName, ServerConfig.GREBE_CONFIG, ModEntityTypes.LITTLE_GREBE.get(), MobCategory.CREATURE, 2, 3);
 
-        checkAndAddSpawn(event, biomeName, ServerConfig.LIZARD_CONFIG, ModEntityTypes.LIZARD.get(), EntityClassification.CREATURE, 1, 4);
+        checkAndAddSpawn(event, biomeName, ServerConfig.LIZARD_CONFIG, ModEntityTypes.LIZARD.get(), MobCategory.CREATURE, 1, 4);
 
-        checkAndAddSpawn(event, biomeName, ServerConfig.CINDERSHELL_CONFIG, ModEntityTypes.CINDERSHELL.get(), EntityClassification.MONSTER, 1, 2);
+        checkAndAddSpawn(event, biomeName, ServerConfig.CINDERSHELL_CONFIG, ModEntityTypes.CINDERSHELL.get(), MobCategory.MONSTER, 1, 2);
 
-        checkAndAddSpawn(event, biomeName, ServerConfig.FRIENDLY_SPORELING_CONFIG, ModEntityTypes.FRIENDLY_SPORELING.get(), EntityClassification.CREATURE, 3, 5);
+        checkAndAddSpawn(event, biomeName, ServerConfig.FRIENDLY_SPORELING_CONFIG, ModEntityTypes.FRIENDLY_SPORELING.get(), MobCategory.CREATURE, 3, 5);
 
-        checkAndAddSpawn(event, biomeName, ServerConfig.HOSTILE_SPORELING_CONFIG, ModEntityTypes.HOSTILE_SPORELING.get(), EntityClassification.MONSTER, 2, 4);
+        checkAndAddSpawn(event, biomeName, ServerConfig.HOSTILE_SPORELING_CONFIG, ModEntityTypes.HOSTILE_SPORELING.get(), MobCategory.MONSTER, 2, 4);
 
-        checkAndAddSpawn(event, biomeName, ServerConfig.NEUTRAL_SPORELING_CONFIG, ModEntityTypes.NEUTRAL_SPORELING.get(), EntityClassification.MONSTER, 2, 4);
+        checkAndAddSpawn(event, biomeName, ServerConfig.NEUTRAL_SPORELING_CONFIG, ModEntityTypes.NEUTRAL_SPORELING.get(), MobCategory.MONSTER, 2, 4);
 
-        checkAndAddSpawn(event, biomeName, ServerConfig.LILYTAD_CONFIG, ModEntityTypes.LILYTAD.get(), EntityClassification.CREATURE, 1, 1);
+        checkAndAddSpawn(event, biomeName, ServerConfig.LILYTAD_CONFIG, ModEntityTypes.LILYTAD.get(), MobCategory.CREATURE, 1, 1);
 
-        checkAndAddSpawn(event, biomeName, ServerConfig.YETI_CONFIG, ModEntityTypes.YETI.get(), EntityClassification.CREATURE, 2, 3);
+        checkAndAddSpawn(event, biomeName, ServerConfig.YETI_CONFIG, ModEntityTypes.YETI.get(), MobCategory.CREATURE, 2, 3);
 	}
 
-    private static void checkAndAddSpawn (BiomeLoadingEvent event, String biomeName, EntityConfig config, EntityType<? extends Entity> type, EntityClassification classification, int min, int max)
+    private static void checkAndAddSpawn (BiomeLoadingEvent event, String biomeName, EntityConfig config, EntityType<? extends Entity> type, MobCategory classification, int min, int max)
     {
         if(config.spawnBiomes.contains(biomeName))
         {
-            MobSpawnInfo.Spawners spawnInfo = new Spawners(type, config.spawnRate, min, max);
+            MobSpawnSettings.SpawnerData spawnInfo = new SpawnerData(type, config.spawnRate, min, max);
             event.getSpawns().getSpawner(classification).add(spawnInfo);
         }
     }
 
 	public static void entitySpawnPlacementRegistry ()
 	{
-		EntitySpawnPlacementRegistry.register(ModEntityTypes.LITTLE_GREBE.get(), EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, GrebeEntity::canGrebeSpawn);
+		SpawnPlacements.register(ModEntityTypes.LITTLE_GREBE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, GrebeEntity::canGrebeSpawn);
 
-		EntitySpawnPlacementRegistry.register(ModEntityTypes.LIZARD.get(), EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, LizardEntity::canLizardSpawn);
+		SpawnPlacements.register(ModEntityTypes.LIZARD.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, LizardEntity::canLizardSpawn);
 
-		EntitySpawnPlacementRegistry.register(ModEntityTypes.CINDERSHELL.get(), EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, CindershellEntity::canCindershellSpawn);
+		SpawnPlacements.register(ModEntityTypes.CINDERSHELL.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, CindershellEntity::canCindershellSpawn);
 
-		EntitySpawnPlacementRegistry.register(ModEntityTypes.HOSTILE_SPORELING.get(), EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, HostileSporelingEntity::canSporelingSpawn);
+		SpawnPlacements.register(ModEntityTypes.HOSTILE_SPORELING.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, HostileSporelingEntity::canSporelingSpawn);
 
-		EntitySpawnPlacementRegistry.register(ModEntityTypes.NEUTRAL_SPORELING.get(), EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, NeutralSporelingEntity::canSporelingSpawn);
+		SpawnPlacements.register(ModEntityTypes.NEUTRAL_SPORELING.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, NeutralSporelingEntity::canSporelingSpawn);
 
-		EntitySpawnPlacementRegistry.register(ModEntityTypes.FRIENDLY_SPORELING.get(), EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, FriendlySporelingEntity::canSporelingSpawn);
+		SpawnPlacements.register(ModEntityTypes.FRIENDLY_SPORELING.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, FriendlySporelingEntity::canSporelingSpawn);
         
-		EntitySpawnPlacementRegistry.register(ModEntityTypes.LILYTAD.get(), EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, LilytadEntity::canLilytadSpawn);
+		SpawnPlacements.register(ModEntityTypes.LILYTAD.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, LilytadEntity::canLilytadSpawn);
 		
-		EntitySpawnPlacementRegistry.register(ModEntityTypes.YETI.get(), EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, YetiEntity::canYetiSpawn);
+		SpawnPlacements.register(ModEntityTypes.YETI.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, YetiEntity::canYetiSpawn);
 	}
 }

@@ -1,43 +1,43 @@
 package com.cgessinger.creaturesandbeasts.common.goals;
 
-import net.minecraft.entity.CreatureEntity;
-import net.minecraft.entity.ai.goal.FindWaterGoal;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.ai.goal.TryFindWaterGoal;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.Level;
 
 
-public class FindWaterOneDeepGoal extends FindWaterGoal
+public class FindWaterOneDeepGoal extends TryFindWaterGoal
 {
-	private final CreatureEntity creature;
+	private final PathfinderMob creature;
 
-	public FindWaterOneDeepGoal (CreatureEntity creature)
+	public FindWaterOneDeepGoal (PathfinderMob creature)
 	{
 		super(creature);
 		this.creature = creature;
 	}
 
 	@Override
-	public void startExecuting ()
+	public void start ()
 	{
-		int fromX = MathHelper.floor(this.creature.getPosX() - 10.0D);
-		int fromY = MathHelper.floor(this.creature.getPosY() - 3.0D);
-		int fromZ = MathHelper.floor(this.creature.getPosZ() - 10.0D);
+		int fromX = Mth.floor(this.creature.getX() - 10.0D);
+		int fromY = Mth.floor(this.creature.getY() - 3.0D);
+		int fromZ = Mth.floor(this.creature.getZ() - 10.0D);
 
-		int toX = MathHelper.floor(this.creature.getPosX() + 10.0D);
-		int toY = MathHelper.floor(this.creature.getPosY());
-		int toZ = MathHelper.floor(this.creature.getPosZ() + 10.0D);
+		int toX = Mth.floor(this.creature.getX() + 10.0D);
+		int toY = Mth.floor(this.creature.getY());
+		int toZ = Mth.floor(this.creature.getZ() + 10.0D);
 
-		Iterable<BlockPos> allBlocks = BlockPos.getRandomPositions(this.creature.getRNG(), 50, fromX, fromY, fromZ, toX, toY, toZ);
+		Iterable<BlockPos> allBlocks = BlockPos.randomBetweenClosed(this.creature.getRandom(), 50, fromX, fromY, fromZ, toX, toY, toZ);
 
 		for (BlockPos blockpos1 : allBlocks)
 		{
-			World world = this.creature.world;
+			Level world = this.creature.level;
 
-			if (world.getFluidState(blockpos1).isTagged(FluidTags.WATER) && world.getBlockState(blockpos1.down()).isSolid() && world.getBlockState(blockpos1.up()).isAir())
+			if (world.getFluidState(blockpos1).is(FluidTags.WATER) && world.getBlockState(blockpos1.below()).canOcclude() && world.getBlockState(blockpos1.above()).isAir())
 			{
-				this.creature.getNavigator().tryMoveToXYZ(blockpos1.getX(), blockpos1.getY(), blockpos1.getZ(), 1.0D);
+				this.creature.getNavigation().moveTo(blockpos1.getX(), blockpos1.getY(), blockpos1.getZ(), 1.0D);
 				break;
 			}
 		}

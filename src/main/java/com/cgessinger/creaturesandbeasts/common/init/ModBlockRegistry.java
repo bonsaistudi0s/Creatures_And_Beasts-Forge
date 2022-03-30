@@ -4,12 +4,18 @@ import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
 import com.cgessinger.creaturesandbeasts.common.blocks.LizardEggBlock;
 
 import net.minecraft.block.*;
-import net.minecraft.block.material.Material;
-import net.minecraft.potion.Effects;
-import net.minecraft.state.IntegerProperty;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.FlowerBlock;
+import net.minecraft.world.level.block.FlowerPotBlock;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 
 public class ModBlockRegistry
 {
@@ -18,10 +24,10 @@ public class ModBlockRegistry
 	public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, CreaturesAndBeasts.MOD_ID);
 
 	public static final RegistryObject<Block> LILYTAD_FLOWER = BLOCKS.register("lilytad_flower_block", () ->
-			new FlowerBlock(Effects.INSTANT_HEALTH, 5,
-			AbstractBlock.Properties.create(Material.PLANTS).doesNotBlockMovement().zeroHardnessAndResistance().sound(SoundType.PLANT)));
+			new FlowerBlock(MobEffects.HEAL, 5,
+			BlockBehaviour.Properties.of(Material.PLANT).noCollission().instabreak().sound(SoundType.GRASS)));
 
-	public static final RegistryObject<Block> POTTED_LILYTAD_FLOWER = BLOCKS.register("potted_lilytad_flower", () -> new FlowerPotBlock(LILYTAD_FLOWER.get(), AbstractBlock.Properties.create(Material.MISCELLANEOUS).zeroHardnessAndResistance().notSolid()));
+	public static final RegistryObject<Block> POTTED_LILYTAD_FLOWER = BLOCKS.register("potted_lilytad_flower", () -> new FlowerPotBlock(LILYTAD_FLOWER.get(), BlockBehaviour.Properties.of(Material.DECORATION).instabreak().noOcclusion()));
     
     public static RegistryObject<Block> LIZARD_EGGS = BLOCKS.register("lizard_egg_block", LizardEggBlock::new);
 }
