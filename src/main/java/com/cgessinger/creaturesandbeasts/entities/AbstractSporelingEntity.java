@@ -182,11 +182,11 @@ public abstract class AbstractSporelingEntity extends PathfinderMob implements I
                 createLocation("textures/model/entity/sporeling_red_overworld.png")),
         NETHER_BROWN(createLocation("geo/nether_brown_sporeling.geo.json"),
                 createLocation("textures/model/entity/sporeling_brown_nether.png")),
-        NETHER_RED(createLocation("geo/nether_red_sporeling.geo.json"),
+        NETHER_RED(createLocation("geo/sporeling_nether_red.json"),
                 createLocation("textures/model/entity/sporeling_red_nether.png")),
-        WARPED_FUNGI(createLocation("geo/warped_fungi_sporeling.geo.json"),
+        WARPED_FUNGI(createLocation("geo/sporeling_warped_fungi.json"),
                 createLocation("textures/model/entity/sporeling_warped_fungi.png")),
-        CRIMSON_FUNGUS(createLocation("geo/warped_fungi_sporeling.geo.json"),
+        CRIMSON_FUNGUS(createLocation("geo/sporeling_warped_fungi.json"),
                 createLocation("textures/model/entity/sporeling_crimson_fungus.png"));
 
         public final ResourceLocation modelLocation;

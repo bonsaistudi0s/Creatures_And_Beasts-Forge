@@ -11,28 +11,30 @@ import software.bernie.geckolib3.model.provider.data.EntityModelData;
 import javax.annotation.Nullable;
 
 public class LizardModel extends AnimatedGeoModel<LizardEntity> {
-    public LizardModel() {
+    private static final ResourceLocation LIZARD_MODEL = new ResourceLocation(CreaturesAndBeasts.MOD_ID, "geo/lizard/lizard.geo.json");
+    private static final ResourceLocation SAD_LIZARD_MODEL = new ResourceLocation(CreaturesAndBeasts.MOD_ID, "geo/lizard/sad_lizard.geo.json");
+
+    private static final ResourceLocation LIZARD_ANIMATIONS = new ResourceLocation(CreaturesAndBeasts.MOD_ID, "animations/lizard.json");
+
+    @Override
+    public ResourceLocation getModelLocation(LizardEntity entity) {
+        return entity.isSad() ? SAD_LIZARD_MODEL : LIZARD_MODEL;
     }
 
     @Override
-    public ResourceLocation getModelLocation(LizardEntity object) {
-        return new ResourceLocation(CreaturesAndBeasts.MOD_ID, "geo/lizard.geo.json");
+    public ResourceLocation getTextureLocation(LizardEntity entity) {
+        return entity.getLizardType().getTextureLocation(entity.isSad());
     }
 
     @Override
-    public ResourceLocation getTextureLocation(LizardEntity object) {
-        return object.getLizardType().getTextureLocation(object.isSad());
-    }
-
-    @Override
-    public ResourceLocation getAnimationFileLocation(LizardEntity object) {
-        return new ResourceLocation(CreaturesAndBeasts.MOD_ID, "animations/lizard.json");
+    public ResourceLocation getAnimationFileLocation(LizardEntity entity) {
+        return LIZARD_ANIMATIONS;
     }
 
     @Override
     public void setLivingAnimations(LizardEntity entity, Integer uniqueID, @Nullable AnimationEvent customPredicate) {
         super.setLivingAnimations(entity, uniqueID, customPredicate);
-        IBone head = this.getAnimationProcessor().getBone("bone8");
+        IBone head = this.getAnimationProcessor().getBone("head");
 
         if (entity.isSad()) {
             head.setRotationX(0.2182F);

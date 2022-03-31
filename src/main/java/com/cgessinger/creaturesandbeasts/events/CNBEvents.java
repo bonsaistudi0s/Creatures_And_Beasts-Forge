@@ -2,7 +2,15 @@ package com.cgessinger.creaturesandbeasts.events;
 
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
 import com.cgessinger.creaturesandbeasts.config.CNBConfig.ServerConfig;
+import com.cgessinger.creaturesandbeasts.entities.CindershellEntity;
+import com.cgessinger.creaturesandbeasts.entities.FriendlySporelingEntity;
+import com.cgessinger.creaturesandbeasts.entities.GrebeEntity;
+import com.cgessinger.creaturesandbeasts.entities.HostileSporelingEntity;
+import com.cgessinger.creaturesandbeasts.entities.LilytadEntity;
 import com.cgessinger.creaturesandbeasts.entities.LizardEntity;
+import com.cgessinger.creaturesandbeasts.entities.NeutralSporelingEntity;
+import com.cgessinger.creaturesandbeasts.entities.YetiEntity;
+import com.cgessinger.creaturesandbeasts.init.CNBEntityTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBItems;
 import com.google.common.collect.Multimap;
 import net.minecraft.nbt.CompoundTag;
@@ -19,6 +27,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -27,11 +36,23 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
 
-@Mod.EventBusSubscriber(modid = CreaturesAndBeasts.MOD_ID,bus = Mod.EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(modid = CreaturesAndBeasts.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class CNBEvents {
 
     @SubscribeEvent
-    public static void onBlockActivate(PlayerInteractEvent.RightClickBlock event) {
+    public static void onEntityAttributeCreation(EntityAttributeCreationEvent event) {
+        event.put(CNBEntityTypes.CINDERSHELL.get(), CindershellEntity.createAttributes().build());
+        event.put(CNBEntityTypes.FRIENDLY_SPORELING.get(), FriendlySporelingEntity.createAttributes().build());
+        event.put(CNBEntityTypes.LITTLE_GREBE.get(), GrebeEntity.createAttributes().build());
+        event.put(CNBEntityTypes.HOSTILE_SPORELING.get(), HostileSporelingEntity.createAttributes().build());
+        event.put(CNBEntityTypes.LILYTAD.get(), LilytadEntity.createAttributes().build());
+        event.put(CNBEntityTypes.LIZARD.get(), LizardEntity.createAttributes().build());
+        event.put(CNBEntityTypes.NEUTRAL_SPORELING.get(), NeutralSporelingEntity.createAttributes().build());
+        event.put(CNBEntityTypes.YETI.get(), YetiEntity.createAttributes().build());
+    }
+
+    @SubscribeEvent
+    public void onBlockActivate(PlayerInteractEvent.RightClickBlock event) {
         BlockEntity te = event.getWorld().getBlockEntity(event.getPos());
         if (te instanceof JukeboxBlockEntity) {
             Item heldItem = event.getPlayer().getItemInHand(event.getHand()).getItem();
@@ -49,7 +70,7 @@ public class CNBEvents {
      * (Needed for Netherite items to update attributes when upgraded in smithing table)
      */
     @SubscribeEvent
-    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
+    public void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.player.level.isClientSide()) {
             return;
         }
@@ -66,7 +87,7 @@ public class CNBEvents {
 
     }
 
-    private static void checkAndUpdateItemArmor(ItemStack input) {
+    private void checkAndUpdateItemArmor(ItemStack input) {
         if (input.hasTag() && input.getTag().contains("hide_amount")) {
             if (input.getTag().contains("AttributeModifiers", 9)) {
                 input.removeTagKey("AttributeModifiers");
@@ -109,7 +130,7 @@ public class CNBEvents {
 	*/
 
     @SubscribeEvent
-    public static void onAnvilChange(AnvilUpdateEvent event) {
+    public void onAnvilChange(AnvilUpdateEvent event) {
         if (event.getLeft().getItem() instanceof ArmorItem && event.getRight().getItem() == CNBItems.YETI_HIDE.get()) {
             ItemStack output = event.getLeft().copy();
             CompoundTag nbt = output.getOrCreateTag();

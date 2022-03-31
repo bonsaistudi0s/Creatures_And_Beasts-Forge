@@ -6,24 +6,26 @@ import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 
-public class SporelingModel<T extends AbstractSporelingEntity> extends AnimatedGeoModel<T> {
+public class SporelingModel extends AnimatedGeoModel<AbstractSporelingEntity> {
+    private static final ResourceLocation SPORELING_ANIMATIONS = new ResourceLocation(CreaturesAndBeasts.MOD_ID, "animations/sporeling.json");
+
     @Override
-    public ResourceLocation getModelLocation(T t) {
-        return t.getSporelingType().getModelLocation();
+    public ResourceLocation getModelLocation(AbstractSporelingEntity entity) {
+        return entity.getSporelingType().getModelLocation();
     }
 
     @Override
-    public ResourceLocation getTextureLocation(T t) {
-        return t.getSporelingType().getTextureLocation();
+    public ResourceLocation getTextureLocation(AbstractSporelingEntity entity) {
+        return entity.getSporelingType().getTextureLocation();
     }
 
     @Override
-    public ResourceLocation getAnimationFileLocation(T t) {
-        return new ResourceLocation(CreaturesAndBeasts.MOD_ID, "animations/sporeling.json");
+    public ResourceLocation getAnimationFileLocation(AbstractSporelingEntity entity) {
+        return SPORELING_ANIMATIONS;
     }
 
     @Override
-    public void setLivingAnimations(T entity, Integer uniqueID, AnimationEvent customPredicate) {
+    public void setLivingAnimations(AbstractSporelingEntity entity, Integer uniqueID, AnimationEvent customPredicate) {
         super.setLivingAnimations(entity, uniqueID, customPredicate);
 
         if (!entity.getHolding().isEmpty()) {

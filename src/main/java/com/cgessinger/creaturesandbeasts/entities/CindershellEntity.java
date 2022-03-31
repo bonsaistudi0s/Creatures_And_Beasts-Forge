@@ -4,8 +4,8 @@ import com.cgessinger.creaturesandbeasts.config.CNBConfig;
 import com.cgessinger.creaturesandbeasts.init.CNBEntityTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBItems;
 import com.cgessinger.creaturesandbeasts.init.CNBSoundEvents;
-import com.cgessinger.creaturesandbeasts.util.IAnimationHolder;
 import com.cgessinger.creaturesandbeasts.util.AnimationHandler;
+import com.cgessinger.creaturesandbeasts.util.IAnimationHolder;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.core.BlockPos;
@@ -22,11 +22,13 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.BreedGoal;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -41,31 +43,33 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.manager.AnimationData;
+import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 
-public class CindershellEntity extends Animal implements IAnimationHolder<CindershellEntity> {
+public class CindershellEntity extends Animal implements IAnimationHolder<CindershellEntity>, IAnimatable {
     public static final EntityDataAccessor<ItemStack> HOLDING = SynchedEntityData.defineId(CindershellEntity.class, EntityDataSerializers.ITEM_STACK);
     private static final EntityDataAccessor<Boolean> EAT = SynchedEntityData.defineId(CindershellEntity.class, EntityDataSerializers.BOOLEAN);
     private final UUID healthReductionUUID = UUID.fromString("189faad9-35de-4e15-a598-82d147b996d7");
     private final float babyHealth = 10.0F;
     private final AnimationHandler<CindershellEntity> animationHandler;
+    private final AnimationFactory factory = new AnimationFactory(this);
 
     public CindershellEntity(EntityType<? extends Animal> type, Level worldIn) {
         super(type, worldIn);
         this.animationHandler = new AnimationHandler<>("eat_controller", this, 40, 1, 0, EAT);
     }
 
-    @SubscribeEvent
-    public static void onEntityAttributeModification(EntityAttributeModificationEvent event) {
-        event.add(CNBEntityTypes.CINDERSHELL.get(), Attributes.MAX_HEALTH, 80.0D);
-        event.add(CNBEntityTypes.CINDERSHELL.get(), Attributes.MOVEMENT_SPEED, 0.15D);
-        event.add(CNBEntityTypes.CINDERSHELL.get(), Attributes.KNOCKBACK_RESISTANCE, 100D);
+    public static AttributeSupplier.Builder createAttributes() {
+        return Mob.createMobAttributes()
+                .add(Attributes.MAX_HEALTH, 80.0D)
+                .add(Attributes.MOVEMENT_SPEED, 0.15D)
+                .add(Attributes.KNOCKBACK_RESISTANCE, 100D);
     }
 
     public static boolean canCindershellSpawn(EntityType<CindershellEntity> p_234418_0_, LevelAccessor p_234418_1_, MobSpawnType p_234418_2_, BlockPos p_234418_3_, Random p_234418_4_) {
@@ -267,5 +271,15 @@ public class CindershellEntity extends Animal implements IAnimationHolder<Cinder
     @Override
     public AnimationHandler<CindershellEntity> getAnimationHandler(String name) {
         return this.animationHandler;
+    }
+
+    @Override
+    public void registerControllers(AnimationData data) {
+
+    }
+
+    @Override
+    public AnimationFactory getFactory() {
+        return this.factory;
     }
 }

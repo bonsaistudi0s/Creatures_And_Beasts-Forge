@@ -2,7 +2,6 @@ package com.cgessinger.creaturesandbeasts.entities;
 
 import com.cgessinger.creaturesandbeasts.config.CNBConfig;
 import com.cgessinger.creaturesandbeasts.entities.ai.FindWaterOneDeepGoal;
-import com.cgessinger.creaturesandbeasts.init.CNBEntityTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBItems;
 import com.cgessinger.creaturesandbeasts.init.CNBSoundEvents;
 import net.minecraft.core.BlockPos;
@@ -18,7 +17,9 @@ import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.LookControl;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
@@ -32,8 +33,6 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraftforge.common.IForgeShearable;
-import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -66,10 +65,10 @@ public class LilytadEntity extends Animal implements IForgeShearable, IAnimatabl
         };
     }
 
-    @SubscribeEvent
-    public static void onEntityAttributeModification(EntityAttributeModificationEvent event) {
-        event.add(CNBEntityTypes.LILYTAD.get(), Attributes.MAX_HEALTH, 20.0D);
-        event.add(CNBEntityTypes.LILYTAD.get(), Attributes.MOVEMENT_SPEED, 0.2D);
+    public static AttributeSupplier.Builder createAttributes() {
+        return Mob.createMobAttributes()
+                .add(Attributes.MAX_HEALTH, 20.0D)
+                .add(Attributes.MOVEMENT_SPEED, 0.2D);
     }
 
     public static boolean canLilytadSpawn(EntityType<LilytadEntity> animal, LevelAccessor worldIn, MobSpawnType reason, BlockPos pos, Random randomIn) {
@@ -197,7 +196,7 @@ public class LilytadEntity extends Animal implements IForgeShearable, IAnimatabl
             this.setSheared(true);
             this.shearedTimer = 15 * 60 * 20; // 15 min x 60 sec x 20 ticks per sec
             java.util.List<ItemStack> items = new java.util.ArrayList<>();
-            items.add(new ItemStack(CNBItems.LILYTAD_FLOWER.get()));
+            items.add(new ItemStack(CNBItems.LILYTAD_FLOWER_PINK.get()));
 
             return items;
         }

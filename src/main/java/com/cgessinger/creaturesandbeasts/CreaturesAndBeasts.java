@@ -2,14 +2,7 @@ package com.cgessinger.creaturesandbeasts;
 
 import com.cgessinger.creaturesandbeasts.client.entity.CNBClient;
 import com.cgessinger.creaturesandbeasts.config.CNBConfig;
-import com.cgessinger.creaturesandbeasts.entities.CindershellEntity;
-import com.cgessinger.creaturesandbeasts.entities.FriendlySporelingEntity;
-import com.cgessinger.creaturesandbeasts.entities.GrebeEntity;
-import com.cgessinger.creaturesandbeasts.entities.HostileSporelingEntity;
-import com.cgessinger.creaturesandbeasts.entities.LilytadEntity;
-import com.cgessinger.creaturesandbeasts.entities.LizardEntity;
-import com.cgessinger.creaturesandbeasts.entities.NeutralSporelingEntity;
-import com.cgessinger.creaturesandbeasts.entities.YetiEntity;
+import com.cgessinger.creaturesandbeasts.events.CNBEvents;
 import com.cgessinger.creaturesandbeasts.init.CNBBlocks;
 import com.cgessinger.creaturesandbeasts.init.CNBEntityTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBItems;
@@ -47,21 +40,13 @@ public class CreaturesAndBeasts {
 
         ModLoadingContext.get().registerConfig(Type.COMMON, CNBConfig.COMMON_SPEC);
 
-        CNBSoundEvents.SOUND_EVENTS.register(eventBus);
-        CNBEntityTypes.ENTITY_TYPES.register(eventBus);
         CNBBlocks.BLOCKS.register(eventBus);
         CNBItems.ITEMS.register(eventBus);
+        CNBSoundEvents.SOUND_EVENTS.register(eventBus);
+        CNBEntityTypes.ENTITY_TYPES.register(eventBus);
 
         MinecraftForge.EVENT_BUS.register(this);
-
-        MinecraftForge.EVENT_BUS.addListener(CindershellEntity::onEntityAttributeModification);
-        MinecraftForge.EVENT_BUS.addListener(FriendlySporelingEntity::onEntityAttributeModification);
-        MinecraftForge.EVENT_BUS.addListener(GrebeEntity::onEntityAttributeModification);
-        MinecraftForge.EVENT_BUS.addListener(HostileSporelingEntity::onEntityAttributeModification);
-        MinecraftForge.EVENT_BUS.addListener(LilytadEntity::onEntityAttributeModification);
-        MinecraftForge.EVENT_BUS.addListener(LizardEntity::onEntityAttributeModification);
-        MinecraftForge.EVENT_BUS.addListener(NeutralSporelingEntity::onEntityAttributeModification);
-        MinecraftForge.EVENT_BUS.addListener(YetiEntity::onEntityAttributeModification);
+        MinecraftForge.EVENT_BUS.register(new CNBEvents());
 
         GeckoLib.initialize();
     }

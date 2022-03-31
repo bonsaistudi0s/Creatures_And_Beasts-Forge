@@ -5,8 +5,8 @@ import com.cgessinger.creaturesandbeasts.config.CNBConfig.ServerConfig;
 import com.cgessinger.creaturesandbeasts.entities.ai.AnimatedAttackGoal;
 import com.cgessinger.creaturesandbeasts.init.CNBEntityTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBSoundEvents;
-import com.cgessinger.creaturesandbeasts.util.IAnimationHolder;
 import com.cgessinger.creaturesandbeasts.util.AnimationHandler;
+import com.cgessinger.creaturesandbeasts.util.IAnimationHolder;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.client.Minecraft;
@@ -28,10 +28,12 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.BreedGoal;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -50,8 +52,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -87,13 +87,13 @@ public class YetiEntity extends Animal implements IAnimatable, IAnimationHolder<
         this.eatHandler = new AnimationHandler<>("breed_controller", this, 40, 10, 20, EAT);
     }
 
-    @SubscribeEvent
-    public static void onEntityAttributeModification(EntityAttributeModificationEvent event) {
-        event.add(CNBEntityTypes.YETI.get(), Attributes.MAX_HEALTH, 80.0D);
-        event.add(CNBEntityTypes.YETI.get(), Attributes.MOVEMENT_SPEED, 0.3D);
-        event.add(CNBEntityTypes.YETI.get(), Attributes.ATTACK_DAMAGE, 16.0D);
-        event.add(CNBEntityTypes.YETI.get(), Attributes.ATTACK_SPEED, 0.1D);
-        event.add(CNBEntityTypes.YETI.get(), Attributes.KNOCKBACK_RESISTANCE, 0.7D);
+    public static AttributeSupplier.Builder createAttributes() {
+        return Mob.createMobAttributes()
+                .add(Attributes.MAX_HEALTH, 80.0D)
+                .add(Attributes.MOVEMENT_SPEED, 0.3D)
+                .add(Attributes.ATTACK_DAMAGE, 16.0D)
+                .add(Attributes.ATTACK_SPEED, 0.1D)
+                .add(Attributes.KNOCKBACK_RESISTANCE, 0.7D);
     }
 
     public static boolean canYetiSpawn(EntityType<? extends Animal> animal, LevelAccessor worldIn, MobSpawnType reason, BlockPos pos, Random random) {

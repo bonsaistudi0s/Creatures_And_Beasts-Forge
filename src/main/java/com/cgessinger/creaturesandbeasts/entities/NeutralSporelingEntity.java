@@ -2,7 +2,6 @@ package com.cgessinger.creaturesandbeasts.entities;
 
 import com.cgessinger.creaturesandbeasts.config.CNBConfig;
 import com.cgessinger.creaturesandbeasts.entities.ai.TimedAttackGoal;
-import com.cgessinger.creaturesandbeasts.init.CNBEntityTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBSoundEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
@@ -13,9 +12,11 @@ import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.level.Level;
@@ -23,8 +24,6 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
-import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -39,12 +38,12 @@ public class NeutralSporelingEntity extends AbstractSporelingEntity {
         super(type, worldIn);
     }
 
-    @SubscribeEvent
-    public static void onEntityAttributeModification(EntityAttributeModificationEvent event) {
-        event.add(CNBEntityTypes.NEUTRAL_SPORELING.get(), Attributes.MAX_HEALTH, 16.0D);
-        event.add(CNBEntityTypes.NEUTRAL_SPORELING.get(), Attributes.MOVEMENT_SPEED, 0.2D);
-        event.add(CNBEntityTypes.NEUTRAL_SPORELING.get(), Attributes.FOLLOW_RANGE, 35.0D);
-        event.add(CNBEntityTypes.NEUTRAL_SPORELING.get(), Attributes.ATTACK_DAMAGE, 3.0D);
+    public static AttributeSupplier.Builder createAttributes() {
+        return Mob.createMobAttributes()
+                .add(Attributes.MAX_HEALTH, 16.0D)
+                .add(Attributes.MOVEMENT_SPEED, 0.2D)
+                .add(Attributes.FOLLOW_RANGE, 35.0D)
+                .add(Attributes.ATTACK_DAMAGE, 3.0D);
     }
 
     public static boolean canSporelingSpawn(EntityType<NeutralSporelingEntity> p_234418_0_, LevelAccessor worldIn, MobSpawnType p_234418_2_, BlockPos p_234418_3_, Random p_234418_4_) {

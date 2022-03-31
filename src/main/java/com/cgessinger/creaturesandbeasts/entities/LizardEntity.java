@@ -7,10 +7,10 @@ import com.cgessinger.creaturesandbeasts.entities.ai.AnimatedBreedGoal;
 import com.cgessinger.creaturesandbeasts.init.CNBBlocks;
 import com.cgessinger.creaturesandbeasts.init.CNBEntityTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBItems;
-import com.cgessinger.creaturesandbeasts.util.IAnimationHolder;
-import com.cgessinger.creaturesandbeasts.util.IModNetable;
 import com.cgessinger.creaturesandbeasts.items.AppleSliceItem;
 import com.cgessinger.creaturesandbeasts.util.AnimationHandler;
+import com.cgessinger.creaturesandbeasts.util.IAnimationHolder;
+import com.cgessinger.creaturesandbeasts.util.IModNetable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ParticleOptions;
@@ -29,8 +29,10 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.LookControl;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -51,8 +53,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -89,10 +89,10 @@ public class LizardEntity extends Animal implements IAnimatable, IModNetable, IA
         this.animationHandler = new AnimationHandler<>("breed_controller", this, 110, 1, 0, LAY_EGG);
     }
 
-    @SubscribeEvent
-    public static void onEntityAttributeModification(EntityAttributeModificationEvent event) {
-        event.add(CNBEntityTypes.LIZARD.get(), Attributes.MAX_HEALTH, 12.0D);
-        event.add(CNBEntityTypes.LIZARD.get(), Attributes.MOVEMENT_SPEED, 0.4D);
+    public static AttributeSupplier.Builder createAttributes() {
+        return Mob.createMobAttributes()
+                .add(Attributes.MAX_HEALTH, 12.0D)
+                .add(Attributes.MOVEMENT_SPEED, 0.4D);
     }
 
     public static boolean canLizardSpawn(EntityType<LizardEntity> animal, LevelAccessor worldIn, MobSpawnType reason, BlockPos pos, Random randomIn) {
