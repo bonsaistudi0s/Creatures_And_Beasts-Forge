@@ -20,7 +20,7 @@
 					]
 				},
 				{
-					"name": "head",
+					"name": "Head",
 					"parent": "bone",
 					"pivot": [0, 4.5, 2],
 					"rotation": [-2.4981, 0, 0],
@@ -29,7 +29,7 @@
 					]
 				},
 				{
-					"name": "beak",
+					"name": "bone2",
 					"parent": "Head",
 					"pivot": [0, 4.5, 2],
 					"cubes": [
@@ -37,7 +37,7 @@
 					]
 				},
 				{
-					"name": "rwing",
+					"name": "Rwing",
 					"parent": "bone",
 					"pivot": [2, 4.5, 1.5],
 					"rotation": [5.00192, 5.00192, 0],
@@ -46,7 +46,7 @@
 					]
 				},
 				{
-					"name": "lwing",
+					"name": "Lwing",
 					"parent": "bone",
 					"pivot": [-2, 4.5, 1.5],
 					"rotation": [5.00192, -5.00192, 0],
@@ -55,7 +55,7 @@
 					]
 				},
 				{
-					"name": "lleg",
+					"name": "Lleg",
 					"parent": "bone",
 					"pivot": [-1, 2, 0],
 					"cubes": [
@@ -63,7 +63,7 @@
 					]
 				},
 				{
-					"name": "rleg",
+					"name": "Rleg",
 					"parent": "bone",
 					"pivot": [1, 2, 0],
 					"cubes": [

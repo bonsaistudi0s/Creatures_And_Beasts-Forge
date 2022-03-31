@@ -5,8 +5,8 @@
     128
   ],
   "textures": {
-    "0": "cnb:model/entity/lilytad_flower_layer",
-    "particle": "cnb:items/lilytad_flower"
+    "0": "cnb:entity/lilytad/lilytad_pink",
+    "particle": "cnb:items/lilytad_flower_pink"
   },
   "elements": [
     {

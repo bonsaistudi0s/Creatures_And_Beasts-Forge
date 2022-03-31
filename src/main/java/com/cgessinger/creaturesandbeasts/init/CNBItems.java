@@ -21,7 +21,7 @@ public class CNBItems {
     public static final RegistryObject<LizardEgg> LIZARD_EGG = ITEMS.register("lizard_egg", LizardEgg::new);
     public static final RegistryObject<EntityNetItem> ENTITY_NET = ITEMS.register("entity_net", EntityNetItem::new);
     public static final RegistryObject<CindershellShellShardItem> CINDERSHELL_SHELL_SHARD = ITEMS.register("cindershell_shell_shard", CindershellShellShardItem::new);
-    public static final RegistryObject<LilytadFlowerItem> LILYTAD_FLOWER = ITEMS.register("lilytad_flower", LilytadFlowerItem::new);
+    public static final RegistryObject<LilytadFlowerItem> LILYTAD_FLOWER_PINK = ITEMS.register("lilytad_flower_pink", LilytadFlowerItem::new);
     public static final RegistryObject<Item> YETI_ANTLER = ITEMS.register("yeti_antler", () -> new Item(new Item.Properties().tab(CreaturesAndBeasts.TAB)));
     public static final RegistryObject<Item> YETI_HIDE = ITEMS.register("yeti_hide", () -> new Item(new Item.Properties().tab(CreaturesAndBeasts.TAB)));
     public static RegistryObject<ModSpawnEggItem> GREBE_SPAWN_EGG = ITEMS.register("little_grebe_spawn_egg", () -> new ModSpawnEggItem(CNBEntityTypes.LITTLE_GREBE, 0x00FFFFFF, 0x00FFFFFF, new Item.Properties().tab(CreaturesAndBeasts.TAB)));

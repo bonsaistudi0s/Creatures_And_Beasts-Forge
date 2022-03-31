@@ -37,12 +37,12 @@ public class GrebeModel extends AnimatedGeoModel<GrebeEntity> {
     public void setLivingAnimations(GrebeEntity entity, Integer uniqueID, @Nullable AnimationEvent customPredicate) {
         super.setLivingAnimations(entity, uniqueID, customPredicate);
 
-        IBone head = this.getAnimationProcessor().getBone("head");
-        IBone beak = this.getAnimationProcessor().getBone("beak");
-        IBone rleg = this.getAnimationProcessor().getBone("rleg");
-        IBone lleg = this.getAnimationProcessor().getBone("lleg");
-        IBone rwing = this.getAnimationProcessor().getBone("rwing");
-        IBone lwing = this.getAnimationProcessor().getBone("lwing");
+        IBone head = this.getAnimationProcessor().getBone("Head");
+        IBone beak = this.getAnimationProcessor().getBone("bone2");
+        IBone rleg = this.getAnimationProcessor().getBone("Rleg");
+        IBone lleg = this.getAnimationProcessor().getBone("Lleg");
+        IBone rwing = this.getAnimationProcessor().getBone("Rwing");
+        IBone lwing = this.getAnimationProcessor().getBone("Lwing");
         EntityModelData extraData = (EntityModelData) customPredicate.getExtraDataOfType(EntityModelData.class).get(0);
 
         head.setRotationX(extraData.headPitch * ((float)Math.PI / 180F));
