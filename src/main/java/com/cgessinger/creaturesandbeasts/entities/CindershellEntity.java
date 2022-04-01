@@ -22,6 +22,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.Pose;
@@ -72,7 +73,7 @@ public class CindershellEntity extends Animal implements IAnimationHolder<Cinder
                 .add(Attributes.KNOCKBACK_RESISTANCE, 100D);
     }
 
-    public static boolean canCindershellSpawn(EntityType<CindershellEntity> p_234418_0_, LevelAccessor p_234418_1_, MobSpawnType p_234418_2_, BlockPos p_234418_3_, Random p_234418_4_) {
+    public static boolean canCindershellSpawn(EntityType<CindershellEntity> entity, LevelAccessor level, MobSpawnType mobSpawnType, BlockPos pos, Random random) {
         return true;
     }
 
@@ -154,6 +155,7 @@ public class CindershellEntity extends Animal implements IAnimationHolder<Cinder
 
     public void setHolding(ItemStack stack) {
         this.entityData.set(HOLDING, stack);
+        this.setItemSlot(EquipmentSlot.MAINHAND, stack);
     }
 
     @Nullable

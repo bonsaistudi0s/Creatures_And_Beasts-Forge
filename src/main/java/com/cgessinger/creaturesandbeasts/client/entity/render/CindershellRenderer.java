@@ -9,8 +9,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import software.bernie.geckolib3.geo.render.built.GeoBone;
 import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 
@@ -27,13 +25,12 @@ public class CindershellRenderer extends GeoEntityRenderer<CindershellEntity> {
         if (bone.getName().equals("head")) {
             stack.pushPose();
             stack.mulPose(Vector3f.XP.rotation(-bone.getRotationX()));
-            stack.translate(0, 1.7 +  0.1F, -0.6 + 0.1F);
+            stack.translate(0.0D, 0.5D, -1.0D);
             stack.mulPose(Vector3f.XP.rotationDegrees(-90.0F));
-            Minecraft.getInstance().getItemRenderer().renderStatic(new ItemStack(Items.ACACIA_BOAT), ItemTransforms.TransformType.THIRD_PERSON_LEFT_HAND, packedLightIn, packedOverlayIn, stack, this.rtb, 0);
+            Minecraft.getInstance().getItemRenderer().renderStatic(this.mainHand, ItemTransforms.TransformType.THIRD_PERSON_LEFT_HAND, packedLightIn, packedOverlayIn, stack, this.rtb, 0);
             stack.popPose();
             bufferIn = rtb.getBuffer(RenderType.entityTranslucent(whTexture));
         }
-
         super.renderRecursively(bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
     }
 }
