@@ -211,7 +211,29 @@ public class SporelingEntity extends PathfinderMob implements Enemy, IAnimatable
         ResourceKey<Biome> biomeKey = ResourceKey.create(Registry.BIOME_REGISTRY, biome.value().getRegistryName());
         Biome.BiomeCategory biomeCategory = Biome.getBiomeCategory(biome);
 
-        if (reason == MobSpawnType.NATURAL) {
+        if (reason == MobSpawnType.SPAWN_EGG && dataTag != null && dataTag.contains("EggType")) {
+            String eggType = dataTag.getString("EggType");
+
+            if (eggType.equals("Nether")) {
+                if (biomeKey.equals(Biomes.CRIMSON_FOREST)) {
+                    this.setSporelingType(CNBSporelingTypes.CRIMSON_FUNGUS);
+                } else if (biomeKey.equals(Biomes.WARPED_FOREST)) {
+                    this.setSporelingType(CNBSporelingTypes.WARPED_FUNGUS);
+                } else {
+                    if (random.nextBoolean()) {
+                        this.setSporelingType(CNBSporelingTypes.RED_NETHER);
+                    } else {
+                        this.setSporelingType(CNBSporelingTypes.BROWN_NETHER);
+                    }
+                }
+            } else {
+                if (random.nextBoolean()) {
+                    this.setSporelingType(CNBSporelingTypes.RED_OVERWORLD);
+                } else {
+                    this.setSporelingType(CNBSporelingTypes.BROWN_OVERWORLD);
+                }
+            }
+        } else {
             if (biomeKey.equals(Biomes.CRIMSON_FOREST)) {
                 this.setSporelingType(CNBSporelingTypes.CRIMSON_FUNGUS);
             } else if (biomeKey.equals(Biomes.WARPED_FOREST)) {

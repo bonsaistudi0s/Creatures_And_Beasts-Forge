@@ -8,7 +8,7 @@ import com.cgessinger.creaturesandbeasts.client.entity.render.LizardRenderer;
 import com.cgessinger.creaturesandbeasts.client.entity.render.SporelingRenderer;
 import com.cgessinger.creaturesandbeasts.client.entity.render.YetiRenderer;
 import com.cgessinger.creaturesandbeasts.init.CNBEntityTypes;
-import com.cgessinger.creaturesandbeasts.items.ModSpawnEggItem;
+import com.cgessinger.creaturesandbeasts.items.CNBSpawnEggItem;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.api.distmarker.Dist;
@@ -33,6 +33,6 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void onRegisterEntities(final RegistryEvent.Register<EntityType<?>> event) {
-        ModSpawnEggItem.initSpawnEggs();
+        CNBSpawnEggItem.initUnaddedEggs();
     }
 }
