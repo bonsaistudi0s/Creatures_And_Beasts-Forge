@@ -12,9 +12,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
-public class LizardEgg extends Item {
+public class LizardEggItem extends Item {
 
-    public LizardEgg() {
+    public LizardEggItem() {
         super(new Item.Properties().stacksTo(16).tab(CreaturesAndBeasts.TAB));
     }
 

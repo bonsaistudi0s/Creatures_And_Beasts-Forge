@@ -1,6 +1,6 @@
 package com.cgessinger.creaturesandbeasts.items;
 
-import com.cgessinger.creaturesandbeasts.init.CNBItems;
+import com.cgessinger.creaturesandbeasts.util.LizardType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -25,14 +25,22 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraftforge.common.util.NonNullSupplier;
 import net.minecraftforge.registries.RegistryObject;
 
 import java.util.Objects;
 
-public class SporelingSpawnEgg extends CNBSpawnEggItem {
+public class LizardItem extends CNBSpawnEggItem {
+    private final LizardType type;
 
-    public SporelingSpawnEgg(final RegistryObject<? extends EntityType<?>> entityTypeSupplier, final int primaryColor, final int secondaryColor, final Properties properties) {
+    public LizardItem(NonNullSupplier<? extends EntityType<?>> entityTypeSupplier, int primaryColor, int secondaryColor, Properties properties, LizardType type) {
         super(entityTypeSupplier, primaryColor, secondaryColor, properties);
+        this.type = type;
+    }
+
+    public LizardItem(RegistryObject<? extends EntityType<?>> entityTypeSupplier, int primaryColor, int secondaryColor, Properties properties, LizardType type) {
+        super(entityTypeSupplier, primaryColor, secondaryColor, properties);
+        this.type = type;
     }
 
     @Override
@@ -69,11 +77,7 @@ public class SporelingSpawnEgg extends CNBSpawnEggItem {
 
             CompoundTag itemTag = itemstack.getOrCreateTag();
 
-            if (itemstack.getItem().equals(CNBItems.SPORELING_OVERWORLD_EGG.get())) {
-                itemTag.putString("EggType", "Overworld");
-            } else if (itemstack.getItem().equals(CNBItems.SPORELING_NETHER_EGG.get())) {
-                itemTag.putString("EggType", "Nether");
-            }
+            itemTag.putString("LizardType", type.getId().toString());
 
             if (entitytype.spawn((ServerLevel)level, itemstack, context.getPlayer(), blockpos1, MobSpawnType.SPAWN_EGG, true, !Objects.equals(blockpos, blockpos1) && direction == Direction.UP) != null) {
                 itemstack.shrink(1);
@@ -103,11 +107,7 @@ public class SporelingSpawnEgg extends CNBSpawnEggItem {
 
                 CompoundTag itemTag = itemstack.getOrCreateTag();
 
-                if (itemstack.getItem().equals(CNBItems.SPORELING_OVERWORLD_EGG.get())) {
-                    itemTag.putString("EggType", "Overworld");
-                } else if (itemstack.getItem().equals(CNBItems.SPORELING_NETHER_EGG.get())) {
-                    itemTag.putString("EggType", "Nether");
-                }
+                itemTag.putString("LizardType", type.getId().toString());
 
                 if (entitytype.spawn((ServerLevel)level, itemstack, player, blockpos, MobSpawnType.SPAWN_EGG, false, false) == null) {
                     return InteractionResultHolder.pass(itemstack);

@@ -12,7 +12,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.api.distmarker.Dist;
@@ -47,11 +46,9 @@ public class LizardEggEntity extends ThrowableItemProjectile {
         super.onHit(result);
         if (!this.level.isClientSide) {
             if (this.random.nextFloat() > 0.3F) {
-                BlockPos pos = this.blockPosition();
                 LizardEntity lizard = CNBEntityTypes.LIZARD.get().create(this.level);
                 lizard.setAge(-24000);
                 lizard.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
-                lizard.setVariant(lizard.getLizardTypeFromBiome(Biome.getBiomeCategory(this.level.getBiome(pos))));
                 this.level.addFreshEntity(lizard);
             }
 

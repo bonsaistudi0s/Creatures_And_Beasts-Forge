@@ -23,7 +23,7 @@ public class LizardModel extends AnimatedGeoModel<LizardEntity> {
 
     @Override
     public ResourceLocation getTextureLocation(LizardEntity entity) {
-        return entity.getLizardType().getTextureLocation(entity.isSad());
+        return entity.isSad() ? entity.getLizardType().getSadTextureLocation() : entity.getLizardType().getTextureLocation();
     }
 
     @Override

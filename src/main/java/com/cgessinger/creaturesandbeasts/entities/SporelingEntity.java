@@ -76,10 +76,15 @@ public class SporelingEntity extends PathfinderMob implements Enemy, IAnimatable
 
     public SporelingEntity(EntityType<SporelingEntity> entityType, Level level) {
         super(entityType, level);
-        this.entityData.define(TYPE, CNBSporelingTypes.RED_OVERWORLD.getId().toString());
-        this.entityData.define(ITEM_HELD, ItemStack.EMPTY);
         this.attackTimer = 0;
         this.inspectTimer = 0;
+    }
+
+    @Override
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(TYPE, CNBSporelingTypes.RED_OVERWORLD.getId().toString());
+        this.entityData.define(ITEM_HELD, ItemStack.EMPTY);
     }
 
     @Override
@@ -196,7 +201,7 @@ public class SporelingEntity extends PathfinderMob implements Enemy, IAnimatable
         return this.getSporelingType().getHostility() == FRIENDLY ? MobCategory.CREATURE : MobCategory.MONSTER;
     }
 
-    public static boolean canSporelingSpawn(EntityType<SporelingEntity> entity, LevelAccessor worldIn, MobSpawnType mobSpawnType, BlockPos pos, Random rand) {
+    public static boolean checkSporelingSpawnRules(EntityType<SporelingEntity> entity, LevelAccessor worldIn, MobSpawnType mobSpawnType, BlockPos pos, Random rand) {
         if (Biome.getBiomeCategory(worldIn.getBiome(pos)).equals(Biome.BiomeCategory.NETHER)) {
             return worldIn.getDifficulty() != Difficulty.PEACEFUL;
         } else {
