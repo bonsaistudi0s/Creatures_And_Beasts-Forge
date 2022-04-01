@@ -1,7 +1,7 @@
 package com.cgessinger.creaturesandbeasts.client.entity.render;
 
 import com.cgessinger.creaturesandbeasts.client.entity.model.SporelingModel;
-import com.cgessinger.creaturesandbeasts.entities.AbstractSporelingEntity;
+import com.cgessinger.creaturesandbeasts.entities.SporelingEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Vector3f;
@@ -18,7 +18,7 @@ import software.bernie.geckolib3.geo.render.built.GeoBone;
 import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 
 @OnlyIn(Dist.CLIENT)
-public class SporelingRenderer extends GeoEntityRenderer<AbstractSporelingEntity> {
+public class SporelingRenderer extends GeoEntityRenderer<SporelingEntity> {
     private MultiBufferSource rtb;
     private ResourceLocation whTexture;
     private ItemStack heldItem;
@@ -29,7 +29,7 @@ public class SporelingRenderer extends GeoEntityRenderer<AbstractSporelingEntity
     }
 
     @Override
-    public void renderEarly(AbstractSporelingEntity entity, PoseStack stackIn, float ticks, MultiBufferSource renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float partialTicks) {
+    public void renderEarly(SporelingEntity entity, PoseStack stackIn, float ticks, MultiBufferSource renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float partialTicks) {
         this.rtb = renderTypeBuffer;
         this.whTexture = this.getTextureLocation(entity);
         this.heldItem = entity.getHolding();

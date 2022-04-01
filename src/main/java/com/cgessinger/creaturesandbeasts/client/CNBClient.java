@@ -1,4 +1,4 @@
-package com.cgessinger.creaturesandbeasts.client.entity;
+package com.cgessinger.creaturesandbeasts.client;
 
 import com.cgessinger.creaturesandbeasts.init.CNBBlocks;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;

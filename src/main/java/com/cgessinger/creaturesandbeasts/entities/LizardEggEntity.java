@@ -28,10 +28,6 @@ public class LizardEggEntity extends ThrowableItemProjectile {
         super(CNBEntityTypes.LIZARD_EGG.get(), throwerIn, worldIn);
     }
 
-    public LizardEggEntity(Level worldIn, double x, double y, double z) {
-        super(CNBEntityTypes.LIZARD_EGG.get(), x, y, z, worldIn);
-    }
-
     @OnlyIn(Dist.CLIENT)
     public void handleEntityEvent(byte id) {
         if (id == 3) {

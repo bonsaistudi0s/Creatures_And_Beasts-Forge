@@ -1,12 +1,13 @@
 package com.cgessinger.creaturesandbeasts;
 
-import com.cgessinger.creaturesandbeasts.client.entity.CNBClient;
+import com.cgessinger.creaturesandbeasts.client.CNBClient;
 import com.cgessinger.creaturesandbeasts.config.CNBConfig;
 import com.cgessinger.creaturesandbeasts.events.CNBEvents;
 import com.cgessinger.creaturesandbeasts.init.CNBBlocks;
 import com.cgessinger.creaturesandbeasts.init.CNBEntityTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBItems;
 import com.cgessinger.creaturesandbeasts.init.CNBSoundEvents;
+import com.cgessinger.creaturesandbeasts.init.CNBSporelingTypes;
 import com.cgessinger.creaturesandbeasts.world.gen.ModEntitySpawns;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
@@ -44,6 +45,8 @@ public class CreaturesAndBeasts {
         CNBItems.ITEMS.register(eventBus);
         CNBSoundEvents.SOUND_EVENTS.register(eventBus);
         CNBEntityTypes.ENTITY_TYPES.register(eventBus);
+
+        CNBSporelingTypes.registerAll();
 
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(new CNBEvents());

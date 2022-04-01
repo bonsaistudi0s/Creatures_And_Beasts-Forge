@@ -55,9 +55,9 @@ import javax.annotation.Nullable;
 import java.util.Random;
 import java.util.UUID;
 
-public class GrebeEntity extends Animal implements IAnimatable {
+public class LittleGrebeEntity extends Animal implements IAnimatable {
     public static final Ingredient TEMPTATION_ITEMS = Ingredient.of(Items.COD, Items.SALMON, Items.TROPICAL_FISH);
-    private static final EntityDataAccessor<BlockPos> TRAVEL_POS = SynchedEntityData.defineId(GrebeEntity.class, EntityDataSerializers.BLOCK_POS);
+    private static final EntityDataAccessor<BlockPos> TRAVEL_POS = SynchedEntityData.defineId(LittleGrebeEntity.class, EntityDataSerializers.BLOCK_POS);
     private final UUID healthReductionUUID = UUID.fromString("189faad9-35de-4e15-a598-82d147b996d7");
     private final float babyHealth = 5.0F;
     public float wingRotation;
@@ -67,7 +67,7 @@ public class GrebeEntity extends Animal implements IAnimatable {
     public float wingRotDelta = 1.0F;
     private final AnimationFactory factory = new AnimationFactory(this);
 
-    public GrebeEntity(EntityType<? extends Animal> type, Level worldIn) {
+    public LittleGrebeEntity(EntityType<? extends Animal> type, Level worldIn) {
         super(type, worldIn);
         this.setPathfindingMalus(BlockPathTypes.WATER, 10.0F);
     }
@@ -78,7 +78,7 @@ public class GrebeEntity extends Animal implements IAnimatable {
                 .add(Attributes.MOVEMENT_SPEED, 0.25D);
     }
 
-    public static boolean canGrebeSpawn(EntityType<GrebeEntity> animal, LevelAccessor worldIn, MobSpawnType reason, BlockPos pos, Random randomIn) {
+    public static boolean canGrebeSpawn(EntityType<LittleGrebeEntity> animal, LevelAccessor worldIn, MobSpawnType reason, BlockPos pos, Random randomIn) {
         return worldIn.getRawBrightness(pos, 0) > 8;
     }
 
@@ -96,8 +96,8 @@ public class GrebeEntity extends Animal implements IAnimatable {
         this.goalSelector.addGoal(2, new SmoothSwimGoal(this));
         this.goalSelector.addGoal(3, new PanicGoal(this, 1.0D));
         this.goalSelector.addGoal(3, new FollowParentGoal(this, 1.25D));
-        this.goalSelector.addGoal(3, new GrebeEntity.SwimTravelGoal(this, 1.0D));
-        this.goalSelector.addGoal(4, new GrebeEntity.WanderGoal(this, 1.0D, 2));
+        this.goalSelector.addGoal(3, new LittleGrebeEntity.SwimTravelGoal(this, 1.0D));
+        this.goalSelector.addGoal(4, new LittleGrebeEntity.WanderGoal(this, 1.0D, 2));
         this.goalSelector.addGoal(5, new TemptGoal(this, 1.0D, TEMPTATION_ITEMS, false));
         this.goalSelector.addGoal(5, new BreedGoal(this, 1.0D));
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
@@ -241,7 +241,7 @@ public class GrebeEntity extends Animal implements IAnimatable {
     }
 
     static class WanderGoal extends RandomStrollGoal {
-        private WanderGoal(GrebeEntity entity, double speedIn, int chance) {
+        private WanderGoal(LittleGrebeEntity entity, double speedIn, int chance) {
             super(entity, speedIn, chance);
         }
 
@@ -252,11 +252,11 @@ public class GrebeEntity extends Animal implements IAnimatable {
     }
 
     static class SwimTravelGoal extends Goal {
-        private final GrebeEntity grebeEntity;
+        private final LittleGrebeEntity grebeEntity;
         private final double speed;
         private boolean stuck;
 
-        SwimTravelGoal(GrebeEntity grebeEntity, double speedIn) {
+        SwimTravelGoal(LittleGrebeEntity grebeEntity, double speedIn) {
             this.grebeEntity = grebeEntity;
             this.speed = speedIn;
         }

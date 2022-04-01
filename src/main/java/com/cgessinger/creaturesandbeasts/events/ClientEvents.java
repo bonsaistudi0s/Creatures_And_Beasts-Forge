@@ -2,7 +2,7 @@ package com.cgessinger.creaturesandbeasts.events;
 
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
 import com.cgessinger.creaturesandbeasts.client.entity.render.CindershellRenderer;
-import com.cgessinger.creaturesandbeasts.client.entity.render.GrebeRenderer;
+import com.cgessinger.creaturesandbeasts.client.entity.render.LittleGrebeRenderer;
 import com.cgessinger.creaturesandbeasts.client.entity.render.LilytadRenderer;
 import com.cgessinger.creaturesandbeasts.client.entity.render.LizardRenderer;
 import com.cgessinger.creaturesandbeasts.client.entity.render.SporelingRenderer;
@@ -22,13 +22,11 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
-        event.registerEntityRenderer(CNBEntityTypes.LITTLE_GREBE.get(), GrebeRenderer::new);
+        event.registerEntityRenderer(CNBEntityTypes.LITTLE_GREBE.get(), LittleGrebeRenderer::new);
         event.registerEntityRenderer(CNBEntityTypes.LIZARD.get(), LizardRenderer::new);
         event.registerEntityRenderer(CNBEntityTypes.CINDERSHELL.get(), CindershellRenderer::new);
         event.registerEntityRenderer(CNBEntityTypes.LILYTAD.get(), LilytadRenderer::new);
-        event.registerEntityRenderer(CNBEntityTypes.FRIENDLY_SPORELING.get(), SporelingRenderer::new);
-        event.registerEntityRenderer(CNBEntityTypes.HOSTILE_SPORELING.get(), SporelingRenderer::new);
-        event.registerEntityRenderer(CNBEntityTypes.NEUTRAL_SPORELING.get(), SporelingRenderer::new);
+        event.registerEntityRenderer(CNBEntityTypes.SPORELING.get(), SporelingRenderer::new);
         event.registerEntityRenderer(CNBEntityTypes.YETI.get(), YetiRenderer::new);
         event.registerEntityRenderer(CNBEntityTypes.LIZARD_EGG.get(), manager -> new ThrownItemRenderer<>(manager, 1.0F, true));
     }

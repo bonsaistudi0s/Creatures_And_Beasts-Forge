@@ -1,6 +1,6 @@
 package com.cgessinger.creaturesandbeasts.entities.ai;
 
-import com.cgessinger.creaturesandbeasts.entities.GrebeEntity;
+import com.cgessinger.creaturesandbeasts.entities.LittleGrebeEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.animal.Animal;
 
@@ -18,9 +18,9 @@ public class MountAdultGoal extends Goal {
     @Override
     public boolean canUse() {
         if (!this.childAnimal.isPassenger() && this.childAnimal.isBaby()) {
-            List<GrebeEntity> entities = this.childAnimal.level.getEntitiesOfClass(GrebeEntity.class, this.childAnimal.getBoundingBox().inflate(10, 3, 10));
+            List<LittleGrebeEntity> entities = this.childAnimal.level.getEntitiesOfClass(LittleGrebeEntity.class, this.childAnimal.getBoundingBox().inflate(10, 3, 10));
 
-            for (GrebeEntity entity : entities) {
+            for (LittleGrebeEntity entity : entities) {
                 if (!entity.isBaby() && !entity.isVehicle()) {
                     this.childAnimal.getNavigation().moveTo(this.childAnimal.getNavigation().createPath(entity, 0), this.moveSpeed);
                     return true;
@@ -35,9 +35,9 @@ public class MountAdultGoal extends Goal {
      */
     @Override
     public void tick() {
-        List<GrebeEntity> list = this.childAnimal.level.getEntitiesOfClass(GrebeEntity.class, this.childAnimal.getBoundingBox());
+        List<LittleGrebeEntity> list = this.childAnimal.level.getEntitiesOfClass(LittleGrebeEntity.class, this.childAnimal.getBoundingBox());
 
-        for (GrebeEntity grebe : list) {
+        for (LittleGrebeEntity grebe : list) {
             if (!grebe.equals(this.childAnimal) && !grebe.isBaby() && !grebe.isVehicle()) {
                 this.childAnimal.startRiding(grebe);
             }

@@ -182,7 +182,7 @@ public class LizardEntity extends Animal implements IAnimatable, IModNetable, IA
 
     @Override
     public void registerControllers(AnimationData animationData) {
-        animationData.addAnimationController(new AnimationController<LizardEntity>(this, "controller", 0, this::animationPredicate));
+        animationData.addAnimationController(new AnimationController<>(this, "controller", 0, this::animationPredicate));
     }
 
     @Override
@@ -208,7 +208,7 @@ public class LizardEntity extends Animal implements IAnimatable, IModNetable, IA
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new PanicGoal(this, 1.25D));
-        this.goalSelector.addGoal(3, new AnimatedBreedGoal<LizardEntity>(this, 1.0D));
+        this.goalSelector.addGoal(3, new AnimatedBreedGoal<>(this, 1.0D));
         this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 1.0D) {
             @Override
             public boolean canUse() {
@@ -353,10 +353,16 @@ public class LizardEntity extends Animal implements IAnimatable, IModNetable, IA
     }
 
     public enum LizardType {
-        DESERT_1(createLocation("textures/model/entity/lizard/lizard_desert.png"), createLocation("textures/model/entity/lizard/sad_lizard_desert.png"), CNBItems.LIZARD_ITEM_0.get()), DESERT_2(createLocation("textures/model/entity/lizard/lizard_desert_2.png"), createLocation("textures/model/entity/lizard/sad_lizard_desert_2.png"), CNBItems.LIZARD_ITEM_1.get()), JUNGLE_1(createLocation("textures/model/entity/lizard/lizard_jungle.png"), createLocation("textures/model/entity/lizard/sad_lizard_jungle.png"), CNBItems.LIZARD_ITEM_2.get()), JUNGLE_2(createLocation("textures/model/entity/lizard/lizard_jungle_2.png"), createLocation("textures/model/entity/lizard/sad_lizard_jungle_2.png"), CNBItems.LIZARD_ITEM_3.get());
+        DESERT_1(createLocation("textures/entity/lizard/lizard_desert.png"),
+                createLocation("textures/entity/lizard/sad_lizard_desert.png"), CNBItems.LIZARD_ITEM_0.get()),
+        DESERT_2(createLocation("textures/entity/lizard/lizard_desert_2.png"),
+                createLocation("textures/entity/lizard/sad_lizard_desert_2.png"), CNBItems.LIZARD_ITEM_1.get()),
+        JUNGLE_1(createLocation("textures/entity/lizard/lizard_jungle.png"),
+                createLocation("textures/entity/lizard/sad_lizard_jungle.png"), CNBItems.LIZARD_ITEM_2.get()),
+        JUNGLE_2(createLocation("textures/entity/lizard/lizard_jungle_2.png"),
+                createLocation("textures/entity/lizard/sad_lizard_jungle_2.png"), CNBItems.LIZARD_ITEM_3.get());
 
         public final ResourceLocation textureLocation;
-
         public final ResourceLocation textureLocationSad;
 
         public final Item item;
