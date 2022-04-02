@@ -116,17 +116,16 @@ public class SporelingEntity extends PathfinderMob implements Enemy, IAnimatable
         this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
 
-        //Friendly
-        this.goalSelector.addGoal(1, new PanicGoal(this, 1.25D));
-        this.goalSelector.addGoal(6, new WaveGoal(this, Player.class, 8.0F));
-
-        //Hostile
-        this.goalSelector.addGoal(2, new TimedAttackGoal<>(this, 1.3D, false, 30));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
-
-        //Neutral
-        this.goalSelector.addGoal(2, new TimedAttackGoal<>(this, 1.3D, false, 3));
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        if (this.getSporelingType().getHostility() == FRIENDLY) {
+            this.goalSelector.addGoal(1, new PanicGoal(this, 1.25D));
+            this.goalSelector.addGoal(6, new WaveGoal(this, Player.class, 8.0F));
+        } else if (this.getSporelingType().getHostility() == HOSTILE) {
+            this.goalSelector.addGoal(2, new TimedAttackGoal<>(this, 1.3D, false, 30));
+            this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        } else {
+            this.goalSelector.addGoal(2, new TimedAttackGoal<>(this, 1.3D, false, 3));
+            this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        }
     }
 
     @Override
