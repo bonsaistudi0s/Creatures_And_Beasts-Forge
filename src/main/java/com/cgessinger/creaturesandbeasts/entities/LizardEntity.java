@@ -66,11 +66,11 @@ import java.util.Random;
 
 public class LizardEntity extends Animal implements IAnimatable, Netable {
     private static final EntityDataAccessor<String> TYPE = SynchedEntityData.defineId(LizardEntity.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<Boolean> PARTYING = SynchedEntityData.defineId(LizardEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> LAY_EGG = SynchedEntityData.defineId(LizardEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> FROM_NET = SynchedEntityData.defineId(LizardEntity.class, EntityDataSerializers.BOOLEAN);
     private final AnimationFactory factory = new AnimationFactory(this);
     public BlockPos jukeboxPosition;
-    private boolean isPartying;
     private boolean isSad;
 
     private int breedTimer;
@@ -97,6 +97,7 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
         this.entityData.define(TYPE, CNBLizardTypes.DESERT.getId().toString());
         this.entityData.define(LAY_EGG, false);
         this.entityData.define(FROM_NET, false);
+        this.entityData.define(PARTYING, false);
     }
 
     @Override
@@ -241,6 +242,11 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
     }
 
     @Override
+    public void setRecordPlayingNearby(BlockPos pos, boolean isPartying) {
+        this.setPartying(isPartying, pos);
+    }
+
+    @Override
     protected void actuallyHurt(DamageSource damageSrc, float damageAmount) {
         super.actuallyHurt(damageSrc, damageAmount);
         this.setPartying(false, null);
@@ -374,13 +380,13 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
 
     public void setPartying(boolean isPartying, @Nullable BlockPos jukeboxPos) {
         if (!this.isSad()) {
-            this.isPartying = isPartying;
+            this.entityData.set(PARTYING, isPartying);
             this.jukeboxPosition = jukeboxPos;
         }
     }
 
     public boolean isPartying() {
-        return this.isPartying;
+        return this.entityData.get(PARTYING);
     }
 
     public void setSad(boolean sad) {
