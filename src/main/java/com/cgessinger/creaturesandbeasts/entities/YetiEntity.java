@@ -67,83 +67,32 @@ import java.util.UUID;
 
 public class YetiEntity extends Animal implements IAnimatable, Enemy {
     public static final EntityDataAccessor<Boolean> ATTACKING = SynchedEntityData.defineId(YetiEntity.class, EntityDataSerializers.BOOLEAN);
+    public static final EntityDataAccessor<Boolean> EATING = SynchedEntityData.defineId(YetiEntity.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<ItemStack> HELD_ITEM = SynchedEntityData.defineId(YetiEntity.class, EntityDataSerializers.ITEM_STACK);
     private final AnimationFactory factory = new AnimationFactory(this);
     private final UUID healthReductionUUID = UUID.fromString("189faad9-35de-4e15-a598-82d147b996d7");
     private final float babyHealth = 20.0F;
 
-    private int eatTimer = 60;
-    private Player lastFed = null;
-
-    public boolean isPassive;
+    private int eatTimer;
+    private boolean isPassive;
 
     public YetiEntity(EntityType<? extends Animal> type, Level worldIn) {
         super(type, worldIn);
-    }
-
-    public static AttributeSupplier.Builder createAttributes() {
-        return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 80.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.3D)
-                .add(Attributes.ATTACK_DAMAGE, 16.0D)
-                .add(Attributes.ATTACK_SPEED, 0.1D)
-                .add(Attributes.KNOCKBACK_RESISTANCE, 0.7D);
-    }
-
-    public static boolean checkYetiSpawnRules(EntityType<YetiEntity> entity, LevelAccessor level, MobSpawnType mobSpawnType, BlockPos pos, Random random) {
-        return random.nextDouble() >= ServerConfig.YETI_PROP.value;
-    }
-
-    /*
-     * Guarantees a baby to spawn alongside a Yeti
-     */
-    @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, MobSpawnType reason, SpawnGroupData spawnDataIn, CompoundTag dataTag) {
-        if (spawnDataIn == null) {
-            spawnDataIn = new AgeableMobGroupData(1.0F);
-        }
-
-        return super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+        this.eatTimer = 0;
     }
 
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(ATTACKING, false);
+        this.entityData.define(EATING, false);
         this.entityData.define(HELD_ITEM, ItemStack.EMPTY);
-    }
-
-    /*
-     * If a Yeti is a baby, apply the max health reduction to the yeti and set its health to the new max
-     */
-    @Override
-    public void setAge(int age) {
-        super.setAge(age);
-        double MAX_HEALTH = this.getAttribute(Attributes.MAX_HEALTH).getValue();
-        if (isBaby() && MAX_HEALTH > this.babyHealth) {
-            Multimap<Attribute, AttributeModifier> multimap = HashMultimap.create();
-            multimap.put(Attributes.MAX_HEALTH, new AttributeModifier(this.healthReductionUUID, "yeti_health_reduction", this.babyHealth - MAX_HEALTH, AttributeModifier.Operation.ADDITION));
-            this.getAttributes().addTransientAttributeModifiers(multimap);
-            this.setHealth(this.babyHealth);
-        }
-    }
-
-    /*
-     * When a Yeti baby grows up, remove the max health debuff, maintain the same percentage of max health
-     */
-    @Override
-    protected void ageBoundaryReached() {
-        super.ageBoundaryReached();
-        float percentHealth = this.getHealth() / this.babyHealth;
-        this.getAttribute(Attributes.MAX_HEALTH).removeModifier(this.healthReductionUUID);
-        this.setHealth(percentHealth);
     }
 
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putBoolean("passive", this.isPassive);
-        compound.putUUID("lastFed", this.lastFed.getUUID());
     }
 
     @Override
@@ -152,13 +101,16 @@ public class YetiEntity extends Animal implements IAnimatable, Enemy {
         if (compound.contains("passive")) {
             this.isPassive = compound.getBoolean("passive");
         }
-        this.lastFed = this.level.getPlayerByUUID(compound.getUUID("lastFed"));
     }
 
-    @Nullable
-    @Override
-    public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob mob) {
-        return CNBEntityTypes.YETI.get().create(level);
+
+    public static AttributeSupplier.Builder createAttributes() {
+        return Mob.createMobAttributes()
+                .add(Attributes.MAX_HEALTH, 80.0D)
+                .add(Attributes.MOVEMENT_SPEED, 0.3D)
+                .add(Attributes.ATTACK_DAMAGE, 16.0D)
+                .add(Attributes.ATTACK_SPEED, 0.1D)
+                .add(Attributes.KNOCKBACK_RESISTANCE, 0.7D);
     }
 
     @Override
@@ -194,25 +146,108 @@ public class YetiEntity extends Animal implements IAnimatable, Enemy {
             this.eatTimer--;
         }
 
-        if (this.eatTimer == 30) {
+        if (this.eatTimer == 40) {
             if (this.isBaby()) {
                 this.ageUp((int) (-this.getAge() / 20F * 0.1F), true);
-            } else if (this.getHolding().getItem() == Items.SWEET_BERRIES) {
-                this.setInLove(this.lastFed);
             } else {
                 this.setTarget(null);
                 this.isPassive = true;
             }
             this.setHolding(ItemStack.EMPTY);
+        } else if (this.eatTimer == 0) {
+            this.setEating(false);
         }
+    }
+
+    public static boolean checkYetiSpawnRules(EntityType<YetiEntity> entity, LevelAccessor level, MobSpawnType mobSpawnType, BlockPos pos, Random random) {
+        return random.nextDouble() >= ServerConfig.YETI_PROP.value;
+    }
+
+    @Override
+    public void checkDespawn() {
+        if (!CNBConfig.ServerConfig.YETI_CONFIG.shouldExist) {
+            this.discard();
+            return;
+        }
+        super.checkDespawn();
+    }
+
+    /*
+     * Guarantees a baby to spawn alongside a Yeti
+     */
+    @Override
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, MobSpawnType reason, SpawnGroupData spawnDataIn, CompoundTag dataTag) {
+        if (spawnDataIn == null) {
+            spawnDataIn = new AgeableMobGroupData(1.0F);
+        }
+
+        return super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+    }
+
+    @Override
+    public InteractionResult mobInteract(Player player, InteractionHand hand) {
+        ItemStack item = player.getItemInHand(hand);
+
+        if (this.level.isClientSide) {
+            return InteractionResult.CONSUME;
+        }
+
+        if (!(this.getEating() || this.entityData.get(ATTACKING))) {
+            if (item.getItem() == Items.MELON_SLICE && !this.isPassive) {
+                return this.startEat(player, item);
+            } else if (item.getItem() == Items.SWEET_BERRIES) {
+                if (this.canFallInLove()) {
+                    this.setInLove(player);
+                    return this.startEat(player, item);
+                } else if (this.isBaby()) {
+                    return this.startEat(player, item);
+                }
+            }
+        }
+        return InteractionResult.PASS;
+    }
+
+    /*
+     * If a Yeti is a baby, apply the max health reduction to the yeti and set its health to the new max
+     */
+    @Override
+    public void setAge(int age) {
+        super.setAge(age);
+        double MAX_HEALTH = this.getAttribute(Attributes.MAX_HEALTH).getValue();
+        if (isBaby() && MAX_HEALTH > this.babyHealth) {
+            Multimap<Attribute, AttributeModifier> multimap = HashMultimap.create();
+            multimap.put(Attributes.MAX_HEALTH, new AttributeModifier(this.healthReductionUUID, "yeti_health_reduction", this.babyHealth - MAX_HEALTH, AttributeModifier.Operation.ADDITION));
+            this.getAttributes().addTransientAttributeModifiers(multimap);
+            this.setHealth(this.babyHealth);
+        }
+    }
+
+    /*
+     * When a Yeti baby grows up, remove the max health debuff, maintain the same percentage of max health
+     */
+    @Override
+    protected void ageBoundaryReached() {
+        super.ageBoundaryReached();
+        float percentHealth = this.getHealth() / this.babyHealth;
+        this.getAttribute(Attributes.MAX_HEALTH).removeModifier(this.healthReductionUUID);
+        this.setHealth(percentHealth * (float) this.getAttribute(Attributes.MAX_HEALTH).getValue());
+        this.setEating(false);
+        this.setHolding(ItemStack.EMPTY);
+    }
+
+    @Nullable
+    @Override
+    public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob mob) {
+        return CNBEntityTypes.YETI.get().create(level);
     }
 
     public void setEating(boolean isEating) {
         this.eatTimer = isEating ? 60 : 0;
+        this.entityData.set(EATING, isEating);
     }
 
     public boolean getEating() {
-        return this.eatTimer > 0;
+        return this.entityData.get(EATING);
     }
 
     public ItemStack getHolding() {
@@ -231,26 +266,6 @@ public class YetiEntity extends Animal implements IAnimatable, Enemy {
         SoundEvent sound = this.isBaby() ? CNBSoundEvents.YETI_BABY_EAT.get() : CNBSoundEvents.YETI_ADULT_EAT.get();
         this.playSound(sound, 1.1F, 1F);
         return InteractionResult.SUCCESS;
-    }
-
-    @Override
-    public InteractionResult mobInteract(Player player, InteractionHand hand) {
-        ItemStack item = player.getItemInHand(hand);
-
-        if (this.level.isClientSide) {
-            return InteractionResult.CONSUME;
-        }
-
-        if (!(this.getEating() || this.entityData.get(ATTACKING))) {
-            if (item.getItem() == Items.MELON_SLICE && !this.isPassive) {
-                return this.startEat(player, item);
-            } else if (item.getItem() == Items.SWEET_BERRIES) {
-                if (this.canFallInLove() || this.isBaby()) {
-                    return this.startEat(player, item);
-                }
-            }
-        }
-        return InteractionResult.PASS;
     }
 
     @Override
@@ -305,15 +320,6 @@ public class YetiEntity extends Animal implements IAnimatable, Enemy {
     @Override
     protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
         return this.isBaby() ? null : CNBSoundEvents.YETI_HURT.get();
-    }
-
-    @Override
-    public void checkDespawn() {
-        if (!CNBConfig.ServerConfig.YETI_CONFIG.shouldExist) {
-            this.discard();
-            return;
-        }
-        super.checkDespawn();
     }
 
     private <E extends IAnimatable> PlayState animationPredicate(AnimationEvent<E> event) {

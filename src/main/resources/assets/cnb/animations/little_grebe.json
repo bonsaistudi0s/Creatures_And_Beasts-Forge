@@ -1,7 +1,7 @@
 {
   "format_version": "1.8.0",
   "animations": {
-    "little_grebe_walk": {
+    "little_grebe.walk": {
       "loop": true,
       "animation_length": 0.8,
       "bones": {
@@ -205,7 +205,7 @@
         }
       }
     },
-    "little_grebe_chick_walk": {
+    "little_grebe_chick.walk": {
       "loop": true,
       "animation_length": 0.48,
       "bones": {
@@ -443,7 +443,7 @@
         }
       }
     },
-    "little_grebe_fall": {
+    "little_grebe.fall": {
       "loop": true,
       "animation_length": 0.2,
       "bones": {
@@ -479,7 +479,7 @@
         }
       }
     },
-    "little_grebe_swim": {
+    "little_grebe.swim": {
       "loop": true,
       "animation_length": 0.8,
       "bones": {

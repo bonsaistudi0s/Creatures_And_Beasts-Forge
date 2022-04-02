@@ -4,8 +4,6 @@ import com.cgessinger.creaturesandbeasts.config.CNBConfig;
 import com.cgessinger.creaturesandbeasts.init.CNBEntityTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBItems;
 import com.cgessinger.creaturesandbeasts.init.CNBSoundEvents;
-import com.cgessinger.creaturesandbeasts.util.AnimationHandler;
-import com.cgessinger.creaturesandbeasts.util.IAnimationHolder;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.core.BlockPos;
@@ -49,21 +47,18 @@ import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 import javax.annotation.Nullable;
-import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 
-public class CindershellEntity extends Animal implements IAnimationHolder<CindershellEntity>, IAnimatable {
-    public static final EntityDataAccessor<ItemStack> HOLDING = SynchedEntityData.defineId(CindershellEntity.class, EntityDataSerializers.ITEM_STACK);
-    private static final EntityDataAccessor<Boolean> EAT = SynchedEntityData.defineId(CindershellEntity.class, EntityDataSerializers.BOOLEAN);
+public class CindershellEntity extends Animal implements IAnimatable {
+    private static final EntityDataAccessor<Boolean> EATING = SynchedEntityData.defineId(CindershellEntity.class, EntityDataSerializers.BOOLEAN);
     private final UUID healthReductionUUID = UUID.fromString("189faad9-35de-4e15-a598-82d147b996d7");
-    private final float babyHealth = 10.0F;
-    private final AnimationHandler<CindershellEntity> animationHandler;
     private final AnimationFactory factory = new AnimationFactory(this);
+    private int eatTimer;
 
     public CindershellEntity(EntityType<? extends Animal> type, Level worldIn) {
         super(type, worldIn);
-        this.animationHandler = new AnimationHandler<>("eat_controller", this, 40, 1, 0, EAT);
+        this.eatTimer = 0;
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -73,15 +68,10 @@ public class CindershellEntity extends Animal implements IAnimationHolder<Cinder
                 .add(Attributes.KNOCKBACK_RESISTANCE, 100D);
     }
 
-    public static boolean canCindershellSpawn(EntityType<CindershellEntity> entity, LevelAccessor level, MobSpawnType mobSpawnType, BlockPos pos, Random random) {
-        return true;
-    }
-
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
-        this.entityData.define(EAT, false);
-        this.entityData.define(HOLDING, ItemStack.EMPTY);
+        this.entityData.define(EATING, false);
     }
 
     @Override
@@ -103,6 +93,32 @@ public class CindershellEntity extends Animal implements IAnimationHolder<Cinder
     }
 
     @Override
+    public void aiStep() {
+        super.aiStep();
+
+        this.eatTimer--;
+
+        if (this.eatTimer == 39) {
+            this.setHolding(ItemStack.EMPTY);
+        } else if (this.eatTimer == 0) {
+            this.setEating(false);
+        }
+    }
+
+    public static boolean checkCindershellSpawnRules(EntityType<CindershellEntity> entity, LevelAccessor level, MobSpawnType mobSpawnType, BlockPos pos, Random random) {
+        return true;
+    }
+
+    @Override
+    public void checkDespawn() {
+        if (!CNBConfig.ServerConfig.CINDERSHELL_CONFIG.shouldExist) {
+            this.discard();
+            return;
+        }
+        super.checkDespawn();
+    }
+
+    @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, MobSpawnType reason, SpawnGroupData spawnDataIn, CompoundTag dataTag) {
         if (dataTag != null) {
             if (dataTag.contains("age")) {
@@ -120,98 +136,6 @@ public class CindershellEntity extends Animal implements IAnimationHolder<Cinder
     }
 
     @Override
-    public void aiStep() {
-        super.aiStep();
-        this.animationHandler.process();
-    }
-
-    @Override
-    public void setAge(int age) {
-        super.setAge(age);
-        double MAX_HEALTH = this.getAttribute(Attributes.MAX_HEALTH).getValue();
-        if (isBaby() && MAX_HEALTH > this.babyHealth) {
-            Multimap<Attribute, AttributeModifier> multimap = HashMultimap.create();
-            multimap.put(Attributes.MAX_HEALTH, new AttributeModifier(this.healthReductionUUID, "yeti_health_reduction", this.babyHealth - MAX_HEALTH, AttributeModifier.Operation.ADDITION));
-            this.getAttributes().addTransientAttributeModifiers(multimap);
-            this.setHealth(this.babyHealth);
-        }
-    }
-
-    @Override
-    protected void ageBoundaryReached() {
-        super.ageBoundaryReached();
-        this.getAttribute(Attributes.MAX_HEALTH).removeModifier(this.healthReductionUUID);
-        this.setHealth((float) this.getAttribute(Attributes.MAX_HEALTH).getValue());
-    }
-
-    @Override
-    public float getEyeHeight(Pose pose) {
-        return this.getBbHeight() * 0.2F;
-    }
-
-    public ItemStack getHolding() {
-        return this.entityData.get(HOLDING);
-    }
-
-    public void setHolding(ItemStack stack) {
-        this.entityData.set(HOLDING, stack);
-        this.setItemSlot(EquipmentSlot.MAINHAND, stack);
-    }
-
-    @Nullable
-    @Override
-    public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob mob) {
-        return CNBEntityTypes.CINDERSHELL.get().create(level);
-    }
-
-    @Nullable
-    @Override
-    protected SoundEvent getAmbientSound() {
-        return CNBSoundEvents.CINDERSHELL_AMBIENT.get();
-    }
-
-    @Nullable
-    @Override
-    protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
-        return CNBSoundEvents.CINDERSHELL_HURT.get();
-    }
-
-    @Nullable
-    @Override
-    protected SoundEvent getDeathSound() {
-        return CNBSoundEvents.CINDERSHELL_HURT.get();
-    }
-
-    @Override
-    protected float getSoundVolume() {
-        return super.getSoundVolume() * 2;
-    }
-
-    @Override
-    public int getAmbientSoundInterval() {
-        return 120;
-    }
-
-    @Override
-    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
-        return false;
-    }
-
-    @Override
-    public boolean causeFallDamage(float distance, float damageMultiplier, DamageSource source) {
-        return false;
-    }
-
-    @Override
-    public void checkDespawn() {
-        if (!CNBConfig.ServerConfig.CINDERSHELL_CONFIG.shouldExist) {
-            this.remove(RemovalReason.DISCARDED);
-            return;
-        }
-        super.checkDespawn();
-    }
-
-    @Override
     public boolean isFood(ItemStack stack) {
         return false;
     }
@@ -221,7 +145,8 @@ public class CindershellEntity extends Animal implements IAnimationHolder<Cinder
             int i = this.getAge();
             if (!this.level.isClientSide && i == 0 && this.canFallInLove()) {
                 this.usePlayerItem(player, player.getUsedItemHand(), stack);
-                this.animationHandler.startAnimation(AnimationHandler.ExecutionData.create().withPlayer(player).build());
+                this.setEating(true);
+                this.setInLove(player);
                 this.playSound(CNBSoundEvents.CINDERSHELL_ADULT_EAT.get(), 1.2F, 1F);
                 this.setHolding(stack);
                 return InteractionResult.SUCCESS;
@@ -245,7 +170,6 @@ public class CindershellEntity extends Animal implements IAnimationHolder<Cinder
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack item = player.getItemInHand(hand);
         if (item.getItem() == Items.LAVA_BUCKET && this.isBaby()) {
-            //spawnParticles( ParticleTypes.HEART );
             ItemStack stack = new ItemStack(CNBItems.CINDERSHELL_BUCKET.get(), item.getCount());
             CompoundTag nbt = stack.getOrCreateTag();
             nbt.putInt("age", this.getAge());
@@ -262,17 +186,91 @@ public class CindershellEntity extends Animal implements IAnimationHolder<Cinder
         return this.tryStartEat(player, item);
     }
 
+
     @Override
-    public void executeBreakpoint(Optional<AnimationHandler.ExecutionData> data) {
-        if (data.isPresent() && data.get().player != null) {
-            this.setInLove(data.get().player);
-            this.setHolding(ItemStack.EMPTY);
+    public void setAge(int age) {
+        super.setAge(age);
+        double MAX_HEALTH = this.getAttribute(Attributes.MAX_HEALTH).getValue();
+        float babyHealth = 10.0F;
+        if (isBaby() && MAX_HEALTH > babyHealth) {
+            Multimap<Attribute, AttributeModifier> multimap = HashMultimap.create();
+            multimap.put(Attributes.MAX_HEALTH, new AttributeModifier(this.healthReductionUUID, "yeti_health_reduction", babyHealth - MAX_HEALTH, AttributeModifier.Operation.ADDITION));
+            this.getAttributes().addTransientAttributeModifiers(multimap);
+            this.setHealth(babyHealth);
         }
     }
 
     @Override
-    public AnimationHandler<CindershellEntity> getAnimationHandler(String name) {
-        return this.animationHandler;
+    protected void ageBoundaryReached() {
+        super.ageBoundaryReached();
+        this.getAttribute(Attributes.MAX_HEALTH).removeModifier(this.healthReductionUUID);
+        this.setHealth((float) this.getAttribute(Attributes.MAX_HEALTH).getValue());
+    }
+
+    @Override
+    public float getEyeHeight(Pose pose) {
+        return this.getBbHeight() * 0.2F;
+    }
+
+    public ItemStack getHolding() {
+        return this.getItemBySlot(EquipmentSlot.MAINHAND);
+    }
+
+    public void setHolding(ItemStack stack) {
+        this.setItemSlot(EquipmentSlot.MAINHAND, stack);
+    }
+
+    public void setEating(boolean isEating) {
+        this.eatTimer = isEating ? 40 : 0;
+        this.entityData.set(EATING, isEating);
+    }
+
+    public boolean getEating() {
+        return this.entityData.get(EATING);
+    }
+
+    @Nullable
+    @Override
+    public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob mob) {
+        return CNBEntityTypes.CINDERSHELL.get().create(level);
+    }
+
+    @Override
+    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+        return false;
+    }
+
+    @Override
+    public boolean causeFallDamage(float distance, float damageMultiplier, DamageSource source) {
+        return false;
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return CNBSoundEvents.CINDERSHELL_AMBIENT.get();
+    }
+
+    @Override
+    public int getAmbientSoundInterval() {
+        return 120;
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
+        return CNBSoundEvents.CINDERSHELL_HURT.get();
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getDeathSound() {
+        return CNBSoundEvents.CINDERSHELL_HURT.get();
+    }
+
+    @Override
+    protected float getSoundVolume() {
+        return super.getSoundVolume() * 2;
     }
 
     @Override

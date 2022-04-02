@@ -6,9 +6,6 @@ import com.cgessinger.creaturesandbeasts.init.CNBItems;
 import com.cgessinger.creaturesandbeasts.init.CNBSoundEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.FluidTags;
@@ -47,13 +44,13 @@ import java.util.List;
 import java.util.Random;
 
 public class LilytadEntity extends Animal implements IForgeShearable, IAnimatable {
-    private static final EntityDataAccessor<Boolean> SHEARED = SynchedEntityData.defineId(LilytadEntity.class, EntityDataSerializers.BOOLEAN);
     private final AnimationFactory factory = new AnimationFactory(this);
     private int shearedTimer;
 
     public LilytadEntity(EntityType<? extends Animal> type, Level worldIn) {
         super(type, worldIn);
         this.shearedTimer = 0;
+
         this.lookControl = new LookControl(this) {
             @Override
             public void tick() {
@@ -63,22 +60,6 @@ public class LilytadEntity extends Animal implements IForgeShearable, IAnimatabl
                 }
             }
         };
-    }
-
-    public static AttributeSupplier.Builder createAttributes() {
-        return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 20.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.2D);
-    }
-
-    public static boolean canLilytadSpawn(EntityType<LilytadEntity> animal, LevelAccessor worldIn, MobSpawnType reason, BlockPos pos, Random randomIn) {
-        return true;
-    }
-
-    @Override
-    protected void defineSynchedData() {
-        this.entityData.define(SHEARED, false);
-        super.defineSynchedData();
     }
 
     @Override
@@ -93,6 +74,14 @@ public class LilytadEntity extends Animal implements IForgeShearable, IAnimatabl
         super.addAdditionalSaveData(compound);
         compound.putInt("ShearedTimer", this.shearedTimer);
     }
+
+    public static AttributeSupplier.Builder createAttributes() {
+        return Mob.createMobAttributes()
+                .add(Attributes.MAX_HEALTH, 20.0D)
+                .add(Attributes.MOVEMENT_SPEED, 0.2D);
+    }
+
+
 
     @Override
     protected void registerGoals() {
@@ -117,8 +106,21 @@ public class LilytadEntity extends Animal implements IForgeShearable, IAnimatabl
     public void aiStep() {
         super.aiStep();
         if (!this.level.isClientSide() && this.shearedTimer > 0) {
-            this.setSheared(--this.shearedTimer > 0);
+            this.shearedTimer--;
         }
+    }
+
+    public static boolean checkLilytadSpawnRules(EntityType<LilytadEntity> animal, LevelAccessor worldIn, MobSpawnType reason, BlockPos pos, Random randomIn) {
+        return true;
+    }
+
+    @Override
+    public void checkDespawn() {
+        if (!CNBConfig.ServerConfig.LILYTAD_CONFIG.shouldExist) {
+            this.discard();
+            return;
+        }
+        super.checkDespawn();
     }
 
     @Override
@@ -162,26 +164,18 @@ public class LilytadEntity extends Animal implements IForgeShearable, IAnimatabl
         return false;
     }
 
-    private <E extends IAnimatable> PlayState animationPredicate(AnimationEvent<E> event) {
-        if (!(animationSpeed > -0.15F && animationSpeed < 0.15F)) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("lilytad.walk", true));
-            return PlayState.CONTINUE;
-        }
-        return PlayState.STOP;
-    }
-
     @Nullable
     @Override
-    public AgeableMob getBreedOffspring(ServerLevel p_241840_1_, AgeableMob p_241840_2_) {
+    public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob entity) {
         return null;
     }
 
     public boolean getSheared() {
-        return this.entityData.get(SHEARED);
+        return this.shearedTimer > 0;
     }
 
     public void setSheared(boolean sheared) {
-        this.entityData.set(SHEARED, sheared);
+        this.shearedTimer = sheared ? 18000 : 0;
     }
 
     @Override
@@ -194,7 +188,6 @@ public class LilytadEntity extends Animal implements IForgeShearable, IAnimatabl
     public List<ItemStack> onSheared(@Nullable Player player, @Nonnull ItemStack item, Level world, BlockPos pos, int fortune) {
         if (!world.isClientSide) {
             this.setSheared(true);
-            this.shearedTimer = 15 * 60 * 20; // 15 min x 60 sec x 20 ticks per sec
             java.util.List<ItemStack> items = new java.util.ArrayList<>();
             items.add(new ItemStack(CNBItems.LILYTAD_FLOWER_PINK.get()));
 
@@ -205,16 +198,6 @@ public class LilytadEntity extends Animal implements IForgeShearable, IAnimatabl
 
     public boolean shouldLookAround() {
         return !this.level.getFluidState(this.blockPosition()).is(FluidTags.WATER);
-    }
-
-    @Override
-    public void registerControllers(AnimationData animationData) {
-        animationData.addAnimationController(new AnimationController<>(this, "controller", 0, this::animationPredicate));
-    }
-
-    @Override
-    public AnimationFactory getFactory() {
-        return this.factory;
     }
 
     @Nullable
@@ -235,12 +218,22 @@ public class LilytadEntity extends Animal implements IForgeShearable, IAnimatabl
         return CNBSoundEvents.LILYTAD_DEATH.get();
     }
 
-    @Override
-    public void checkDespawn() {
-        if (!CNBConfig.ServerConfig.LILYTAD_CONFIG.shouldExist) {
-            this.remove(RemovalReason.DISCARDED);
-            return;
+    private <E extends IAnimatable> PlayState animationPredicate(AnimationEvent<E> event) {
+        if (!(animationSpeed > -0.15F && animationSpeed < 0.15F)) {
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("lilytad.walk", true));
+            return PlayState.CONTINUE;
         }
-        super.checkDespawn();
+        return PlayState.STOP;
     }
+
+    @Override
+    public void registerControllers(AnimationData animationData) {
+        animationData.addAnimationController(new AnimationController<>(this, "controller", 0, this::animationPredicate));
+    }
+
+    @Override
+    public AnimationFactory getFactory() {
+        return this.factory;
+    }
+
 }

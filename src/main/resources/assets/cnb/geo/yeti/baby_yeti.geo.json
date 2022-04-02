@@ -43,6 +43,14 @@
 					]
 				},
 				{
+					"name": "ItemHolder",
+					"parent": "RightArm",
+					"pivot": [-2, 7, 4],
+					"cubes": [
+						{"origin": [-2, 7, 4], "size": [0, 0, 0], "uv": [0, 0]}
+					]
+				},
+				{
 					"name": "Head",
 					"parent": "Body",
 					"pivot": [0, 16.1859, 4.9864],

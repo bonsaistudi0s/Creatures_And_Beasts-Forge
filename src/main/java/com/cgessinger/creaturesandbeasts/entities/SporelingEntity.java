@@ -68,7 +68,6 @@ import static com.cgessinger.creaturesandbeasts.util.SporelingType.SporelingHost
 import static com.cgessinger.creaturesandbeasts.util.SporelingType.SporelingHostility.NEUTRAL;
 
 public class SporelingEntity extends PathfinderMob implements Enemy, IAnimatable, ITimedAttackEntity {
-    protected static final EntityDataAccessor<ItemStack> ITEM_HELD = SynchedEntityData.defineId(SporelingEntity.class, EntityDataSerializers.ITEM_STACK);
     private static final EntityDataAccessor<String> TYPE = SynchedEntityData.defineId(SporelingEntity.class, EntityDataSerializers.STRING);
     private final AnimationFactory factory = new AnimationFactory(this);
     protected int attackTimer;
@@ -84,7 +83,6 @@ public class SporelingEntity extends PathfinderMob implements Enemy, IAnimatable
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(TYPE, CNBSporelingTypes.RED_OVERWORLD.getId().toString());
-        this.entityData.define(ITEM_HELD, ItemStack.EMPTY);
     }
 
     @Override
@@ -292,11 +290,11 @@ public class SporelingEntity extends PathfinderMob implements Enemy, IAnimatable
     }
 
     public ItemStack getHolding() {
-        return this.entityData.get(ITEM_HELD);
+        return this.getItemBySlot(EquipmentSlot.MAINHAND);
     }
 
     public void setHolding(ItemStack stack) {
-        this.entityData.set(ITEM_HELD, stack);
+        this.setItemSlot(EquipmentSlot.MAINHAND, stack);
     }
 
     @Nullable

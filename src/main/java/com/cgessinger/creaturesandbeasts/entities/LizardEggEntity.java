@@ -2,7 +2,6 @@ package com.cgessinger.creaturesandbeasts.entities;
 
 import com.cgessinger.creaturesandbeasts.init.CNBEntityTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBItems;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.Packet;
@@ -53,7 +52,7 @@ public class LizardEggEntity extends ThrowableItemProjectile {
             }
 
             this.level.broadcastEntityEvent(this, (byte) 3);
-            this.remove(RemovalReason.DISCARDED);
+            this.discard();
         }
 
     }
