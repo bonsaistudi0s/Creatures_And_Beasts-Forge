@@ -6,6 +6,7 @@ import com.cgessinger.creaturesandbeasts.init.CNBItems;
 import com.cgessinger.creaturesandbeasts.init.CNBSoundEvents;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -13,7 +14,9 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -36,8 +39,10 @@ import net.minecraft.world.entity.ai.goal.PanicGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.animal.Bucketable;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -50,8 +55,9 @@ import javax.annotation.Nullable;
 import java.util.Random;
 import java.util.UUID;
 
-public class CindershellEntity extends Animal implements IAnimatable {
+public class CindershellEntity extends Animal implements IAnimatable, Bucketable {
     private static final EntityDataAccessor<Boolean> EATING = SynchedEntityData.defineId(CindershellEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> FROM_BUCKET = SynchedEntityData.defineId(CindershellEntity.class, EntityDataSerializers.BOOLEAN);
     private final UUID healthReductionUUID = UUID.fromString("189faad9-35de-4e15-a598-82d147b996d7");
     private final AnimationFactory factory = new AnimationFactory(this);
     private int eatTimer;
@@ -72,6 +78,19 @@ public class CindershellEntity extends Animal implements IAnimatable {
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(EATING, false);
+        this.entityData.define(FROM_BUCKET, false);
+    }
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putBoolean("FromBucket", this.fromBucket());
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundTag tag) {
+        this.setFromBucket(tag.getBoolean("FromBucket"));
+        super.readAdditionalSaveData(tag);
     }
 
     @Override
@@ -121,14 +140,14 @@ public class CindershellEntity extends Animal implements IAnimatable {
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, MobSpawnType reason, SpawnGroupData spawnDataIn, CompoundTag dataTag) {
         if (dataTag != null) {
-            if (dataTag.contains("age")) {
-                this.setAge(dataTag.getInt("age"));
+            if (dataTag.contains("Age")) {
+                this.setAge(dataTag.getInt("Age"));
             }
-            if (dataTag.contains("health")) {
-                this.setHealth(dataTag.getFloat("health"));
+            if (dataTag.contains("Health")) {
+                this.setHealth(dataTag.getFloat("Health"));
             }
-            if (dataTag.contains("name")) {
-                this.setCustomName(Component.nullToEmpty(dataTag.getString("name")));
+            if (dataTag.contains("Name")) {
+                this.setCustomName(Component.nullToEmpty(dataTag.getString("Name")));
             }
         }
 
@@ -169,23 +188,109 @@ public class CindershellEntity extends Animal implements IAnimatable {
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack item = player.getItemInHand(hand);
-        if (item.getItem() == Items.LAVA_BUCKET && this.isBaby()) {
-            ItemStack stack = new ItemStack(CNBItems.CINDERSHELL_BUCKET.get(), item.getCount());
-            CompoundTag nbt = stack.getOrCreateTag();
-            nbt.putInt("age", this.getAge());
-            nbt.putFloat("health", this.getHealth());
-            if (this.hasCustomName()) {
-                nbt.putString("name", this.getCustomName().getString());
+
+        if (item.getItem() == Items.LAVA_BUCKET && this.isAlive()) {
+            this.playSound(this.getPickupSound(), 1.0F, 1.0F);
+            ItemStack bucketItem = this.getBucketItemStack();
+            this.saveToBucketTag(bucketItem);
+            ItemStack bucketWithData = ItemUtils.createFilledResult(item, player, bucketItem, false);
+            player.setItemInHand(hand, bucketWithData);
+            Level level = this.level;
+
+            if (!level.isClientSide) {
+                CriteriaTriggers.FILLED_BUCKET.trigger((ServerPlayer)player, bucketItem);
             }
 
-            player.setItemInHand(hand, stack);
-            this.remove(RemovalReason.DISCARDED);
-            return InteractionResult.SUCCESS;
+            this.discard();
+            return InteractionResult.sidedSuccess(level.isClientSide);
+        } else {
+            return this.tryStartEat(player, item);
         }
-
-        return this.tryStartEat(player, item);
     }
 
+    @Override
+    public boolean fromBucket() {
+        return this.entityData.get(FROM_BUCKET);
+    }
+
+    @Override
+    public void setFromBucket(boolean fromBucket) {
+        this.entityData.set(FROM_BUCKET, fromBucket);
+    }
+
+    @Override
+    public void saveToBucketTag(ItemStack stack) {
+        CompoundTag tag = stack.getOrCreateTag();
+
+        if (this.hasCustomName()) {
+            stack.setHoverName(this.getCustomName());
+        }
+        if (this.isNoAi()) {
+            tag.putBoolean("NoAI", this.isNoAi());
+        }
+
+        if (this.isSilent()) {
+            tag.putBoolean("Silent", this.isSilent());
+        }
+
+        if (this.isNoGravity()) {
+            tag.putBoolean("NoGravity", this.isNoGravity());
+        }
+
+        if (this.hasGlowingTag()) {
+            tag.putBoolean("Glowing", this.hasGlowingTag());
+        }
+
+        if (this.isInvulnerable()) {
+            tag.putBoolean("Invulnerable", this.isInvulnerable());
+        }
+
+        tag.putFloat("Health", this.getHealth());
+        tag.putInt("Age", this.getAge());
+    }
+
+    @Override
+    public void loadFromBucketTag(CompoundTag compound) {
+        if (compound.contains("NoAI")) {
+            this.setNoAi(compound.getBoolean("NoAI"));
+        }
+
+        if (compound.contains("Silent")) {
+            this.setSilent(compound.getBoolean("Silent"));
+        }
+
+        if (compound.contains("NoGravity")) {
+            this.setNoGravity(compound.getBoolean("NoGravity"));
+        }
+
+        if (compound.contains("Glowing")) {
+            this.setGlowingTag(compound.getBoolean("Glowing"));
+        }
+
+        if (compound.contains("Invulnerable")) {
+            this.setInvulnerable(compound.getBoolean("Invulnerable"));
+        }
+
+        if (compound.contains("Health", 99)) {
+            this.setHealth(compound.getFloat("Health"));
+        }
+
+        if (compound.contains("Age")) {
+            this.setAge(compound.getInt("Age"));
+        } else {
+            this.setAge(-24000);
+        }
+    }
+
+    @Override
+    public ItemStack getBucketItemStack() {
+        return new ItemStack(CNBItems.CINDERSHELL_BUCKET.get());
+    }
+
+    @Override
+    public SoundEvent getPickupSound() {
+        return SoundEvents.BUCKET_FILL_LAVA;
+    }
 
     @Override
     public void setAge(int age) {

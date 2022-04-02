@@ -16,10 +16,10 @@ public class CNBLizardTypes {
     // Make sure to change the initial size of this ArrayList when adding new Lizard variants
     private static final List<LizardType> LIZARD_TYPES = new ArrayList<>(4);
 
-    public static final LizardType DESERT = registerWithCNBDirectory("lizard_item_0", MOD_ID, "desert");
-    public static final LizardType DESERT_2 = registerWithCNBDirectory("lizard_item_1", MOD_ID, "desert_2");
-    public static final LizardType JUNGLE = registerWithCNBDirectory("lizard_item_2", MOD_ID, "jungle");
-    public static final LizardType JUNGLE_2 = registerWithCNBDirectory("lizard_item_3", MOD_ID, "jungle_2");
+    public static final LizardType DESERT = registerWithCNBDirectory("lizard_item_desert", MOD_ID, "desert");
+    public static final LizardType DESERT_2 = registerWithCNBDirectory("lizard_item_desert_2", MOD_ID, "desert_2");
+    public static final LizardType JUNGLE = registerWithCNBDirectory("lizard_item_jungle", MOD_ID, "jungle");
+    public static final LizardType JUNGLE_2 = registerWithCNBDirectory("lizard_item_jungle_2", MOD_ID, "jungle_2");
 
     private static LizardType registerWithCNBDirectory(String itemName, String namespace, String name) {
         return registerWithCNBDirectory(() -> ForgeRegistries.ITEMS.getValue(new ResourceLocation(namespace, itemName)), namespace, name);

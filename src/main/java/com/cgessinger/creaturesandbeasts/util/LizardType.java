@@ -42,8 +42,8 @@ public class LizardType {
         }
     }
 
-    public void setSpawnItem(@Nullable Item conversionItem) {
-        this.spawnItem = () -> conversionItem;
+    public void setSpawnItem(@Nullable Item spawnItem) {
+        this.spawnItem = () -> spawnItem;
     }
 
 

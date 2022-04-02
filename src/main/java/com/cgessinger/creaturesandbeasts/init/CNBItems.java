@@ -1,15 +1,16 @@
 package com.cgessinger.creaturesandbeasts.init;
 
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
-import com.cgessinger.creaturesandbeasts.items.AppleSliceItem;
-import com.cgessinger.creaturesandbeasts.items.CindershellShellShardItem;
-import com.cgessinger.creaturesandbeasts.items.EntityNetItem;
-import com.cgessinger.creaturesandbeasts.items.LilytadFlowerItem;
+import com.cgessinger.creaturesandbeasts.items.CNBEntityBucketItem;
+import com.cgessinger.creaturesandbeasts.items.CNBFuelItem;
+import com.cgessinger.creaturesandbeasts.items.CNBSpawnEggItem;
 import com.cgessinger.creaturesandbeasts.items.LizardEggItem;
 import com.cgessinger.creaturesandbeasts.items.LizardItem;
-import com.cgessinger.creaturesandbeasts.items.ModEntityBucket;
-import com.cgessinger.creaturesandbeasts.items.CNBSpawnEggItem;
 import com.cgessinger.creaturesandbeasts.items.SporelingSpawnEggItem;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.registries.DeferredRegister;
@@ -19,12 +20,20 @@ import net.minecraftforge.registries.RegistryObject;
 public class CNBItems {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, CreaturesAndBeasts.MOD_ID);
 
-    public static final RegistryObject<ModEntityBucket> CINDERSHELL_BUCKET = ITEMS.register("cindershell_bucket", () -> new ModEntityBucket(CNBEntityTypes.CINDERSHELL, Fluids.LAVA, new Item.Properties().tab(CreaturesAndBeasts.TAB)));
-    public static final RegistryObject<AppleSliceItem> APPLE_SLICE = ITEMS.register("apple_slice", AppleSliceItem::new);
+    // Food
+    public static final RegistryObject<Item> APPLE_SLICE = ITEMS.register("apple_slice", () -> new Item(new Item.Properties().tab(CreaturesAndBeasts.TAB)
+            .food(new FoodProperties.Builder().nutrition(1).saturationMod(0.3F).build())));
+    public static final RegistryObject<Item> LILYTAD_FLOWER_PINK = ITEMS.register("lilytad_flower_pink", () -> new Item(new Item.Properties().tab(CreaturesAndBeasts.TAB)
+            .food(new FoodProperties.Builder().nutrition(4).saturationMod(0.5F).alwaysEat()
+                    .effect(() -> new MobEffectInstance(MobEffects.HEAL, 1), 1.0F).build())));
+
+    // Bucketed Mobs
+    public static final RegistryObject<CNBEntityBucketItem> CINDERSHELL_BUCKET = ITEMS.register("cindershell_bucket", () -> new CNBEntityBucketItem(CNBEntityTypes.CINDERSHELL::get, Fluids.LAVA, () -> SoundEvents.BUCKET_EMPTY_LAVA, new Item.Properties().stacksTo(1).tab(CreaturesAndBeasts.TAB)));
+
+    // Misc. Items
+    public static final RegistryObject<Item> ENTITY_NET = ITEMS.register("entity_net", () -> new Item(new Item.Properties().tab(CreaturesAndBeasts.TAB).durability(64)));
     public static final RegistryObject<LizardEggItem> LIZARD_EGG = ITEMS.register("lizard_egg", LizardEggItem::new);
-    public static final RegistryObject<EntityNetItem> ENTITY_NET = ITEMS.register("entity_net", EntityNetItem::new);
-    public static final RegistryObject<CindershellShellShardItem> CINDERSHELL_SHELL_SHARD = ITEMS.register("cindershell_shell_shard", CindershellShellShardItem::new);
-    public static final RegistryObject<LilytadFlowerItem> LILYTAD_FLOWER_PINK = ITEMS.register("lilytad_flower_pink", LilytadFlowerItem::new);
+    public static final RegistryObject<CNBFuelItem> CINDERSHELL_SHELL_SHARD = ITEMS.register("cindershell_shell_shard", () -> new CNBFuelItem(6400));
     public static final RegistryObject<Item> YETI_ANTLER = ITEMS.register("yeti_antler", () -> new Item(new Item.Properties().tab(CreaturesAndBeasts.TAB)));
     public static final RegistryObject<Item> YETI_HIDE = ITEMS.register("yeti_hide", () -> new Item(new Item.Properties().tab(CreaturesAndBeasts.TAB)));
 

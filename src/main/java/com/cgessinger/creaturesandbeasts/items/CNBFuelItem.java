@@ -5,13 +5,16 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 
-public class CindershellShellShardItem extends Item {
-    public CindershellShellShardItem() {
+public class CNBFuelItem extends Item {
+    private final int burnTime;
+
+    public CNBFuelItem(int burnTime) {
         super(new Item.Properties().tab(CreaturesAndBeasts.TAB));
+        this.burnTime = burnTime;
     }
 
     @Override
     public int getBurnTime(ItemStack itemStack, RecipeType<?> recipeType) {
-        return 6400;
+        return this.burnTime;
     }
 }

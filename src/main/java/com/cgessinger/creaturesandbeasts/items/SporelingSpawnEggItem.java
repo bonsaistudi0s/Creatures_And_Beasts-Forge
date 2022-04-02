@@ -69,9 +69,9 @@ public class SporelingSpawnEggItem extends CNBSpawnEggItem {
 
             CompoundTag itemTag = itemstack.getOrCreateTag();
 
-            if (itemstack.getItem().equals(CNBItems.SPORELING_OVERWORLD_EGG.get())) {
+            if (itemstack.sameItem(CNBItems.SPORELING_OVERWORLD_EGG.get().getDefaultInstance())) {
                 itemTag.putString("EggType", "Overworld");
-            } else if (itemstack.getItem().equals(CNBItems.SPORELING_NETHER_EGG.get())) {
+            } else if (itemstack.sameItem(CNBItems.SPORELING_NETHER_EGG.get().getDefaultInstance())) {
                 itemTag.putString("EggType", "Nether");
             }
 
@@ -103,9 +103,9 @@ public class SporelingSpawnEggItem extends CNBSpawnEggItem {
 
                 CompoundTag itemTag = itemstack.getOrCreateTag();
 
-                if (itemstack.getItem().equals(CNBItems.SPORELING_OVERWORLD_EGG.get())) {
+                if (itemstack.sameItem(CNBItems.SPORELING_OVERWORLD_EGG.get().getDefaultInstance())) {
                     itemTag.putString("EggType", "Overworld");
-                } else if (itemstack.getItem().equals(CNBItems.SPORELING_NETHER_EGG.get())) {
+                } else if (itemstack.sameItem(CNBItems.SPORELING_NETHER_EGG.get().getDefaultInstance())) {
                     itemTag.putString("EggType", "Nether");
                 }
 

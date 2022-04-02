@@ -1,7 +1,6 @@
 package com.cgessinger.creaturesandbeasts.blocks;
 
 import com.cgessinger.creaturesandbeasts.entities.LizardEntity;
-import com.cgessinger.creaturesandbeasts.init.CNBBlocks;
 import com.cgessinger.creaturesandbeasts.init.CNBEntityTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBItems;
 import com.cgessinger.creaturesandbeasts.init.CNBLizardTypes;
@@ -27,7 +26,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import java.util.Random;
 
 public class LizardEggBlock extends Block {
-    public static final IntegerProperty EGGS = CNBBlocks.EGGS_1_6;
+    public static final IntegerProperty EGGS = IntegerProperty.create("eggs", 1, 6);;
     private static final VoxelShape THREE_EGG_SHAPE = Block.box(6.0D, 0.0D, 6.0D, 12.0D, 2D, 12.0D);
     private LizardType parent1;
     private LizardType parent2;

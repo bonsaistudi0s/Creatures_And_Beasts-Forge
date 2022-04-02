@@ -6,8 +6,7 @@ import com.cgessinger.creaturesandbeasts.init.CNBBlocks;
 import com.cgessinger.creaturesandbeasts.init.CNBEntityTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBItems;
 import com.cgessinger.creaturesandbeasts.init.CNBLizardTypes;
-import com.cgessinger.creaturesandbeasts.items.AppleSliceItem;
-import com.cgessinger.creaturesandbeasts.util.IModNetable;
+import com.cgessinger.creaturesandbeasts.util.Netable;
 import com.cgessinger.creaturesandbeasts.util.LizardType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -22,6 +21,8 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -63,9 +64,10 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 import javax.annotation.Nullable;
 import java.util.Random;
 
-public class LizardEntity extends Animal implements IAnimatable, IModNetable {
+public class LizardEntity extends Animal implements IAnimatable, Netable {
     private static final EntityDataAccessor<String> TYPE = SynchedEntityData.defineId(LizardEntity.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> LAY_EGG = SynchedEntityData.defineId(LizardEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> FROM_NET = SynchedEntityData.defineId(LizardEntity.class, EntityDataSerializers.BOOLEAN);
     private final AnimationFactory factory = new AnimationFactory(this);
     public BlockPos jukeboxPosition;
     private boolean isPartying;
@@ -94,13 +96,15 @@ public class LizardEntity extends Animal implements IAnimatable, IModNetable {
         super.defineSynchedData();
         this.entityData.define(TYPE, CNBLizardTypes.DESERT.getId().toString());
         this.entityData.define(LAY_EGG, false);
+        this.entityData.define(FROM_NET, false);
     }
 
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putString("LizardType", this.getLizardType().getId().toString());
-        compound.putBoolean("sad", this.isSad);
+        compound.putBoolean("Sad", this.isSad);
+        compound.putBoolean("FromNet", this.fromNet());
     }
 
     @Override
@@ -111,8 +115,12 @@ public class LizardEntity extends Animal implements IAnimatable, IModNetable {
             type = CNBLizardTypes.DESERT;
         }
         this.setLizardType(type);
-        if (compound.contains("sad")) {
-            setSad(compound.getBoolean("sad"));
+        if (compound.contains("Sad")) {
+            setSad(compound.getBoolean("Sad"));
+        }
+
+        if (compound.contains("FromNet")) {
+            setFromNet(compound.getBoolean("FromNet"));
         }
     }
 
@@ -251,14 +259,107 @@ public class LizardEntity extends Animal implements IAnimatable, IModNetable {
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack item = player.getItemInHand(hand);
 
-        if (item.getItem().equals(CNBItems.APPLE_SLICE.get()) && this.isSad()) {
+        if (item.sameItem(CNBItems.APPLE_SLICE.get().getDefaultInstance()) && this.isSad()) {
             this.setSad(false);
             this.usePlayerItem(player, hand, item);
             spawnParticles(ParticleTypes.HEART);
             return InteractionResult.SUCCESS;
         }
 
-        return super.mobInteract(player, hand);
+        return Netable.netMobPickup(player, hand, this).orElse(super.mobInteract(player, hand));
+    }
+
+    @Override
+    public boolean fromNet() {
+        return this.entityData.get(FROM_NET);
+    }
+
+    @Override
+    public void setFromNet(boolean fromNet) {
+        this.entityData.set(FROM_NET, fromNet);
+    }
+
+    @Override
+    public void saveToNetTag(ItemStack stack) {
+        CompoundTag tag = stack.getOrCreateTag();
+
+        if (this.hasCustomName()) {
+            stack.setHoverName(this.getCustomName());
+        }
+        if (this.isNoAi()) {
+            tag.putBoolean("NoAI", this.isNoAi());
+        }
+
+        if (this.isSilent()) {
+            tag.putBoolean("Silent", this.isSilent());
+        }
+
+        if (this.isNoGravity()) {
+            tag.putBoolean("NoGravity", this.isNoGravity());
+        }
+
+        if (this.hasGlowingTag()) {
+            tag.putBoolean("Glowing", this.hasGlowingTag());
+        }
+
+        if (this.isInvulnerable()) {
+            tag.putBoolean("Invulnerable", this.isInvulnerable());
+        }
+
+        tag.putFloat("Health", this.getHealth());
+        tag.putBoolean("Sad", this.isSad());
+        tag.putString("LizardType", this.getLizardType().getId().toString());
+    }
+
+    @Override
+    public void loadFromNetTag(CompoundTag compound) {
+        if (compound.contains("NoAI")) {
+            this.setNoAi(compound.getBoolean("NoAI"));
+        }
+
+        if (compound.contains("Silent")) {
+            this.setSilent(compound.getBoolean("Silent"));
+        }
+
+        if (compound.contains("NoGravity")) {
+            this.setNoGravity(compound.getBoolean("NoGravity"));
+        }
+
+        if (compound.contains("Glowing")) {
+            this.setGlowingTag(compound.getBoolean("Glowing"));
+        }
+
+        if (compound.contains("Invulnerable")) {
+            this.setInvulnerable(compound.getBoolean("Invulnerable"));
+        }
+
+        if (compound.contains("Health", 99)) {
+            this.setHealth(compound.getFloat("Health"));
+        }
+
+        if (compound.contains("Sad")) {
+            this.setSad(compound.getBoolean("Sad"));
+        }
+
+        if (compound.contains("LizardType")) {
+            LizardType type = LizardType.getById(compound.getString("LizardType"));
+            if (type != null) {
+                this.setLizardType(type);
+            }
+        }
+    }
+
+    @Override
+    public ItemStack getItemStack() {
+        if (!this.isSad() && !this.isBaby()) {
+            return new ItemStack(this.getLizardType().getSpawnItem());
+        }
+        return null;
+    }
+
+    @Override
+    public SoundEvent getPickupSound() {
+        return SoundEvents.ITEM_PICKUP;
     }
 
     @Nullable
@@ -296,7 +397,7 @@ public class LizardEntity extends Animal implements IAnimatable, IModNetable {
 
     @Override
     public boolean isFood(ItemStack stack) {
-        return stack.getItem() instanceof AppleSliceItem;
+        return stack.sameItem(CNBItems.APPLE_SLICE.get().getDefaultInstance());
     }
 
     public void spawnParticles(ParticleOptions data) {
@@ -306,25 +407,6 @@ public class LizardEntity extends Animal implements IAnimatable, IModNetable {
             double d2 = this.random.nextGaussian() * 0.02D;
             this.level.addParticle(data, this.getRandomX(1.0D), this.getRandomY() + 0.5D, this.getRandomZ(1.0D), d0, d1, d2);
         }
-    }
-
-    public ItemStack getItem() {
-        if (!this.isSad() && !this.isBaby()) {
-            LizardType type = this.getLizardType();
-            ItemStack stack = new ItemStack(type.getSpawnItem());
-            CompoundTag nbt = stack.getOrCreateTag();
-            nbt.putFloat("health", this.getHealth());
-            if (this.hasCustomName()) {
-                nbt.putString("name", this.getCustomName().getString());
-            }
-            return stack;
-        }
-        return null;
-    }
-
-    @Override
-    public void spawnParticleFeedback() {
-        spawnParticles(ParticleTypes.HAPPY_VILLAGER);
     }
 
     public void setLizardType(LizardType lizardType) {
@@ -358,5 +440,4 @@ public class LizardEntity extends Animal implements IAnimatable, IModNetable {
     public AnimationFactory getFactory() {
         return this.factory;
     }
-
 }
