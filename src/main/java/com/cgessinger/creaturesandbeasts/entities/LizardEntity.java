@@ -67,11 +67,11 @@ import java.util.Random;
 public class LizardEntity extends Animal implements IAnimatable, Netable {
     private static final EntityDataAccessor<String> TYPE = SynchedEntityData.defineId(LizardEntity.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> PARTYING = SynchedEntityData.defineId(LizardEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> SAD = SynchedEntityData.defineId(LizardEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> LAY_EGG = SynchedEntityData.defineId(LizardEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> FROM_NET = SynchedEntityData.defineId(LizardEntity.class, EntityDataSerializers.BOOLEAN);
     private final AnimationFactory factory = new AnimationFactory(this);
     public BlockPos jukeboxPosition;
-    private boolean isSad;
 
     private int breedTimer;
 
@@ -98,13 +98,14 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
         this.entityData.define(LAY_EGG, false);
         this.entityData.define(FROM_NET, false);
         this.entityData.define(PARTYING, false);
+        this.entityData.define(SAD, false);
     }
 
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putString("LizardType", this.getLizardType().getId().toString());
-        compound.putBoolean("Sad", this.isSad);
+        compound.putBoolean("Sad", this.getSad());
         compound.putBoolean("FromNet", this.fromNet());
     }
 
@@ -230,12 +231,12 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
         // 1/10 chance to change variant to sad lizard variant
         this.setSad(this.getRandom().nextInt(10) == 0);
 
-        if (dataTag != null && dataTag.contains("health")) {
-            this.setHealth(dataTag.getFloat("health"));
+        if (dataTag != null && dataTag.contains("Health")) {
+            this.setHealth(dataTag.getFloat("Health"));
         }
 
-        if (dataTag != null && dataTag.contains("name")) {
-            this.setCustomName(Component.nullToEmpty(dataTag.getString("name")));
+        if (dataTag != null && dataTag.contains("Name")) {
+            this.setCustomName(Component.nullToEmpty(dataTag.getString("Name")));
         }
 
         return super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
@@ -265,7 +266,7 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack item = player.getItemInHand(hand);
 
-        if (item.sameItem(CNBItems.APPLE_SLICE.get().getDefaultInstance()) && this.isSad()) {
+        if (item.sameItem(CNBItems.APPLE_SLICE.get().getDefaultInstance()) && this.getSad()) {
             this.setSad(false);
             this.usePlayerItem(player, hand, item);
             spawnParticles(ParticleTypes.HEART);
@@ -313,7 +314,8 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
         }
 
         tag.putFloat("Health", this.getHealth());
-        tag.putBoolean("Sad", this.isSad());
+        tag.putBoolean("Sad", this.getSad());
+        tag.putBoolean("FromNet", true);
         tag.putString("LizardType", this.getLizardType().getId().toString());
     }
 
@@ -353,11 +355,15 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
                 this.setLizardType(type);
             }
         }
+
+        if (compound.contains("FromNet")) {
+            this.setFromNet(compound.getBoolean("FromNet"));
+        }
     }
 
     @Override
     public ItemStack getItemStack() {
-        if (!this.isSad() && !this.isBaby()) {
+        if (!this.isBaby()) {
             return new ItemStack(this.getLizardType().getSpawnItem());
         }
         return null;
@@ -379,7 +385,7 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
     }
 
     public void setPartying(boolean isPartying, @Nullable BlockPos jukeboxPos) {
-        if (!this.isSad()) {
+        if (!this.getSad()) {
             this.entityData.set(PARTYING, isPartying);
             this.jukeboxPosition = jukeboxPos;
         }
@@ -390,11 +396,11 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
     }
 
     public void setSad(boolean sad) {
-        this.isSad = sad;
+        this.entityData.set(SAD, sad);
     }
 
-    public boolean isSad() {
-        return this.isSad;
+    public boolean getSad() {
+        return this.entityData.get(SAD);
     }
 
     public boolean shouldLookAround() {

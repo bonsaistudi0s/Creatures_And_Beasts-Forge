@@ -18,12 +18,12 @@ public class LizardModel extends AnimatedGeoModel<LizardEntity> {
 
     @Override
     public ResourceLocation getModelLocation(LizardEntity entity) {
-        return entity.isSad() ? SAD_LIZARD_MODEL : LIZARD_MODEL;
+        return entity.getSad() ? SAD_LIZARD_MODEL : LIZARD_MODEL;
     }
 
     @Override
     public ResourceLocation getTextureLocation(LizardEntity entity) {
-        return entity.isSad() ? entity.getLizardType().getSadTextureLocation() : entity.getLizardType().getTextureLocation();
+        return entity.getSad() ? entity.getLizardType().getSadTextureLocation() : entity.getLizardType().getTextureLocation();
     }
 
     @Override
@@ -36,7 +36,7 @@ public class LizardModel extends AnimatedGeoModel<LizardEntity> {
         super.setLivingAnimations(entity, uniqueID, customPredicate);
         IBone head = this.getAnimationProcessor().getBone("head");
 
-        if (entity.isSad()) {
+        if (entity.getSad()) {
             head.setRotationX(0.2182F);
             return;
         }

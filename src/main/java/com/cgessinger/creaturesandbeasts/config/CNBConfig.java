@@ -68,7 +68,7 @@ public class CNBConfig {
 
             FRIENDLY_SPORELING_CONFIG = EntityConfig.createConfigForEntity(builder, "friendly_sporeling", true, 40, Lists.newArrayList("minecraft:mushroom_fields", "minecraft:mushroom_field_shore", "minecraft:dark_forest", "minecraft:swamp", "minecraft:swamp_hills"));
 
-            HOSTILE_SPORELING_CONFIG = EntityConfig.createConfigForEntity(builder, "hostile_sporeling", true, 10, Lists.newArrayList("minecraft:soul_sand_valley", "minecraft:basalt_deltas", "minecraft:nether_wastes"));
+            HOSTILE_SPORELING_CONFIG = EntityConfig.createConfigForEntity(builder, "hostile_sporeling", true, 10, Lists.newArrayList("minecraft:basalt_deltas", "minecraft:nether_wastes"));
 
             NEUTRAL_SPORELING_CONFIG = EntityConfig.createConfigForEntity(builder, "neutral_sporeling", true, 5, Lists.newArrayList("minecraft:crimson_forest", "minecraft:warped_forest"));
 
