@@ -8,7 +8,6 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 public class LilytadModel extends AnimatedGeoModel<LilytadEntity> {
     private static final ResourceLocation LILYTAD_MODEL = new ResourceLocation(CreaturesAndBeasts.MOD_ID, "geo/lilytad/lilytad.geo.json");
     private static final ResourceLocation LILYTAD_SHEARED_TEXTURE = new ResourceLocation(CreaturesAndBeasts.MOD_ID, "textures/entity/lilytad/lilytad_sheared.png");
-    private static final ResourceLocation LILYTAD_TEXTURE = new ResourceLocation(CreaturesAndBeasts.MOD_ID, "textures/entity/lilytad/lilytad_light_pink.png");
     private static final ResourceLocation LILYTAD_ANIMATIONS = new ResourceLocation(CreaturesAndBeasts.MOD_ID, "animations/lilytad.json");
 
     @Override
@@ -18,7 +17,7 @@ public class LilytadModel extends AnimatedGeoModel<LilytadEntity> {
 
     @Override
     public ResourceLocation getTextureLocation(LilytadEntity entity) {
-        return entity.getSheared() ? LILYTAD_SHEARED_TEXTURE : LILYTAD_TEXTURE;
+        return entity.getSheared() ? LILYTAD_SHEARED_TEXTURE : entity.getLilytadType().getTextureLocation();
     }
 
     @Override

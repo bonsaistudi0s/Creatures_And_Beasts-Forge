@@ -6,6 +6,7 @@ import com.cgessinger.creaturesandbeasts.events.CNBEvents;
 import com.cgessinger.creaturesandbeasts.init.CNBBlocks;
 import com.cgessinger.creaturesandbeasts.init.CNBEntityTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBItems;
+import com.cgessinger.creaturesandbeasts.init.CNBLilytadTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBLizardTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBSoundEvents;
 import com.cgessinger.creaturesandbeasts.init.CNBSporelingTypes;
@@ -49,6 +50,7 @@ public class CreaturesAndBeasts {
 
         CNBSporelingTypes.registerAll();
         CNBLizardTypes.registerAll();
+        CNBLilytadTypes.registerAll();
 
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(new CNBEvents());

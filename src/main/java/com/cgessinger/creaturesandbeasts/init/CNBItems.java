@@ -26,6 +26,12 @@ public class CNBItems {
     public static final RegistryObject<Item> LILYTAD_FLOWER_PINK = ITEMS.register("lilytad_flower_pink", () -> new Item(new Item.Properties().tab(CreaturesAndBeasts.TAB)
             .food(new FoodProperties.Builder().nutrition(4).saturationMod(0.5F).alwaysEat()
                     .effect(() -> new MobEffectInstance(MobEffects.HEAL, 1), 1.0F).build())));
+    public static final RegistryObject<Item> LILYTAD_FLOWER_LIGHT_PINK = ITEMS.register("lilytad_flower_light_pink", () -> new Item(new Item.Properties().tab(CreaturesAndBeasts.TAB)
+            .food(new FoodProperties.Builder().nutrition(4).saturationMod(0.5F).alwaysEat()
+                    .effect(() -> new MobEffectInstance(MobEffects.HEAL, 1), 1.0F).build())));
+    public static final RegistryObject<Item> LILYTAD_FLOWER_YELLOW = ITEMS.register("lilytad_flower_yellow", () -> new Item(new Item.Properties().tab(CreaturesAndBeasts.TAB)
+            .food(new FoodProperties.Builder().nutrition(4).saturationMod(0.5F).alwaysEat()
+                    .effect(() -> new MobEffectInstance(MobEffects.HEAL, 1), 1.0F).build())));
 
     // Bucketed Mobs
     public static final RegistryObject<CNBEntityBucketItem> CINDERSHELL_BUCKET = ITEMS.register("cindershell_bucket", () -> new CNBEntityBucketItem(CNBEntityTypes.CINDERSHELL::get, Fluids.LAVA, () -> SoundEvents.BUCKET_EMPTY_LAVA, new Item.Properties().stacksTo(1).tab(CreaturesAndBeasts.TAB)));
