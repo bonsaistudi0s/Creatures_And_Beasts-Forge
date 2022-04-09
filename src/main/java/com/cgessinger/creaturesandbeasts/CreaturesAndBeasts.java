@@ -8,11 +8,14 @@ import com.cgessinger.creaturesandbeasts.init.CNBEntityTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBItems;
 import com.cgessinger.creaturesandbeasts.init.CNBLilytadTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBLizardTypes;
+import com.cgessinger.creaturesandbeasts.init.CNBPaintingTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBSoundEvents;
 import com.cgessinger.creaturesandbeasts.init.CNBSporelingTypes;
 import com.cgessinger.creaturesandbeasts.world.gen.ModEntitySpawns;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.FlowerPotBlock;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -45,6 +48,7 @@ public class CreaturesAndBeasts {
 
         CNBBlocks.BLOCKS.register(eventBus);
         CNBItems.ITEMS.register(eventBus);
+        CNBPaintingTypes.PAINTINGS.register(eventBus);
         CNBSoundEvents.SOUND_EVENTS.register(eventBus);
         CNBEntityTypes.ENTITY_TYPES.register(eventBus);
 
@@ -60,6 +64,12 @@ public class CreaturesAndBeasts {
 
     private void commonSetup(final FMLCommonSetupEvent event) {
         ModEntitySpawns.entitySpawnPlacementRegistry();
+
+        // Register New Flowers to be Able to Place in Pots
+        FlowerPotBlock flowerPot = (FlowerPotBlock) Blocks.FLOWER_POT;
+        flowerPot.addPlant(CNBBlocks.PINK_WATERLILY_BLOCK.getId(), CNBBlocks.POTTED_PINK_WATERLILY);
+        flowerPot.addPlant(CNBBlocks.LIGHT_PINK_WATERLILY_BLOCK.getId(), CNBBlocks.POTTED_LIGHT_PINK_WATERLILY);
+        flowerPot.addPlant(CNBBlocks.YELLOW_WATERLILY_BLOCK.getId(), CNBBlocks.POTTED_YELLOW_WATERLILY);
     }
 
     private void clientSetup(final FMLClientSetupEvent event) {

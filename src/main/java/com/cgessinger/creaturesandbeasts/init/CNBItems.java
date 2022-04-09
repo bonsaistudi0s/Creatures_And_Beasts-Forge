@@ -7,6 +7,7 @@ import com.cgessinger.creaturesandbeasts.items.CNBSpawnEggItem;
 import com.cgessinger.creaturesandbeasts.items.LizardEggItem;
 import com.cgessinger.creaturesandbeasts.items.LizardItem;
 import com.cgessinger.creaturesandbeasts.items.SporelingSpawnEggItem;
+import com.cgessinger.creaturesandbeasts.items.WaterlilyBlockItem;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -23,13 +24,13 @@ public class CNBItems {
     // Food
     public static final RegistryObject<Item> APPLE_SLICE = ITEMS.register("apple_slice", () -> new Item(new Item.Properties().tab(CreaturesAndBeasts.TAB)
             .food(new FoodProperties.Builder().nutrition(1).saturationMod(0.3F).build())));
-    public static final RegistryObject<Item> LILYTAD_FLOWER_PINK = ITEMS.register("lilytad_flower_pink", () -> new Item(new Item.Properties().tab(CreaturesAndBeasts.TAB)
+    public static final RegistryObject<WaterlilyBlockItem> PINK_WATERLILY = ITEMS.register("pink_waterlily", () -> new WaterlilyBlockItem(CNBBlocks.PINK_WATERLILY_BLOCK.get(), new Item.Properties()
             .food(new FoodProperties.Builder().nutrition(4).saturationMod(0.5F).alwaysEat()
                     .effect(() -> new MobEffectInstance(MobEffects.HEAL, 1), 1.0F).build())));
-    public static final RegistryObject<Item> LILYTAD_FLOWER_LIGHT_PINK = ITEMS.register("lilytad_flower_light_pink", () -> new Item(new Item.Properties().tab(CreaturesAndBeasts.TAB)
+    public static final RegistryObject<WaterlilyBlockItem> LIGHT_PINK_WATERLILY = ITEMS.register("light_pink_waterlily", () -> new WaterlilyBlockItem(CNBBlocks.LIGHT_PINK_WATERLILY_BLOCK.get(), new Item.Properties()
             .food(new FoodProperties.Builder().nutrition(4).saturationMod(0.5F).alwaysEat()
                     .effect(() -> new MobEffectInstance(MobEffects.HEAL, 1), 1.0F).build())));
-    public static final RegistryObject<Item> LILYTAD_FLOWER_YELLOW = ITEMS.register("lilytad_flower_yellow", () -> new Item(new Item.Properties().tab(CreaturesAndBeasts.TAB)
+    public static final RegistryObject<WaterlilyBlockItem> YELLOW_WATERLILY = ITEMS.register("yellow_waterlily", () -> new WaterlilyBlockItem(CNBBlocks.YELLOW_WATERLILY_BLOCK.get(), new Item.Properties()
             .food(new FoodProperties.Builder().nutrition(4).saturationMod(0.5F).alwaysEat()
                     .effect(() -> new MobEffectInstance(MobEffects.HEAL, 1), 1.0F).build())));
 

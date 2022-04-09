@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "cnb:items/lilytad_flower_light_pink"
+    "layer0": "cnb:items/pink_waterlily"
   }
 }
