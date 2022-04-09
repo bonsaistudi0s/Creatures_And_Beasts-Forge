@@ -83,7 +83,7 @@ public class CNBConfig {
             builder.push(CreaturesAndBeasts.MOD_ID + "_other").comment("Creatures And Beasts Other Config");
 
             HIDE_AMOUNT = OtherConfig.with(builder, "Define how often items can be reinforced with the yeti hide", "hide amount", 5);
-            HIDE_MULTIPLIER = OtherConfig.with(builder, "Define the yeti hide reinforcement multiplier. The armor attribute value will be multiplied with this value each time", "hide multiplier", 1.01D);
+            HIDE_MULTIPLIER = OtherConfig.with(builder, "Define the yeti hide reinforcement multiplier. The armor attribute value will be increased by this percentage each time", "hide multiplier", 0.01D);
             HIDE_COST = OtherConfig.with(builder, "Define amount of xp needed to upgrade armor with yeti hide", "hide cost", 1);
 
             builder.pop();

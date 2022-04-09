@@ -51,13 +51,13 @@ public class CNBEvents {
             int hideAmount = tag.getInt("HideAmount");
 
             if (equipmentSlot.equals(EquipmentSlot.HEAD)) {
-                event.addModifier(Attributes.ARMOR, new AttributeModifier(UUID.fromString("96a6b318-81f1-475a-b4a4-b3da41d2711e"), "yeti_hide", 0.01D * hideAmount, AttributeModifier.Operation.MULTIPLY_TOTAL));
+                event.addModifier(Attributes.ARMOR, new AttributeModifier(UUID.fromString("96a6b318-81f1-475a-b4a4-b3da41d2711e"), "yeti_hide", ServerConfig.HIDE_AMOUNT.value * hideAmount, AttributeModifier.Operation.MULTIPLY_TOTAL));
             } else if (equipmentSlot.equals(EquipmentSlot.CHEST)) {
-                event.addModifier(Attributes.ARMOR, new AttributeModifier(UUID.fromString("3f3136ff-4f04-4d62-a9cc-8d1f4175c1e2"), "yeti_hide", 0.01D * hideAmount, AttributeModifier.Operation.MULTIPLY_TOTAL));
+                event.addModifier(Attributes.ARMOR, new AttributeModifier(UUID.fromString("3f3136ff-4f04-4d62-a9cc-8d1f4175c1e2"), "yeti_hide", ServerConfig.HIDE_AMOUNT.value * hideAmount, AttributeModifier.Operation.MULTIPLY_TOTAL));
             } else if (equipmentSlot.equals(EquipmentSlot.LEGS)) {
-                event.addModifier(Attributes.ARMOR, new AttributeModifier(UUID.fromString("f49d078c-2740-4283-8255-5d1f106efea0"), "yeti_hide", 0.01D * hideAmount, AttributeModifier.Operation.MULTIPLY_TOTAL));
+                event.addModifier(Attributes.ARMOR, new AttributeModifier(UUID.fromString("f49d078c-2740-4283-8255-5d1f106efea0"), "yeti_hide", ServerConfig.HIDE_AMOUNT.value * hideAmount, AttributeModifier.Operation.MULTIPLY_TOTAL));
             } else {
-                event.addModifier(Attributes.ARMOR, new AttributeModifier(UUID.fromString("b16e7c3f-508d-461d-8868-de6ee2a1314c"), "yeti_hide", 0.01D * hideAmount, AttributeModifier.Operation.MULTIPLY_TOTAL));
+                event.addModifier(Attributes.ARMOR, new AttributeModifier(UUID.fromString("b16e7c3f-508d-461d-8868-de6ee2a1314c"), "yeti_hide", ServerConfig.HIDE_AMOUNT.value * hideAmount, AttributeModifier.Operation.MULTIPLY_TOTAL));
             }
 		}
 	}
