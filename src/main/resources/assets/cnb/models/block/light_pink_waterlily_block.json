@@ -1,5 +1,4 @@
 {
-	"parent": "lilytad_flower",
 	"texture_size": [128, 128],
 	"textures": {
 		"0": "cnb:entity/lilytad/lilytad_light_pink",

@@ -1,10 +1,8 @@
 package com.cgessinger.creaturesandbeasts.entities;
 
 import com.cgessinger.creaturesandbeasts.config.CNBConfig;
-import com.cgessinger.creaturesandbeasts.entities.ai.TimedAttackGoal;
 import com.cgessinger.creaturesandbeasts.init.CNBSoundEvents;
 import com.cgessinger.creaturesandbeasts.init.CNBSporelingTypes;
-import com.cgessinger.creaturesandbeasts.util.ITimedAttackEntity;
 import com.cgessinger.creaturesandbeasts.util.SporelingType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -14,11 +12,14 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -26,16 +27,18 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.BodyRotationControl;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.FollowOwnerGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.PanicGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
@@ -67,22 +70,31 @@ import static com.cgessinger.creaturesandbeasts.util.SporelingType.SporelingHost
 import static com.cgessinger.creaturesandbeasts.util.SporelingType.SporelingHostility.HOSTILE;
 import static com.cgessinger.creaturesandbeasts.util.SporelingType.SporelingHostility.NEUTRAL;
 
-public class SporelingEntity extends PathfinderMob implements Enemy, IAnimatable, ITimedAttackEntity {
+public class SporelingEntity extends TamableAnimal implements Enemy, IAnimatable {
     private static final EntityDataAccessor<String> TYPE = SynchedEntityData.defineId(SporelingEntity.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<Boolean> ATTACKING = SynchedEntityData.defineId(SporelingEntity.class, EntityDataSerializers.BOOLEAN);
+
+    private final SporelingAttackGoal attackGoal = new SporelingAttackGoal(this, 1.3D, false);
+    private final NearestAttackableTargetGoal<Player> nearestAttackableTargetGoal = new NearestAttackableTargetGoal<>(this, Player.class, true);
+    private final HurtByTargetGoal hurtByTargetGoal = new HurtByTargetGoal(this);
+    private final WaveGoal waveGoal = new WaveGoal(this, Player.class, 8.0F);
+    private final PanicGoal panicGoal = new PanicGoal(this, 1.25D);
+
     private final AnimationFactory factory = new AnimationFactory(this);
-    protected int attackTimer;
     private int inspectTimer;
+    private int attackTimer;
 
     public SporelingEntity(EntityType<SporelingEntity> entityType, Level level) {
         super(entityType, level);
-        this.attackTimer = 0;
         this.inspectTimer = 0;
+        this.attackTimer = 0;
     }
 
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(TYPE, CNBSporelingTypes.RED_OVERWORLD.getId().toString());
+        this.entityData.define(ATTACKING, false);
     }
 
     @Override
@@ -99,6 +111,7 @@ public class SporelingEntity extends PathfinderMob implements Enemy, IAnimatable
             type = CNBSporelingTypes.RED_OVERWORLD;
         }
         this.setSporelingType(type);
+        this.reassessGoals();
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -111,31 +124,39 @@ public class SporelingEntity extends PathfinderMob implements Enemy, IAnimatable
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 1.0D));
-        this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(1, new FloatGoal(this));
+        this.goalSelector.addGoal(2, new SitWhenOrderedToGoal(this));
+        this.goalSelector.addGoal(3, new FollowOwnerGoal(this, 1.0D, 10.0F, 2.0F, false));
+        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 1.0D));
+        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
 
+
+    }
+
+    private void reassessGoals() {
         if (this.getSporelingType().getHostility() == FRIENDLY) {
-            this.goalSelector.addGoal(1, new PanicGoal(this, 1.25D));
-            this.goalSelector.addGoal(6, new WaveGoal(this, Player.class, 8.0F));
+            this.goalSelector.addGoal(1, waveGoal);
+            this.goalSelector.addGoal(6, panicGoal);
         } else if (this.getSporelingType().getHostility() == HOSTILE) {
-            this.goalSelector.addGoal(2, new TimedAttackGoal<>(this, 1.3D, false, 30));
-            this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+            this.goalSelector.addGoal(2, attackGoal);
+            this.targetSelector.addGoal(2, nearestAttackableTargetGoal);
         } else {
-            this.goalSelector.addGoal(2, new TimedAttackGoal<>(this, 1.3D, false, 3));
-            this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+            this.goalSelector.addGoal(2, attackGoal);
+            this.targetSelector.addGoal(1, hurtByTargetGoal);
         }
     }
 
     @Override
-    public void aiStep() {
-        super.aiStep();
+    public void tick() {
+        super.tick();
 
         if (this.isWaving()) {
             this.navigation.stop();
             this.getNavigation().setSpeedModifier(0);
-        } else if (this.isInspecting()) {
+        }
+
+        if (this.isInspecting()) {
             ItemStack stack = this.getHolding();
 
             if (stack != null && stack != ItemStack.EMPTY) {
@@ -164,6 +185,13 @@ public class SporelingEntity extends PathfinderMob implements Enemy, IAnimatable
                 this.inspectTimer--;
             }
         }
+
+        if (this.attackTimer > 0) {
+            this.navigation.stop();
+            this.attackTimer--;
+        } else {
+            this.setAttacking(false);
+        }
     }
 
     @Override
@@ -191,6 +219,54 @@ public class SporelingEntity extends PathfinderMob implements Enemy, IAnimatable
             return itemstackIn.getItem() == Items.DIRT;
         }
         return false;
+    }
+
+    @Override
+    public InteractionResult mobInteract(Player player, InteractionHand hand) {
+        ItemStack itemstack = player.getItemInHand(hand);
+        if (this.level.isClientSide) {
+            boolean flag = this.isOwnedBy(player) || this.isTame() || itemstack.is(Items.BONE) && !this.isTame();
+            return flag ? InteractionResult.CONSUME : InteractionResult.PASS;
+        } else {
+            if (this.isTame()) {
+                InteractionResult interactionresult = super.mobInteract(player, hand);
+                if (!interactionresult.consumesAction() && this.isOwnedBy(player)) {
+                    this.setOrderedToSit(!this.isOrderedToSit());
+                    this.jumping = false;
+                    this.navigation.stop();
+                    this.setTarget(null);
+                    return InteractionResult.SUCCESS;
+                }
+
+                return interactionresult;
+            } else if (this.getSporelingType().getHostility() == FRIENDLY && itemstack.is(Items.BONE_MEAL)) {
+                if (!player.getAbilities().instabuild) {
+                    itemstack.shrink(1);
+                }
+
+                if (this.random.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, player)) {
+                    this.tame(player);
+                    this.navigation.stop();
+                    this.setTarget(null);
+                    this.setOrderedToSit(true);
+                    this.level.broadcastEntityEvent(this, (byte)7);
+                } else {
+                    this.level.broadcastEntityEvent(this, (byte)6);
+                }
+
+                return InteractionResult.SUCCESS;
+            }
+
+            return super.mobInteract(player, hand);
+        }
+    }
+
+    @Override
+    protected void actuallyHurt(DamageSource damageSource, float damage) {
+        if (damageSource.isFire() && this.getSporelingType().getHostility() != FRIENDLY) {
+            return;
+        }
+        super.actuallyHurt(damageSource, damage);
     }
 
     @Override
@@ -255,21 +331,20 @@ public class SporelingEntity extends PathfinderMob implements Enemy, IAnimatable
             }
         }
 
+        this.reassessGoals();
+
         return super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+    }
+
+    @Nullable
+    @Override
+    public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob mob) {
+        return null;
     }
 
     @Override
     protected BodyRotationControl createBodyControl() {
         return super.createBodyControl();
-    }
-
-    public boolean isAttacking() {
-        return this.goalSelector.getRunningGoals().anyMatch(goal -> goal.getGoal() instanceof MeleeAttackGoal);
-    }
-
-    @Override
-    public void setAttacking(boolean attack) {
-        this.attackTimer = attack ? 40 : 0;
     }
 
     public boolean isWaving() {
@@ -278,6 +353,15 @@ public class SporelingEntity extends PathfinderMob implements Enemy, IAnimatable
 
     public boolean isRunning() {
         return this.getMoveControl().getSpeedModifier() >= 1.3D;
+    }
+
+    public void setAttacking(boolean isAttacking) {
+        this.entityData.set(ATTACKING, isAttacking);
+        this.attackTimer = isAttacking ? 30 : 0;
+    }
+
+    public boolean isAttacking() {
+        return this.entityData.get(ATTACKING);
     }
 
     public boolean isInspecting() {
@@ -394,7 +478,7 @@ public class SporelingEntity extends PathfinderMob implements Enemy, IAnimatable
             }
             return PlayState.CONTINUE;
         } else if (this.isAttacking()) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("sporeling.bite"));
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("sporeling.bite", false));
             return PlayState.CONTINUE;
         } else if (this.isWaving() && this.getHolding() == ItemStack.EMPTY) {
             event.getController().setAnimation(new AnimationBuilder().addAnimation("sporeling.wave", false));
@@ -438,6 +522,26 @@ public class SporelingEntity extends PathfinderMob implements Enemy, IAnimatable
         @Override
         public boolean canContinueToUse() {
             return super.canContinueToUse() && this.sporeling.getLookControl().isLookingAtTarget();
+        }
+    }
+
+    static class SporelingAttackGoal extends MeleeAttackGoal {
+        private final SporelingEntity goalOwner;
+
+        public SporelingAttackGoal(SporelingEntity sporeling, double speedModifier, boolean followWithoutLineOfSight) {
+            super(sporeling, speedModifier, followWithoutLineOfSight);
+            this.goalOwner = sporeling;
+        }
+
+        @Override
+        protected void checkAndPerformAttack(LivingEntity entity, double distance) {
+            double d0 = this.getAttackReachSqr(entity);
+            if (distance <= d0 && this.ticksUntilNextAttack <= 0) {
+                this.resetAttackCooldown();
+                this.goalOwner.setAttacking(true);
+                this.goalOwner.playSound(CNBSoundEvents.SPORELING_BITE.get(), 1.0F, 1.0F);
+                this.goalOwner.doHurtTarget(entity);
+            }
         }
     }
 }
