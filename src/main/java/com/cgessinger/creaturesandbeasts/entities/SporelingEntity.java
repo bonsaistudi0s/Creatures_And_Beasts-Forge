@@ -20,7 +20,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -54,8 +53,10 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
+import software.bernie.geckolib3.core.AnimationState;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
+import software.bernie.geckolib3.core.builder.Animation;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
@@ -130,8 +131,6 @@ public class SporelingEntity extends TamableAnimal implements Enemy, IAnimatable
         this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 1.0D));
         this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
-
-
     }
 
     private void reassessGoals() {
@@ -185,11 +184,17 @@ public class SporelingEntity extends TamableAnimal implements Enemy, IAnimatable
                 this.inspectTimer--;
             }
         }
+    }
 
-        if (this.attackTimer > 0) {
-            this.navigation.stop();
+    @Override
+    public void aiStep() {
+        super.aiStep();
+
+        if (this.isAttacking()) {
             this.attackTimer--;
-        } else {
+        }
+
+        if (this.attackTimer == 0) {
             this.setAttacking(false);
         }
     }
@@ -446,12 +451,6 @@ public class SporelingEntity extends TamableAnimal implements Enemy, IAnimatable
     }
 
     @Override
-    public boolean doHurtTarget(Entity entityIn) {
-        this.playSound(CNBSoundEvents.SPORELING_BITE.get(), this.getSoundVolume() * 2, this.getVoicePitch());
-        return super.doHurtTarget(entityIn);
-    }
-
-    @Override
     public int getMaxHeadYRot() {
         return 5;
     }
@@ -470,22 +469,27 @@ public class SporelingEntity extends TamableAnimal implements Enemy, IAnimatable
     }
 
     public <E extends IAnimatable> PlayState animationPredicate(AnimationEvent<E> event) {
-        if (!(animationSpeed > -0.15F && animationSpeed < 0.15F)) {
-            if (this.isRunning()) {
-                event.getController().setAnimation(new AnimationBuilder().addAnimation("sporeling.run", true));
-            } else {
-                event.getController().setAnimation(new AnimationBuilder().addAnimation("sporeling.walk", true));
-            }
-            return PlayState.CONTINUE;
+        Animation currentAnimation = event.getController().getCurrentAnimation();
+
+        if (this.isInSittingPose()) {
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("sporeling_sit").addAnimation("sporeling_sitting"));
+        } else if (currentAnimation != null && (currentAnimation.animationName.equals("sporeling_sitting") || (currentAnimation.animationName.equals("sporeling_stand") && !event.getController().getAnimationState().equals(AnimationState.Stopped))) && !this.isInSittingPose()) {
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("sporeling_stand"));
         } else if (this.isAttacking()) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("sporeling.bite", false));
-            return PlayState.CONTINUE;
-        } else if (this.isWaving() && this.getHolding() == ItemStack.EMPTY) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("sporeling.wave", false));
-            return PlayState.CONTINUE;
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("sporeling_bite"));
+        } else if (this.isWaving() && this.getHolding().isEmpty()) {
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("sporeling_wave"));
+        } else if (!(animationSpeed > -0.15F && animationSpeed < 0.15F)) {
+            if (this.isRunning()) {
+                event.getController().setAnimation(new AnimationBuilder().addAnimation("sporeling_run"));
+            } else {
+                event.getController().setAnimation(new AnimationBuilder().addAnimation("sporeling_walk"));
+            }
+        } else {
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("sporeling_idle"));
         }
 
-        return PlayState.STOP;
+        return PlayState.CONTINUE;
     }
 
     @Override
@@ -536,12 +540,17 @@ public class SporelingEntity extends TamableAnimal implements Enemy, IAnimatable
         @Override
         protected void checkAndPerformAttack(LivingEntity entity, double distance) {
             double d0 = this.getAttackReachSqr(entity);
-            if (distance <= d0 && this.ticksUntilNextAttack <= 0) {
+            if (distance <= d0 && this.goalOwner.attackTimer <= 0 && this.ticksUntilNextAttack <= 0) {
                 this.resetAttackCooldown();
-                this.goalOwner.setAttacking(true);
                 this.goalOwner.playSound(CNBSoundEvents.SPORELING_BITE.get(), 1.0F, 1.0F);
                 this.goalOwner.doHurtTarget(entity);
             }
+        }
+
+        @Override
+        protected void resetAttackCooldown() {
+            this.ticksUntilNextAttack = this.adjustedTickDelay(30);
+            this.goalOwner.setAttacking(true);
         }
     }
 }
