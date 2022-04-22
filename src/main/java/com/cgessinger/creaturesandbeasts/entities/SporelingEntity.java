@@ -275,6 +275,12 @@ public class SporelingEntity extends TamableAnimal implements Enemy, IAnimatable
     }
 
     @Override
+    public boolean fireImmune() {
+        SporelingType.SporelingHostility hostility = this.getSporelingType().getHostility();
+        return hostility.equals(HOSTILE) || hostility.equals(NEUTRAL) || super.fireImmune();
+    }
+
+    @Override
     public MobCategory getClassification(boolean forSpawnCount) {
         return this.getSporelingType().getHostility() == FRIENDLY ? MobCategory.CREATURE : MobCategory.MONSTER;
     }
