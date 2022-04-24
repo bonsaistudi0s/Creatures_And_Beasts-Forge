@@ -10,14 +10,18 @@ import com.cgessinger.creaturesandbeasts.entities.SporelingEntity;
 import com.cgessinger.creaturesandbeasts.entities.YetiEntity;
 import com.cgessinger.creaturesandbeasts.init.CNBEntityTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBItems;
+import com.cgessinger.creaturesandbeasts.init.CNBLootModifiers;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -35,6 +39,11 @@ public class CNBEvents {
         event.put(CNBEntityTypes.LILYTAD.get(), LilytadEntity.createAttributes().build());
         event.put(CNBEntityTypes.LIZARD.get(), LizardEntity.createAttributes().build());
         event.put(CNBEntityTypes.YETI.get(), YetiEntity.createAttributes().build());
+    }
+
+    @SubscribeEvent
+    public static void onRegisterLootModifiers(RegistryEvent.Register<GlobalLootModifierSerializer<?>> event) {
+        event.getRegistry().register(new CNBLootModifiers.NetherBridgeLootSerializer().setRegistryName(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "nether_bridge_loot_modifier")));
     }
 
 	@SubscribeEvent

@@ -22,6 +22,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
@@ -95,17 +96,9 @@ public class CindershellEntity extends Animal implements IAnimatable, Bucketable
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(0, new CindershellFloatGoal(this));
         this.goalSelector.addGoal(1, new PanicGoal(this, 1.25D));
-        this.goalSelector.addGoal(3, new BreedGoal(this, 1.0D) {
-            @Override
-            protected void breed() {
-                int range = this.animal.getRandom().nextInt(4) + 3;
-                for (int i = 0; i <= range; i++) {
-                    super.breed();
-                }
-            }
-        });
+        this.goalSelector.addGoal(3, new CindershellBreedGoal(this, 1.0D));
         this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 1.0D));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0F));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
@@ -122,6 +115,11 @@ public class CindershellEntity extends Animal implements IAnimatable, Bucketable
         } else if (this.eatTimer == 0) {
             this.setEating(false);
         }
+    }
+
+    @Override
+    public boolean isSensitiveToWater() {
+        return true;
     }
 
     public static boolean checkCindershellSpawnRules(EntityType<CindershellEntity> entity, LevelAccessor level, MobSpawnType mobSpawnType, BlockPos pos, Random random) {
@@ -313,6 +311,20 @@ public class CindershellEntity extends Animal implements IAnimatable, Bucketable
     }
 
     @Override
+    public EntityDimensions getDimensions(Pose pose) {
+        return pose == Pose.SLEEPING ? SLEEPING_DIMENSIONS : super.getDimensions(pose).scale(this.getScale(), this.getHeightScale());
+    }
+
+    private float getHeightScale() {
+        return this.isBaby() ? 0.35F : 1.0F;
+    }
+
+    @Override
+    public float getScale() {
+        return this.isBaby() ? 0.55F : 1.0F;
+    }
+
+    @Override
     public float getEyeHeight(Pose pose) {
         return this.getBbHeight() * 0.2F;
     }
@@ -386,5 +398,34 @@ public class CindershellEntity extends Animal implements IAnimatable, Bucketable
     @Override
     public AnimationFactory getFactory() {
         return this.factory;
+    }
+
+    static class CindershellFloatGoal extends FloatGoal {
+        private final CindershellEntity cindershell;
+
+        public CindershellFloatGoal(CindershellEntity cindershell) {
+            super(cindershell);
+            this.cindershell = cindershell;
+        }
+
+        @Override
+        public boolean canUse() {
+            return this.cindershell.isInLava();
+        }
+    }
+
+    static class CindershellBreedGoal extends BreedGoal {
+
+        public CindershellBreedGoal(Animal cindershell, double speedModifier) {
+            super(cindershell, speedModifier);
+        }
+
+        @Override
+        protected void breed() {
+            int range = this.animal.getRandom().nextInt(4) + 3;
+            for (int i = 0; i <= range; i++) {
+                super.breed();
+            }
+        }
     }
 }
