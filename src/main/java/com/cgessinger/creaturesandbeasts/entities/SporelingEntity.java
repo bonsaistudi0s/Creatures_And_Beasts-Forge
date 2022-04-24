@@ -1,6 +1,7 @@
 package com.cgessinger.creaturesandbeasts.entities;
 
 import com.cgessinger.creaturesandbeasts.config.CNBConfig;
+import com.cgessinger.creaturesandbeasts.entities.ai.ConvertItemGoal;
 import com.cgessinger.creaturesandbeasts.init.CNBSoundEvents;
 import com.cgessinger.creaturesandbeasts.init.CNBSporelingTypes;
 import com.cgessinger.creaturesandbeasts.util.SporelingType;
@@ -38,16 +39,15 @@ import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.PanicGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
+import net.minecraft.world.entity.ai.goal.TemptGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -64,7 +64,6 @@ import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 import javax.annotation.Nullable;
-import java.util.Map;
 import java.util.Random;
 
 import static com.cgessinger.creaturesandbeasts.util.SporelingType.SporelingHostility.FRIENDLY;
@@ -74,21 +73,25 @@ import static com.cgessinger.creaturesandbeasts.util.SporelingType.SporelingHost
 public class SporelingEntity extends TamableAnimal implements Enemy, IAnimatable {
     private static final EntityDataAccessor<String> TYPE = SynchedEntityData.defineId(SporelingEntity.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> ATTACKING = SynchedEntityData.defineId(SporelingEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> WAVING = SynchedEntityData.defineId(SporelingEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> INSPECTING = SynchedEntityData.defineId(SporelingEntity.class, EntityDataSerializers.BOOLEAN);
 
     private final SporelingAttackGoal attackGoal = new SporelingAttackGoal(this, 1.3D, false);
     private final NearestAttackableTargetGoal<Player> nearestAttackableTargetGoal = new NearestAttackableTargetGoal<>(this, Player.class, true);
     private final HurtByTargetGoal hurtByTargetGoal = new HurtByTargetGoal(this);
     private final WaveGoal waveGoal = new WaveGoal(this, Player.class, 8.0F);
+    private final TemptGoal temptGoal = new TemptGoal(this, 1.0D,Ingredient.of(Items.BONE_MEAL), false);
     private final PanicGoal panicGoal = new PanicGoal(this, 1.25D);
+    private final ConvertItemGoal convertItemGoal = new ConvertItemGoal(this, 16.0D, 1.3D);
 
     private final AnimationFactory factory = new AnimationFactory(this);
-    private int inspectTimer;
     private int attackTimer;
+    private int waveTimer;
 
     public SporelingEntity(EntityType<SporelingEntity> entityType, Level level) {
         super(entityType, level);
-        this.inspectTimer = 0;
         this.attackTimer = 0;
+        this.waveTimer = 0;
     }
 
     @Override
@@ -96,6 +99,8 @@ public class SporelingEntity extends TamableAnimal implements Enemy, IAnimatable
         super.defineSynchedData();
         this.entityData.define(TYPE, CNBSporelingTypes.RED_OVERWORLD.getId().toString());
         this.entityData.define(ATTACKING, false);
+        this.entityData.define(WAVING, false);
+        this.entityData.define(INSPECTING, false);
     }
 
     @Override
@@ -135,54 +140,16 @@ public class SporelingEntity extends TamableAnimal implements Enemy, IAnimatable
 
     private void reassessGoals() {
         if (this.getSporelingType().getHostility() == FRIENDLY) {
-            this.goalSelector.addGoal(1, waveGoal);
-            this.goalSelector.addGoal(6, panicGoal);
+            this.goalSelector.addGoal(2, panicGoal);
+            this.goalSelector.addGoal(2, convertItemGoal);
+            this.goalSelector.addGoal(3, temptGoal);
+            this.goalSelector.addGoal(6, waveGoal);
         } else if (this.getSporelingType().getHostility() == HOSTILE) {
             this.goalSelector.addGoal(2, attackGoal);
             this.targetSelector.addGoal(2, nearestAttackableTargetGoal);
         } else {
             this.goalSelector.addGoal(2, attackGoal);
             this.targetSelector.addGoal(1, hurtByTargetGoal);
-        }
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-
-        if (this.isWaving()) {
-            this.navigation.stop();
-            this.getNavigation().setSpeedModifier(0);
-        }
-
-        if (this.isInspecting()) {
-            ItemStack stack = this.getHolding();
-
-            if (stack != null && stack != ItemStack.EMPTY) {
-                if (stack.isEnchanted()) {
-                    Map<Enchantment, Integer> map = EnchantmentHelper.getEnchantments(stack);
-                    for (Map.Entry<Enchantment, Integer> entry : map.entrySet()) {
-                        if (entry.getKey().isCurse()) {
-                            map.remove(entry.getKey(), entry.getValue());
-                            if (stack.isDamageableItem()) {
-                                float percent = (this.getRandom().nextFloat() * 0.8F) + 0.1F;
-                                int damage = (int) (percent * stack.getMaxDamage() + stack.getDamageValue());
-                                int setDamage = Math.min(damage, (int) (stack.getMaxDamage() * 0.9F));
-                                stack.setDamageValue(Math.max(stack.getDamageValue(), setDamage));
-                            }
-                            EnchantmentHelper.setEnchantments(map, stack);
-                            break;
-                        }
-                    }
-                } else if (stack.getItem() == Items.DIRT) {
-                    stack = new ItemStack(Items.MYCELIUM, stack.getCount());
-                }
-
-                this.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
-                this.setHolding(ItemStack.EMPTY);
-                this.spawnAtLocation(stack);
-                this.inspectTimer--;
-            }
         }
     }
 
@@ -194,36 +161,18 @@ public class SporelingEntity extends TamableAnimal implements Enemy, IAnimatable
             this.attackTimer--;
         }
 
+        if (this.isWaving()) {
+            this.waveTimer--;
+            this.navigation.stop();
+        }
+
         if (this.attackTimer == 0) {
             this.setAttacking(false);
         }
-    }
 
-    @Override
-    protected void pickUpItem(ItemEntity itemEntity) {
-        ItemStack stack = itemEntity.getItem();
-        if (this.canTakeItem(stack) && !(this.isWaving() || this.isAttacking() || this.isInspecting())) {
-            this.onItemPickup(itemEntity);
-            this.setItemSlot(EquipmentSlot.MAINHAND, stack);
-            this.setHolding(stack);
-            this.setInspecting(true);
-            itemEntity.discard();
+        if (this.waveTimer == 0) {
+            this.setWaving(false);
         }
-    }
-
-    @Override
-    public boolean canTakeItem(ItemStack itemstackIn) {
-        if (!this.hasItemInSlot(EquipmentSlot.MAINHAND)) {
-            if (itemstackIn.isEnchanted()) {
-                for (Map.Entry<Enchantment, Integer> entry : EnchantmentHelper.getEnchantments(itemstackIn).entrySet()) {
-                    if (entry.getKey().isCurse()) {
-                        return true;
-                    }
-                }
-            }
-            return itemstackIn.getItem() == Items.DIRT;
-        }
-        return false;
     }
 
     @Override
@@ -358,10 +307,6 @@ public class SporelingEntity extends TamableAnimal implements Enemy, IAnimatable
         return super.createBodyControl();
     }
 
-    public boolean isWaving() {
-        return this.goalSelector.getRunningGoals().anyMatch(goal -> goal.getGoal() instanceof WaveGoal);
-    }
-
     public boolean isRunning() {
         return this.getMoveControl().getSpeedModifier() >= 1.3D;
     }
@@ -375,12 +320,21 @@ public class SporelingEntity extends TamableAnimal implements Enemy, IAnimatable
         return this.entityData.get(ATTACKING);
     }
 
+    public boolean isWaving() {
+        return this.entityData.get(WAVING);
+    }
+
+    public void setWaving(boolean isWaving) {
+        this.entityData.set(WAVING, isWaving);
+        this.waveTimer = isWaving ? 41 : 0;
+    }
+
     public boolean isInspecting() {
-        return this.inspectTimer > 0;
+        return this.entityData.get(INSPECTING);
     }
 
     public void setInspecting(boolean isInspecting) {
-        this.inspectTimer = isInspecting ? 40 : 0;
+        this.entityData.set(INSPECTING, isInspecting);
     }
 
     public ItemStack getHolding() {
@@ -485,6 +439,8 @@ public class SporelingEntity extends TamableAnimal implements Enemy, IAnimatable
             event.getController().setAnimation(new AnimationBuilder().addAnimation("sporeling_bite"));
         } else if (this.isWaving() && this.getHolding().isEmpty()) {
             event.getController().setAnimation(new AnimationBuilder().addAnimation("sporeling_wave"));
+        } else if (this.isInspecting()) {
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("sporeling_convert"));
         } else if (!(animationSpeed > -0.15F && animationSpeed < 0.15F)) {
             if (this.isRunning()) {
                 event.getController().setAnimation(new AnimationBuilder().addAnimation("sporeling_run"));
@@ -510,28 +466,26 @@ public class SporelingEntity extends TamableAnimal implements Enemy, IAnimatable
 
     static class WaveGoal extends LookAtPlayerGoal {
         private final SporelingEntity sporeling;
-        private int waveTimer;
 
         public WaveGoal(SporelingEntity entityIn, Class<? extends LivingEntity> watchTargetClass, float maxDistance) {
             super(entityIn, watchTargetClass, maxDistance);
             sporeling = entityIn;
-            this.waveTimer = 0;
         }
 
         @Override
         public boolean canUse() {
-            boolean shouldExec = super.canUse();
-            if (shouldExec && this.waveTimer == 0 && this.sporeling.getRandom().nextInt(9) == 0) {
-                this.waveTimer = 8;
-            } else if (this.waveTimer > 0 && this.lookAt != null) {
-                this.waveTimer--;
-            }
-            return shouldExec;
+            return super.canUse() && !sporeling.isInspecting() && sporeling.random.nextDouble() <= 0.25D;
+        }
+
+        @Override
+        public void start() {
+            super.start();
+            this.sporeling.setWaving(true);
         }
 
         @Override
         public boolean canContinueToUse() {
-            return super.canContinueToUse() && this.sporeling.getLookControl().isLookingAtTarget();
+            return super.canContinueToUse() && this.sporeling.isWaving();
         }
     }
 
