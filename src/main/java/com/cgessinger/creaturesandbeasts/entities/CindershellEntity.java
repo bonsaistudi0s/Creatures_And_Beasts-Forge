@@ -63,7 +63,7 @@ public class CindershellEntity extends Animal implements IAnimatable, Bucketable
     private final AnimationFactory factory = new AnimationFactory(this);
     private int eatTimer;
 
-    public CindershellEntity(EntityType<? extends Animal> type, Level worldIn) {
+    public CindershellEntity(EntityType<CindershellEntity> type, Level worldIn) {
         super(type, worldIn);
         this.eatTimer = 0;
     }

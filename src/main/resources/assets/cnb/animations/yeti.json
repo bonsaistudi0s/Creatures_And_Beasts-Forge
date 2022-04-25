@@ -1,7 +1,7 @@
 {
 	"format_version": "1.8.0",
 	"animations": {
-		"yeti.walk": {
+		"yeti_walk": {
 			"loop": true,
 			"animation_length": 1.04,
 			"bones": {
@@ -53,7 +53,7 @@
 				}
 			}
 		},
-		"yeti.attack": {
+		"yeti_attack": {
 			"animation_length": 1.16,
 			"bones": {
 				"bone": {
@@ -112,7 +112,7 @@
 				}
 			}
 		},
-		"yeti_adult.eat": {
+		"yeti_adult_eat": {
 			"animation_length": 1.56,
 			"bones": {
 				"Head": {
@@ -150,7 +150,7 @@
 				}
 			}
 		},
-		"yeti_baby.eat": {
+		"yeti_baby_eat": {
 			"animation_length": 1.56,
 			"bones": {
 				"bone": {
@@ -227,7 +227,7 @@
 				}
 			}
 		},
-		"yeti.idle": {
+		"yeti_idle": {
 			"loop": true
 		}
 	},

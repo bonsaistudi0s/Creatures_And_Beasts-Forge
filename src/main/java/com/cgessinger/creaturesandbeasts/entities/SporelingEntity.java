@@ -313,7 +313,7 @@ public class SporelingEntity extends TamableAnimal implements Enemy, IAnimatable
 
     public void setAttacking(boolean isAttacking) {
         this.entityData.set(ATTACKING, isAttacking);
-        this.attackTimer = isAttacking ? 30 : 0;
+        this.attackTimer = isAttacking ? 7 : 0;
     }
 
     public boolean isAttacking() {
@@ -509,7 +509,7 @@ public class SporelingEntity extends TamableAnimal implements Enemy, IAnimatable
 
         @Override
         protected void resetAttackCooldown() {
-            this.ticksUntilNextAttack = this.adjustedTickDelay(30);
+            super.resetAttackCooldown();
             this.goalOwner.setAttacking(true);
         }
     }

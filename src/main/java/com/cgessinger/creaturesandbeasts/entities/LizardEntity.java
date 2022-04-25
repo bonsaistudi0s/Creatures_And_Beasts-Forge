@@ -75,7 +75,7 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
 
     private int breedTimer;
 
-    public LizardEntity(EntityType<? extends Animal> type, Level worldIn) {
+    public LizardEntity(EntityType<LizardEntity> type, Level worldIn) {
         super(type, worldIn);
         this.breedTimer = 0;
 

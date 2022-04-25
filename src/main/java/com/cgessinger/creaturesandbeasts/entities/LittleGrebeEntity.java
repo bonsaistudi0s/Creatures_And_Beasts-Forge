@@ -67,7 +67,7 @@ public class LittleGrebeEntity extends Animal implements IAnimatable {
     private float nextFlap = 1.0F;
     private final AnimationFactory factory = new AnimationFactory(this);
 
-    public LittleGrebeEntity(EntityType<? extends Animal> type, Level worldIn) {
+    public LittleGrebeEntity(EntityType<LittleGrebeEntity> type, Level worldIn) {
         super(type, worldIn);
         this.setPathfindingMalus(BlockPathTypes.WATER, 10.0F);
     }

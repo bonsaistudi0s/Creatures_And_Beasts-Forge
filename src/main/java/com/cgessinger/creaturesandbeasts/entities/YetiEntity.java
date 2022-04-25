@@ -18,15 +18,20 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.TimeUtil;
+import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -40,7 +45,9 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.ResetUniversalAngerTargetGoal;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -65,20 +72,28 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
-public class YetiEntity extends Animal implements IAnimatable, Enemy {
+public class YetiEntity extends TamableAnimal implements IAnimatable, Enemy, NeutralMob {
     public static final EntityDataAccessor<Boolean> ATTACKING = SynchedEntityData.defineId(YetiEntity.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<Boolean> EATING = SynchedEntityData.defineId(YetiEntity.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<ItemStack> HELD_ITEM = SynchedEntityData.defineId(YetiEntity.class, EntityDataSerializers.ITEM_STACK);
+
     private final AnimationFactory factory = new AnimationFactory(this);
     private final UUID healthReductionUUID = UUID.fromString("189faad9-35de-4e15-a598-82d147b996d7");
     private final float babyHealth = 20.0F;
 
+    private static final UniformInt PERSISTENT_ANGER_TIME = TimeUtil.rangeOfSeconds(20, 39);
+    private int remainingPersistentAngerTime;
+    @Nullable
+    private UUID persistentAngerTarget;
+
     private int eatTimer;
+    private int attackTimer;
     private boolean isPassive;
 
-    public YetiEntity(EntityType<? extends Animal> type, Level worldIn) {
+    public YetiEntity(EntityType<YetiEntity> type, Level worldIn) {
         super(type, worldIn);
         this.eatTimer = 0;
+        this.isPassive = false;
     }
 
     @Override
@@ -118,38 +133,36 @@ public class YetiEntity extends Animal implements IAnimatable, Enemy {
         super.registerGoals();
         this.goalSelector.addGoal(1, new FloatGoal(this));
         this.goalSelector.addGoal(1, new BreedGoal(this, 1.0D));
-        this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.2D, true) {
-            @Override
-            public boolean canContinueToUse() {
-                return super.canContinueToUse() && !((YetiEntity) this.mob).isPassive;
-            }
-
-            @Override
-            public boolean canUse() {
-                return super.canUse() && !((YetiEntity) this.mob).isPassive;
-            }
-        });
+        this.goalSelector.addGoal(2, new YetiAttackGoal(this, 1.2D, true));
         this.goalSelector.addGoal(3, new FollowParentGoal(this, 1.25D));
         this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 12.0F));
         this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
         this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 1.0D, 0.01F));
-        this.targetSelector.addGoal(1, (new HurtByTargetGoal(this)).setAlertOthers());
-        this.targetSelector.addGoal(2, new TargetPlayerGoal());
+        this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
+        this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
+        this.targetSelector.addGoal(3, (new HurtByTargetGoal(this)).setAlertOthers());
+        this.targetSelector.addGoal(4, new TargetPlayerGoal(this));
+        this.targetSelector.addGoal(5, new ResetUniversalAngerTargetGoal<>(this, true));
     }
 
     @Override
     public void aiStep() {
         super.aiStep();
 
-        if (this.getEating()) {
+        if (this.isEating()) {
             this.navigation.stop();
             this.eatTimer--;
+        }
+
+        if (this.isAttacking()) {
+            this.navigation.stop();
+            this.attackTimer--;
         }
 
         if (this.eatTimer == 40) {
             if (this.isBaby()) {
                 this.ageUp((int) (-this.getAge() / 20F * 0.1F), true);
-            } else {
+            } else if (this.getHolding().sameItem(Items.MELON_SLICE.getDefaultInstance())) {
                 this.setTarget(null);
                 this.isPassive = true;
             }
@@ -157,6 +170,38 @@ public class YetiEntity extends Animal implements IAnimatable, Enemy {
         } else if (this.eatTimer == 0) {
             this.setEating(false);
         }
+
+        if (this.attackTimer == 11) {
+            this.performAttack();
+        } else if (this.attackTimer == 0) {
+            this.setAttacking(false);
+        }
+    }
+
+    @Override
+    public int getRemainingPersistentAngerTime() {
+        return this.remainingPersistentAngerTime;
+    }
+
+    @Override
+    public void setRemainingPersistentAngerTime(int angerTime) {
+        this.remainingPersistentAngerTime = angerTime;
+    }
+
+    @Nullable
+    @Override
+    public UUID getPersistentAngerTarget() {
+        return this.persistentAngerTarget;
+    }
+
+    @Override
+    public void setPersistentAngerTarget(@Nullable UUID uuid) {
+        this.persistentAngerTarget = uuid;
+    }
+
+    @Override
+    public void startPersistentAngerTimer() {
+        this.setRemainingPersistentAngerTime(PERSISTENT_ANGER_TIME.sample(this.random));
     }
 
     public static boolean checkYetiSpawnRules(EntityType<YetiEntity> entity, LevelAccessor level, MobSpawnType mobSpawnType, BlockPos pos, Random random) {
@@ -192,8 +237,9 @@ public class YetiEntity extends Animal implements IAnimatable, Enemy {
             return InteractionResult.CONSUME;
         }
 
-        if (!(this.getEating() || this.entityData.get(ATTACKING))) {
+        if (!(this.isEating() || this.entityData.get(ATTACKING))) {
             if (item.getItem() == Items.MELON_SLICE && !this.isPassive) {
+                this.setOwnerUUID(player.getUUID());
                 return this.startEat(player, item);
             } else if (item.getItem() == Items.SWEET_BERRIES) {
                 if (this.canFallInLove()) {
@@ -233,6 +279,10 @@ public class YetiEntity extends Animal implements IAnimatable, Enemy {
         this.setHealth(percentHealth * (float) this.getAttribute(Attributes.MAX_HEALTH).getValue());
         this.setEating(false);
         this.setHolding(ItemStack.EMPTY);
+
+        if (this.isPassive && this.getOwner() != null && this.getOwner() instanceof Player player) {
+            this.tame(player);
+        }
     }
 
     @Nullable
@@ -246,8 +296,17 @@ public class YetiEntity extends Animal implements IAnimatable, Enemy {
         this.entityData.set(EATING, isEating);
     }
 
-    public boolean getEating() {
+    public boolean isEating() {
         return this.entityData.get(EATING);
+    }
+
+    public void setAttacking(boolean isAttacking) {
+        this.entityData.set(ATTACKING, isAttacking);
+        this.attackTimer = isAttacking ? 24 : 0;
+    }
+
+    public boolean isAttacking() {
+        return this.entityData.get(ATTACKING);
     }
 
     public ItemStack getHolding() {
@@ -274,8 +333,38 @@ public class YetiEntity extends Animal implements IAnimatable, Enemy {
     }
 
     @Override
+    public boolean isInSittingPose() {
+        return false;
+    }
+
+    @Override
+    public void setInSittingPose(boolean p_21838_) {
+    }
+
+    @Override
+    public boolean isOrderedToSit() {
+        return false;
+    }
+
+    @Override
+    public void setOrderedToSit(boolean p_21840_) {
+    }
+
+    @Override
     public boolean removeWhenFarAway(double distanceToClosestPlayer) {
         return false;
+    }
+
+    private void performAttack() {
+        List<LivingEntity> list = this.level.getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(2.0D, 4.0D, 2.0D));
+
+        for (LivingEntity entity : list) {
+            if ((entity instanceof Player && entity.getUUID().equals(this.getOwnerUUID())) || entity instanceof YetiEntity) {
+                continue;
+            }
+
+            this.doHurtTarget(entity);
+        }
     }
 
     @Override
@@ -284,13 +373,18 @@ public class YetiEntity extends Animal implements IAnimatable, Enemy {
             List<YetiEntity> list = this.level.getEntitiesOfClass(YetiEntity.class, this.getBoundingBox().inflate(8.0D, 4.0D, 8.0D));
 
             for (YetiEntity yeti : list) {
-                if (!yeti.isBaby()) {
+                if (!yeti.isBaby() && !yeti.isTame()) {
                     yeti.isPassive = false;
+                    yeti.setOwnerUUID(null);
                     break;
                 }
             }
         }
-        this.isPassive = false;
+
+        if (!this.isTame()) {
+            this.isPassive = false;
+            this.setOwnerUUID(null);
+        }
         return super.hurt(source, amount);
     }
 
@@ -323,18 +417,16 @@ public class YetiEntity extends Animal implements IAnimatable, Enemy {
     }
 
     private <E extends IAnimatable> PlayState animationPredicate(AnimationEvent<E> event) {
-        if (this.getEating()) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation(this.isBaby() ? "yeti_baby.eat" : "yeti_adult.eat", false));
-            return PlayState.CONTINUE;
-        } else if (this.entityData.get(ATTACKING)) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("yeti.attack", false));
-            return PlayState.CONTINUE;
+        if (this.isEating()) {
+            event.getController().setAnimation(new AnimationBuilder().addAnimation(this.isBaby() ? "yeti_baby_eat" : "yeti_adult_eat"));
+        } else if (this.isAttacking()) {
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("yeti_attack"));
         } else if (!(animationSpeed > -0.15F && animationSpeed < 0.15F)) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("yeti.walk", true));
-            return PlayState.CONTINUE;
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("yeti_walk"));
+        } else {
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("yeti_idle"));
         }
 
-        event.getController().setAnimation(new AnimationBuilder().addAnimation("yeti.idle", false));
         return PlayState.CONTINUE;
     }
 
@@ -383,17 +475,19 @@ public class YetiEntity extends Animal implements IAnimatable, Enemy {
         return this.factory;
     }
 
+    static class TargetPlayerGoal extends NearestAttackableTargetGoal<Player> {
+        private final YetiEntity yeti;
 
-    class TargetPlayerGoal extends NearestAttackableTargetGoal<Player> {
-        public TargetPlayerGoal() {
-            super(YetiEntity.this, Player.class, 20, true, true, null);
+        public TargetPlayerGoal(YetiEntity yeti) {
+            super(yeti, Player.class, 20, true, true, null);
+            this.yeti = yeti;
         }
 
         @Override
         public boolean canUse() {
-            if (!YetiEntity.this.isBaby() && super.canUse()) {
-                for (YetiEntity yeti : YetiEntity.this.level.getEntitiesOfClass(YetiEntity.class, YetiEntity.this.getBoundingBox().inflate(8.0D, 4.0D, 8.0D))) {
-                    if (yeti.isBaby() && !YetiEntity.this.isPassive) {
+            if (!yeti.isBaby() && super.canUse()) {
+                for (YetiEntity yeti : yeti.level.getEntitiesOfClass(YetiEntity.class, yeti.getBoundingBox().inflate(8.0D, 4.0D, 8.0D))) {
+                    if (yeti.isBaby() && !yeti.isPassive) {
                         return true;
                     }
                 }
@@ -405,6 +499,39 @@ public class YetiEntity extends Animal implements IAnimatable, Enemy {
         @Override
         protected double getFollowDistance() {
             return super.getFollowDistance() * 0.5D;
+        }
+    }
+
+    static class YetiAttackGoal extends MeleeAttackGoal {
+        private final YetiEntity yeti;
+
+        public YetiAttackGoal(YetiEntity yeti, double speedModifier, boolean requiresLineOfSight) {
+            super(yeti, speedModifier, requiresLineOfSight);
+            this.yeti = yeti;
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return super.canContinueToUse() && !this.yeti.isPassive && !this.yeti.isBaby();
+        }
+
+        @Override
+        public boolean canUse() {
+            return super.canUse() && !this.yeti.isPassive && !this.yeti.isBaby();
+        }
+
+        @Override
+        protected void checkAndPerformAttack(LivingEntity entity, double distance) {
+            double d0 = this.getAttackReachSqr(entity);
+            if (distance <= d0 && this.yeti.attackTimer <= 0 && this.ticksUntilNextAttack <= 0) {
+                this.resetAttackCooldown();
+            }
+        }
+
+        @Override
+        protected void resetAttackCooldown() {
+            this.ticksUntilNextAttack = this.adjustedTickDelay(25);
+            this.yeti.setAttacking(true);
         }
     }
 }

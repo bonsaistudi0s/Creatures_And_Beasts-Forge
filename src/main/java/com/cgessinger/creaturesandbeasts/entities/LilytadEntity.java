@@ -57,7 +57,7 @@ public class LilytadEntity extends Animal implements IForgeShearable, IAnimatabl
     private final AnimationFactory factory = new AnimationFactory(this);
     private int shearedTimer;
 
-    public LilytadEntity(EntityType<? extends Animal> type, Level worldIn) {
+    public LilytadEntity(EntityType<LilytadEntity> type, Level worldIn) {
         super(type, worldIn);
         this.shearedTimer = 0;
 

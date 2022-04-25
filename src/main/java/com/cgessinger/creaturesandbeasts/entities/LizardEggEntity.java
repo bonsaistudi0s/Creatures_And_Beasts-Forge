@@ -18,8 +18,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkHooks;
 
 public class LizardEggEntity extends ThrowableItemProjectile {
-    public LizardEggEntity(EntityType<? extends LizardEggEntity> p_i50154_1_, Level p_i50154_2_) {
-        super(p_i50154_1_, p_i50154_2_);
+    public LizardEggEntity(EntityType<LizardEggEntity> type, Level level) {
+        super(type, level);
     }
 
     public LizardEggEntity(Level worldIn, LivingEntity throwerIn) {
