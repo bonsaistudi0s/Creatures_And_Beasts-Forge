@@ -85,6 +85,7 @@ public class ConvertItemGoal extends Goal {
     public void stop() {
         this.itemInstance = null;
         this.path = null;
+        this.navigation.stop();
         entityIn.setHolding(ItemStack.EMPTY);
         converting = false;
         entityIn.setInspecting(false);
@@ -97,7 +98,7 @@ public class ConvertItemGoal extends Goal {
 
     @Override
     public boolean canContinueToUse() {
-        return !this.navigation.isDone() || this.convertTime > 0;
+        return (!this.navigation.isDone() || this.convertTime > 0) && (!this.itemInstance.isRemoved() || this.converting);
     }
 
     public void convertItem() {

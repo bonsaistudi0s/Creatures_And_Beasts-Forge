@@ -4,6 +4,7 @@ import com.cgessinger.creaturesandbeasts.client.entity.model.SporelingModel;
 import com.cgessinger.creaturesandbeasts.entities.SporelingEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
@@ -26,12 +27,13 @@ public class SporelingRenderer extends GeoEntityRenderer<SporelingEntity> {
         if (bone.getName().equals("itemHolder")) {
             stack.pushPose();
             stack.scale(0.5F, 0.5F, 0.5F);
-            stack.translate(0.6F, -0.2F, -0.1F);
+            stack.translate(0.6F, 0.1F, -0.1F);
+            stack.mulPose(Vector3f.XP.rotationDegrees(-90.0F));
             Minecraft.getInstance().getItemRenderer().renderStatic(mainHand, TransformType.THIRD_PERSON_LEFT_HAND, packedLightIn, packedOverlayIn, stack, this.rtb, 0);
             stack.popPose();
 
             // restore the render buffer - GeckoLib expects this state otherwise you'll have weird texture issues
-            bufferIn = rtb.getBuffer(RenderType.entitySmoothCutout(whTexture));
+            bufferIn = rtb.getBuffer(RenderType.entityTranslucent(whTexture));
         }
 
         super.renderRecursively(bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
