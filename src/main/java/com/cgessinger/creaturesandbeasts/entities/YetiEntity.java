@@ -171,7 +171,7 @@ public class YetiEntity extends TamableAnimal implements IAnimatable, Enemy, Neu
             this.setEating(false);
         }
 
-        if (this.attackTimer == 11) {
+        if (this.attackTimer == 10) {
             this.performAttack();
         } else if (this.attackTimer == 0) {
             this.setAttacking(false);
