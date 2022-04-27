@@ -6,8 +6,9 @@ import com.cgessinger.creaturesandbeasts.init.CNBBlocks;
 import com.cgessinger.creaturesandbeasts.init.CNBEntityTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBItems;
 import com.cgessinger.creaturesandbeasts.init.CNBLizardTypes;
-import com.cgessinger.creaturesandbeasts.util.Netable;
 import com.cgessinger.creaturesandbeasts.util.LizardType;
+import com.cgessinger.creaturesandbeasts.util.Netable;
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
@@ -21,14 +22,18 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.stats.Stats;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.SpawnGroupData;
@@ -38,20 +43,22 @@ import net.minecraft.world.entity.ai.control.LookControl;
 import net.minecraft.world.entity.ai.goal.BreedGoal;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.MoveToBlockGoal;
 import net.minecraft.world.entity.ai.goal.PanicGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
@@ -68,16 +75,18 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
     private static final EntityDataAccessor<String> TYPE = SynchedEntityData.defineId(LizardEntity.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> PARTYING = SynchedEntityData.defineId(LizardEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> SAD = SynchedEntityData.defineId(LizardEntity.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Boolean> LAY_EGG = SynchedEntityData.defineId(LizardEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> HAS_EGG = SynchedEntityData.defineId(LizardEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> LAYING_EGG = SynchedEntityData.defineId(LizardEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> FROM_NET = SynchedEntityData.defineId(LizardEntity.class, EntityDataSerializers.BOOLEAN);
-    private final AnimationFactory factory = new AnimationFactory(this);
-    public BlockPos jukeboxPosition;
 
-    private int breedTimer;
+    private final AnimationFactory factory = new AnimationFactory(this);
+    private LizardEntity partner;
+
+    public BlockPos jukeboxPosition;
+    int layEggCounter;
 
     public LizardEntity(EntityType<LizardEntity> type, Level worldIn) {
         super(type, worldIn);
-        this.breedTimer = 0;
 
         this.lookControl = new LookControl(this) {
             @Override
@@ -95,7 +104,8 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(TYPE, CNBLizardTypes.DESERT.getId().toString());
-        this.entityData.define(LAY_EGG, false);
+        this.entityData.define(HAS_EGG, false);
+        this.entityData.define(LAYING_EGG, false);
         this.entityData.define(FROM_NET, false);
         this.entityData.define(PARTYING, false);
         this.entityData.define(SAD, false);
@@ -136,20 +146,23 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new PanicGoal(this, 1.25D));
-        this.goalSelector.addGoal(3, new BreedGoal(this, 1.0D));
-        this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 1.0D) {
+        this.goalSelector.addGoal(2, new LizardBreedGoal(this, 1.0D));
+        this.goalSelector.addGoal(3, new LizardLayEggGoal(this, 1.0D));
+        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 1.0D) {
             @Override
             public boolean canUse() {
                 return !((LizardEntity) this.mob).isPartying() && super.canUse();
             }
         });
-        this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0F));
-        this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 6.0F));
+        this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
     }
 
 
     @Override
     public void aiStep() {
+        super.aiStep();
+
         if (this.jukeboxPosition != null) {
             BlockEntity te = this.level.getBlockEntity(this.jukeboxPosition);
             Vec3 pos = this.position();
@@ -158,24 +171,11 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
             }
         }
 
-        if (this.isPartying() || this.entityData.get(LAY_EGG)) {
+        if (this.isPartying() || this.entityData.get(LAYING_EGG)) {
             this.navigation.stop();
-            this.getNavigation().setSpeedModifier(0);
         }
 
-        if (this.breedTimer > 0) {
-            Level world = this.level;
-            LizardEntity lizardMate = (LizardEntity) this;
-            BlockState state = CNBBlocks.LIZARD_EGGS.get().defaultBlockState().setValue(LizardEggBlock.EGGS, this.random.nextInt(4) + 3);
-            if (state.getBlock() instanceof LizardEggBlock eggBlock) {
-                eggBlock.setParents(this.getLizardType(), lizardMate.getLizardType());
-            }
-            world.setBlock(this.blockPosition(), state, 3);
-        }
-
-        super.aiStep();
-
-        if (this.isAlive() && this.entityData.get(LAY_EGG) && this.tickCount % 10 == 0) {
+        if (this.isAlive() && this.isLayingEgg() && this.layEggCounter >= 1 && this.layEggCounter % 5 == 0) {
             BlockPos blockpos = this.blockPosition().below();
             this.level.levelEvent(2001, blockpos, Block.getId(this.level.getBlockState(blockpos)));
         }
@@ -403,8 +403,25 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
         return this.entityData.get(SAD);
     }
 
+    public boolean hasEgg() {
+        return this.entityData.get(HAS_EGG);
+    }
+
+    void setHasEgg(boolean hasEgg) {
+        this.entityData.set(HAS_EGG, hasEgg);
+    }
+
+    public boolean isLayingEgg() {
+        return this.entityData.get(LAYING_EGG);
+    }
+
+    void setLayingEgg(boolean layingEgg) {
+        this.layEggCounter = layingEgg ? 1 : 0;
+        this.entityData.set(LAYING_EGG, layingEgg);
+    }
+
     public boolean shouldLookAround() {
-        return !this.isPartying() && !this.entityData.get(LAY_EGG);
+        return !this.isPartying() && !this.entityData.get(LAYING_EGG);
     }
 
     @Override
@@ -430,14 +447,14 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
     }
 
     private <E extends IAnimatable> PlayState animationPredicate(AnimationEvent<E> event) {
-        if (this.entityData.get(LAY_EGG)) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("lizard.dig", true));
+        if (this.entityData.get(LAYING_EGG)) {
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("lizard_dig", true));
             return PlayState.CONTINUE;
         } else if (!(animationSpeed > -0.15F && animationSpeed < 0.15F)) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("lizard.walk", true));
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("lizard_walk", true));
             return PlayState.CONTINUE;
         } else if (this.isPartying()) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("lizard.dance", true));
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("lizard_dance", true));
             return PlayState.CONTINUE;
         }
         return PlayState.STOP;
@@ -451,5 +468,87 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
     @Override
     public AnimationFactory getFactory() {
         return this.factory;
+    }
+
+    static class LizardBreedGoal extends BreedGoal {
+        private final LizardEntity lizard;
+
+        LizardBreedGoal(LizardEntity lizard, double speedModifier) {
+            super(lizard, speedModifier);
+            this.lizard = lizard;
+        }
+
+        public boolean canUse() {
+            return super.canUse() && !this.lizard.hasEgg();
+        }
+
+        protected void breed() {
+            ServerPlayer serverplayer = this.animal.getLoveCause();
+            if (serverplayer == null && this.partner.getLoveCause() != null) {
+                serverplayer = this.partner.getLoveCause();
+            }
+
+            if (serverplayer != null) {
+                serverplayer.awardStat(Stats.ANIMALS_BRED);
+                CriteriaTriggers.BRED_ANIMALS.trigger(serverplayer, this.animal, this.partner, null);
+            }
+
+            this.lizard.setHasEgg(true);
+            this.lizard.partner = (LizardEntity) this.partner;
+            this.animal.resetLove();
+            this.partner.resetLove();
+            Random random = this.animal.getRandom();
+            if (this.level.getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT)) {
+                this.level.addFreshEntity(new ExperienceOrb(this.level, this.animal.getX(), this.animal.getY(), this.animal.getZ(), random.nextInt(7) + 1));
+            }
+
+        }
+    }
+
+    static class LizardLayEggGoal extends MoveToBlockGoal {
+        private final LizardEntity lizard;
+
+        LizardLayEggGoal(LizardEntity lizard, double speedModifier) {
+            super(lizard, speedModifier, 16);
+            this.lizard = lizard;
+        }
+
+        public boolean canUse() {
+            return this.lizard.hasEgg() && super.canUse();
+        }
+
+        public boolean canContinueToUse() {
+            return super.canContinueToUse() && this.lizard.hasEgg();
+        }
+
+        public void tick() {
+            super.tick();
+            BlockPos blockpos = this.lizard.blockPosition();
+            if (!this.lizard.isInWater() && this.isReachedTarget()) {
+                if (this.lizard.layEggCounter < 1) {
+                    this.lizard.setLayingEgg(true);
+                } else if (this.lizard.layEggCounter > this.adjustedTickDelay(200)) {
+                    Level level = this.lizard.level;
+                    level.playSound(null, blockpos, SoundEvents.TURTLE_LAY_EGG, SoundSource.BLOCKS, 0.3F, 0.9F + level.random.nextFloat() * 0.2F);
+                    level.setBlock(this.blockPos.above(), CNBBlocks.LIZARD_EGGS.get().defaultBlockState().setValue(LizardEggBlock.EGGS, this.lizard.random.nextInt(6) + 1), 3);
+
+                    LizardEggBlock lizardEggBlock = (LizardEggBlock) level.getBlockState(this.blockPos.above()).getBlock();
+                    lizardEggBlock.setParents(this.lizard.getLizardType(), this.lizard.partner.getLizardType());
+
+                    this.lizard.setHasEgg(false);
+                    this.lizard.setLayingEgg(false);
+                    this.lizard.setInLoveTime(600);
+                }
+
+                if (this.lizard.isLayingEgg()) {
+                    ++this.lizard.layEggCounter;
+                }
+            }
+
+        }
+
+        protected boolean isValidTarget(LevelReader levelReader, BlockPos pos) {
+            return levelReader.isEmptyBlock(pos.above());
+        }
     }
 }

@@ -10,6 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -23,6 +24,7 @@ import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import javax.annotation.Nullable;
 import java.util.Random;
 
 public class LizardEggBlock extends Block {
@@ -33,14 +35,13 @@ public class LizardEggBlock extends Block {
 
     public LizardEggBlock() {
         super(BlockBehaviour.Properties.of(Material.EGG, MaterialColor.SAND).strength(0.5F).sound(SoundType.METAL).strength(1.5F, 6.0F).randomTicks().noOcclusion());
-        this.registerDefaultState(this.stateDefinition.any().setValue(EGGS, 6));
+        this.registerDefaultState(this.stateDefinition.any().setValue(EGGS, 1));
         this.parent1 = CNBLizardTypes.DESERT;
         this.parent2 = CNBLizardTypes.JUNGLE;
     }
 
     @Override
     protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
-        super.createBlockStateDefinition(builder);
         builder.add(EGGS);
     }
 
@@ -91,5 +92,15 @@ public class LizardEggBlock extends Block {
     public void setParents(LizardType parent1, LizardType parent2) {
         this.parent1 = parent1;
         this.parent2 = parent2;
+    }
+
+    public boolean canBeReplaced(BlockState blockState, BlockPlaceContext context) {
+        return context.isSecondaryUseActive() && context.getItemInHand().is(this.asItem()) && blockState.getValue(EGGS) < 6 || super.canBeReplaced(blockState, context);
+    }
+
+    @Nullable
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        BlockState blockstate = context.getLevel().getBlockState(context.getClickedPos());
+        return blockstate.is(this) ? blockstate.setValue(EGGS, Math.min(6, blockstate.getValue(EGGS) + 1)) : super.getStateForPlacement(context);
     }
 }

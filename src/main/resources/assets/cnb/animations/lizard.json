@@ -1,7 +1,7 @@
 {
   "format_version": "1.8.0",
   "animations": {
-    "lizard.walk": {
+    "lizard_walk": {
       "loop": true,
       "animation_length": 0.4,
       "bones": {
@@ -107,7 +107,7 @@
         }
       }
     },
-    "lizard.dance": {
+    "lizard_dance": {
       "loop": true,
       "animation_length": 1.92,
       "override_previous_animation": true,
@@ -307,7 +307,7 @@
         }
       }
     },
-    "lizard.dig": {
+    "lizard_dig": {
       "loop": true,
       "animation_length": 0.56,
       "bones": {

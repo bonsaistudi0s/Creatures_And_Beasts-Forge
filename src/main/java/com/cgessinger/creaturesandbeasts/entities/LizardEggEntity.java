@@ -36,9 +36,9 @@ public class LizardEggEntity extends ThrowableItemProjectile {
 
     }
 
-    protected void onHitEntity(EntityHitResult p_213868_1_) {
-        super.onHitEntity(p_213868_1_);
-        p_213868_1_.getEntity().hurt(DamageSource.thrown(this, this.getOwner()), 0.0F);
+    protected void onHitEntity(EntityHitResult hitResult) {
+        super.onHitEntity(hitResult);
+        hitResult.getEntity().hurt(DamageSource.thrown(this, this.getOwner()), 0.0F);
     }
 
     protected void onHit(HitResult result) {
