@@ -22,7 +22,7 @@ public class CNBLilytadTypes {
 
 
     private static LilytadType registerWithCNBDirectory(String namespace, String name) {
-        return registerWithCNBDirectory(() -> ForgeRegistries.ITEMS.getValue(new ResourceLocation(namespace, "lilytad_flower_" + name)), namespace, name);
+        return registerWithCNBDirectory(() -> ForgeRegistries.ITEMS.getValue(new ResourceLocation(namespace, name + "_waterlily")), namespace, name);
     }
 
     private static LilytadType registerWithCNBDirectory(@Nullable Item shearItem, String namespace, String name) {

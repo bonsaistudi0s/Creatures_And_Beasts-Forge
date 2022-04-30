@@ -83,14 +83,14 @@ public class LittleGrebeEntity extends Animal implements IAnimatable {
         this.goalSelector.addGoal(1, new MountAdultGoal(this, 1.2D));
         this.goalSelector.addGoal(2, new SmoothSwimGoal(this));
         this.goalSelector.addGoal(3, new PanicGoal(this, 1.0D));
-        this.goalSelector.addGoal(3, new FollowParentGoal(this, 1.25D));
-        this.goalSelector.addGoal(3, new LittleGrebeEntity.SwimTravelGoal(this, 1.0D));
-        this.goalSelector.addGoal(4, new LittleGrebeEntity.WanderGoal(this, 1.0D, 2));
-        this.goalSelector.addGoal(5, new TemptGoal(this, 1.0D, TEMPTATION_ITEMS, false));
-        this.goalSelector.addGoal(5, new BreedGoal(this, 1.0D));
-        this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
-        this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
-        this.goalSelector.addGoal(8, new GoToWaterGoal(this, 0.8D));
+        this.goalSelector.addGoal(3, new TemptGoal(this, 1.0D, TEMPTATION_ITEMS, false));
+        this.goalSelector.addGoal(4, new BreedGoal(this, 1.0D));
+        this.goalSelector.addGoal(5, new FollowParentGoal(this, 1.25D));
+        this.goalSelector.addGoal(5, new LittleGrebeEntity.SwimTravelGoal(this, 1.0D));
+        this.goalSelector.addGoal(6, new LittleGrebeEntity.WanderGoal(this, 1.0D, 120));
+        this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0F));
+        this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(9, new GoToWaterGoal(this, 0.8D));
     }
 
     public static boolean checkGrebeSpawnRules(EntityType<LittleGrebeEntity> animal, LevelAccessor worldIn, MobSpawnType reason, BlockPos pos, Random randomIn) {
@@ -132,7 +132,7 @@ public class LittleGrebeEntity extends Animal implements IAnimatable {
         this.flapSpeed = Mth.clamp(this.flapSpeed, 0.0F, 1.0F);
 
         Vec3 vec3 = this.getDeltaMovement();
-        if (!this.onGround && vec3.y < 0.0D) {
+        if (!this.onGround && !this.isBaby() && vec3.y < 0.0D) {
             this.setDeltaMovement(vec3.multiply(1.0D, 0.6D, 1.0D));
         }
     }
@@ -145,7 +145,7 @@ public class LittleGrebeEntity extends Animal implements IAnimatable {
 
     @Override
     public boolean causeFallDamage(float distance, float damageMultiplier, DamageSource source) {
-        return false;
+        return this.isBaby() && super.causeFallDamage(distance, damageMultiplier, source);
     }
 
     @Override

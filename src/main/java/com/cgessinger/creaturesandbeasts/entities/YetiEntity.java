@@ -17,6 +17,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.TimeUtil;
 import net.minecraft.util.valueproviders.UniformInt;
@@ -69,12 +70,14 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import java.util.UUID;
 
 public class YetiEntity extends TamableAnimal implements IAnimatable, Enemy, NeutralMob {
     public static final EntityDataAccessor<Boolean> ATTACKING = SynchedEntityData.defineId(YetiEntity.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<Boolean> EATING = SynchedEntityData.defineId(YetiEntity.class, EntityDataSerializers.BOOLEAN);
+    public static final EntityDataAccessor<Boolean> PASSIVE = SynchedEntityData.defineId(YetiEntity.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<ItemStack> HELD_ITEM = SynchedEntityData.defineId(YetiEntity.class, EntityDataSerializers.ITEM_STACK);
 
     private final AnimationFactory factory = new AnimationFactory(this);
@@ -88,12 +91,11 @@ public class YetiEntity extends TamableAnimal implements IAnimatable, Enemy, Neu
 
     private int eatTimer;
     private int attackTimer;
-    private boolean isPassive;
 
     public YetiEntity(EntityType<YetiEntity> type, Level worldIn) {
         super(type, worldIn);
+        this.setTame(false);
         this.eatTimer = 0;
-        this.isPassive = false;
     }
 
     @Override
@@ -101,20 +103,21 @@ public class YetiEntity extends TamableAnimal implements IAnimatable, Enemy, Neu
         super.defineSynchedData();
         this.entityData.define(ATTACKING, false);
         this.entityData.define(EATING, false);
+        this.entityData.define(PASSIVE, false);
         this.entityData.define(HELD_ITEM, ItemStack.EMPTY);
     }
 
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        compound.putBoolean("passive", this.isPassive);
+        compound.putBoolean("passive", this.isPassive());
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         if (compound.contains("passive")) {
-            this.isPassive = compound.getBoolean("passive");
+            this.setPassive(compound.getBoolean("passive"));
         }
     }
 
@@ -162,9 +165,10 @@ public class YetiEntity extends TamableAnimal implements IAnimatable, Enemy, Neu
         if (this.eatTimer == 40) {
             if (this.isBaby()) {
                 this.ageUp((int) (-this.getAge() / 20F * 0.1F), true);
-            } else if (this.getHolding().sameItem(Items.MELON_SLICE.getDefaultInstance())) {
+            }
+            if (this.getHolding().sameItem(Items.MELON_SLICE.getDefaultInstance())) {
                 this.setTarget(null);
-                this.isPassive = true;
+                this.setPassive(true);
             }
             this.setHolding(ItemStack.EMPTY);
         } else if (this.eatTimer == 0) {
@@ -233,23 +237,24 @@ public class YetiEntity extends TamableAnimal implements IAnimatable, Enemy, Neu
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack item = player.getItemInHand(hand);
 
+        if (!(this.isEating() || this.isAttacking())) {
+            if (!this.level.isClientSide && item.getItem() == Items.MELON_SLICE && !this.isPassive()) {
+                this.setOwnerUUID(player.getUUID());
+                return this.startEat(player, item.copy());
+            } else if (item.getItem() == Items.SWEET_BERRIES) {
+                if (!this.level.isClientSide && this.getAge() == 0 && this.canFallInLove()) {
+                    this.setInLove(player);
+                    return this.startEat(player, item.copy());
+                } else if (this.isBaby()) {
+                    return this.startEat(player, item.copy());
+                }
+            }
+        }
+
         if (this.level.isClientSide) {
             return InteractionResult.CONSUME;
         }
 
-        if (!(this.isEating() || this.entityData.get(ATTACKING))) {
-            if (item.getItem() == Items.MELON_SLICE && !this.isPassive) {
-                this.setOwnerUUID(player.getUUID());
-                return this.startEat(player, item);
-            } else if (item.getItem() == Items.SWEET_BERRIES) {
-                if (this.canFallInLove()) {
-                    this.setInLove(player);
-                    return this.startEat(player, item);
-                } else if (this.isBaby()) {
-                    return this.startEat(player, item);
-                }
-            }
-        }
         return InteractionResult.PASS;
     }
 
@@ -280,8 +285,11 @@ public class YetiEntity extends TamableAnimal implements IAnimatable, Enemy, Neu
         this.setEating(false);
         this.setHolding(ItemStack.EMPTY);
 
-        if (this.isPassive && this.getOwner() != null && this.getOwner() instanceof Player player) {
+        if (!this.level.isClientSide && this.isPassive() && this.getOwner() != null && this.getOwner() instanceof ServerPlayer player) {
             this.tame(player);
+            this.navigation.stop();
+            this.setTarget(null);
+            this.level.broadcastEntityEvent(this, (byte)7);
         }
     }
 
@@ -307,6 +315,14 @@ public class YetiEntity extends TamableAnimal implements IAnimatable, Enemy, Neu
 
     public boolean isAttacking() {
         return this.entityData.get(ATTACKING);
+    }
+
+    public boolean isPassive() {
+        return this.entityData.get(PASSIVE);
+    }
+
+    public void setPassive(boolean isPassive) {
+        this.entityData.set(PASSIVE, isPassive);
     }
 
     public ItemStack getHolding() {
@@ -359,10 +375,9 @@ public class YetiEntity extends TamableAnimal implements IAnimatable, Enemy, Neu
         List<LivingEntity> list = this.level.getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(2.0D, 4.0D, 2.0D));
 
         for (LivingEntity entity : list) {
-            if ((entity instanceof Player && entity.getUUID().equals(this.getOwnerUUID())) || entity instanceof YetiEntity) {
+            if ((entity instanceof Player && entity.getUUID().equals(this.getOwnerUUID())) || (entity instanceof YetiEntity && Objects.equals(this.getOwnerUUID(), ((YetiEntity) entity).getOwnerUUID()))) {
                 continue;
             }
-
             this.doHurtTarget(entity);
         }
     }
@@ -374,7 +389,7 @@ public class YetiEntity extends TamableAnimal implements IAnimatable, Enemy, Neu
 
             for (YetiEntity yeti : list) {
                 if (!yeti.isBaby() && !yeti.isTame()) {
-                    yeti.isPassive = false;
+                    yeti.setPassive(false);
                     yeti.setOwnerUUID(null);
                     break;
                 }
@@ -382,7 +397,7 @@ public class YetiEntity extends TamableAnimal implements IAnimatable, Enemy, Neu
         }
 
         if (!this.isTame()) {
-            this.isPassive = false;
+            this.setPassive(false);
             this.setOwnerUUID(null);
         }
         return super.hurt(source, amount);
@@ -487,7 +502,7 @@ public class YetiEntity extends TamableAnimal implements IAnimatable, Enemy, Neu
         public boolean canUse() {
             if (!yeti.isBaby() && super.canUse()) {
                 for (YetiEntity yeti : yeti.level.getEntitiesOfClass(YetiEntity.class, yeti.getBoundingBox().inflate(8.0D, 4.0D, 8.0D))) {
-                    if (yeti.isBaby() && !yeti.isPassive) {
+                    if (yeti.isBaby() && !yeti.isPassive()) {
                         return true;
                     }
                 }
@@ -512,12 +527,12 @@ public class YetiEntity extends TamableAnimal implements IAnimatable, Enemy, Neu
 
         @Override
         public boolean canContinueToUse() {
-            return super.canContinueToUse() && !this.yeti.isPassive && !this.yeti.isBaby();
+            return super.canContinueToUse() && !this.yeti.isPassive() && !this.yeti.isBaby();
         }
 
         @Override
         public boolean canUse() {
-            return super.canUse() && !this.yeti.isPassive && !this.yeti.isBaby();
+            return super.canUse() && !this.yeti.isPassive() && !this.yeti.isBaby();
         }
 
         @Override
