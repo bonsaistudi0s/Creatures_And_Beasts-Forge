@@ -294,5 +294,51 @@
         "stream": true
       }
     ]
+  },
+  "entity.minipad.hurt": {
+    "category": "entity",
+    "subtitle": "entity.minipad.hurt",
+    "sounds": [
+      {
+        "name": "cnb:entity/minipad/entity.minipad.hurt",
+        "stream": true
+      },
+      {
+        "name": "cnb:entity/minipad/entity.minipad.hurt_2",
+        "stream": true
+      }
+    ]
+  },
+  "entity.minipad.step": {
+    "category": "entity",
+    "subtitle": "entity.minipad.step",
+    "sounds": [
+      {
+        "name": "cnb:entity/minipad/entity.minipad.step",
+        "stream": true
+      },
+      {
+        "name": "cnb:entity/minipad/entity.minipad.step_2",
+        "stream": true
+      }
+    ]
+  },
+  "entity.minipad.swim": {
+    "category": "entity",
+    "subtitle": "entity.minipad.swim",
+    "sounds": [
+      {
+        "name": "cnb:entity/minipad/entity.minipad.swim",
+        "stream": true
+      },
+      {
+        "name": "cnb:entity/minipad/entity.minipad.swim_2",
+        "stream": true
+      },
+      {
+        "name": "cnb:entity/minipad/entity.minipad.swim_3",
+        "stream": true
+      }
+    ]
   }
 }
