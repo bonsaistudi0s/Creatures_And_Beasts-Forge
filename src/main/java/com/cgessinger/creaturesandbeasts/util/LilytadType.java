@@ -58,13 +58,13 @@ public class LilytadType {
         this.texture = textureLocation;
     }
 
-    public static LilytadType registerLilytadType(LilytadType lizardType) {
-        ResourceLocation id = lizardType.getId();
+    public static LilytadType registerLilytadType(LilytadType minipadType) {
+        ResourceLocation id = minipadType.getId();
         if (LILYTAD_TYPES.containsKey(id)) {
             throw new IllegalStateException(String.format("%s already exists in the LilytadType registry.", id.toString()));
         }
-        LILYTAD_TYPES.put(id, lizardType);
-        return lizardType;
+        LILYTAD_TYPES.put(id, minipadType);
+        return minipadType;
     }
 
     @Nullable

@@ -7,6 +7,7 @@ import com.cgessinger.creaturesandbeasts.entities.CindershellEntity;
 import com.cgessinger.creaturesandbeasts.entities.LittleGrebeEntity;
 import com.cgessinger.creaturesandbeasts.entities.LilytadEntity;
 import com.cgessinger.creaturesandbeasts.entities.LizardEntity;
+import com.cgessinger.creaturesandbeasts.entities.MinipadEntity;
 import com.cgessinger.creaturesandbeasts.entities.SporelingEntity;
 import com.cgessinger.creaturesandbeasts.entities.YetiEntity;
 import com.cgessinger.creaturesandbeasts.init.CNBEntityTypes;
@@ -34,6 +35,7 @@ public class ModEntitySpawns {
         checkAndAddSpawn(event, biomeName, ServerConfig.FRIENDLY_SPORELING_CONFIG, CNBEntityTypes.SPORELING.get(), MobCategory.CREATURE, 3, 5);
         checkAndAddSpawn(event, biomeName, ServerConfig.LILYTAD_CONFIG, CNBEntityTypes.LILYTAD.get(), MobCategory.CREATURE, 1, 1);
         checkAndAddSpawn(event, biomeName, ServerConfig.YETI_CONFIG, CNBEntityTypes.YETI.get(), MobCategory.CREATURE, 2, 3);
+        checkAndAddSpawn(event, biomeName, ServerConfig.MINIPAD_CONFIG, CNBEntityTypes.MINIPAD.get(), MobCategory.CREATURE, 3, 6);
     }
 
     private static void checkAndAddSpawn(BiomeLoadingEvent event, String biomeName, EntityConfig config, EntityType<? extends Entity> type, MobCategory classification, int min, int max) {
@@ -50,5 +52,6 @@ public class ModEntitySpawns {
         SpawnPlacements.register(CNBEntityTypes.SPORELING.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SporelingEntity::checkSporelingSpawnRules);
         SpawnPlacements.register(CNBEntityTypes.LILYTAD.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, LilytadEntity::checkLilytadSpawnRules);
         SpawnPlacements.register(CNBEntityTypes.YETI.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, YetiEntity::checkYetiSpawnRules);
+        SpawnPlacements.register(CNBEntityTypes.MINIPAD.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MinipadEntity::checkMinipadSpawnRules);
     }
 }

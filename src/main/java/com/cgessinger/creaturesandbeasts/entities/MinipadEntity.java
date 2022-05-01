@@ -1,10 +1,9 @@
 package com.cgessinger.creaturesandbeasts.entities;
 
 import com.cgessinger.creaturesandbeasts.config.CNBConfig;
-import com.cgessinger.creaturesandbeasts.entities.ai.FindWaterOneDeepGoal;
-import com.cgessinger.creaturesandbeasts.init.CNBLilytadTypes;
+import com.cgessinger.creaturesandbeasts.init.CNBMinipadTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBSoundEvents;
-import com.cgessinger.creaturesandbeasts.util.LilytadType;
+import com.cgessinger.creaturesandbeasts.util.MinipadType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -27,10 +26,13 @@ import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.LookControl;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.PanicGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.RandomSwimmingGoal;
+import net.minecraft.world.entity.ai.goal.TryFindWaterGoal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -38,6 +40,7 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraftforge.common.IForgeShearable;
 import software.bernie.geckolib3.core.IAnimatable;
@@ -53,21 +56,23 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Random;
 
-public class LilytadEntity extends Animal implements IForgeShearable, IAnimatable {
-    public static final EntityDataAccessor<String> TYPE = SynchedEntityData.defineId(LilytadEntity.class, EntityDataSerializers.STRING);
-    public static final EntityDataAccessor<Boolean> SHEARED = SynchedEntityData.defineId(LilytadEntity.class, EntityDataSerializers.BOOLEAN);
+public class MinipadEntity extends Animal implements IForgeShearable, IAnimatable {
+    public static final EntityDataAccessor<String> TYPE = SynchedEntityData.defineId(MinipadEntity.class, EntityDataSerializers.STRING);
+    public static final EntityDataAccessor<Boolean> SHEARED = SynchedEntityData.defineId(MinipadEntity.class, EntityDataSerializers.BOOLEAN);
+    public static final EntityDataAccessor<Boolean> GLOWING = SynchedEntityData.defineId(MinipadEntity.class, EntityDataSerializers.BOOLEAN);
+
     private final AnimationFactory factory = new AnimationFactory(this);
     private int shearedTimer;
 
-    public LilytadEntity(EntityType<LilytadEntity> type, Level worldIn) {
+    public MinipadEntity(EntityType<MinipadEntity> type, Level worldIn) {
         super(type, worldIn);
         this.shearedTimer = 0;
 
         this.lookControl = new LookControl(this) {
             @Override
             public void tick() {
-                LilytadEntity lilytad = (LilytadEntity) this.mob;
-                if (lilytad.shouldLookAround()) {
+                MinipadEntity minipad = (MinipadEntity) this.mob;
+                if (minipad.shouldLookAround()) {
                     super.tick();
                 }
             }
@@ -77,19 +82,20 @@ public class LilytadEntity extends Animal implements IForgeShearable, IAnimatabl
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
-        this.entityData.define(TYPE, CNBLilytadTypes.PINK.getId().toString());
+        this.entityData.define(TYPE, CNBMinipadTypes.PINK.getId().toString());
         this.entityData.define(SHEARED, false);
+        this.entityData.define(GLOWING, false);
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
 
-        LilytadType type = LilytadType.getById(compound.getString("LilytadType"));
+        MinipadType type = MinipadType.getById(compound.getString("MinipadType"));
         if (type == null) {
-            type = CNBLilytadTypes.PINK;
+            type = CNBMinipadTypes.PINK;
         }
-        this.setLilytadType(type);
+        this.setMinipadType(type);
         this.shearedTimer = compound.getInt("ShearedTimer");
         this.setSheared(this.shearedTimer > 0);
     }
@@ -98,19 +104,19 @@ public class LilytadEntity extends Animal implements IForgeShearable, IAnimatabl
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putInt("ShearedTimer", this.shearedTimer);
-        compound.putString("LilytadType", this.getLilytadType().getId().toString());
+        compound.putString("MinipadType", this.getMinipadType().getId().toString());
     }
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 20.0D)
+                .add(Attributes.MAX_HEALTH, 12.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.2D);
     }
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(1, new FindWaterOneDeepGoal(this));
-        this.goalSelector.addGoal(2, new PanicGoal(this, 1.25D));
+        this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(1, new PanicGoal(this, 1.25D));
         this.goalSelector.addGoal(2, new RandomStrollGoal(this, 1.0D) {
             @Override
             public boolean canUse() {
@@ -122,8 +128,10 @@ public class LilytadEntity extends Animal implements IForgeShearable, IAnimatabl
                 return !this.mob.level.getFluidState(this.mob.blockPosition()).is(FluidTags.WATER) && super.canContinueToUse();
             }
         });
-        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(3, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(2, new RandomSwimmingGoal(this, 1.0D, 120));
+        this.goalSelector.addGoal(3, new TryFindWaterGoal(this));
+        this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
     }
 
     @Override
@@ -132,6 +140,10 @@ public class LilytadEntity extends Animal implements IForgeShearable, IAnimatabl
         if (!this.level.isClientSide() && --this.shearedTimer == 0) {
             this.setSheared(false);
         }
+
+        if (!this.level.isClientSide()) {
+            this.setGlowing(this.level.isNight());
+        }
     }
 
     @Override
@@ -139,26 +151,26 @@ public class LilytadEntity extends Animal implements IForgeShearable, IAnimatabl
         switch (this.random.nextInt(3)) {
             case 0:
             default:
-                this.setLilytadType(CNBLilytadTypes.PINK);
+                this.setMinipadType(CNBMinipadTypes.PINK);
                 break;
             case 1:
-                this.setLilytadType(CNBLilytadTypes.LIGHT_PINK);
+                this.setMinipadType(CNBMinipadTypes.LIGHT_PINK);
                 break;
             case 2:
-                this.setLilytadType(CNBLilytadTypes.YELLOW);
+                this.setMinipadType(CNBMinipadTypes.YELLOW);
                 break;
         }
 
         return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData, tag);
     }
 
-    public static boolean checkLilytadSpawnRules(EntityType<LilytadEntity> animal, LevelAccessor worldIn, MobSpawnType reason, BlockPos pos, Random randomIn) {
+    public static boolean checkMinipadSpawnRules(EntityType<MinipadEntity> animal, LevelAccessor worldIn, MobSpawnType reason, BlockPos pos, Random randomIn) {
         return true;
     }
 
     @Override
     public void checkDespawn() {
-        if (!CNBConfig.ServerConfig.LILYTAD_CONFIG.shouldExist) {
+        if (!CNBConfig.ServerConfig.MINIPAD_CONFIG.shouldExist) {
             this.discard();
             return;
         }
@@ -221,12 +233,20 @@ public class LilytadEntity extends Animal implements IForgeShearable, IAnimatabl
         this.entityData.set(SHEARED, sheared);
     }
 
-    public void setLilytadType(LilytadType lilytadType) {
-        this.entityData.set(TYPE, lilytadType.getId().toString());
+    public void setGlowing(boolean isGlowing) {
+        this.entityData.set(GLOWING, isGlowing);
     }
 
-    public LilytadType getLilytadType() {
-        return LilytadType.getById(this.entityData.get(TYPE));
+    public boolean isGlowing() {
+        return this.entityData.get(GLOWING);
+    }
+
+    public void setMinipadType(MinipadType minipadType) {
+        this.entityData.set(TYPE, minipadType.getId().toString());
+    }
+
+    public MinipadType getMinipadType() {
+        return MinipadType.getById(this.entityData.get(TYPE));
     }
 
     @Override
@@ -242,7 +262,12 @@ public class LilytadEntity extends Animal implements IForgeShearable, IAnimatabl
         if (!world.isClientSide) {
             this.setSheared(true);
             java.util.List<ItemStack> items = new java.util.ArrayList<>();
-            items.add(new ItemStack(this.getLilytadType().getShearItem()));
+
+            if (this.level.isNight()) {
+                items.add(new ItemStack(this.getMinipadType().getGlowShearItem()));
+            } else {
+                items.add(new ItemStack(this.getMinipadType().getShearItem()));
+            }
 
             return items;
         }
@@ -253,27 +278,44 @@ public class LilytadEntity extends Animal implements IForgeShearable, IAnimatabl
         return !this.level.getFluidState(this.blockPosition()).is(FluidTags.WATER);
     }
 
-    @Nullable
     @Override
-    protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
-        return CNBSoundEvents.LILYTAD_HURT.get();
+    protected int getExperienceReward(Player p_27590_) {
+        return 2 + this.level.random.nextInt(3);
+    }
+
+    @Override
+    protected void playStepSound(BlockPos pos, BlockState blockIn) {
+        if (!blockIn.getMaterial().isLiquid()) {
+            this.playSound(CNBSoundEvents.MINIPAD_STEP.get(), this.getSoundVolume() * 0.3F, this.getVoicePitch());
+        }
+    }
+
+    @Override
+    protected SoundEvent getSwimSound() {
+        return CNBSoundEvents.MINIPAD_SWIM.get();
     }
 
     @Nullable
     @Override
-    protected SoundEvent getAmbientSound() {
-        return CNBSoundEvents.LILYTAD_AMBIENT.get();
+    protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
+        return CNBSoundEvents.MINIPAD_HURT.get();
     }
 
     @Nullable
     @Override
     protected SoundEvent getDeathSound() {
-        return CNBSoundEvents.LILYTAD_DEATH.get();
+        return CNBSoundEvents.MINIPAD_HURT.get();
     }
 
     private <E extends IAnimatable> PlayState animationPredicate(AnimationEvent<E> event) {
-        if (!(animationSpeed > -0.15F && animationSpeed < 0.15F)) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("lilytad.walk", true));
+        if (this.isInWater() && event.isMoving()) {
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("minipad_swim"));
+            return PlayState.CONTINUE;
+        } else if(this.isInWater()) {
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("minipad_float"));
+            return PlayState.CONTINUE;
+        } else if (event.isMoving()) {
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("minipad_walk"));
             return PlayState.CONTINUE;
         }
         return PlayState.STOP;
@@ -288,5 +330,4 @@ public class LilytadEntity extends Animal implements IForgeShearable, IAnimatabl
     public AnimationFactory getFactory() {
         return this.factory;
     }
-
 }

@@ -6,6 +6,13 @@
   "item.cnb.yeti_antler": "Yeti Antler",
   "item.cnb.yeti_hide": "Yeti Hide",
 
+  "item.cnb.pink_minipad_flower": "Pink Minipad Flower",
+  "item.cnb.light_pink_minipad_flower": "Light Pink Minipad Flower",
+  "item.cnb.yellow_minipad_flower": "Yellow Minipad Flower",
+  "item.cnb.pink_minipad_flower_glow": "Pink Glowing Minipad Flower",
+  "item.cnb.light_pink_minipad_flower_glow": "Light Pink Glowing Minipad Flower",
+  "item.cnb.yellow_minipad_flower_glow": "Yellow Glowing Minipad Flower",
+
   "item.cnb.pink_waterlily": "Pink Waterlily",
   "item.cnb.light_pink_waterlily": "Light Pink Waterlily",
   "item.cnb.yellow_waterlily": "Yellow Waterlily",
@@ -30,6 +37,7 @@
   "item.cnb.cindershell_bucket": "Cindershell In A Bucket",
   "item.cnb.lilytad_spawn_egg": "Lilytad Spawn Egg",
   "item.cnb.yeti_spawn_egg": "Yeti Spawn Egg",
+  "item.cnb.minipad_spawn_egg": "Minipad Spawn Egg",
 
   "entity.cnb.little_grebe": "Little Grebe",
   "entity.cnb.little_grebe_chick": "Little Grebe Chick",
@@ -38,6 +46,7 @@
   "entity.cnb.sporeling": "Sporeling",
   "entity.cnb.yeti": "Yeti",
   "entity.cnb.lilytad": "Lilytad",
+  "entity.cnb.minipad": "Minipad",
 
   "entity.little_grebe_chick.ambient": "Little Grebe cheeps",
   "entity.little_grebe.ambient": "Little Grebe cheeps",
@@ -66,6 +75,10 @@
   "entity.yeti.hit": "Yeti attacks",
   "entity.yeti_adult.eat": "Yeti eats",
   "entity.yeti_baby.eat": "Baby Yeti chomps",
+
+  "entity.minipad.hurt": "Minipad hurts",
+  "entity.minipad.step": "Minipad walks",
+  "entity.minipad.swim": "Minipad swims",
 
   "itemGroup.cnb_tab": "Creatures And Beasts"
 }

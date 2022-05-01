@@ -6,6 +6,7 @@ import com.cgessinger.creaturesandbeasts.entities.CindershellEntity;
 import com.cgessinger.creaturesandbeasts.entities.LilytadEntity;
 import com.cgessinger.creaturesandbeasts.entities.LittleGrebeEntity;
 import com.cgessinger.creaturesandbeasts.entities.LizardEntity;
+import com.cgessinger.creaturesandbeasts.entities.MinipadEntity;
 import com.cgessinger.creaturesandbeasts.entities.SporelingEntity;
 import com.cgessinger.creaturesandbeasts.entities.YetiEntity;
 import com.cgessinger.creaturesandbeasts.init.CNBEntityTypes;
@@ -39,6 +40,7 @@ public class CNBEvents {
         event.put(CNBEntityTypes.LILYTAD.get(), LilytadEntity.createAttributes().build());
         event.put(CNBEntityTypes.LIZARD.get(), LizardEntity.createAttributes().build());
         event.put(CNBEntityTypes.YETI.get(), YetiEntity.createAttributes().build());
+        event.put(CNBEntityTypes.MINIPAD.get(), MinipadEntity.createAttributes().build());
     }
 
     @SubscribeEvent

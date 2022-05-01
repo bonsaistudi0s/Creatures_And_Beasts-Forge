@@ -28,6 +28,7 @@ public class CNBConfig {
         ServerConfig.NEUTRAL_SPORELING_CONFIG.bake();
         ServerConfig.LILYTAD_CONFIG.bake();
         ServerConfig.YETI_CONFIG.bake();
+        ServerConfig.MINIPAD_CONFIG.bake();
         ServerConfig.YETI_PROP.bake();
 
         ServerConfig.HIDE_AMOUNT.bake();
@@ -49,6 +50,7 @@ public class CNBConfig {
         public static EntityConfig NEUTRAL_SPORELING_CONFIG;
         public static EntityConfig LILYTAD_CONFIG;
         public static EntityConfig YETI_CONFIG;
+        public static EntityConfig MINIPAD_CONFIG;
         public static OtherConfig<Double> YETI_PROP;
 
         public static OtherConfig<Integer> HIDE_AMOUNT;
@@ -75,6 +77,8 @@ public class CNBConfig {
             LILYTAD_CONFIG = EntityConfig.createConfigForEntity(builder, "lilytad", true, 35, Lists.newArrayList("minecraft:swamp", "minecraft:swamp_hills"));
 
             YETI_CONFIG = EntityConfig.createConfigForEntity(builder, "yeti", true, 1, Lists.newArrayList("minecraft:snowy_tundra", "minecraft:snowy_mountains", "minecraft:snowy_taiga", "minecraft:snowy_taiga_hills", "minecraft:ice_spikes", "minecraft:snowy_taiga_mountains"));
+
+            MINIPAD_CONFIG = EntityConfig.createConfigForEntity(builder, "minipad", true, 10, Lists.newArrayList("minecraft:swamp", "minecraft:swamp_hills"));
 
             YETI_PROP = OtherConfig.withRange(builder, "Define extra chance to spawn yeti. Each time a yeti should spawn it checks random.nextFloat() >= value. Increase this value up to 1.0 to make yetis more rare", "yeti chance", 0.5D, 0D, 1D, Double.class);
 
