@@ -142,7 +142,8 @@ public class MinipadEntity extends Animal implements IForgeShearable, IAnimatabl
         }
 
         if (!this.level.isClientSide()) {
-            this.setGlowing(this.level.isNight());
+            long time = this.level.getDayTime();
+            this.setGlowing(time >= 13000 && time <= 23000);
         }
     }
 
