@@ -16,7 +16,7 @@ import software.bernie.geckolib3.renderers.geo.IGeoRenderer;
 @OnlyIn(Dist.CLIENT)
 public class CindershellGlowLayer extends GeoLayerRenderer {
     private static final ResourceLocation GLOW_LAYER = new ResourceLocation(CreaturesAndBeasts.MOD_ID, "textures/entity/cindershell/cindershell_glow.png");
-    private static final ResourceLocation CINDERSHELL_MODEL = new ResourceLocation(CreaturesAndBeasts.MOD_ID, "geo/cindershell/cindershell.geo.json");
+    private static final ResourceLocation CINDERSHELL_MODEL = new ResourceLocation(CreaturesAndBeasts.MOD_ID, "geo/entity/cindershell/cindershell.geo.json");
 
     public CindershellGlowLayer(IGeoRenderer entityRendererIn) {
         super(entityRendererIn);
