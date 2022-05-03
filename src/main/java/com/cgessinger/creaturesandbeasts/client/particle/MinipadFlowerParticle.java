@@ -19,7 +19,7 @@ public class MinipadFlowerParticle extends TextureSheetParticle {
         this.yd = motionY * 0.2F;
         this.zd = motionZ;
         this.quadSize *= 0.5F;
-        this.lifetime = 5;
+        this.lifetime = 10;
         this.sprites = sprites;
         this.setSpriteFromAge(this.sprites);
     }
