@@ -10,6 +10,7 @@ import com.cgessinger.creaturesandbeasts.init.CNBLilytadTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBLizardTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBMinipadTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBPaintingTypes;
+import com.cgessinger.creaturesandbeasts.init.CNBParticleTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBSoundEvents;
 import com.cgessinger.creaturesandbeasts.init.CNBSporelingTypes;
 import com.cgessinger.creaturesandbeasts.world.gen.ModEntitySpawns;
@@ -47,6 +48,7 @@ public class CreaturesAndBeasts {
 
         ModLoadingContext.get().registerConfig(Type.COMMON, CNBConfig.COMMON_SPEC);
 
+        CNBParticleTypes.PARTICLE_TYPES.register(eventBus);
         CNBBlocks.BLOCKS.register(eventBus);
         CNBItems.ITEMS.register(eventBus);
         CNBPaintingTypes.PAINTINGS.register(eventBus);

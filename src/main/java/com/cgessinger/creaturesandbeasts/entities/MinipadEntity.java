@@ -5,6 +5,7 @@ import com.cgessinger.creaturesandbeasts.init.CNBMinipadTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBSoundEvents;
 import com.cgessinger.creaturesandbeasts.util.MinipadType;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -148,6 +149,11 @@ public class MinipadEntity extends Animal implements IForgeShearable, IAnimatabl
     public void tick() {
         super.tick();
         this.floatMinipad();
+
+        SimpleParticleType particle = this.getMinipadType().getParticle();
+        if (particle != null && this.tickCount % 10 == 0) {
+            this.level.addParticle(particle, this.getX() + (this.random.nextDouble(0.5) - 0.25), this.getY() + 0.8 + (this.random.nextDouble(0.1) - 0.05), this.getZ() + (this.random.nextDouble(0.5) - 0.25), this.getDeltaMovement().x, this.getDeltaMovement().y, this.getDeltaMovement().z);
+        }
     }
 
     @Override
