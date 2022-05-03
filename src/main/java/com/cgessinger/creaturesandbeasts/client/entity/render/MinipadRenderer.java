@@ -16,7 +16,7 @@ public class MinipadRenderer extends GeoEntityRenderer<MinipadEntity> {
     public MinipadRenderer(EntityRendererProvider.Context context) {
         super(context, new MinipadModel());
         this.addLayer(new MinipadGlowLayer(this));
-        this.shadowRadius = 0.7F;
+        this.shadowRadius = 0.4F;
     }
 
     @Override

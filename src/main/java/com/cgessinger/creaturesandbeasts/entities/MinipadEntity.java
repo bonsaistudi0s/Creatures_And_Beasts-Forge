@@ -31,7 +31,6 @@ import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.PanicGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
-import net.minecraft.world.entity.ai.goal.RandomSwimmingGoal;
 import net.minecraft.world.entity.ai.goal.TryFindWaterGoal;
 import net.minecraft.world.entity.ai.util.GoalUtils;
 import net.minecraft.world.entity.ai.util.RandomPos;
@@ -42,9 +41,13 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraftforge.common.IForgeShearable;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
@@ -114,16 +117,16 @@ public class MinipadEntity extends Animal implements IForgeShearable, IAnimatabl
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 12.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.2D);
+                .add(Attributes.MOVEMENT_SPEED, 0.2D)
+                .add(Attributes.FOLLOW_RANGE, 32.0D);
     }
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(0, new MinipadPanicGoal(this, 1.25D, 3.75D));
-        this.goalSelector.addGoal(1, new MinipadFloatGoal(this));
-        this.goalSelector.addGoal(2, new RandomStrollGoal(this, 1.0D));
-        this.goalSelector.addGoal(2, new RandomSwimmingGoal(this, 3.0D, 120));
-        this.goalSelector.addGoal(3, new TryFindWaterGoal(this));
+        this.goalSelector.addGoal(0, new MinipadFloatGoal(this));
+        this.goalSelector.addGoal(1, new MinipadPanicGoal(this, 1.25D));
+        this.goalSelector.addGoal(2, new TryFindWaterGoal(this));
+        this.goalSelector.addGoal(3, new MinipadRandomStrollGoal(this, 1.0D, 60, 240));
         this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
     }
@@ -139,6 +142,12 @@ public class MinipadEntity extends Animal implements IForgeShearable, IAnimatabl
             long time = this.level.getDayTime();
             this.setGlowing(time >= 13000 && time <= 23000);
         }
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        this.floatMinipad();
     }
 
     @Override
@@ -206,6 +215,23 @@ public class MinipadEntity extends Animal implements IForgeShearable, IAnimatabl
     @Override
     public boolean canBreatheUnderwater() {
         return true;
+    }
+
+    @Override
+    public boolean canStandOnFluid(FluidState fluidState) {
+        return fluidState.is(FluidTags.WATER);
+    }
+
+    private void floatMinipad() {
+        if (this.isInWater()) {
+            CollisionContext collisioncontext = CollisionContext.of(this);
+            if (collisioncontext.isAbove(LiquidBlock.STABLE_SHAPE, this.blockPosition(), true) && !this.level.getFluidState(this.blockPosition().above()).is(FluidTags.WATER)) {
+                this.onGround = true;
+            } else {
+                this.setDeltaMovement(this.getDeltaMovement().scale(0.5D).add(0.0D, 0.1D, 0.0D));
+            }
+        }
+
     }
 
     @Override
@@ -311,7 +337,7 @@ public class MinipadEntity extends Animal implements IForgeShearable, IAnimatabl
         if (this.isInWater() && !(animationSpeed > -0.15F && animationSpeed < 0.15F)) {
             event.getController().setAnimation(new AnimationBuilder().addAnimation("minipad_swim"));
             return PlayState.CONTINUE;
-        } else if(this.isInWater()) {
+        } else if (this.isInWater()) {
             event.getController().setAnimation(new AnimationBuilder().addAnimation("minipad_float"));
             return PlayState.CONTINUE;
         } else if (!(animationSpeed > -0.15F && animationSpeed < 0.15F)) {
@@ -351,43 +377,113 @@ public class MinipadEntity extends Animal implements IForgeShearable, IAnimatabl
 
     static class MinipadPanicGoal extends PanicGoal {
         private final MinipadEntity minipad;
-        private final double waterSpeedModifier;
 
-        public MinipadPanicGoal(MinipadEntity minipad, double landSpeedModifier, double waterSpeedModifier) {
-            super(minipad, landSpeedModifier);
+        public MinipadPanicGoal(MinipadEntity minipad, double speedModifier) {
+            super(minipad, speedModifier);
             this.minipad = minipad;
-            this.waterSpeedModifier = waterSpeedModifier;
         }
 
         @Override
         public void start() {
-            this.minipad.getNavigation().moveTo(this.posX, this.posY, this.posZ, this.minipad.isInWater() ? this.waterSpeedModifier : this.speedModifier);
+            this.minipad.getNavigation().moveTo(this.posX, this.posY, this.posZ, this.speedModifier);
             this.isRunning = true;
         }
 
         @Override
         protected boolean findRandomPosition() {
-            BlockPos pos = generateRandomPosTowardDirection(this.minipad, 5, RandomPos.generateRandomDirection(this.minipad.getRandom(), 5, 4));
-
-            if (pos == null) {
+            boolean flag = GoalUtils.mobRestricted(this.minipad, 5);
+            Vec3 vec3 = RandomPos.generateRandomPos(this.minipad, () -> {
+                BlockPos blockpos = RandomPos.generateRandomDirection(this.minipad.getRandom(), 5, 4);
+                return generateRandomPosTowardDirection(this.minipad, 5, flag, blockpos);
+            });
+            if (vec3 == null) {
                 return false;
             }
 
-            this.posX = pos.getX();
-            this.posY = pos.getY();
-            this.posZ = pos.getZ();
+            this.posX = vec3.x;
+            this.posY = vec3.y;
+            this.posZ = vec3.z;
             return true;
         }
 
         @Nullable
-        private static BlockPos generateRandomPosTowardDirection(MinipadEntity minipad, int horizontalRange, BlockPos posTowards) {
+        private static BlockPos generateRandomPosTowardDirection(MinipadEntity minipad, int horizontalRange, boolean flag, BlockPos posTowards) {
             BlockPos blockpos = RandomPos.generateRandomPosTowardDirection(minipad, horizontalRange, minipad.getRandom(), posTowards);
-            return !GoalUtils.isOutsideLimits(blockpos, minipad) && !GoalUtils.isRestricted(true, minipad, blockpos) && !GoalUtils.hasMalus(minipad, blockpos) && (!GoalUtils.isNotStable(minipad.getNavigation(), blockpos) || GoalUtils.isWater(minipad, blockpos)) ? blockpos : null;
+            return !GoalUtils.isOutsideLimits(blockpos, minipad) && !GoalUtils.isRestricted(flag, minipad, blockpos) && !GoalUtils.hasMalus(minipad, blockpos) && (!GoalUtils.isNotStable(minipad.getNavigation(), blockpos) || GoalUtils.isWater(minipad, blockpos)) ? blockpos : null;
+        }
+    }
+
+    static class MinipadRandomStrollGoal extends RandomStrollGoal {
+        private final MinipadEntity minipad;
+        private final int intervalLand;
+        private final int intervalWater;
+        private final boolean checkNoActionTime;
+
+        public MinipadRandomStrollGoal(MinipadEntity minipad, double speedModifier) {
+            this(minipad, speedModifier, 60, 120);
+        }
+
+        public MinipadRandomStrollGoal(MinipadEntity minipad, double speedModifier, int intervalLand, int intervalWater) {
+            this(minipad, speedModifier, intervalLand, intervalWater, true);
+        }
+
+        public MinipadRandomStrollGoal(MinipadEntity minipad, double speedModifier, int intervalLand, int intervalWater, boolean checkNoActionTime) {
+            super(minipad, speedModifier, intervalLand, checkNoActionTime);
+            this.minipad = minipad;
+            this.intervalLand = intervalLand;
+            this.intervalWater = intervalWater;
+            this.checkNoActionTime = checkNoActionTime;
         }
 
         @Override
-        public void tick() {
-            this.minipad.getNavigation().setSpeedModifier(this.minipad.isInWater() ? this.waterSpeedModifier : this.speedModifier);
+        public void start() {
+            this.minipad.getNavigation().moveTo(this.wantedX, this.wantedY, this.wantedZ, this.speedModifier);
+        }
+
+        @Override
+        public boolean canUse() {
+            if (this.mob.isVehicle()) {
+                return false;
+            } else {
+                if (!this.forceTrigger) {
+                    if (this.checkNoActionTime && this.mob.getNoActionTime() >= 100) {
+                        return false;
+                    }
+
+                    int i = this.minipad.isInWater() ? this.intervalWater : this.intervalLand;
+                    if (this.mob.getRandom().nextInt(reducedTickDelay(i)) != 0) {
+                        return false;
+                    }
+                }
+
+                Vec3 vec3 = this.getPosition();
+                if (vec3 == null) {
+                    return false;
+                } else {
+                    this.wantedX = vec3.x;
+                    this.wantedY = vec3.y;
+                    this.wantedZ = vec3.z;
+                    this.forceTrigger = false;
+                    return true;
+                }
+            }
+        }
+
+        @Override
+        protected Vec3 getPosition() {
+            boolean flag = GoalUtils.mobRestricted(this.minipad, 10);
+            Vec3 vec3 = RandomPos.generateRandomPos(this.minipad, () -> {
+                BlockPos blockpos = RandomPos.generateRandomDirection(this.minipad.getRandom(), 10, 7);
+                return generateRandomPosTowardDirection(this.minipad, 10, flag, blockpos);
+            });
+
+            return vec3;
+        }
+
+        @Nullable
+        private static BlockPos generateRandomPosTowardDirection(MinipadEntity minipad, int horizontalRange, boolean flag, BlockPos posTowards) {
+            BlockPos blockpos = RandomPos.generateRandomPosTowardDirection(minipad, horizontalRange, minipad.getRandom(), posTowards);
+            return !GoalUtils.isOutsideLimits(blockpos, minipad) && !GoalUtils.isRestricted(flag, minipad, blockpos) && !GoalUtils.hasMalus(minipad, blockpos) && (!GoalUtils.isNotStable(minipad.getNavigation(), blockpos) || GoalUtils.isWater(minipad, blockpos)) ? blockpos : null;
         }
     }
 }
