@@ -229,15 +229,15 @@ public class LittleGrebeEntity extends Animal implements IAnimatable {
         if (!(this.isOnGround() || this.isInWater() || this.isBaby())) {
             event.getController().setAnimation(new AnimationBuilder().addAnimation("little_grebe.fall", true));
             return PlayState.CONTINUE;
+        } else if (this.isInWater()) {
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("little_grebe.swim", true));
+            return PlayState.CONTINUE;
         } else if (!(animationSpeed > -0.15F && animationSpeed < 0.15F)) {
             if (this.isBaby()) {
                 event.getController().setAnimation(new AnimationBuilder().addAnimation("little_grebe_chick.walk", true));
             } else {
                 event.getController().setAnimation(new AnimationBuilder().addAnimation("little_grebe.walk", true));
             }
-            return PlayState.CONTINUE;
-        } else if (this.isInWater()) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("little_grebe.swim", true));
             return PlayState.CONTINUE;
         }
         return PlayState.STOP;

@@ -21,6 +21,11 @@ public class CindershellRenderer extends GeoEntityRenderer<CindershellEntity> {
     }
 
     @Override
+    protected float getDeathMaxRotation(CindershellEntity entityLivingBaseIn) {
+        return 0;
+    }
+
+    @Override
     public void renderRecursively(GeoBone bone, PoseStack stack, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
         if (bone.getName().equals("head")) {
             stack.pushPose();

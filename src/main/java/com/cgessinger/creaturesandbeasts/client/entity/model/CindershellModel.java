@@ -12,6 +12,8 @@ public class CindershellModel extends AnimatedGeoModel<CindershellEntity> {
     private static final ResourceLocation CINDERSHELL_TEXTURE = new ResourceLocation(CreaturesAndBeasts.MOD_ID, "textures/entity/cindershell/cindershell.png");
     private static final ResourceLocation BABY_CINDERSHELL_TEXTURE = new ResourceLocation(CreaturesAndBeasts.MOD_ID, "textures/entity/cindershell/baby_cindershell.png");
 
+    private static final ResourceLocation CINDERSHELL_ANIMATIONS = new ResourceLocation(CreaturesAndBeasts.MOD_ID, "animations/cindershell.json");
+
     @Override
     public ResourceLocation getModelLocation(CindershellEntity entity) {
         return entity.isBaby() ? BABY_CINDERSHELL_MODEL : CINDERSHELL_MODEL;
@@ -24,6 +26,6 @@ public class CindershellModel extends AnimatedGeoModel<CindershellEntity> {
 
     @Override
     public ResourceLocation getAnimationFileLocation(CindershellEntity entity) {
-        return null;
+        return CINDERSHELL_ANIMATIONS;
     }
 }

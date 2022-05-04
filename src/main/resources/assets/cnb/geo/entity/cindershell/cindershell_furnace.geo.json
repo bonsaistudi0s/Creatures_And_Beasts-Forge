@@ -13,26 +13,10 @@
 			"bones": [
 				{
 					"name": "main",
-					"pivot": [0, 5, 0],
-					"cubes": [
-						{"origin": [-7, 20, -7], "size": [14, 3, 14], "uv": [0, 38]},
-						{"origin": [-8, 20, -8], "size": [16, 16, 16], "uv": [0, 76]},
-						{"origin": [-11, 14, -3], "size": [22, 7, 6], "uv": [0, 108]},
-						{"origin": [-10, 5, -12], "size": [20, 15, 23], "uv": [0, 0]}
-					]
+					"pivot": [0, 5, 0]
 				},
 				{
-					"name": "Tail",
-					"parent": "main",
-					"pivot": [0, 9, 10],
-					"rotation": [-5.00192, 0, 0],
-					"cubes": [
-						{"origin": [-2, 10, 17], "size": [4, 2, 6], "uv": [0, 0]},
-						{"origin": [-4, 7, 9], "size": [8, 5, 8], "uv": [36, 60]}
-					]
-				},
-				{
-					"name": "BL",
+					"name": "left_leg",
 					"parent": "main",
 					"pivot": [9, 8, 9.5],
 					"rotation": [0, 0, -5.00192],
@@ -41,7 +25,7 @@
 					]
 				},
 				{
-					"name": "BR",
+					"name": "right_leg",
 					"parent": "main",
 					"pivot": [-9, 8, 9.5],
 					"rotation": [0, 0, 5.00192],
@@ -50,7 +34,7 @@
 					]
 				},
 				{
-					"name": "FL",
+					"name": "left_arm",
 					"parent": "main",
 					"pivot": [9, 8, -11.5],
 					"rotation": [-5.00192, 0, -5.00192],
@@ -59,17 +43,38 @@
 					]
 				},
 				{
-					"name": "FR",
+					"name": "right_arm",
 					"parent": "main",
-					"pivot": [-9, 8, -11.5],
+					"pivot": [-9, 8, -12.5],
 					"rotation": [-5.00192, 0, 5.00192],
 					"cubes": [
-						{"origin": [-11, 0, -13], "size": [6, 9, 5], "uv": [64, 1], "mirror": true}
+						{"origin": [-11, 0, -14], "size": [6, 9, 5], "uv": [64, 1], "mirror": true}
+					]
+				},
+				{
+					"name": "body",
+					"parent": "main",
+					"pivot": [0, 5, 0],
+					"cubes": [
+						{"origin": [-8, 20, -8], "size": [16, 16, 16], "uv": [0, 76]},
+						{"origin": [-7, 20, -7], "size": [14, 3, 14], "uv": [0, 38]},
+						{"origin": [-11, 14, -3], "size": [22, 7, 6], "uv": [0, 108]},
+						{"origin": [-10, 5, -12], "size": [20, 15, 23], "uv": [0, 0]}
+					]
+				},
+				{
+					"name": "tail",
+					"parent": "body",
+					"pivot": [0, 9, 10],
+					"rotation": [-5.00192, 0, 0],
+					"cubes": [
+						{"origin": [-2, 10, 17], "size": [4, 2, 6], "uv": [0, 0]},
+						{"origin": [-4, 7, 9], "size": [8, 5, 8], "uv": [36, 60]}
 					]
 				},
 				{
 					"name": "head",
-					"parent": "main",
+					"parent": "body",
 					"pivot": [0, 10, -10]
 				},
 				{

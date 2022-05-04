@@ -22,6 +22,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -51,6 +52,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
 import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.PlayState;
+import software.bernie.geckolib3.core.builder.AnimationBuilder;
+import software.bernie.geckolib3.core.controller.AnimationController;
+import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
@@ -75,7 +80,7 @@ public class CindershellEntity extends Animal implements IAnimatable, Bucketable
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 80.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.15D)
+                .add(Attributes.MOVEMENT_SPEED, 0.1D)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 100D);
     }
 
@@ -316,6 +321,15 @@ public class CindershellEntity extends Animal implements IAnimatable, Bucketable
     }
 
     @Override
+    protected void tickDeath() {
+        ++this.deathTime;
+        if (this.deathTime == 23 && !this.level.isClientSide()) {
+            this.level.broadcastEntityEvent(this, (byte)60);
+            this.remove(Entity.RemovalReason.KILLED);
+        }
+    }
+
+    @Override
     public EntityDimensions getDimensions(Pose pose) {
         return pose == Pose.SLEEPING ? SLEEPING_DIMENSIONS : super.getDimensions(pose).scale(this.getScale(), this.getHeightScale());
     }
@@ -395,9 +409,20 @@ public class CindershellEntity extends Animal implements IAnimatable, Bucketable
         return super.getSoundVolume() * 2;
     }
 
-    @Override
-    public void registerControllers(AnimationData data) {
+    private <E extends IAnimatable> PlayState animationPredicate(AnimationEvent<E> event) {
+        if (!(animationSpeed > -0.05F && animationSpeed < 0.05F)) {
+            event.getController().setAnimation(new AnimationBuilder().addAnimation(this.isBaby() ? "baby_cindershell_walk" : "cindershell_walk"));
+        } else if (this.isDeadOrDying()) {
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("cindershell_death"));
+        } else {
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("cindershell_idle"));
+        }
+        return PlayState.CONTINUE;
+    }
 
+    @Override
+    public void registerControllers(AnimationData animationData) {
+        animationData.addAnimationController(new AnimationController<>(this, "controller", 0, this::animationPredicate));
     }
 
     @Override
