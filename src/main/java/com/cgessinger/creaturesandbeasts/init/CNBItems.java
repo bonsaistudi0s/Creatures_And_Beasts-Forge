@@ -4,6 +4,8 @@ import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
 import com.cgessinger.creaturesandbeasts.items.CNBEntityBucketItem;
 import com.cgessinger.creaturesandbeasts.items.CNBFuelItem;
 import com.cgessinger.creaturesandbeasts.items.CNBSpawnEggItem;
+import com.cgessinger.creaturesandbeasts.items.FlowerCrownItem;
+import com.cgessinger.creaturesandbeasts.items.GlowingFlowerCrownItem;
 import com.cgessinger.creaturesandbeasts.items.LizardEggItem;
 import com.cgessinger.creaturesandbeasts.items.LizardItem;
 import com.cgessinger.creaturesandbeasts.items.MinipadFlowerGlowItem;
@@ -12,8 +14,10 @@ import com.cgessinger.creaturesandbeasts.items.WaterlilyBlockItem;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -51,6 +55,10 @@ public class CNBItems {
     public static final RegistryObject<Item> PINK_MINIPAD_FLOWER_GLOW = ITEMS.register("pink_minipad_flower_glow", () -> new MinipadFlowerGlowItem(new Item.Properties().tab(CreaturesAndBeasts.TAB)));
     public static final RegistryObject<Item> LIGHT_PINK_MINIPAD_FLOWER_GLOW = ITEMS.register("light_pink_minipad_flower_glow", () -> new MinipadFlowerGlowItem(new Item.Properties().tab(CreaturesAndBeasts.TAB)));
     public static final RegistryObject<Item> YELLOW_MINIPAD_FLOWER_GLOW = ITEMS.register("yellow_minipad_flower_glow", () -> new MinipadFlowerGlowItem(new Item.Properties().tab(CreaturesAndBeasts.TAB)));
+
+    // Armor
+    public static final RegistryObject<FlowerCrownItem> FLOWER_CROWN = ITEMS.register("flower_crown", () -> new FlowerCrownItem(CNBArmorMaterials.FLOWER_CROWN, Ingredient.of(PINK_MINIPAD_FLOWER.get(), LIGHT_PINK_MINIPAD_FLOWER.get(), YELLOW_MINIPAD_FLOWER.get()), EquipmentSlot.HEAD, new Item.Properties().tab(CreaturesAndBeasts.TAB)));
+    public static final RegistryObject<GlowingFlowerCrownItem> GLOWING_FLOWER_CROWN = ITEMS.register("glowing_flower_crown", () -> new GlowingFlowerCrownItem(CNBArmorMaterials.FLOWER_CROWN, Ingredient.of(PINK_MINIPAD_FLOWER_GLOW.get(), LIGHT_PINK_MINIPAD_FLOWER_GLOW.get(), YELLOW_MINIPAD_FLOWER_GLOW.get()), EquipmentSlot.HEAD, new Item.Properties().tab(CreaturesAndBeasts.TAB)));
 
     // Spawn Eggs
     public static RegistryObject<CNBSpawnEggItem> GREBE_SPAWN_EGG = ITEMS.register("little_grebe_spawn_egg", () -> new CNBSpawnEggItem(CNBEntityTypes.LITTLE_GREBE, 0x00FFFFFF, 0x00FFFFFF, new Item.Properties().tab(CreaturesAndBeasts.TAB)));
