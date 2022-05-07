@@ -4,6 +4,7 @@ import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
 import com.cgessinger.creaturesandbeasts.items.CNBEntityBucketItem;
 import com.cgessinger.creaturesandbeasts.items.CNBFuelItem;
 import com.cgessinger.creaturesandbeasts.items.CNBSpawnEggItem;
+import com.cgessinger.creaturesandbeasts.items.CinderSwordItem;
 import com.cgessinger.creaturesandbeasts.items.FlowerCrownItem;
 import com.cgessinger.creaturesandbeasts.items.GlowingFlowerCrownItem;
 import com.cgessinger.creaturesandbeasts.items.LizardEggItem;
@@ -59,6 +60,9 @@ public class CNBItems {
     // Armor
     public static final RegistryObject<FlowerCrownItem> FLOWER_CROWN = ITEMS.register("flower_crown", () -> new FlowerCrownItem(CNBArmorMaterials.FLOWER_CROWN, Ingredient.of(PINK_MINIPAD_FLOWER.get(), LIGHT_PINK_MINIPAD_FLOWER.get(), YELLOW_MINIPAD_FLOWER.get()), EquipmentSlot.HEAD, new Item.Properties().tab(CreaturesAndBeasts.TAB)));
     public static final RegistryObject<GlowingFlowerCrownItem> GLOWING_FLOWER_CROWN = ITEMS.register("glowing_flower_crown", () -> new GlowingFlowerCrownItem(CNBArmorMaterials.FLOWER_CROWN, Ingredient.of(PINK_MINIPAD_FLOWER_GLOW.get(), LIGHT_PINK_MINIPAD_FLOWER_GLOW.get(), YELLOW_MINIPAD_FLOWER_GLOW.get()), EquipmentSlot.HEAD, new Item.Properties().tab(CreaturesAndBeasts.TAB)));
+
+    // Tools
+    public static final RegistryObject<CinderSwordItem> CINDER_SWORD = ITEMS.register("cinder_sword", () -> new CinderSwordItem(CNBItemTiers.CINDER, 3, -2.4F, new Item.Properties().tab(CreaturesAndBeasts.TAB)));
 
     // Spawn Eggs
     public static RegistryObject<CNBSpawnEggItem> GREBE_SPAWN_EGG = ITEMS.register("little_grebe_spawn_egg", () -> new CNBSpawnEggItem(CNBEntityTypes.LITTLE_GREBE, 0x00FFFFFF, 0x00FFFFFF, new Item.Properties().tab(CreaturesAndBeasts.TAB)));

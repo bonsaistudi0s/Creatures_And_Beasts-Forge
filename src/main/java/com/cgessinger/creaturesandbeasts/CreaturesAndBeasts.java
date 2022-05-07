@@ -1,5 +1,6 @@
 package com.cgessinger.creaturesandbeasts;
 
+import com.cgessinger.creaturesandbeasts.capabilities.CinderSwordCapability;
 import com.cgessinger.creaturesandbeasts.client.CNBClient;
 import com.cgessinger.creaturesandbeasts.config.CNBConfig;
 import com.cgessinger.creaturesandbeasts.events.CNBEvents;
@@ -20,6 +21,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FlowerPotBlock;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -45,6 +47,7 @@ public class CreaturesAndBeasts {
 
         eventBus.addListener(this::commonSetup);
         eventBus.addListener(this::clientSetup);
+        eventBus.addListener(this::registerCapabilities);
 
         ModLoadingContext.get().registerConfig(Type.COMMON, CNBConfig.COMMON_SPEC);
 
@@ -78,5 +81,9 @@ public class CreaturesAndBeasts {
 
     private void clientSetup(final FMLClientSetupEvent event) {
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> CNBClient::init);
+    }
+
+    private void registerCapabilities(RegisterCapabilitiesEvent event) {
+        CinderSwordCapability.register(event);
     }
 }

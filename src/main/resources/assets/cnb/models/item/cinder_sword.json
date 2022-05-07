@@ -1,0 +1,14 @@
+{
+  "parent": "item/handheld",
+  "textures": {
+    "layer0": "cnb:items/cinder_sword"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "imbued": 1.0
+      },
+      "model": "cnb:item/cinder_sword_imbued"
+    }
+    ]
+}
