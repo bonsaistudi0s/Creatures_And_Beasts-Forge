@@ -17,6 +17,7 @@ import software.bernie.geckolib3.renderers.geo.IGeoRenderer;
 public class CindershellGlowLayer extends GeoLayerRenderer {
     private static final ResourceLocation GLOW_LAYER = new ResourceLocation(CreaturesAndBeasts.MOD_ID, "textures/entity/cindershell/cindershell_glow.png");
     private static final ResourceLocation CINDERSHELL_MODEL = new ResourceLocation(CreaturesAndBeasts.MOD_ID, "geo/entity/cindershell/cindershell.geo.json");
+    private static final ResourceLocation CINDERSHELL_FURNACE_MODEL = new ResourceLocation(CreaturesAndBeasts.MOD_ID, "geo/entity/cindershell/cindershell_furnace.geo.json");
 
     public CindershellGlowLayer(IGeoRenderer entityRendererIn) {
         super(entityRendererIn);
@@ -27,7 +28,7 @@ public class CindershellGlowLayer extends GeoLayerRenderer {
         if (entityLivingBaseIn instanceof CindershellEntity cindershellEntity && !cindershellEntity.isBaby()) {
             RenderType renderType = RenderType.eyes(GLOW_LAYER);
             matrixStackIn.pushPose();
-            this.getRenderer().render(this.getEntityModel().getModel(CINDERSHELL_MODEL), entityLivingBaseIn, partialTicks, renderType, matrixStackIn, bufferIn, bufferIn.getBuffer(renderType), packedLightIn, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, 1f);
+            this.getRenderer().render(this.getEntityModel().getModel(cindershellEntity.hasFurnace() ? CINDERSHELL_FURNACE_MODEL : CINDERSHELL_MODEL), entityLivingBaseIn, partialTicks, renderType, matrixStackIn, bufferIn, bufferIn.getBuffer(renderType), packedLightIn, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, 1f);
             matrixStackIn.popPose();
         }
     }

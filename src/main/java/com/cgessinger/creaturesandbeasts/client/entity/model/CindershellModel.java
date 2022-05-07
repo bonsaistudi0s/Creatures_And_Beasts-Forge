@@ -8,6 +8,7 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 public class CindershellModel extends AnimatedGeoModel<CindershellEntity> {
     private static final ResourceLocation CINDERSHELL_MODEL = new ResourceLocation(CreaturesAndBeasts.MOD_ID, "geo/entity/cindershell/cindershell.geo.json");
     private static final ResourceLocation BABY_CINDERSHELL_MODEL = new ResourceLocation(CreaturesAndBeasts.MOD_ID, "geo/entity/cindershell/baby_cindershell.geo.json");
+    private static final ResourceLocation CINDERSHELL_FURNACE_MODEL = new ResourceLocation(CreaturesAndBeasts.MOD_ID, "geo/entity/cindershell/cindershell_furnace.geo.json");
 
     private static final ResourceLocation CINDERSHELL_TEXTURE = new ResourceLocation(CreaturesAndBeasts.MOD_ID, "textures/entity/cindershell/cindershell.png");
     private static final ResourceLocation BABY_CINDERSHELL_TEXTURE = new ResourceLocation(CreaturesAndBeasts.MOD_ID, "textures/entity/cindershell/baby_cindershell.png");
@@ -16,7 +17,13 @@ public class CindershellModel extends AnimatedGeoModel<CindershellEntity> {
 
     @Override
     public ResourceLocation getModelLocation(CindershellEntity entity) {
-        return entity.isBaby() ? BABY_CINDERSHELL_MODEL : CINDERSHELL_MODEL;
+        if (entity.isBaby()) {
+            return BABY_CINDERSHELL_MODEL;
+        } else if (entity.hasFurnace()) {
+            return CINDERSHELL_FURNACE_MODEL;
+        } else {
+            return CINDERSHELL_MODEL;
+        }
     }
 
     @Override

@@ -87,5 +87,7 @@
   "entity.minipad.step": "Minipad walks",
   "entity.minipad.swim": "Minipad swims",
 
-  "itemGroup.cnb_tab": "Creatures And Beasts"
+  "itemGroup.cnb_tab": "Creatures And Beasts",
+
+  "cnb.container.cinder_furnace": "Cinder Furnace"
 }

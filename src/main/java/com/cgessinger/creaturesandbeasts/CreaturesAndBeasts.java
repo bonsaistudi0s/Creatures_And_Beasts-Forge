@@ -5,6 +5,7 @@ import com.cgessinger.creaturesandbeasts.client.CNBClient;
 import com.cgessinger.creaturesandbeasts.config.CNBConfig;
 import com.cgessinger.creaturesandbeasts.events.CNBEvents;
 import com.cgessinger.creaturesandbeasts.init.CNBBlocks;
+import com.cgessinger.creaturesandbeasts.init.CNBContainerTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBEntityTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBItems;
 import com.cgessinger.creaturesandbeasts.init.CNBLilytadTypes;
@@ -54,6 +55,7 @@ public class CreaturesAndBeasts {
         CNBParticleTypes.PARTICLE_TYPES.register(eventBus);
         CNBBlocks.BLOCKS.register(eventBus);
         CNBItems.ITEMS.register(eventBus);
+        CNBContainerTypes.CONTAINER_TYPES.register(eventBus);
         CNBPaintingTypes.PAINTINGS.register(eventBus);
         CNBSoundEvents.SOUND_EVENTS.register(eventBus);
         CNBEntityTypes.ENTITY_TYPES.register(eventBus);

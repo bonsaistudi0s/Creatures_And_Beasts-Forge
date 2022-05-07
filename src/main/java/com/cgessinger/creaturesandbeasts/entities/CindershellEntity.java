@@ -1,6 +1,8 @@
 package com.cgessinger.creaturesandbeasts.entities;
 
 import com.cgessinger.creaturesandbeasts.config.CNBConfig;
+import com.cgessinger.creaturesandbeasts.containers.CinderFurnaceContainer;
+import com.cgessinger.creaturesandbeasts.init.CNBBlocks;
 import com.cgessinger.creaturesandbeasts.init.CNBEntityTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBItems;
 import com.cgessinger.creaturesandbeasts.init.CNBSoundEvents;
@@ -11,7 +13,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -19,9 +23,13 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.Container;
+import net.minecraft.world.ContainerListener;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
@@ -45,6 +53,7 @@ import net.minecraft.world.entity.ai.goal.TemptGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Bucketable;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
@@ -63,16 +72,22 @@ import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 
-public class CindershellEntity extends Animal implements IAnimatable, Bucketable {
+public class CindershellEntity extends Animal implements IAnimatable, Bucketable, ContainerListener {
     private static final EntityDataAccessor<Boolean> EATING = SynchedEntityData.defineId(CindershellEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> FROM_BUCKET = SynchedEntityData.defineId(CindershellEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> FURNACE = SynchedEntityData.defineId(CindershellEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Optional<UUID>> PLAYER = SynchedEntityData.defineId(CindershellEntity.class, EntityDataSerializers.OPTIONAL_UUID);
 
     private static final Ingredient TEMPTATION_ITEMS = Ingredient.of(Items.CRIMSON_FUNGUS, Items.WARPED_FUNGUS);
     private final UUID healthReductionUUID = UUID.fromString("189faad9-35de-4e15-a598-82d147b996d7");
     private final AnimationFactory factory = new AnimationFactory(this);
+    protected CinderFurnaceContainer inventory;
+    private static final Component CONTAINER_TITLE = new TranslatableComponent("cnb.container.cinder_furnace");
     private int eatTimer;
 
     public CindershellEntity(EntityType<CindershellEntity> type, Level worldIn) {
@@ -92,17 +107,55 @@ public class CindershellEntity extends Animal implements IAnimatable, Bucketable
         super.defineSynchedData();
         this.entityData.define(EATING, false);
         this.entityData.define(FROM_BUCKET, false);
+        this.entityData.define(FURNACE, false);
+        this.entityData.define(PLAYER, Optional.empty());
     }
 
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
         tag.putBoolean("FromBucket", this.fromBucket());
+        tag.putBoolean("HasFurnace", this.hasFurnace());
+        if (this.hasFurnace()) {
+            ListTag listtag = new ListTag();
+
+            List<ItemStack> items = this.inventory.getItems();
+            for(int i = 0; i < items.size(); i++) {
+                ItemStack itemstack = items.get(i);
+                if (!itemstack.isEmpty()) {
+                    CompoundTag compoundtag = new CompoundTag();
+                    compoundtag.putByte("Slot", (byte)i);
+                    itemstack.save(compoundtag);
+                    listtag.add(compoundtag);
+                }
+            }
+
+            tag.put("Items", listtag);
+            tag.putUUID("Player", this.entityData.get(PLAYER).get());
+        }
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         this.setFromBucket(tag.getBoolean("FromBucket"));
+        UUID playerUUID = null;
+        if (tag.contains("Player")) {
+            playerUUID = tag.getUUID("Player");
+        }
+        this.setFurnace(tag.getBoolean("HasFurnace"), playerUUID);
+        if (this.hasFurnace() && tag.contains("Player")) {
+            this.inventory = this.createMenu(this.getId(), this.level.getPlayerByUUID(tag.getUUID("Player")).getInventory());
+            ListTag listtag = tag.getList("Items", 10);
+
+            for(int i = 0; i < listtag.size(); ++i) {
+                CompoundTag compoundtag = listtag.getCompound(i);
+                int j = compoundtag.getByte("Slot") & 255;
+                if (j < this.inventory.getSize()) {
+                    this.inventory.getSlot(j).set(ItemStack.of(compoundtag));
+                }
+            }
+        }
+
         super.readAdditionalSaveData(tag);
     }
 
@@ -170,7 +223,7 @@ public class CindershellEntity extends Animal implements IAnimatable, Bucketable
 
     @Override
     public boolean isFood(ItemStack stack) {
-        return false;
+        return TEMPTATION_ITEMS.test(stack);
     }
 
     public InteractionResult tryStartEat(Player player, ItemStack stack) {
@@ -203,7 +256,7 @@ public class CindershellEntity extends Animal implements IAnimatable, Bucketable
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack item = player.getItemInHand(hand);
 
-        if (item.getItem() == Items.LAVA_BUCKET && this.isAlive()) {
+        if (item.sameItem(Items.LAVA_BUCKET.getDefaultInstance()) && this.isAlive()) {
             this.playSound(this.getPickupSound(), 1.0F, 1.0F);
             ItemStack bucketItem = this.getBucketItemStack();
             this.saveToBucketTag(bucketItem);
@@ -217,10 +270,51 @@ public class CindershellEntity extends Animal implements IAnimatable, Bucketable
 
             this.discard();
             return InteractionResult.sidedSuccess(level.isClientSide);
-        } else if (!this.getEating()) {
+        } else if (!this.hasFurnace() && item.sameItem(CNBItems.CINDERSHELL_FURNACE.get().getDefaultInstance())) {
+            this.setFurnace(true, player.getUUID());
+
+            this.inventory = this.createMenu(this.getId(), player.getInventory());
+
+            if (!player.getAbilities().instabuild) {
+                item.shrink(1);
+            }
+
+            this.playSound(SoundEvents.DONKEY_CHEST, 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
+            return InteractionResult.sidedSuccess(this.level.isClientSide);
+        } else if (this.isFood(item) && !this.getEating()) {
             return this.tryStartEat(player, item);
+        } else if (this.hasFurnace() && player.isSecondaryUseActive()) {
+            this.dropEquipment();
+            return InteractionResult.sidedSuccess(this.level.isClientSide);
+        } else if (this.hasFurnace()) {
+            player.openMenu(this.getMenuProvider());
+            return InteractionResult.sidedSuccess(this.level.isClientSide);
         } else {
             return InteractionResult.PASS;
+        }
+    }
+
+    private CinderFurnaceContainer createMenu(int id, Inventory playerInventory) {
+        return new CinderFurnaceContainer(id, playerInventory);
+    }
+
+    @Nullable
+    public MenuProvider getMenuProvider() {
+        return new SimpleMenuProvider((p_48785_, p_48786_, p_48787_) -> this.inventory, CONTAINER_TITLE);
+    }
+
+    @Override
+    protected void dropEquipment() {
+        super.dropEquipment();
+        if (this.hasFurnace()) {
+            if (!this.level.isClientSide) {
+                this.spawnAtLocation(CNBBlocks.CINDER_FURNACE.get());
+                for (int i = 0; i < this.inventory.getSize(); i++) {
+                    this.spawnAtLocation(this.inventory.getSlot(i).getItem());
+                }
+            }
+
+            this.setFurnace(false, null);
         }
     }
 
@@ -309,6 +403,11 @@ public class CindershellEntity extends Animal implements IAnimatable, Bucketable
     }
 
     @Override
+    public void containerChanged(Container container) {
+
+    }
+
+    @Override
     public void setAge(int age) {
         super.setAge(age);
         double MAX_HEALTH = this.getAttribute(Attributes.MAX_HEALTH).getValue();
@@ -371,6 +470,19 @@ public class CindershellEntity extends Animal implements IAnimatable, Bucketable
 
     public boolean getEating() {
         return this.entityData.get(EATING);
+    }
+
+    public boolean hasFurnace() {
+        return this.entityData.get(FURNACE);
+    }
+
+    public void setFurnace(boolean hasFurnace, @Nullable UUID playerUUID) {
+        this.entityData.set(FURNACE, hasFurnace);
+        if (playerUUID != null) {
+            this.entityData.set(PLAYER, Optional.of(playerUUID));
+        } else {
+            this.entityData.set(PLAYER, Optional.empty());
+        }
     }
 
     @Nullable
