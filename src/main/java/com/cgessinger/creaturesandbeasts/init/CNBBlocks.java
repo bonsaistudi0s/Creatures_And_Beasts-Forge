@@ -1,6 +1,7 @@
 package com.cgessinger.creaturesandbeasts.init;
 
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
+import com.cgessinger.creaturesandbeasts.blocks.CinderFurnaceBlock;
 import com.cgessinger.creaturesandbeasts.blocks.LizardEggBlock;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.level.block.Block;
@@ -23,6 +24,8 @@ public class CNBBlocks {
     public static final RegistryObject<FlowerPotBlock> POTTED_LIGHT_PINK_WATERLILY = BLOCKS.register("potted_light_pink_waterlily", () -> new FlowerPotBlock(() -> (FlowerPotBlock) Blocks.FLOWER_POT, LIGHT_PINK_WATERLILY_BLOCK, BlockBehaviour.Properties.copy(Blocks.FLOWER_POT)));
     public static final RegistryObject<FlowerBlock> YELLOW_WATERLILY_BLOCK = BLOCKS.register("yellow_waterlily_block", () -> new FlowerBlock(MobEffects.HEAL, 5, BlockBehaviour.Properties.of(Material.PLANT).noCollission().instabreak().sound(SoundType.GRASS)));
     public static final RegistryObject<FlowerPotBlock> POTTED_YELLOW_WATERLILY = BLOCKS.register("potted_yellow_waterlily", () -> new FlowerPotBlock(() -> (FlowerPotBlock) Blocks.FLOWER_POT, YELLOW_WATERLILY_BLOCK, BlockBehaviour.Properties.copy(Blocks.FLOWER_POT)));
+
+    public static final RegistryObject<Block> CINDER_FURNACE = BLOCKS.register("cinder_furnace", () -> new CinderFurnaceBlock(BlockBehaviour.Properties.of(Material.STONE).requiresCorrectToolForDrops().strength(3.5F)));
 
     public static RegistryObject<Block> LIZARD_EGGS = BLOCKS.register("lizard_egg_block", LizardEggBlock::new);
 }
