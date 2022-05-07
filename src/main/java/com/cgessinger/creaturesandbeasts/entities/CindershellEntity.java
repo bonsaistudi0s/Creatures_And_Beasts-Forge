@@ -7,6 +7,8 @@ import com.cgessinger.creaturesandbeasts.init.CNBSoundEvents;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -55,6 +57,7 @@ import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
 import software.bernie.geckolib3.core.controller.AnimationController;
+import software.bernie.geckolib3.core.event.SoundKeyframeEvent;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
@@ -118,9 +121,12 @@ public class CindershellEntity extends Animal implements IAnimatable, Bucketable
     public void aiStep() {
         super.aiStep();
 
-        this.eatTimer--;
+        if (this.getEating()) {
+            this.navigation.stop();
+            this.eatTimer--;
+        }
 
-        if (this.eatTimer == 39) {
+        if (this.eatTimer == 10) {
             this.setHolding(ItemStack.EMPTY);
         } else if (this.eatTimer == 0) {
             this.setEating(false);
@@ -211,8 +217,10 @@ public class CindershellEntity extends Animal implements IAnimatable, Bucketable
 
             this.discard();
             return InteractionResult.sidedSuccess(level.isClientSide);
-        } else {
+        } else if (!this.getEating()) {
             return this.tryStartEat(player, item);
+        } else {
+            return InteractionResult.PASS;
         }
     }
 
@@ -412,6 +420,8 @@ public class CindershellEntity extends Animal implements IAnimatable, Bucketable
     private <E extends IAnimatable> PlayState animationPredicate(AnimationEvent<E> event) {
         if (!(animationSpeed > -0.05F && animationSpeed < 0.05F)) {
             event.getController().setAnimation(new AnimationBuilder().addAnimation(this.isBaby() ? "baby_cindershell_walk" : "cindershell_walk"));
+        } else if (this.getEating()) {
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("cindershell_eat"));
         } else if (this.isDeadOrDying()) {
             event.getController().setAnimation(new AnimationBuilder().addAnimation("cindershell_death"));
         } else {
@@ -420,9 +430,18 @@ public class CindershellEntity extends Animal implements IAnimatable, Bucketable
         return PlayState.CONTINUE;
     }
 
+    private <E extends IAnimatable> void soundListener(SoundKeyframeEvent<E> event) {
+        LocalPlayer player = Minecraft.getInstance().player;
+        player.playSound(this.isBaby() ? CNBSoundEvents.CINDERSHELL_BABY_EAT.get() : CNBSoundEvents.CINDERSHELL_ADULT_EAT.get(), 0.4F, 1F);
+    }
+
     @Override
     public void registerControllers(AnimationData animationData) {
-        animationData.addAnimationController(new AnimationController<>(this, "controller", 0, this::animationPredicate));
+        AnimationController<CindershellEntity> controller = new AnimationController<>(this, "controller", 0, this::animationPredicate);
+
+        controller.registerSoundListener(this::soundListener);
+
+        animationData.addAnimationController(controller);
     }
 
     @Override

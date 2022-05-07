@@ -27,11 +27,10 @@ public class CindershellRenderer extends GeoEntityRenderer<CindershellEntity> {
 
     @Override
     public void renderRecursively(GeoBone bone, PoseStack stack, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
-        if (bone.getName().equals("head")) {
+        if (bone.getName().equals("itemHolder")) {
             stack.pushPose();
-            stack.mulPose(Vector3f.XP.rotation(-bone.getRotationX()));
-            stack.translate(0.0D, 0.5D, -1.0D);
-            stack.mulPose(Vector3f.XP.rotationDegrees(-90.0F));
+            stack.translate(0, 0.62D, -1.52D);
+            stack.mulPose(Vector3f.XP.rotationDegrees(90.0F));
             Minecraft.getInstance().getItemRenderer().renderStatic(this.mainHand, ItemTransforms.TransformType.THIRD_PERSON_LEFT_HAND, packedLightIn, packedOverlayIn, stack, this.rtb, 0);
             stack.popPose();
             bufferIn = rtb.getBuffer(RenderType.entityTranslucent(whTexture));

@@ -764,6 +764,59 @@
             }
           }
         }
+      },
+      "cindershell_eat": {
+        "animation_length": 1.88,
+        "bones": {
+          "head": {
+            "rotation": {
+              "0.0": {
+                "vector": [0, 0, 0]
+              },
+              "0.2": {
+                "vector": [0, 0, 0],
+                "easing": "easeInOutSine"
+              },
+              "0.44": {
+                "vector": [5, 0, 0],
+                "easing": "easeInOutSine"
+              },
+              "0.6": {
+                "vector": [0, 0, 0],
+                "easing": "easeInOutSine"
+              },
+              "0.84": {
+                "vector": [5, 0, 0],
+                "easing": "easeInOutSine"
+              },
+              "1.0": {
+                "vector": [0, 0, 0],
+                "easing": "easeInOutSine"
+              },
+              "1.24": {
+                "vector": [5, 0, 0],
+                "easing": "easeInOutSine"
+              },
+              "1.4": {
+                "vector": [0, 0, 0],
+                "easing": "easeInOutSine"
+              },
+              "1.64": {
+                "vector": [5, 0, 0],
+                "easing": "easeInOutSine"
+              },
+              "1.8": {
+                "vector": [0, 0, 0],
+                "easing": "easeInOutSine"
+              }
+            }
+          }
+        },
+        "sound_effects": {
+          "0.2": {
+            "effect": "entity.cindershell_adult.eat"
+          }
+        }
       }
 	}
 }

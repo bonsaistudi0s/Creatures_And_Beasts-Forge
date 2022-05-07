@@ -59,6 +59,14 @@
 					]
 				},
 				{
+					"name": "itemHolder",
+					"parent": "head",
+					"pivot": [0, 9, -22],
+					"cubes": [
+						{"origin": [0, 9, -22], "size": [0, 0, 0], "uv": [0, 0]}
+					]
+				},
+				{
 					"name": "left_leg",
 					"parent": "main",
 					"pivot": [9, 8, 9.5],
