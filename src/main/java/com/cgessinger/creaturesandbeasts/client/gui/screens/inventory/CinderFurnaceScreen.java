@@ -65,10 +65,12 @@ public class CinderFurnaceScreen extends AbstractContainerScreen<CinderFurnaceCo
         int j = this.topPos;
         this.blit(poseStack, i, j, 0, 0, this.imageWidth, this.imageHeight);
         this.blit(poseStack, i + 57, j + 37, 176, 0, 14, 14);
-        /*
-        int l = this.menu.getBurnProgress();
-        this.blit(p_97853_, i + 79, j + 34, 176, 14, l + 1, 16);
-        */
+        int l = this.menu.getCookingProgress();
+        this.blit(poseStack, i + 79, j + 35, 176, 14, l + 1, 16);
+    }
+
+    @Override
+    protected void renderLabels(PoseStack p_97808_, int p_97809_, int p_97810_) {
     }
 
     public boolean mouseClicked(double x, double y, int z) {

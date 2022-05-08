@@ -1,14 +1,17 @@
 package com.cgessinger.creaturesandbeasts.containers;
 
+import com.cgessinger.creaturesandbeasts.entities.CindershellEntity;
 import com.cgessinger.creaturesandbeasts.init.CNBContainerTypes;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.StackedContents;
-import net.minecraft.world.inventory.FurnaceResultSlot;
+import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.RecipeBookMenu;
 import net.minecraft.world.inventory.RecipeBookType;
+import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.inventory.StackedContentsCompatible;
 import net.minecraft.world.item.ItemStack;
@@ -16,6 +19,8 @@ import net.minecraft.world.item.crafting.AbstractCookingRecipe;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class CinderFurnaceContainer extends RecipeBookMenu<Container> {
     public static final int INGREDIENT_SLOT = 0;
@@ -26,23 +31,25 @@ public class CinderFurnaceContainer extends RecipeBookMenu<Container> {
     private static final int USE_ROW_SLOT_START = 29;
     private static final int USE_ROW_SLOT_END = 38;
     private final Container container;
+    private final ContainerData data;
     protected final Level level;
     private final RecipeType<? extends AbstractCookingRecipe> recipeType;
     private final RecipeBookType recipeBookType;
 
     public CinderFurnaceContainer(int id, Inventory inventory) {
-        this(id, inventory, new SimpleContainer(2));
+        this(id, inventory, new SimpleContainer(2), new SimpleContainerData(2));
     }
 
-    public CinderFurnaceContainer(int id, Inventory inventory, Container container) {
+    public CinderFurnaceContainer(int id, Inventory inventory, Container container, ContainerData data) {
         super(CNBContainerTypes.CINDER_FURNACE_CONTAINER.get(), id);
         this.recipeBookType = RecipeBookType.FURNACE;
         this.recipeType = RecipeType.SMELTING;
         checkContainerSize(container, SLOT_COUNT);
         this.container = container;
+        this.data = data;
         this.level = inventory.player.level;
         this.addSlot(new Slot(container, INGREDIENT_SLOT, 56, 17));
-        this.addSlot(new FurnaceResultSlot(inventory.player, container, RESULT_SLOT, 116, 35));
+        this.addSlot(new CinderFurnaceResultSlot(inventory.player, container, RESULT_SLOT, 116, 35));
 
         for(int i = 0; i < 3; ++i) {
             for(int j = 0; j < 9; ++j) {
@@ -53,6 +60,8 @@ public class CinderFurnaceContainer extends RecipeBookMenu<Container> {
         for(int k = 0; k < 9; ++k) {
             this.addSlot(new Slot(inventory, k, 8 + k * 18, 142));
         }
+
+        this.addDataSlots(data);
     }
 
     public void fillCraftSlotsStackedContents(StackedContents contents) {
@@ -144,7 +153,60 @@ public class CinderFurnaceContainer extends RecipeBookMenu<Container> {
         return this.recipeBookType;
     }
 
+    public RecipeType<? extends AbstractCookingRecipe> getRecipeType() {
+        return this.recipeType;
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public int getCookingProgress() {
+        int i = this.data.get(0);
+        int j = this.data.get(1);
+        return j != 0 && i != 0 ? i * 24 / j : 0;
+    }
+
     public boolean shouldMoveToInventory(int slotIndex) {
         return true;
+    }
+
+    public static class CinderFurnaceResultSlot extends Slot {
+        private final Player player;
+        private int removeCount;
+
+        public CinderFurnaceResultSlot(Player player, Container container, int index, int x, int y) {
+            super(container, index, x, y);
+            this.player = player;
+        }
+
+        public boolean mayPlace(ItemStack p_39553_) {
+            return false;
+        }
+
+        public ItemStack remove(int amount) {
+            if (this.hasItem()) {
+                this.removeCount += Math.min(amount, this.getItem().getCount());
+            }
+
+            return super.remove(amount);
+        }
+
+        public void onTake(Player player, ItemStack stack) {
+            this.checkTakeAchievements(stack);
+            super.onTake(player, stack);
+        }
+
+        protected void onQuickCraft(ItemStack stack, int amount) {
+            this.removeCount += amount;
+            this.checkTakeAchievements(stack);
+        }
+
+        public void checkTakeAchievements(ItemStack stack) {
+            stack.onCraftedBy(this.player.level, this.player, this.removeCount);
+            if (this.player instanceof ServerPlayer serverPlayer && this.container instanceof CindershellEntity cindershellEntity) {
+                cindershellEntity.awardUsedRecipesAndPopExperience(serverPlayer);
+            }
+
+            this.removeCount = 0;
+            net.minecraftforge.event.ForgeEventFactory.firePlayerSmeltedEvent(this.player, stack);
+        }
     }
 }
