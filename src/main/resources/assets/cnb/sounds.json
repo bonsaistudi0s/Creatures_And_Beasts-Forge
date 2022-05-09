@@ -340,5 +340,27 @@
         "stream": true
       }
     ]
+  },
+  "entity.end_whale.ambient": {
+    "category": "entity",
+    "subtitle": "entity.end_whale.ambient",
+    "sounds": [
+      {
+        "name": "cnb:entity/end_whale/entity.end_whale.ambient",
+        "stream": true
+      },
+      {
+        "name": "cnb:entity/end_whale/entity.end_whale.ambient_2",
+        "stream": true
+      },
+      {
+        "name": "cnb:entity/end_whale/entity.end_whale.ambient_3",
+        "stream": true
+      },
+      {
+        "name": "cnb:entity/end_whale/entity.end_whale.ambient_4",
+        "stream": true
+      }
+    ]
   }
 }

@@ -45,6 +45,7 @@
   "item.cnb.lilytad_spawn_egg": "Lilytad Spawn Egg",
   "item.cnb.yeti_spawn_egg": "Yeti Spawn Egg",
   "item.cnb.minipad_spawn_egg": "Minipad Spawn Egg",
+  "item.cnb.end_whale_spawn_egg": "End Whale Spawn Egg",
 
   "entity.cnb.little_grebe": "Little Grebe",
   "entity.cnb.little_grebe_chick": "Little Grebe Chick",
@@ -86,6 +87,10 @@
   "entity.minipad.hurt": "Minipad hurts",
   "entity.minipad.step": "Minipad walks",
   "entity.minipad.swim": "Minipad swims",
+
+  "entity.end_whale.ambient": "End Whale calls",
+
+  "item.end_whistle": "End Whistle calls out",
 
   "itemGroup.cnb_tab": "Creatures And Beasts",
 

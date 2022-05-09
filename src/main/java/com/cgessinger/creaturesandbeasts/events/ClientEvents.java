@@ -3,6 +3,7 @@ package com.cgessinger.creaturesandbeasts.events;
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
 import com.cgessinger.creaturesandbeasts.client.armor.render.FlowerCrownRenderer;
 import com.cgessinger.creaturesandbeasts.client.entity.render.CindershellRenderer;
+import com.cgessinger.creaturesandbeasts.client.entity.render.EndWhaleRenderer;
 import com.cgessinger.creaturesandbeasts.client.entity.render.LilytadRenderer;
 import com.cgessinger.creaturesandbeasts.client.entity.render.LittleGrebeRenderer;
 import com.cgessinger.creaturesandbeasts.client.entity.render.LizardRenderer;
@@ -34,6 +35,7 @@ public class ClientEvents {
         event.registerEntityRenderer(CNBEntityTypes.SPORELING.get(), SporelingRenderer::new);
         event.registerEntityRenderer(CNBEntityTypes.YETI.get(), YetiRenderer::new);
         event.registerEntityRenderer(CNBEntityTypes.MINIPAD.get(), MinipadRenderer::new);
+        event.registerEntityRenderer(CNBEntityTypes.END_WHALE.get(), EndWhaleRenderer::new);
         event.registerEntityRenderer(CNBEntityTypes.LIZARD_EGG.get(), manager -> new ThrownItemRenderer<>(manager, 1.0F, true));
     }
 
