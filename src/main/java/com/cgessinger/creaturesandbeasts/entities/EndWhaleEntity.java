@@ -70,9 +70,9 @@ public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, Saddl
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 160.0D)
-                .add(Attributes.MOVEMENT_SPEED, 3.0D)
+                .add(Attributes.MOVEMENT_SPEED, 1.0D)
                 .add(Attributes.FOLLOW_RANGE, 100.0D)
-                .add(Attributes.FLYING_SPEED, 3.0D);
+                .add(Attributes.FLYING_SPEED, 1.0D);
     }
 
     protected void registerGoals() {
@@ -163,16 +163,21 @@ public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, Saddl
                 this.setRot(this.getYRot(), this.getXRot());
                 this.yBodyRot = this.getYRot();
                 this.yHeadRot = this.yBodyRot;
-                float f = livingentity.xxa * 0.5F;
-                float f1 = livingentity.zza;
-                if (f1 <= 0.0F) {
-                    f1 *= 0.25F;
+                float forwardMovement = livingentity.zza;
+                if (forwardMovement <= 0.0F) {
+                    forwardMovement *= 0.25F;
+                }
+
+                float verticalMovement = 0;
+
+                if (Mth.abs(livingentity.getXRot()) > 7.0F) {
+                    verticalMovement = Mth.rotLerp(0.01F, this.getXRot(), livingentity.getXRot()) * -forwardMovement/100;
                 }
 
                 this.flyingSpeed = this.getSpeed() * 0.1F;
                 if (this.isControlledByLocalInstance()) {
                     this.setSpeed((float)this.getAttributeValue(Attributes.FLYING_SPEED));
-                    super.travel(new Vec3(f, travelVector.y, f1));
+                    super.travel(new Vec3(0, verticalMovement, forwardMovement));
                 } else if (livingentity instanceof Player) {
                     this.setDeltaMovement(Vec3.ZERO);
                 }
