@@ -3,21 +3,35 @@ package com.cgessinger.creaturesandbeasts.entities;
 import com.cgessinger.creaturesandbeasts.config.CNBConfig;
 import com.cgessinger.creaturesandbeasts.init.CNBSoundEvents;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.Saddleable;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.FlyingMoveControl;
+import net.minecraft.world.entity.ai.control.SmoothSwimmingLookControl;
 import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.ai.goal.TemptGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomFlyingGoal;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.ai.util.AirAndWaterRandomPos;
 import net.minecraft.world.entity.ai.util.HoverRandomPos;
 import net.minecraft.world.entity.animal.FlyingAnimal;
@@ -41,31 +55,174 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 import java.util.EnumSet;
 import java.util.Random;
 
-public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, IAnimatable {
+public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, Saddleable, IAnimatable {
+    private static final EntityDataAccessor<Boolean> SADDLED = SynchedEntityData.defineId(EndWhaleEntity.class, EntityDataSerializers.BOOLEAN);
 
     private final AnimationFactory factory = new AnimationFactory(this);
 
     public EndWhaleEntity(EntityType<EndWhaleEntity> entityType, Level level) {
         super(entityType, level);
-        this.moveControl = new FlyingMoveControl(this, 5, true);
+        this.setTame(false);
+        this.moveControl = new FlyingMoveControl(this, 2, true);
+        this.lookControl = new SmoothSwimmingLookControl(this, 45);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 160.0D)
-                .add(Attributes.MOVEMENT_SPEED, 1.0D)
+                .add(Attributes.MOVEMENT_SPEED, 3.0D)
                 .add(Attributes.FOLLOW_RANGE, 100.0D)
-                .add(Attributes.FLYING_SPEED, 1.0D);
+                .add(Attributes.FLYING_SPEED, 3.0D);
     }
 
     protected void registerGoals() {
-        this.goalSelector.addGoal(0, new TemptGoal(this, 1.25D, Ingredient.of(Items.CHORUS_FRUIT), false));
-        this.goalSelector.addGoal(1, new EndWhaleWanderGoal(this));
+        this.goalSelector.addGoal(0, new EndWhaleTemptGoal(this, 1.25D, Ingredient.of(Items.CHORUS_FRUIT)));
+        this.goalSelector.addGoal(1, new WaterAvoidingRandomFlyingGoal(this, 1.0D));
+    }
+
+    @Override
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(SADDLED, false);
+    }
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putBoolean("Saddled", this.isSaddled());
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        boolean isSaddled = tag.getBoolean("Saddled");
+        if (isSaddled) {
+            this.equipSaddle(SoundSource.PLAYERS);
+        }
+    }
+
+    @Override
+    public boolean isSaddleable() {
+        return this.isTame();
+    }
+
+    @Override
+    public void equipSaddle(@Nullable SoundSource soundSource) {
+        this.entityData.set(SADDLED, true);
+        this.playSound(SoundEvents.HORSE_SADDLE, 1.0F, 1.0F);
+    }
+
+    public void removeSaddle() {
+        this.entityData.set(SADDLED, false);
+        this.spawnAtLocation(Items.SADDLE);
+        this.playSound(SoundEvents.HORSE_SADDLE, 0.8F, 1.0F);
+    }
+
+    @Override
+    public boolean isSaddled() {
+        return this.entityData.get(SADDLED);
+    }
+
+    private void mountWhale(Player player) {
+        if (!this.level.isClientSide) {
+            player.setYRot(this.getYRot());
+            player.setXRot(this.getXRot());
+            player.startRiding(this);
+        }
+    }
+
+    @Override
+    public boolean canBeControlledByRider() {
+        return this.getControllingPassenger() instanceof LivingEntity;
+    }
+
+    @Nullable
+    @Override
+    public Entity getControllingPassenger() {
+        return this.getFirstPassenger();
+    }
+
+    @Override
+    public int getHeadRotSpeed() {
+        return 1;
+    }
+
+    @Override
+    public int getMaxHeadXRot() {
+        return 5;
+    }
+
+    @Override
+    public void travel(Vec3 travelVector) {
+        if (this.isAlive()) {
+            if (this.isVehicle() && this.canBeControlledByRider() && this.isSaddled()) {
+                LivingEntity livingentity = (LivingEntity)this.getControllingPassenger();
+                this.setYRot(Mth.rotLerp(0.05F, this.getYRot(), livingentity.getYRot()));
+                this.yRotO = this.getYRot();
+                this.setXRot(livingentity.getXRot() * 0.5F);
+                this.setRot(this.getYRot(), this.getXRot());
+                this.yBodyRot = this.getYRot();
+                this.yHeadRot = this.yBodyRot;
+                float f = livingentity.xxa * 0.5F;
+                float f1 = livingentity.zza;
+                if (f1 <= 0.0F) {
+                    f1 *= 0.25F;
+                }
+
+                this.flyingSpeed = this.getSpeed() * 0.1F;
+                if (this.isControlledByLocalInstance()) {
+                    this.setSpeed((float)this.getAttributeValue(Attributes.FLYING_SPEED));
+                    super.travel(new Vec3(f, travelVector.y, f1));
+                } else if (livingentity instanceof Player) {
+                    this.setDeltaMovement(Vec3.ZERO);
+                }
+
+                this.calculateEntityAnimation(this, false);
+                this.tryCheckInsideBlocks();
+            } else {
+                this.flyingSpeed = 0.02F;
+                super.travel(travelVector);
+            }
+        }
+    }
+
+    public InteractionResult mobInteract(Player player, InteractionHand hand) {
+        ItemStack itemstack = player.getItemInHand(hand);
+        if (this.level.isClientSide) {
+            boolean flag = this.isOwnedBy(player) || this.isTame() || itemstack.is(Items.CHORUS_FRUIT) && !this.isTame();
+            return flag ? InteractionResult.CONSUME : InteractionResult.PASS;
+        } else if (this.isSaddled() && player.isSecondaryUseActive()) {
+            this.removeSaddle();
+            return InteractionResult.CONSUME;
+        } else if (this.isSaddled()) {
+            this.mountWhale(player);
+            return InteractionResult.sidedSuccess(this.level.isClientSide);
+        } else if (!this.isTame()) {
+            if (itemstack.is(Items.CHORUS_FRUIT)) {
+                if (!player.getAbilities().instabuild) {
+                    itemstack.shrink(1);
+                }
+
+                if (this.random.nextInt(10) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, player)) {
+                    this.tame(player);
+                    this.navigation.stop();
+                    this.setTarget(null);
+                    this.setOrderedToSit(true);
+                    this.level.broadcastEntityEvent(this, (byte) 7);
+                } else {
+                    this.level.broadcastEntityEvent(this, (byte) 6);
+                }
+
+                return InteractionResult.SUCCESS;
+            }
+        }
+
+        return super.mobInteract(player, hand);
     }
 
     @Override
     public boolean isFood(ItemStack stack) {
-        return stack.is(Items.CHORUS_FRUIT);
+        return false;
     }
 
     @Nullable
@@ -94,7 +251,7 @@ public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, IAnim
 
     @Override
     public boolean isFlying() {
-        return !this.onGround;
+        return true;
     }
 
     @Override
@@ -108,14 +265,10 @@ public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, IAnim
 
     @Override
     protected PathNavigation createNavigation(Level level) {
-        FlyingPathNavigation flyingpathnavigation = new FlyingPathNavigation(this, level) {
-            public boolean isStableDestination(BlockPos pos) {
-                return !this.level.getBlockState(pos.below()).isAir();
-            }
-        };
+        FlyingPathNavigation flyingpathnavigation = new FlyingPathNavigation(this, level);
         flyingpathnavigation.setCanOpenDoors(false);
         flyingpathnavigation.setCanFloat(false);
-        flyingpathnavigation.setCanPassDoors(true);
+        flyingpathnavigation.setCanPassDoors(false);
         return flyingpathnavigation;
     }
 
@@ -127,7 +280,7 @@ public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, IAnim
 
     @Override
     public int getAmbientSoundInterval() {
-        return 400;
+        return 800;
     }
 
     @Override
@@ -162,7 +315,7 @@ public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, IAnim
         }
 
         public boolean canUse() {
-            return this.endWhale.navigation.isDone() && this.endWhale.random.nextInt(10) == 0;
+            return this.endWhale.navigation.isDone() && this.endWhale.random.nextInt(3) == 0;
         }
 
         public boolean canContinueToUse() {
@@ -172,17 +325,69 @@ public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, IAnim
         public void start() {
             Vec3 vec3 = this.findPos();
             if (vec3 != null) {
-                this.endWhale.navigation.moveTo(this.endWhale.navigation.createPath(new BlockPos(vec3), 1), 1.0D);
+                this.endWhale.navigation.moveTo(this.endWhale.navigation.createPath(new BlockPos(vec3), 3), 1.0D);
             }
 
         }
 
-        @javax.annotation.Nullable
+        @Nullable
         private Vec3 findPos() {
-            Vec3 vec3 = this.endWhale.getViewVector(0.0F);
+            Vec3 vec3 = this.endWhale.getViewVector(0.5F);
 
-            Vec3 vec32 = HoverRandomPos.getPos(this.endWhale, 8, 7, vec3.x, vec3.z, ((float)Math.PI / 2F), 3, 1);
-            return vec32 != null ? vec32 : AirAndWaterRandomPos.getPos(this.endWhale, 8, 4, -2, vec3.x, vec3.z, ((float)Math.PI / 2F));
+            Vec3 vec32 = HoverRandomPos.getPos(this.endWhale, 20, 20, vec3.x, vec3.z, (float)Math.PI, 50, 15);
+            return vec32 != null ? vec32 : AirAndWaterRandomPos.getPos(this.endWhale, 20, 20, -2, vec3.x, vec3.z, ((float)Math.PI));
+        }
+    }
+
+    static class EndWhaleTemptGoal extends Goal {
+        private static final TargetingConditions TEMP_TARGETING = TargetingConditions.forNonCombat().range(100.0D).ignoreLineOfSight();
+        private final TargetingConditions targetingConditions;
+        protected final EndWhaleEntity mob;
+        private final double speedModifier;
+        @Nullable
+        protected Player player;
+        private int calmDown;
+        private final Ingredient items;
+
+        public EndWhaleTemptGoal(EndWhaleEntity endWhale, double speedModifier, Ingredient temptIngredient) {
+            this.mob = endWhale;
+            this.speedModifier = speedModifier;
+            this.items = temptIngredient;
+            this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
+            this.targetingConditions = TEMP_TARGETING.copy().selector(this::shouldFollow);
+        }
+
+        public boolean canUse() {
+            if (this.calmDown > 0) {
+                --this.calmDown;
+                return false;
+            } else {
+                this.player = this.mob.level.getNearestPlayer(this.targetingConditions, this.mob);
+                return this.player != null;
+            }
+        }
+
+        private boolean shouldFollow(LivingEntity entity) {
+            return this.items.test(entity.getMainHandItem()) || this.items.test(entity.getOffhandItem());
+        }
+
+        public boolean canContinueToUse() {
+            return this.canUse();
+        }
+
+        public void stop() {
+            this.player = null;
+            this.mob.getNavigation().stop();
+            this.calmDown = reducedTickDelay(100);
+        }
+
+        public void tick() {
+            this.mob.getLookControl().setLookAt(this.player, (float)(this.mob.getMaxHeadYRot() + 20), (float)this.mob.getMaxHeadXRot());
+            if (this.mob.distanceToSqr(this.player) < 6.25D) {
+                this.mob.getNavigation().stop();
+            } else {
+                this.mob.getNavigation().moveTo(this.player, this.speedModifier);
+            }
         }
     }
 }
