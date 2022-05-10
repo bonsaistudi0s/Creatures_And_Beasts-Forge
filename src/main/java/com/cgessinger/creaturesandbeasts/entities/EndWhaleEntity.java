@@ -21,6 +21,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.Saddleable;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -171,13 +172,36 @@ public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, Saddl
                 float verticalMovement = 0;
 
                 if (Mth.abs(livingentity.getXRot()) > 7.0F) {
-                    verticalMovement = Mth.rotLerp(0.01F, this.getXRot(), livingentity.getXRot()) * -forwardMovement/100;
+                    verticalMovement = Mth.rotLerp(0.01F, this.getXRot(), livingentity.getXRot()) * -forwardMovement/50;
                 }
 
                 this.flyingSpeed = this.getSpeed() * 0.1F;
                 if (this.isControlledByLocalInstance()) {
                     this.setSpeed((float)this.getAttributeValue(Attributes.FLYING_SPEED));
-                    super.travel(new Vec3(0, verticalMovement, forwardMovement));
+
+                    Vec3 proposedMovement = new Vec3(0, verticalMovement, forwardMovement);
+
+                    if (this.isInWater()) {
+                        this.moveRelative(0.02F, proposedMovement);
+                        this.move(MoverType.SELF, this.getDeltaMovement());
+                        this.setDeltaMovement(this.getDeltaMovement().scale(0.8F));
+                    } else if (this.isInLava()) {
+                        this.moveRelative(0.02F, proposedMovement);
+                        this.move(MoverType.SELF, this.getDeltaMovement());
+                        this.setDeltaMovement(this.getDeltaMovement().scale(0.5D));
+                    } else {
+                        BlockPos ground = new BlockPos(this.getX(), this.getY() - 1.0D, this.getZ());
+                        float f = 0.91F;
+                        if (this.onGround) {
+                            f = this.level.getBlockState(ground).getFriction(this.level, ground, this) * 0.91F;
+                        }
+
+                        float f1 = 0.16277137F / (f * f * f);
+
+                        this.moveRelative(this.onGround ? 0.1F * f1 : 0.1F, proposedMovement);
+                        this.move(MoverType.SELF, this.getDeltaMovement());
+                        this.setDeltaMovement(this.getDeltaMovement().scale(f));
+                    }
                 } else if (livingentity instanceof Player) {
                     this.setDeltaMovement(Vec3.ZERO);
                 }
@@ -186,7 +210,30 @@ public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, Saddl
                 this.tryCheckInsideBlocks();
             } else {
                 this.flyingSpeed = 0.02F;
-                super.travel(travelVector);
+
+                if (this.isInWater()) {
+                    this.moveRelative(0.02F, travelVector);
+                    this.move(MoverType.SELF, this.getDeltaMovement());
+                    this.setDeltaMovement(this.getDeltaMovement().scale(0.8F));
+                } else if (this.isInLava()) {
+                    this.moveRelative(0.02F, travelVector);
+                    this.move(MoverType.SELF, this.getDeltaMovement());
+                    this.setDeltaMovement(this.getDeltaMovement().scale(0.5D));
+                } else {
+                    BlockPos ground = new BlockPos(this.getX(), this.getY() - 1.0D, this.getZ());
+                    float f = 0.91F;
+                    if (this.onGround) {
+                        f = this.level.getBlockState(ground).getFriction(this.level, ground, this) * 0.91F;
+                    }
+
+                    float f1 = 0.16277137F / (f * f * f);
+
+                    this.moveRelative(this.onGround ? 0.1F * f1 : 0.02F, travelVector);
+                    this.move(MoverType.SELF, this.getDeltaMovement());
+                    this.setDeltaMovement(this.getDeltaMovement().scale(f));
+                }
+
+                this.calculateEntityAnimation(this, false);
             }
         }
     }
