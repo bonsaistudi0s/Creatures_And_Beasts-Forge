@@ -133,6 +133,34 @@ public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, Saddl
     }
 
     @Override
+    public void positionRider(Entity rider) {
+        if (this.hasPassenger(rider)) {
+            double verticalOffset = this.getPassengersRidingOffset() + rider.getMyRidingOffset();
+            float whaleRoll = this.getWhaleRoll(rider) * Mth.PI/180;
+            float whalePitch = this.getWhalePitch(rider) * Mth.PI/180;
+            rider.setPos(this.getX() + Mth.cos(this.getYRot() * Mth.PI/180) * verticalOffset * Mth.sin(whaleRoll) + Mth.sin(this.getYRot() * Mth.PI/180) * verticalOffset * Mth.sin(whalePitch),
+                    this.getY() + verticalOffset * Mth.cos(whaleRoll) * Mth.cos(whalePitch),
+                    this.getZ() + Mth.sin(this.getYRot() * Mth.PI/180) * verticalOffset * Mth.sin(whaleRoll) - Mth.cos(this.getYRot() * Mth.PI/180) * verticalOffset * Mth.sin(whalePitch));
+        }
+
+        this.clampRotation(rider);
+    }
+
+    private float getWhaleRoll(Entity rider) {
+        float whaleRotY = this.getYRot();
+        float riderRotY = rider.getYRot();
+
+        return Mth.wrapDegrees(whaleRotY - riderRotY) / 2;
+    }
+
+    private float getWhalePitch(Entity rider) {
+        float whaleRotY = this.getXRot();
+        float riderRotY = rider.getXRot();
+
+        return Mth.wrapDegrees(whaleRotY - riderRotY);
+    }
+
+    @Override
     public boolean canBeControlledByRider() {
         return this.getControllingPassenger() instanceof LivingEntity;
     }
@@ -273,6 +301,20 @@ public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, Saddl
     }
 
     @Override
+    public void onPassengerTurned(Entity entity) {
+        this.clampRotation(entity);
+    }
+
+    protected void clampRotation(Entity rider) {
+        rider.setYBodyRot(this.getYRot());
+        float f = Mth.wrapDegrees(rider.getYRot() - this.getYRot());
+        float f1 = Mth.clamp(f, -90.0F, 90.0F);
+        rider.yRotO += f1 - f;
+        rider.setYRot(rider.getYRot() + f1 - f);
+        rider.setYHeadRot(rider.getYRot());
+    }
+
+    @Override
     public boolean isFood(ItemStack stack) {
         return false;
     }
@@ -341,11 +383,8 @@ public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, Saddl
     }
 
     private <E extends IAnimatable> PlayState animationPredicate(AnimationEvent<E> event) {
-        if (!(animationSpeed > -0.15F && animationSpeed < 0.15F)) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("whale_fly"));
-            return PlayState.CONTINUE;
-        }
-        return PlayState.STOP;
+        event.getController().setAnimation(new AnimationBuilder().addAnimation("whale_fly"));
+        return PlayState.CONTINUE;
     }
 
     @Override
