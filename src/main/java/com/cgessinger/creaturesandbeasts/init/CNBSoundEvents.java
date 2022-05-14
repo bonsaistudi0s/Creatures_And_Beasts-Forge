@@ -44,7 +44,5 @@ public class CNBSoundEvents {
 
     public static final RegistryObject<SoundEvent> END_WHALE_AMBIENT = SOUND_EVENTS.register("entity.end_whale.ambient", () -> new SoundEvent(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "entity.end_whale.ambient")));
 
-    public static final RegistryObject<SoundEvent> END_WHISTLE = SOUND_EVENTS.register("item.end_whistle", () -> new SoundEvent(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "item.end_whistle")));
-
     public static final RegistryObject<SoundEvent> LIZARD_EGG_HATCH = SOUND_EVENTS.register("entity.lizard.egg_hatch", () -> new SoundEvent(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "entity.lizard.egg_hatch")));
 }

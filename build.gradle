@@ -2,17 +2,20 @@ buildscript {
     repositories {
         maven { url = 'https://files.minecraftforge.net/maven' }
         maven { url  = 'https://plugins.gradle.org/m2/' }
+        maven { url = 'https://repo.spongepowered.org/maven/' }
         jcenter()
         mavenCentral()
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath group: 'org.spongepowered',                   name: 'mixingradle', version: '0.7-SNAPSHOT'
         classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.4.0'
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'eclipse'
+apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'com.matthewprenger.cursegradle'
 
 import groovy.json.JsonSlurper
@@ -34,6 +37,7 @@ minecraft {
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
+            arg '-mixin.config=creatures-and-beasts.mixins.json'
 
             mods {
                 cnb {
@@ -47,6 +51,7 @@ minecraft {
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
+            arg '-mixin.config=creatures-and-beasts.mixins.json'
 
             mods {
                 cnb {
@@ -72,12 +77,18 @@ minecraft {
     }
 }
 
+mixin {
+    add sourceSets.main, 'creatures-and-beasts.refmap.json'
+}
+
 repositories {
+    maven { url = 'https://repo.spongepowered.org/maven/' }
     maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
 }
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.18.2-40.0.32'
+    annotationProcessor 'org.spongepowered:mixin:0.8.4:processor'
 
     // Geckolib for ingame animations
     implementation fg.deobf('software.bernie.geckolib:geckolib-1.18-forge:3.0.12')
@@ -93,7 +104,8 @@ jar {
             "Implementation-Title": "cnb",
             "Implementation-Version": "${version}",
             "Implementation-Vendor" :"scrimblostudios",
-            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+            'MixinConfigs'          : 'creatures-and-beasts.mixins.json'
         ])
     }
 }

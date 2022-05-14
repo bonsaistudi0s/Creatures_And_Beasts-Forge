@@ -141,9 +141,23 @@ public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, Saddl
             rider.setPos(this.getX() + Mth.cos(this.getYRot() * Mth.PI/180) * verticalOffset * Mth.sin(whaleRoll) + Mth.sin(this.getYRot() * Mth.PI/180) * verticalOffset * Mth.sin(whalePitch),
                     this.getY() + verticalOffset * Mth.cos(whaleRoll) * Mth.cos(whalePitch),
                     this.getZ() + Mth.sin(this.getYRot() * Mth.PI/180) * verticalOffset * Mth.sin(whaleRoll) - Mth.cos(this.getYRot() * Mth.PI/180) * verticalOffset * Mth.sin(whalePitch));
-        }
 
-        this.clampRotation(rider);
+            this.clampRotation(rider);
+        }
+    }
+
+    protected void clampRotation(Entity rider) {
+        rider.setYBodyRot(this.getYRot());
+        float f = Mth.wrapDegrees(rider.getYRot() - this.getYRot());
+        float f1 = Mth.clamp(f, -90.0F, 90.0F);
+        rider.yRotO += f1 - f;
+        rider.setYRot(rider.getYRot() + f1 - f);
+        rider.setYHeadRot(rider.getYRot());
+    }
+
+    @Override
+    public double getPassengersRidingOffset() {
+        return (double)this.getDimensions(this.getPose()).height * 0.70D;
     }
 
     private float getWhaleRoll(Entity rider) {
@@ -172,13 +186,13 @@ public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, Saddl
     }
 
     @Override
-    public int getHeadRotSpeed() {
-        return 1;
+    public boolean rideableUnderWater() {
+        return true;
     }
 
     @Override
-    public int getMaxHeadXRot() {
-        return 5;
+    public boolean canBreatheUnderwater() {
+        return true;
     }
 
     @Override
@@ -209,11 +223,7 @@ public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, Saddl
 
                     Vec3 proposedMovement = new Vec3(0, verticalMovement, forwardMovement);
 
-                    if (this.isInWater()) {
-                        this.moveRelative(0.02F, proposedMovement);
-                        this.move(MoverType.SELF, this.getDeltaMovement());
-                        this.setDeltaMovement(this.getDeltaMovement().scale(0.8F));
-                    } else if (this.isInLava()) {
+                    if (this.isInLava()) {
                         this.moveRelative(0.02F, proposedMovement);
                         this.move(MoverType.SELF, this.getDeltaMovement());
                         this.setDeltaMovement(this.getDeltaMovement().scale(0.5D));
@@ -239,11 +249,7 @@ public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, Saddl
             } else {
                 this.flyingSpeed = 0.02F;
 
-                if (this.isInWater()) {
-                    this.moveRelative(0.02F, travelVector);
-                    this.move(MoverType.SELF, this.getDeltaMovement());
-                    this.setDeltaMovement(this.getDeltaMovement().scale(0.8F));
-                } else if (this.isInLava()) {
+                if (this.isInLava()) {
                     this.moveRelative(0.02F, travelVector);
                     this.move(MoverType.SELF, this.getDeltaMovement());
                     this.setDeltaMovement(this.getDeltaMovement().scale(0.5D));
@@ -303,15 +309,6 @@ public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, Saddl
     @Override
     public void onPassengerTurned(Entity entity) {
         this.clampRotation(entity);
-    }
-
-    protected void clampRotation(Entity rider) {
-        rider.setYBodyRot(this.getYRot());
-        float f = Mth.wrapDegrees(rider.getYRot() - this.getYRot());
-        float f1 = Mth.clamp(f, -90.0F, 90.0F);
-        rider.yRotO += f1 - f;
-        rider.setYRot(rider.getYRot() + f1 - f);
-        rider.setYHeadRot(rider.getYRot());
     }
 
     @Override

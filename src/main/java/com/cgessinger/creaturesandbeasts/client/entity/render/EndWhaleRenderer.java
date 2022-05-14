@@ -35,9 +35,9 @@ public class EndWhaleRenderer extends GeoEntityRenderer<EndWhaleEntity> {
     protected void applyRotations(EndWhaleEntity endWhale, PoseStack matrixStackIn, float ageInTicks, float rotationYaw, float partialTicks) {
         super.applyRotations(endWhale, matrixStackIn, ageInTicks, rotationYaw, partialTicks);
         float whaleRotY = endWhale.getViewYRot(partialTicks);
-        float playerRotY = 0;
+        float playerRotY;
         float whaleRotX = endWhale.getViewXRot(partialTicks);
-        float playerRotX = 0;
+        float playerRotX;
         Entity rider = endWhale.getFirstPassenger();
 
         if (rider != null) {
