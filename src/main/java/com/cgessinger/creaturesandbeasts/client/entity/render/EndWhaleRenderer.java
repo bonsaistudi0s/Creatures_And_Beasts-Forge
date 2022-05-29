@@ -35,17 +35,20 @@ public class EndWhaleRenderer extends GeoEntityRenderer<EndWhaleEntity> {
     protected void applyRotations(EndWhaleEntity endWhale, PoseStack matrixStackIn, float ageInTicks, float rotationYaw, float partialTicks) {
         super.applyRotations(endWhale, matrixStackIn, ageInTicks, rotationYaw, partialTicks);
         float whaleRotY = endWhale.getViewYRot(partialTicks);
-        float playerRotY;
+        float wantedRotY;
         float whaleRotX = endWhale.getViewXRot(partialTicks);
-        float playerRotX;
+        float wantedRotX;
         Entity rider = endWhale.getFirstPassenger();
 
         if (rider != null) {
-            playerRotY = rider.getViewYRot(partialTicks);
-            playerRotX = rider.getViewXRot(partialTicks);
-
-            matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(Mth.wrapDegrees(whaleRotY - playerRotY) / 2));
-            matrixStackIn.mulPose(Vector3f.XP.rotationDegrees(Mth.wrapDegrees(whaleRotX - playerRotX)));
+            wantedRotY = rider.getViewYRot(partialTicks);
+            wantedRotX = rider.getViewXRot(partialTicks);
+        } else {
+            wantedRotY = endWhale.yBodyRot;
+            wantedRotX = endWhale.getXRot();
         }
+
+        matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(Mth.wrapDegrees(whaleRotY - wantedRotY) / 2));
+        matrixStackIn.mulPose(Vector3f.XP.rotationDegrees(Mth.wrapDegrees(whaleRotX - wantedRotX)));
     }
 }

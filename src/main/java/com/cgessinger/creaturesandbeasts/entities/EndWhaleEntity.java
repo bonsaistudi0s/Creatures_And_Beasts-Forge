@@ -26,10 +26,10 @@ import net.minecraft.world.entity.Saddleable;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.control.BodyRotationControl;
 import net.minecraft.world.entity.ai.control.FlyingMoveControl;
-import net.minecraft.world.entity.ai.control.SmoothSwimmingLookControl;
+import net.minecraft.world.entity.ai.control.LookControl;
 import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomFlyingGoal;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
@@ -65,7 +65,7 @@ public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, Saddl
         super(entityType, level);
         this.setTame(false);
         this.moveControl = new FlyingMoveControl(this, 2, true);
-        this.lookControl = new SmoothSwimmingLookControl(this, 45);
+        this.lookControl = new EndWhaleLookControl(this);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -78,7 +78,7 @@ public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, Saddl
 
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new EndWhaleTemptGoal(this, 1.25D, Ingredient.of(Items.CHORUS_FRUIT)));
-        this.goalSelector.addGoal(1, new WaterAvoidingRandomFlyingGoal(this, 1.0D));
+        this.goalSelector.addGoal(1, new EndWhaleWanderGoal(this));
     }
 
     @Override
@@ -100,6 +100,21 @@ public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, Saddl
         if (isSaddled) {
             this.equipSaddle(SoundSource.PLAYERS);
         }
+    }
+
+    @Override
+    protected BodyRotationControl createBodyControl() {
+        return new EndWhaleBodyRotationControl(this);
+    }
+
+    @Override
+    public int getMaxHeadYRot() {
+        return 0;
+    }
+
+    @Override
+    public int getHeadRotSpeed() {
+        return 30;
     }
 
     @Override
@@ -272,6 +287,7 @@ public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, Saddl
         }
     }
 
+    @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack itemstack = player.getItemInHand(hand);
         if (this.level.isClientSide) {
@@ -318,7 +334,7 @@ public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, Saddl
 
     @Nullable
     @Override
-    public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob mob) {
+    public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob endWhale) {
         return null;
     }
 
@@ -394,6 +410,76 @@ public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, Saddl
         return this.factory;
     }
 
+    static class EndWhaleLookControl extends LookControl {
+        private final EndWhaleEntity endWhale;
+
+        public EndWhaleLookControl(EndWhaleEntity endWhale) {
+            super(endWhale);
+            this.endWhale = endWhale;
+        }
+
+        @Override
+        public void tick() {
+            if (this.endWhale.yBodyRot != this.endWhale.getYHeadRot()) {
+                this.endWhale.yHeadRot = Mth.rotLerp(0.05F, this.endWhale.getYHeadRot(), this.endWhale.yBodyRot);
+            }
+        }
+    }
+
+    static class EndWhaleBodyRotationControl extends BodyRotationControl {
+        private final EndWhaleEntity endWhale;
+        private int headStableTime;
+        private float lastStableYHeadRot;
+
+
+        public EndWhaleBodyRotationControl(EndWhaleEntity endWhale) {
+            super(endWhale);
+            this.endWhale = endWhale;
+        }
+
+        @Override
+        public void clientTick() {
+            if (this.isMoving()) {
+                this.endWhale.yBodyRot = Mth.rotLerp(0.05F, this.endWhale.yBodyRot, this.endWhale.getYRot());
+                this.rotateHeadIfNecessary();
+                this.lastStableYHeadRot = this.endWhale.yHeadRot;
+                this.headStableTime = 0;
+            } else {
+                if (this.notCarryingMobPassengers()) {
+                    if (Math.abs(this.endWhale.yHeadRot - this.lastStableYHeadRot) > 15.0F) {
+                        this.headStableTime = 0;
+                        this.lastStableYHeadRot = this.endWhale.yHeadRot;
+                        this.rotateHeadIfNecessary();
+                    } else {
+                        ++this.headStableTime;
+                        if (this.headStableTime > 10) {
+                            this.rotateHeadTowardsFront();
+                        }
+                    }
+                }
+            }
+        }
+
+        private void rotateHeadIfNecessary() {
+            this.endWhale.yHeadRot = Mth.rotLerp(0.05F, this.endWhale.yHeadRot, this.endWhale.yBodyRot);
+        }
+
+        private void rotateHeadTowardsFront() {
+            this.endWhale.yHeadRot = Mth.rotLerp(0.05F, this.endWhale.yHeadRot, this.endWhale.yBodyRot);
+        }
+
+        private boolean notCarryingMobPassengers() {
+            return !(this.endWhale.getFirstPassenger() instanceof Mob);
+        }
+
+
+        private boolean isMoving() {
+            double d0 = this.endWhale.getX() - this.endWhale.xo;
+            double d1 = this.endWhale.getZ() - this.endWhale.zo;
+            return d0 * d0 + d1 * d1 > (double)2.5000003E-7F;
+        }
+    }
+
     static class EndWhaleWanderGoal extends Goal {
         private final EndWhaleEntity endWhale;
 
@@ -415,7 +501,6 @@ public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, Saddl
             if (vec3 != null) {
                 this.endWhale.navigation.moveTo(this.endWhale.navigation.createPath(new BlockPos(vec3), 3), 1.0D);
             }
-
         }
 
         @Nullable
@@ -423,14 +508,20 @@ public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, Saddl
             Vec3 vec3 = this.endWhale.getViewVector(0.5F);
 
             Vec3 vec32 = HoverRandomPos.getPos(this.endWhale, 20, 20, vec3.x, vec3.z, (float)Math.PI, 50, 15);
-            return vec32 != null ? vec32 : AirAndWaterRandomPos.getPos(this.endWhale, 20, 20, -2, vec3.x, vec3.z, ((float)Math.PI));
+            vec32 = vec32 != null ? vec32 : AirAndWaterRandomPos.getPos(this.endWhale, 20, 20, -2, vec3.x, vec3.z, ((float)Math.PI));
+
+            if (this.endWhale.isSaddled() && vec32 != null && this.endWhale.getOwner() != null && vec32.distanceTo(this.endWhale.getOwner().position()) > 100.0D) {
+                vec32 = null;
+            }
+
+            return vec32;
         }
     }
 
     static class EndWhaleTemptGoal extends Goal {
         private static final TargetingConditions TEMP_TARGETING = TargetingConditions.forNonCombat().range(100.0D).ignoreLineOfSight();
         private final TargetingConditions targetingConditions;
-        protected final EndWhaleEntity mob;
+        protected final EndWhaleEntity endWhale;
         private final double speedModifier;
         @Nullable
         protected Player player;
@@ -438,7 +529,7 @@ public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, Saddl
         private final Ingredient items;
 
         public EndWhaleTemptGoal(EndWhaleEntity endWhale, double speedModifier, Ingredient temptIngredient) {
-            this.mob = endWhale;
+            this.endWhale = endWhale;
             this.speedModifier = speedModifier;
             this.items = temptIngredient;
             this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
@@ -450,7 +541,7 @@ public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, Saddl
                 --this.calmDown;
                 return false;
             } else {
-                this.player = this.mob.level.getNearestPlayer(this.targetingConditions, this.mob);
+                this.player = this.endWhale.level.getNearestPlayer(this.targetingConditions, this.endWhale);
                 return this.player != null;
             }
         }
@@ -465,16 +556,16 @@ public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, Saddl
 
         public void stop() {
             this.player = null;
-            this.mob.getNavigation().stop();
+            this.endWhale.getNavigation().stop();
             this.calmDown = reducedTickDelay(100);
         }
 
         public void tick() {
-            this.mob.getLookControl().setLookAt(this.player, (float)(this.mob.getMaxHeadYRot() + 20), (float)this.mob.getMaxHeadXRot());
-            if (this.mob.distanceToSqr(this.player) < 6.25D) {
-                this.mob.getNavigation().stop();
+            this.endWhale.getLookControl().setLookAt(this.player, (float)(this.endWhale.getMaxHeadYRot() + 20), (float)this.endWhale.getMaxHeadXRot());
+            if (this.endWhale.distanceToSqr(this.player) < 6.25D) {
+                this.endWhale.getNavigation().stop();
             } else {
-                this.mob.getNavigation().moveTo(this.player, this.speedModifier);
+                this.endWhale.getNavigation().moveTo(this.player, this.speedModifier);
             }
         }
     }

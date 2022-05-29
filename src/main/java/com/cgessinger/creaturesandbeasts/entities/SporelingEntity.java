@@ -31,7 +31,6 @@ import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.control.BodyRotationControl;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.FollowOwnerGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
@@ -300,11 +299,6 @@ public class SporelingEntity extends TamableAnimal implements Enemy, IAnimatable
     @Override
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob mob) {
         return null;
-    }
-
-    @Override
-    protected BodyRotationControl createBodyControl() {
-        return super.createBodyControl();
     }
 
     public boolean isRunning() {

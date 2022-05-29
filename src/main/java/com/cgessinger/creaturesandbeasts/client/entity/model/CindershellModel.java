@@ -35,4 +35,6 @@ public class CindershellModel extends AnimatedGeoModel<CindershellEntity> {
     public ResourceLocation getAnimationFileLocation(CindershellEntity entity) {
         return CINDERSHELL_ANIMATIONS;
     }
+
+
 }
