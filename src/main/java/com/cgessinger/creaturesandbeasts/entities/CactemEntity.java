@@ -13,8 +13,11 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.SpawnGroupData;
@@ -29,13 +32,18 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.pathfinder.Path;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
@@ -44,14 +52,17 @@ import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.UUID;
 
-public class CactemEntity extends AgeableMob implements IAnimatable {
+public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimatable {
     private static final EntityDataAccessor<Boolean> ELDER = SynchedEntityData.defineId(CactemEntity.class, EntityDataSerializers.BOOLEAN);
 
     private final FollowElderGoal followElderGoal = new FollowElderGoal(this, 0.5D);
     private final TradeGoal tradeGoal = new TradeGoal(this, 16.0D, 0.5D);
+    private final RangedSpearAttackGoal spearAttackGoal = new RangedSpearAttackGoal(this, 0.5D, 20, 15.0F);
+    private final HealGoal healGoal = new HealGoal(this, 1.0D, 60, 16.0F);
 
     private final AnimationFactory factory = new AnimationFactory(this);
     private final UUID healthReductionUUID = UUID.fromString("65a301bb-531d-499e-939c-eda5b857c0b4");
@@ -64,7 +75,7 @@ public class CactemEntity extends AgeableMob implements IAnimatable {
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 30.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.5D);
+                .add(Attributes.MOVEMENT_SPEED, 0.25D);
     }
 
     @Override
@@ -102,6 +113,10 @@ public class CactemEntity extends AgeableMob implements IAnimatable {
     private void reassessGoals() {
         if (this.isElder()) {
             this.goalSelector.addGoal(1, tradeGoal);
+            this.goalSelector.addGoal(1, healGoal);
+        } else if (!this.isBaby()){
+            this.goalSelector.addGoal(1, spearAttackGoal);
+            this.goalSelector.addGoal(1, followElderGoal);
         } else {
             this.goalSelector.addGoal(1, followElderGoal);
         }
@@ -118,11 +133,24 @@ public class CactemEntity extends AgeableMob implements IAnimatable {
 
         if (elderChance < 0.25) {
             this.setElder(true);
+            this.setItemInHand(this.getUsedItemHand(), new ItemStack(CNBItems.HEAL_SPELL_BOOK.get()));
         }
 
         this.reassessGoals();
 
         return super.finalizeSpawn(level, difficulty, spawnType, spawnGroup, tag);
+    }
+
+    @Override
+    public void performRangedAttack(LivingEntity entity, float damage) {
+
+    }
+
+    private void performHeal(float range) {
+        List<? extends CactemEntity> list = this.level.getEntitiesOfClass(CactemEntity.class, this.getBoundingBox().inflate(range, 4, range));
+        for(CactemEntity nearbyCactem : list) {
+            nearbyCactem.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 5, 1));
+        }
     }
 
     @Override
@@ -198,7 +226,7 @@ public class CactemEntity extends AgeableMob implements IAnimatable {
         }
 
         public boolean canUse() {
-            List<? extends CactemEntity> list = this.cactem.level.getEntitiesOfClass(this.cactem.getClass(), this.cactem.getBoundingBox().inflate(HORIZONTAL_SCAN_RANGE, VERTICAL_SCAN_RANGE, HORIZONTAL_SCAN_RANGE));
+            List<? extends CactemEntity> list = this.cactem.level.getEntitiesOfClass(CactemEntity.class, this.cactem.getBoundingBox().inflate(HORIZONTAL_SCAN_RANGE, VERTICAL_SCAN_RANGE, HORIZONTAL_SCAN_RANGE));
             CactemEntity followTarget = null;
             double closestElderDistance = Double.MAX_VALUE;
 
@@ -347,6 +375,180 @@ public class CactemEntity extends AgeableMob implements IAnimatable {
 
             } else {
                 tradeDelay--;
+            }
+        }
+    }
+
+    static class HealGoal extends Goal {
+        private final CactemEntity cactem;
+        private final double speedModifier;
+        private final int healIntervalMin;
+        private final float healRadius;
+        private int healTime = -1;
+
+        public HealGoal(CactemEntity cactem, double speedModifier, int healIntervalMin, float healRadius) {
+            this.cactem = cactem;
+            this.speedModifier = speedModifier;
+            this.healIntervalMin = healIntervalMin;
+            this.healRadius = healRadius;
+            this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
+        }
+
+        public boolean canUse() {
+            return this.cactem.getTarget() != null;
+        }
+
+        public boolean canContinueToUse() {
+            return this.canUse() || !this.cactem.getNavigation().isDone();
+        }
+
+        public void start() {
+            super.start();
+            this.cactem.setAggressive(true);
+        }
+
+        public void stop() {
+            super.stop();
+            this.cactem.setAggressive(false);
+            this.healTime = -1;
+            this.cactem.stopUsingItem();
+        }
+
+        public boolean requiresUpdateEveryTick() {
+            return true;
+        }
+
+        public void tick() {
+            LivingEntity targetEntity = this.cactem.getTarget();
+
+            if (targetEntity != null) {
+                if (this.cactem.isUsingItem()) {
+                    this.cactem.getNavigation().stop();
+                    int i = this.cactem.getTicksUsingItem();
+                    if (i >= 60) {
+                        this.cactem.stopUsingItem();
+                        this.cactem.performHeal(this.healRadius);
+                        this.healTime = this.healIntervalMin + this.cactem.random.nextInt(41);
+                    }
+                } else if (--this.healTime <= 0) {
+                    this.cactem.getNavigation().stop();
+                    this.cactem.startUsingItem(this.cactem.getUsedItemHand());
+                } else {
+                    Vec3 vec3 = DefaultRandomPos.getPosAway(this.cactem, 16, 7, targetEntity.position());
+                    if (vec3 != null) {
+                        Path path = this.cactem.getNavigation().createPath(vec3.x, vec3.y, vec3.z, 0);
+                        this.cactem.getNavigation().moveTo(path, this.speedModifier);
+                    }
+                }
+            }
+        }
+    }
+
+    static class RangedSpearAttackGoal extends Goal {
+        private final CactemEntity cactem;
+        private final double speedModifier;
+        private final int attackIntervalMin;
+        private final float attackRadiusSqr;
+        private int attackTime = -1;
+        private int seeTime;
+        private boolean strafingClockwise;
+        private boolean strafingBackwards;
+        private int strafingTime = -1;
+
+        public RangedSpearAttackGoal(CactemEntity cactem, double speedModifier, int attackIntervalMin, float attackRadius) {
+            this.cactem = cactem;
+            this.speedModifier = speedModifier;
+            this.attackIntervalMin = attackIntervalMin;
+            this.attackRadiusSqr = attackRadius * attackRadius;
+            this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
+        }
+
+        public boolean canUse() {
+            return this.cactem.getTarget() != null;
+        }
+
+        public boolean canContinueToUse() {
+            return (this.canUse() || !this.cactem.getNavigation().isDone());
+        }
+
+        public void start() {
+            super.start();
+            this.cactem.setAggressive(true);
+        }
+
+        public void stop() {
+            super.stop();
+            this.cactem.setAggressive(false);
+            this.seeTime = 0;
+            this.attackTime = -1;
+            this.cactem.stopUsingItem();
+        }
+
+        public boolean requiresUpdateEveryTick() {
+            return true;
+        }
+
+        public void tick() {
+            LivingEntity targetEntity = this.cactem.getTarget();
+            if (targetEntity != null) {
+                double d0 = this.cactem.distanceToSqr(targetEntity.getX(), targetEntity.getY(), targetEntity.getZ());
+                boolean flag = this.cactem.getSensing().hasLineOfSight(targetEntity);
+                boolean flag1 = this.seeTime > 0;
+                if (flag != flag1) {
+                    this.seeTime = 0;
+                }
+
+                if (flag) {
+                    ++this.seeTime;
+                } else {
+                    --this.seeTime;
+                }
+
+                if (!(d0 > (double)this.attackRadiusSqr) && this.seeTime >= 20) {
+                    this.cactem.getNavigation().stop();
+                    ++this.strafingTime;
+                }
+
+                if (this.strafingTime >= 20) {
+                    if ((double)this.cactem.getRandom().nextFloat() < 0.3D) {
+                        this.strafingClockwise = !this.strafingClockwise;
+                    }
+
+                    if ((double)this.cactem.getRandom().nextFloat() < 0.3D) {
+                        this.strafingBackwards = !this.strafingBackwards;
+                    }
+
+                    this.strafingTime = 0;
+                }
+
+                if (this.strafingTime > -1) {
+                    if (d0 > (double)(this.attackRadiusSqr * 0.75F)) {
+                        this.strafingBackwards = false;
+                    } else if (d0 < (double)(this.attackRadiusSqr * 0.25F)) {
+                        this.strafingBackwards = true;
+                    }
+
+                    this.cactem.getMoveControl().strafe(this.strafingBackwards ? -0.5F : 0.5F, this.strafingClockwise ? 0.5F : -0.5F);
+                    this.cactem.lookAt(targetEntity, 30.0F, 30.0F);
+                } else {
+                    this.cactem.getLookControl().setLookAt(targetEntity, 30.0F, 30.0F);
+                }
+
+                if (this.cactem.isUsingItem()) {
+                    if (!flag && this.seeTime < -60) {
+                        this.cactem.stopUsingItem();
+                    } else if (flag) {
+                        int i = this.cactem.getTicksUsingItem();
+                        if (i >= 20) {
+                            this.cactem.stopUsingItem();
+                            this.cactem.performRangedAttack(targetEntity, 1.0F);
+                            this.attackTime = this.attackIntervalMin;
+                        }
+                    }
+                } else if (--this.attackTime <= 0 && this.seeTime >= -60) {
+                    this.cactem.startUsingItem(ProjectileUtil.getWeaponHoldingHand(this.cactem, item -> item instanceof BowItem));
+                }
+
             }
         }
     }
