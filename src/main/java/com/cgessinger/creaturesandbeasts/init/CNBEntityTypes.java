@@ -1,6 +1,7 @@
 package com.cgessinger.creaturesandbeasts.init;
 
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
+import com.cgessinger.creaturesandbeasts.entities.CactemEntity;
 import com.cgessinger.creaturesandbeasts.entities.CindershellEntity;
 import com.cgessinger.creaturesandbeasts.entities.EndWhaleEntity;
 import com.cgessinger.creaturesandbeasts.entities.LittleGrebeEntity;
@@ -28,6 +29,7 @@ public class CNBEntityTypes {
     public static final RegistryObject<EntityType<SporelingEntity>> SPORELING = ENTITY_TYPES.register("sporeling", () -> EntityType.Builder.of(SporelingEntity::new, MobCategory.CREATURE).sized(0.6f, 0.85f).build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "sporeling").toString()));
     public static final RegistryObject<EntityType<MinipadEntity>> MINIPAD = ENTITY_TYPES.register("minipad", () -> EntityType.Builder.of(MinipadEntity::new, MobCategory.CREATURE).sized(0.6f, 0.7f).build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "minipad").toString()));
     public static final RegistryObject<EntityType<EndWhaleEntity>> END_WHALE = ENTITY_TYPES.register("end_whale", () -> EntityType.Builder.of(EndWhaleEntity::new, MobCategory.CREATURE).sized(3.0f, 1.5f).build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "end_whale").toString()));
+    public static final RegistryObject<EntityType<CactemEntity>> CACTEM = ENTITY_TYPES.register("cactem", () -> EntityType.Builder.of(CactemEntity::new, MobCategory.CREATURE).sized(0.75F, 1.3F).build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "cactem").toString()));
 
     /* MONSTERS */
     public static final RegistryObject<EntityType<YetiEntity>> YETI = ENTITY_TYPES.register("yeti", () -> EntityType.Builder.of(YetiEntity::new, MobCategory.MONSTER).sized(1.55f, 2.05f).build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "yeti").toString()));

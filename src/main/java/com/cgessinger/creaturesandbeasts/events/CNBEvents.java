@@ -2,6 +2,7 @@ package com.cgessinger.creaturesandbeasts.events;
 
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
 import com.cgessinger.creaturesandbeasts.config.CNBConfig.ServerConfig;
+import com.cgessinger.creaturesandbeasts.entities.CactemEntity;
 import com.cgessinger.creaturesandbeasts.entities.CindershellEntity;
 import com.cgessinger.creaturesandbeasts.entities.EndWhaleEntity;
 import com.cgessinger.creaturesandbeasts.entities.LilytadEntity;
@@ -43,6 +44,7 @@ public class CNBEvents {
         event.put(CNBEntityTypes.YETI.get(), YetiEntity.createAttributes().build());
         event.put(CNBEntityTypes.MINIPAD.get(), MinipadEntity.createAttributes().build());
         event.put(CNBEntityTypes.END_WHALE.get(), EndWhaleEntity.createAttributes().build());
+        event.put(CNBEntityTypes.CACTEM.get(), CactemEntity.createAttributes().build());
     }
 
     @SubscribeEvent

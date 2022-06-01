@@ -46,6 +46,7 @@
   "item.cnb.yeti_spawn_egg": "Yeti Spawn Egg",
   "item.cnb.minipad_spawn_egg": "Minipad Spawn Egg",
   "item.cnb.end_whale_spawn_egg": "End Whale Spawn Egg",
+  "item.cnb.cactem_spawn_egg": "Cactem Spawn Egg",
 
   "entity.cnb.little_grebe": "Little Grebe",
   "entity.cnb.little_grebe_chick": "Little Grebe Chick",
@@ -55,6 +56,8 @@
   "entity.cnb.yeti": "Yeti",
   "entity.cnb.lilytad": "Lilytad",
   "entity.cnb.minipad": "Minipad",
+  "entity.cnb.end_whale": "End Whale",
+  "entity.cnb.cactem": "Cactem",
 
   "entity.little_grebe_chick.ambient": "Little Grebe cheeps",
   "entity.little_grebe.ambient": "Little Grebe cheeps",

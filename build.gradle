@@ -91,7 +91,7 @@ dependencies {
     annotationProcessor 'org.spongepowered:mixin:0.8.4:processor'
 
     // Geckolib for ingame animations
-    implementation fg.deobf('software.bernie.geckolib:geckolib-1.18-forge:3.0.12')
+    implementation fg.deobf('software.bernie.geckolib:geckolib-1.18-forge:3.0.18')
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..
