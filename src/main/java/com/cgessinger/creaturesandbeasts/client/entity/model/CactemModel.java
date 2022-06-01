@@ -18,6 +18,8 @@ public class CactemModel extends AnimatedGeoModel<CactemEntity> {
     public ResourceLocation getModelLocation(CactemEntity entity) {
         if (entity.isBaby()) {
             return BABY_CACTEM_MODEL;
+        } else if (entity.isElder()) {
+            return ELDER_CACTEM_MODEL;
         } else {
             return WARRIOR_CACTEM_MODEL;
         }
@@ -27,6 +29,8 @@ public class CactemModel extends AnimatedGeoModel<CactemEntity> {
     public ResourceLocation getTextureLocation(CactemEntity entity) {
         if (entity.isBaby()) {
             return BABY_CACTEM_TEXTURE;
+        } else if (entity.isElder()) {
+            return ELDER_CACTEM_TEXTURE;
         } else {
             return WARRIOR_CACTEM_TEXTURE;
         }
