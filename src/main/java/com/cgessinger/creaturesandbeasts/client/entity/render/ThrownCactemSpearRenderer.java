@@ -28,8 +28,8 @@ public class ThrownCactemSpearRenderer extends EntityRenderer<ThrownCactemSpearE
 
     public void render(ThrownCactemSpearEntity spearEntity, float p_116112_, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLightIn) {
         poseStack.pushPose();
-        poseStack.mulPose(Vector3f.YP.rotationDegrees(Mth.lerp(partialTicks, spearEntity.yRotO, spearEntity.getYRot()) - 90.0F));
-        poseStack.mulPose(Vector3f.ZP.rotationDegrees(Mth.lerp(partialTicks, spearEntity.xRotO, spearEntity.getXRot()) + 90.0F));
+        poseStack.mulPose(Vector3f.YP.rotationDegrees(Mth.lerp(partialTicks, spearEntity.yRotO, spearEntity.getYRot()) + 180.0F));
+        poseStack.mulPose(Vector3f.XP.rotationDegrees(Mth.lerp(partialTicks, spearEntity.xRotO, spearEntity.getXRot())));
         VertexConsumer vertexconsumer = ItemRenderer.getFoilBufferDirect(buffer, this.model.renderType(this.getTextureLocation(spearEntity)), false, spearEntity.isFoil());
         this.model.renderToBuffer(poseStack, vertexconsumer, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         poseStack.popPose();

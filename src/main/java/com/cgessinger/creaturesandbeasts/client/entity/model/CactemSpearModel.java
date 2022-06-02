@@ -31,10 +31,10 @@ public class CactemSpearModel extends Model {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 
-		partdefinition.addOrReplaceChild("spear", CubeListBuilder.create().texOffs(0, 0).addBox(-0.5F, -0.5F, -1.375F, 1.0F, 1.0F, 18.0F, new CubeDeformation(0.0F))
-		.texOffs(0, 12).addBox(0.0F, -1.5F, -7.375F, 0.0F, 3.0F, 7.0F, new CubeDeformation(0.0F))
-		.texOffs(0, 0).addBox(-1.5F, 0.0F, -7.375F, 3.0F, 0.0F, 7.0F, new CubeDeformation(0.0F))
-		.texOffs(0, 4).addBox(-1.0F, -1.0F, -1.375F, 2.0F, 2.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 24.5F, -4.625F));
+        partdefinition.addOrReplaceChild("spear", CubeListBuilder.create().texOffs(0, 0).addBox(-1.0F, -1.0F, 0.0F, 1.0F, 1.0F, 18.0F, new CubeDeformation(0.0F))
+                .texOffs(0, 12).addBox(-0.5F, -2.0F, -6.0F, 0.0F, 3.0F, 7.0F, new CubeDeformation(0.0F))
+                .texOffs(0, 0).addBox(-2.0F, -0.5F, -6.0F, 3.0F, 0.0F, 7.0F, new CubeDeformation(0.0F))
+                .texOffs(0, 4).addBox(-1.5F, -1.5F, 0.0F, 2.0F, 2.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.ZERO);
 
 		return LayerDefinition.create(meshdefinition, 64, 64);
 	}

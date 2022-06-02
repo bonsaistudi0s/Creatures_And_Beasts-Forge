@@ -138,6 +138,14 @@ public class SporelingEntity extends TamableAnimal implements Enemy, IAnimatable
     }
 
     private void reassessGoals() {
+        this.goalSelector.removeGoal(panicGoal);
+        this.goalSelector.removeGoal(convertItemGoal);
+        this.goalSelector.removeGoal(temptGoal);
+        this.goalSelector.removeGoal(waveGoal);
+        this.goalSelector.removeGoal(attackGoal);
+        this.targetSelector.removeGoal(nearestAttackableTargetGoal);
+        this.targetSelector.removeGoal(hurtByTargetGoal);
+
         if (this.getSporelingType().getHostility() == FRIENDLY) {
             this.goalSelector.addGoal(2, panicGoal);
             this.goalSelector.addGoal(2, convertItemGoal);

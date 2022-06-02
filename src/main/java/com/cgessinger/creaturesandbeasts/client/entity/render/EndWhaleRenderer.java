@@ -28,7 +28,7 @@ public class EndWhaleRenderer extends GeoEntityRenderer<EndWhaleEntity> {
 
     @Override
     public RenderType getRenderType(EndWhaleEntity animatable, float partialTicks, PoseStack stack, @Nullable MultiBufferSource renderTypeBuffer, @Nullable VertexConsumer vertexBuilder, int packedLightIn, ResourceLocation textureLocation) {
-        return RenderType.armorCutoutNoCull(textureLocation);
+        return RenderType.entityCutoutNoCull(textureLocation);
     }
 
     @Override

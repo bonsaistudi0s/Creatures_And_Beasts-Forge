@@ -1,10 +1,10 @@
 package com.cgessinger.creaturesandbeasts.items;
 
 import com.cgessinger.creaturesandbeasts.entities.ThrownCactemSpearEntity;
+import com.cgessinger.creaturesandbeasts.init.CNBSoundEvents;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.core.BlockPos;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
@@ -65,7 +65,7 @@ public class SpearItem extends Item implements Vanishable {
                 }
 
                 level.addFreshEntity(thrownSpear);
-                level.playSound(null, thrownSpear, SoundEvents.TRIDENT_THROW, SoundSource.PLAYERS, 1.0F, 1.0F);
+                level.playSound(null, thrownSpear, CNBSoundEvents.SPEAR_THROW.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
                 if (!player.getAbilities().instabuild) {
                     player.getInventory().removeItem(stack);
                 }

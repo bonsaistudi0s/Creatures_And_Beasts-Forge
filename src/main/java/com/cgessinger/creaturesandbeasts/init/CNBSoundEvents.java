@@ -44,5 +44,13 @@ public class CNBSoundEvents {
 
     public static final RegistryObject<SoundEvent> END_WHALE_AMBIENT = SOUND_EVENTS.register("entity.end_whale.ambient", () -> new SoundEvent(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "entity.end_whale.ambient")));
 
+    public static final RegistryObject<SoundEvent> CACTEM_AMBIENT = SOUND_EVENTS.register("entity.cactem.ambient", () -> new SoundEvent(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "entity.cactem.ambient")));
+    public static final RegistryObject<SoundEvent> CACTEM_HURT = SOUND_EVENTS.register("entity.cactem.hurt", () -> new SoundEvent(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "entity.cactem.hurt")));
+    public static final RegistryObject<SoundEvent> CACTEM_HEAL = SOUND_EVENTS.register("entity.cactem.heal", () -> new SoundEvent(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "entity.cactem.heal")));
+
+    public static final RegistryObject<SoundEvent> PLAYER_HEAL = SOUND_EVENTS.register("item.heal_spell_book.player_heal", () -> new SoundEvent(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "item.heal_spell_book.player_heal")));
+
+    public static final RegistryObject<SoundEvent> SPEAR_THROW = SOUND_EVENTS.register("item.cactem_spear.throw", () -> new SoundEvent(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "item.cactem_spear.throw")));
+
     public static final RegistryObject<SoundEvent> LIZARD_EGG_HATCH = SOUND_EVENTS.register("entity.lizard.egg_hatch", () -> new SoundEvent(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "entity.lizard.egg_hatch")));
 }

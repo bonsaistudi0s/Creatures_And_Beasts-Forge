@@ -96,7 +96,12 @@
 
   "entity.end_whale.ambient": "End Whale calls",
 
-  "item.end_whistle": "End Whistle calls out",
+  "entity.cactem.ambient": "Cactem creaks",
+  "entity.cactem.hurt": "Cactem hurts",
+  "entity.cactem.heal": "Cactem casts a spell",
+
+  "item.heal_spell_book.player_heal": "Spell is cast",
+  "item.cactem_spear.throw": "Spear flies",
 
   "itemGroup.cnb_tab": "Creatures And Beasts",
 

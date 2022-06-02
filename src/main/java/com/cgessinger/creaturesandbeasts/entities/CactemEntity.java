@@ -2,8 +2,11 @@ package com.cgessinger.creaturesandbeasts.entities;
 
 import com.cgessinger.creaturesandbeasts.init.CNBEntityTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBItems;
+import com.cgessinger.creaturesandbeasts.init.CNBSoundEvents;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -12,15 +15,19 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -44,9 +51,13 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib3.core.AnimationState;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
+import software.bernie.geckolib3.core.builder.Animation;
+import software.bernie.geckolib3.core.builder.AnimationBuilder;
 import software.bernie.geckolib3.core.controller.AnimationController;
+import software.bernie.geckolib3.core.event.SoundKeyframeEvent;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
@@ -57,10 +68,13 @@ import java.util.UUID;
 
 public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimatable {
     private static final EntityDataAccessor<Boolean> ELDER = SynchedEntityData.defineId(CactemEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> ATTACKING = SynchedEntityData.defineId(CactemEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> HEALING = SynchedEntityData.defineId(CactemEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> TRADING = SynchedEntityData.defineId(CactemEntity.class, EntityDataSerializers.BOOLEAN);
 
     private final FollowElderGoal followElderGoal = new FollowElderGoal(this, 0.5D);
     private final TradeGoal tradeGoal = new TradeGoal(this, 16.0D, 0.5D);
-    private final RangedSpearAttackGoal spearAttackGoal = new RangedSpearAttackGoal(this, 0.5D, 20, 16.0F);
+    private final RangedSpearAttackGoal spearAttackGoal = new RangedSpearAttackGoal(this, 0.5D, 60, 16.0F);
     private final HealGoal healGoal = new HealGoal(this, 1.0D, 60, 16.0F, 7.0F);
 
     private final AnimationFactory factory = new AnimationFactory(this);
@@ -81,6 +95,9 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(ELDER, false);
+        this.entityData.define(ATTACKING, false);
+        this.entityData.define(HEALING, false);
+        this.entityData.define(TRADING, false);
     }
 
     @Override
@@ -112,6 +129,11 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
     }
 
     private void reassessGoals() {
+        this.goalSelector.removeGoal(spearAttackGoal);
+        this.goalSelector.removeGoal(followElderGoal);
+        this.goalSelector.removeGoal(tradeGoal);
+        this.goalSelector.removeGoal(healGoal);
+
         if (this.isElder()) {
             this.goalSelector.addGoal(1, tradeGoal);
             this.goalSelector.addGoal(1, healGoal);
@@ -195,10 +217,26 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
         this.reassessGoals();
     }
 
+    @Override
+    protected float getStandingEyeHeight(Pose pose, EntityDimensions dimensions) {
+        return dimensions.height * 0.5F;
+    }
+
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob entity) {
         return CNBEntityTypes.CACTEM.get().create(level);
+    }
+
+    @Override
+    public SoundEvent getAmbientSound() {
+        return CNBSoundEvents.CACTEM_AMBIENT.get();
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getHurtSound(DamageSource damageSource) {
+        return CNBSoundEvents.CACTEM_HURT.get();
     }
 
     @Override
@@ -214,13 +252,67 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
         this.entityData.set(ELDER, isElder);
     }
 
+    public boolean isAttacking() {
+        return this.entityData.get(ATTACKING);
+    }
+
+    public void setAttacking(boolean isAttacking) {
+        this.entityData.set(ATTACKING, isAttacking);
+    }
+
+    public boolean isHealing() {
+        return this.entityData.get(HEALING);
+    }
+
+    public void setHealing(boolean isHealing) {
+        this.entityData.set(HEALING, isHealing);
+    }
+
+    public boolean isTrading() {
+        return this.entityData.get(TRADING);
+    }
+
+    public void setTrading(boolean isTrading) {
+        this.entityData.set(TRADING, isTrading);
+    }
+
     private <E extends IAnimatable> PlayState animationPredicate(AnimationEvent<E> event) {
-        return PlayState.STOP;
+        Animation currentAnim = event.getController().getCurrentAnimation();
+
+        if (this.isAttacking() || (currentAnim != null && currentAnim.animationName.equals("cactem_throw") && event.getController().getAnimationState().equals(AnimationState.Running))) {
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("cactem_throw"));
+        } else if (this.isHealing()) {
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("cactem_elder_heal"));
+        } else if (this.isTrading()) {
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("cactem_admire"));
+        } else if (!(animationSpeed > -0.1F && animationSpeed < 0.1F)) {
+            if (this.isElder()) {
+                event.getController().setAnimation(new AnimationBuilder().addAnimation("cactem_elder_walk"));
+            } else if (this.isBaby()) {
+                event.getController().setAnimation(new AnimationBuilder().addAnimation("cactem_baby_run"));
+            } else {
+                event.getController().setAnimation(new AnimationBuilder().addAnimation("cactem_run"));
+            }
+        } else {
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("cactem_idle").addAnimation("cactem_idle_2"));
+        }
+        return PlayState.CONTINUE;
+    }
+
+    private <E extends IAnimatable> void soundListener(SoundKeyframeEvent<E> event) {
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (event.sound.equals("cactem_heal")) {
+            player.playSound(CNBSoundEvents.CACTEM_HEAL.get(), 1.0F, 1.0F);
+        } else {
+            player.playSound(CNBSoundEvents.SPEAR_THROW.get(), 1.0F, 1.0F);
+        }
     }
 
     @Override
     public void registerControllers(AnimationData animationData) {
         AnimationController<CactemEntity> controller = new AnimationController<>(this, "controller", 0, this::animationPredicate);
+
+        controller.registerSoundListener(this::soundListener);
 
         animationData.addAnimationController(controller);
     }
@@ -337,6 +429,7 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
             this.path = null;
             this.navigation.stop();
             trading = false;
+            this.entityIn.setTrading(false);
         }
 
         @Override
@@ -351,6 +444,7 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
 
         public void trade() {
             trading = false;
+            this.entityIn.setTrading(false);
             ItemStack returnItem;
             double lootChance = this.entityIn.random.nextDouble();
 
@@ -374,6 +468,7 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
 
                     if (!trading) {
                         trading = true;
+                        this.entityIn.setTrading(true);
                         itemInstance.getItem().shrink(1);
                         entityIn.lookAt(EntityAnchorArgument.Anchor.EYES, itemInstance.position());
                         this.tradeTime = 54;
@@ -433,6 +528,7 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
             super.stop();
             this.cactem.setAggressive(false);
             this.healTime = -1;
+            this.cactem.setHealing(false);
             this.cactem.stopUsingItem();
         }
 
@@ -447,13 +543,16 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
                 if (this.cactem.isUsingItem()) {
                     this.cactem.getNavigation().stop();
                     int i = this.cactem.getTicksUsingItem();
-                    if (i >= 60) {
-                        this.cactem.stopUsingItem();
+                    if (i >= 3 && i < 38) {
                         this.cactem.performHeal(this.healRadius);
+                    } else if (i >= 38) {
+                        this.cactem.setHealing(false);
+                        this.cactem.stopUsingItem();
                         this.healTime = this.healIntervalMin + this.cactem.random.nextInt(41);
                     }
                 } else if (--this.healTime <= 0) {
                     this.cactem.getNavigation().stop();
+                    this.cactem.setHealing(true);
                     this.cactem.startUsingItem(this.cactem.getUsedItemHand());
                 } else if (this.cactem.distanceToSqr(this.cactem.getTarget()) <= (this.avoidDist * this.avoidDist)){
                     Vec3 vec3 = DefaultRandomPos.getPosAway(this.cactem, (int) this.avoidDist, 7, targetEntity.position());
@@ -509,6 +608,7 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
             this.cactem.setAggressive(false);
             this.seeTime = 0;
             this.attackTime = -1;
+            this.cactem.setAttacking(false);
             this.cactem.stopUsingItem();
         }
 
@@ -555,8 +655,9 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
                     } else if (d0 < (double)(this.attackRadiusSqr * 0.5F)) {
                         this.strafingBackwards = true;
                     }
-
-                    this.cactem.getMoveControl().strafe(this.strafingBackwards ? -0.5F : 0.5F, this.strafingClockwise ? 0.5F : -0.5F);
+                    if (!this.cactem.isUsingItem()) {
+                        this.cactem.getMoveControl().strafe(this.strafingBackwards ? -0.5F : 0.5F, this.strafingClockwise ? 0.5F : -0.5F);
+                    }
                     this.cactem.lookAt(targetEntity, 30.0F, 30.0F);
                 } else {
                     this.cactem.getLookControl().setLookAt(targetEntity, 30.0F, 30.0F);
@@ -564,16 +665,19 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
 
                 if (this.cactem.isUsingItem()) {
                     if (!flag && this.seeTime < -60) {
+                        this.cactem.setAttacking(false);
                         this.cactem.stopUsingItem();
                     } else if (flag) {
                         int i = this.cactem.getTicksUsingItem();
-                        if (i >= 20) {
+                        if (i >= 6) {
+                            this.cactem.setAttacking(false);
                             this.cactem.stopUsingItem();
                             this.cactem.performRangedAttack(targetEntity, 1.0F);
                             this.attackTime = this.attackIntervalMin;
                         }
                     }
                 } else if (--this.attackTime <= 0 && this.seeTime >= -60) {
+                    this.cactem.setAttacking(true);
                     this.cactem.startUsingItem(this.cactem.getUsedItemHand());
                 }
             }
