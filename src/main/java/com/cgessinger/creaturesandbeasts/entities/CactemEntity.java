@@ -71,6 +71,7 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
     private static final EntityDataAccessor<Boolean> ATTACKING = SynchedEntityData.defineId(CactemEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> HEALING = SynchedEntityData.defineId(CactemEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> TRADING = SynchedEntityData.defineId(CactemEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> IDLE_ANIM = SynchedEntityData.defineId(CactemEntity.class, EntityDataSerializers.INT);
 
     private final FollowElderGoal followElderGoal = new FollowElderGoal(this, 0.5D);
     private final TradeGoal tradeGoal = new TradeGoal(this, 16.0D, 0.5D);
@@ -98,6 +99,7 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
         this.entityData.define(ATTACKING, false);
         this.entityData.define(HEALING, false);
         this.entityData.define(TRADING, false);
+        this.entityData.define(IDLE_ANIM, 0);
     }
 
     @Override
@@ -159,6 +161,7 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
             this.setItemInHand(this.getUsedItemHand(), new ItemStack(CNBItems.HEAL_SPELL_BOOK.get()));
         } else if (!this.isBaby()) {
             this.setItemInHand(this.getUsedItemHand(), new ItemStack(CNBItems.CACTEM_SPEAR.get()));
+            this.setIdleAnim(this.random.nextInt(2));
         }
 
         this.reassessGoals();
@@ -181,7 +184,7 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
     private void performHeal(float range) {
         List<? extends CactemEntity> list = this.level.getEntitiesOfClass(CactemEntity.class, this.getBoundingBox().inflate(range, 4, range));
         for(CactemEntity nearbyCactem : list) {
-            nearbyCactem.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 5, 1));
+            nearbyCactem.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 100, 1));
         }
     }
 
@@ -276,6 +279,22 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
         this.entityData.set(TRADING, isTrading);
     }
 
+    public int getIdleAnim() {
+        return this.entityData.get(IDLE_ANIM);
+    }
+
+    public void setIdleAnim(int anim) {
+        switch (anim) {
+            default:
+            case 0:
+                this.entityData.set(IDLE_ANIM, 0);
+                break;
+            case 1:
+                this.entityData.set(IDLE_ANIM, 1);
+                break;
+        }
+    }
+
     private <E extends IAnimatable> PlayState animationPredicate(AnimationEvent<E> event) {
         Animation currentAnim = event.getController().getCurrentAnimation();
 
@@ -292,9 +311,20 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
                 event.getController().setAnimation(new AnimationBuilder().addAnimation("cactem_baby_run"));
             } else {
                 event.getController().setAnimation(new AnimationBuilder().addAnimation("cactem_run"));
+                this.setIdleAnim(this.random.nextInt(2));
             }
         } else {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("cactem_idle").addAnimation("cactem_idle_2"));
+            if (this.isElder()) {
+                event.getController().setAnimation(new AnimationBuilder().addAnimation("cactem_idle_2"));
+            } else if (this.isBaby()) {
+                event.getController().setAnimation(new AnimationBuilder().addAnimation("cactem_idle"));
+            } else {
+                if (this.getIdleAnim() == 0) {
+                    event.getController().setAnimation(new AnimationBuilder().addAnimation("cactem_idle"));
+                } else {
+                    event.getController().setAnimation(new AnimationBuilder().addAnimation("cactem_idle_2"));
+                }
+            }
         }
         return PlayState.CONTINUE;
     }

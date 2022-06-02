@@ -37,5 +37,5 @@ public class CNBEntityTypes {
 
     /* PROJECTILES */
     public static final RegistryObject<EntityType<LizardEggEntity>> LIZARD_EGG = ENTITY_TYPES.register("lizard_egg", () -> EntityType.Builder.<LizardEggEntity>of(LizardEggEntity::new, MobCategory.MISC).sized(0.25f, 0.25f).clientTrackingRange(4).updateInterval(10).build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "lizard_egg").toString()));
-    public static final RegistryObject<EntityType<ThrownCactemSpearEntity>> THROWN_CACTEM_SPEAR = ENTITY_TYPES.register("thrown_cactem_spear", () -> EntityType.Builder.<ThrownCactemSpearEntity>of(ThrownCactemSpearEntity::new, MobCategory.MISC).sized(0.25F, 0.25F).clientTrackingRange(4).updateInterval(10).build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "cactem_spear").toString()));
+    public static final RegistryObject<EntityType<ThrownCactemSpearEntity>> THROWN_CACTEM_SPEAR = ENTITY_TYPES.register("thrown_cactem_spear", () -> EntityType.Builder.<ThrownCactemSpearEntity>of(ThrownCactemSpearEntity::new, MobCategory.MISC).sized(0.4F, 0.4F).clientTrackingRange(4).updateInterval(10).build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "cactem_spear").toString()));
 }
