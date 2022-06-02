@@ -2,6 +2,7 @@ package com.cgessinger.creaturesandbeasts.events;
 
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
 import com.cgessinger.creaturesandbeasts.client.armor.render.FlowerCrownRenderer;
+import com.cgessinger.creaturesandbeasts.client.entity.model.CactemSpearModel;
 import com.cgessinger.creaturesandbeasts.client.entity.render.CactemRenderer;
 import com.cgessinger.creaturesandbeasts.client.entity.render.CindershellRenderer;
 import com.cgessinger.creaturesandbeasts.client.entity.render.EndWhaleRenderer;
@@ -10,6 +11,7 @@ import com.cgessinger.creaturesandbeasts.client.entity.render.LittleGrebeRendere
 import com.cgessinger.creaturesandbeasts.client.entity.render.LizardRenderer;
 import com.cgessinger.creaturesandbeasts.client.entity.render.MinipadRenderer;
 import com.cgessinger.creaturesandbeasts.client.entity.render.SporelingRenderer;
+import com.cgessinger.creaturesandbeasts.client.entity.render.ThrownCactemSpearRenderer;
 import com.cgessinger.creaturesandbeasts.client.entity.render.YetiRenderer;
 import com.cgessinger.creaturesandbeasts.init.CNBEntityTypes;
 import com.cgessinger.creaturesandbeasts.items.CNBSpawnEggItem;
@@ -39,6 +41,12 @@ public class ClientEvents {
         event.registerEntityRenderer(CNBEntityTypes.END_WHALE.get(), EndWhaleRenderer::new);
         event.registerEntityRenderer(CNBEntityTypes.CACTEM.get(), CactemRenderer::new);
         event.registerEntityRenderer(CNBEntityTypes.LIZARD_EGG.get(), manager -> new ThrownItemRenderer<>(manager, 1.0F, true));
+        event.registerEntityRenderer(CNBEntityTypes.THROWN_CACTEM_SPEAR.get(), ThrownCactemSpearRenderer::new);
+    }
+
+    @SubscribeEvent
+    public static void onRegisterLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
+        event.registerLayerDefinition(CactemSpearModel.LAYER_LOCATION, CactemSpearModel::createLayer);
     }
 
     @SubscribeEvent

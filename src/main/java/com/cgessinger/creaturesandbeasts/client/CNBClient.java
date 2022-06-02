@@ -25,6 +25,8 @@ public class CNBClient {
         ItemProperties.register(CNBItems.CINDER_SWORD.get(), new ResourceLocation("imbued"), (itemStack, clientWorld, livingEntity, integer) ->
                 itemStack.getItem() instanceof CinderSwordItem && itemStack.getCapability(CinderSwordCapability.CINDER_SWORD_CAPABILITY).map(ICinderSwordUpdate::getImbued).get() ? 1.0F : 0.0F);
 
+        ItemProperties.register(CNBItems.CACTEM_SPEAR.get(), new ResourceLocation("throwing"), (item, resourceLocation, entity, itemPropertyFunction) -> entity != null && entity.isUsingItem() && entity.getUseItem() == item ? 1.0F : 0.0F);
+
         MenuScreens.register(CNBContainerTypes.CINDER_FURNACE_CONTAINER.get(), CinderFurnaceScreen::new);
     }
 }

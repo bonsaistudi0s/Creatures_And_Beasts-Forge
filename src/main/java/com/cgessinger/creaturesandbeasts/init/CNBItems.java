@@ -11,6 +11,7 @@ import com.cgessinger.creaturesandbeasts.items.HealSpellBookItem;
 import com.cgessinger.creaturesandbeasts.items.LizardEggItem;
 import com.cgessinger.creaturesandbeasts.items.LizardItem;
 import com.cgessinger.creaturesandbeasts.items.MinipadFlowerGlowItem;
+import com.cgessinger.creaturesandbeasts.items.SpearItem;
 import com.cgessinger.creaturesandbeasts.items.SporelingSpawnEggItem;
 import com.cgessinger.creaturesandbeasts.items.WaterlilyBlockItem;
 import net.minecraft.sounds.SoundEvents;
@@ -67,6 +68,7 @@ public class CNBItems {
 
     // Tools
     public static final RegistryObject<CinderSwordItem> CINDER_SWORD = ITEMS.register("cinder_sword", () -> new CinderSwordItem(CNBItemTiers.CINDER, 3, -2.4F, new Item.Properties().tab(CreaturesAndBeasts.TAB)));
+    public static final RegistryObject<SpearItem> CACTEM_SPEAR = ITEMS.register("cactem_spear", () -> new SpearItem(new Item.Properties().durability(100).tab(CreaturesAndBeasts.TAB)));
 
     // Spawn Eggs
     public static RegistryObject<CNBSpawnEggItem> GREBE_SPAWN_EGG = ITEMS.register("little_grebe_spawn_egg", () -> new CNBSpawnEggItem(CNBEntityTypes.LITTLE_GREBE, 0x00FFFFFF, 0x00FFFFFF, new Item.Properties().tab(CreaturesAndBeasts.TAB)));

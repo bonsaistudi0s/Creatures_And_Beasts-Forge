@@ -1,5 +1,6 @@
 package com.cgessinger.creaturesandbeasts.entities;
 
+import com.cgessinger.creaturesandbeasts.init.CNBEntityTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBItems;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -36,8 +37,6 @@ import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.ProjectileUtil;
-import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -61,8 +60,8 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
 
     private final FollowElderGoal followElderGoal = new FollowElderGoal(this, 0.5D);
     private final TradeGoal tradeGoal = new TradeGoal(this, 16.0D, 0.5D);
-    private final RangedSpearAttackGoal spearAttackGoal = new RangedSpearAttackGoal(this, 0.5D, 20, 15.0F);
-    private final HealGoal healGoal = new HealGoal(this, 1.0D, 60, 16.0F);
+    private final RangedSpearAttackGoal spearAttackGoal = new RangedSpearAttackGoal(this, 0.5D, 20, 16.0F);
+    private final HealGoal healGoal = new HealGoal(this, 1.0D, 60, 16.0F, 7.0F);
 
     private final AnimationFactory factory = new AnimationFactory(this);
     private final UUID healthReductionUUID = UUID.fromString("65a301bb-531d-499e-939c-eda5b857c0b4");
@@ -90,6 +89,8 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
 
         if (tag.contains("IsElder")) {
             this.setElder(tag.getBoolean("IsElder"));
+        } else if (tag.contains("Age") && tag.getInt("Age") >= 0) {
+            this.setItemInHand(this.getUsedItemHand(), new ItemStack(CNBItems.CACTEM_SPEAR.get()));
         }
 
         this.reassessGoals();
@@ -134,6 +135,8 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
         if (elderChance < 0.25) {
             this.setElder(true);
             this.setItemInHand(this.getUsedItemHand(), new ItemStack(CNBItems.HEAL_SPELL_BOOK.get()));
+        } else if (!this.isBaby()) {
+            this.setItemInHand(this.getUsedItemHand(), new ItemStack(CNBItems.CACTEM_SPEAR.get()));
         }
 
         this.reassessGoals();
@@ -143,7 +146,14 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
 
     @Override
     public void performRangedAttack(LivingEntity entity, float damage) {
-
+        ItemStack itemstack = this.getProjectile(this.getItemInHand(this.getUsedItemHand()));
+        ThrownCactemSpearEntity spearEntity = new ThrownCactemSpearEntity(this.level, this, itemstack);
+        double d0 = entity.getX() - this.getX();
+        double d1 = entity.getY(0.3333333333333333D) - spearEntity.getY();
+        double d2 = entity.getZ() - this.getZ();
+        double d3 = Math.sqrt(d0 * d0 + d2 * d2);
+        spearEntity.shoot(d0, d1 + d3 * (double)0.2F, d2, 1.6F, (float)(14 - this.level.getDifficulty().getId() * 4));
+        this.level.addFreshEntity(spearEntity);
     }
 
     private void performHeal(float range) {
@@ -168,6 +178,16 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
     @Override
     protected void ageBoundaryReached() {
         super.ageBoundaryReached();
+
+        double elderChance = this.random.nextDouble();
+
+        if (elderChance < 0.25) {
+            this.setElder(true);
+            this.setItemInHand(this.getUsedItemHand(), new ItemStack(CNBItems.HEAL_SPELL_BOOK.get()));
+        } else {
+            this.setItemInHand(this.getUsedItemHand(), new ItemStack(CNBItems.CACTEM_SPEAR.get()));
+        }
+
         float percentHealth = this.getHealth() / this.babyHealth;
         this.getAttribute(Attributes.MAX_HEALTH).removeModifier(this.healthReductionUUID);
         this.setHealth(percentHealth * (float) this.getAttribute(Attributes.MAX_HEALTH).getValue());
@@ -178,7 +198,7 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob entity) {
-        return null;
+        return CNBEntityTypes.CACTEM.get().create(level);
     }
 
     @Override
@@ -384,13 +404,15 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
         private final double speedModifier;
         private final int healIntervalMin;
         private final float healRadius;
+        private final float avoidDist;
         private int healTime = -1;
 
-        public HealGoal(CactemEntity cactem, double speedModifier, int healIntervalMin, float healRadius) {
+        public HealGoal(CactemEntity cactem, double speedModifier, int healIntervalMin, float healRadius, float avoidDist) {
             this.cactem = cactem;
             this.speedModifier = speedModifier;
             this.healIntervalMin = healIntervalMin;
             this.healRadius = healRadius;
+            this.avoidDist = avoidDist;
             this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
         }
 
@@ -433,8 +455,14 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
                 } else if (--this.healTime <= 0) {
                     this.cactem.getNavigation().stop();
                     this.cactem.startUsingItem(this.cactem.getUsedItemHand());
+                } else if (this.cactem.distanceToSqr(this.cactem.getTarget()) <= (this.avoidDist * this.avoidDist)){
+                    Vec3 vec3 = DefaultRandomPos.getPosAway(this.cactem, (int) this.avoidDist, 7, targetEntity.position());
+                    if (vec3 != null) {
+                        Path path = this.cactem.getNavigation().createPath(vec3.x, vec3.y, vec3.z, 0);
+                        this.cactem.getNavigation().moveTo(path, this.speedModifier);
+                    }
                 } else {
-                    Vec3 vec3 = DefaultRandomPos.getPosAway(this.cactem, 16, 7, targetEntity.position());
+                    Vec3 vec3 = DefaultRandomPos.getPosTowards(this.cactem, (int) this.avoidDist, 7, targetEntity.position(), ((float)Math.PI / 2.0F));
                     if (vec3 != null) {
                         Path path = this.cactem.getNavigation().createPath(vec3.x, vec3.y, vec3.z, 0);
                         this.cactem.getNavigation().moveTo(path, this.speedModifier);
@@ -524,7 +552,7 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
                 if (this.strafingTime > -1) {
                     if (d0 > (double)(this.attackRadiusSqr * 0.75F)) {
                         this.strafingBackwards = false;
-                    } else if (d0 < (double)(this.attackRadiusSqr * 0.25F)) {
+                    } else if (d0 < (double)(this.attackRadiusSqr * 0.5F)) {
                         this.strafingBackwards = true;
                     }
 
@@ -546,9 +574,8 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
                         }
                     }
                 } else if (--this.attackTime <= 0 && this.seeTime >= -60) {
-                    this.cactem.startUsingItem(ProjectileUtil.getWeaponHoldingHand(this.cactem, item -> item instanceof BowItem));
+                    this.cactem.startUsingItem(this.cactem.getUsedItemHand());
                 }
-
             }
         }
     }
