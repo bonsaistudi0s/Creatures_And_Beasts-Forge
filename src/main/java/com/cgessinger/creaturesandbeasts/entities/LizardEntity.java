@@ -254,6 +254,11 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
     }
 
     @Override
+    public boolean canBeLeashed(Player player) {
+        return false;
+    }
+
+    @Override
     public void checkDespawn() {
         if (!CNBConfig.ServerConfig.LIZARD_CONFIG.shouldExist) {
             this.discard();

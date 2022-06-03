@@ -1,6 +1,5 @@
 package com.cgessinger.creaturesandbeasts.client.entity.render;
 
-import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
 import com.cgessinger.creaturesandbeasts.client.entity.model.EndWhaleModel;
 import com.cgessinger.creaturesandbeasts.entities.EndWhaleEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -15,11 +14,9 @@ import net.minecraft.world.entity.Entity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 
 @OnlyIn(Dist.CLIENT)
-public class EndWhaleRenderer extends GeoEntityRenderer<EndWhaleEntity> {
-    private static final ResourceLocation END_WHALE_MODEL = new ResourceLocation(CreaturesAndBeasts.MOD_ID, "geo/entity/end_whale/end_whale.geo.json");
+public class EndWhaleRenderer extends LeadableGeoEntityRenderer<EndWhaleEntity> {
 
     public EndWhaleRenderer(EntityRendererProvider.Context renderManager) {
         super(renderManager, new EndWhaleModel());

@@ -23,7 +23,6 @@ import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 public class CactemRenderer extends GeoEntityRenderer<CactemEntity> {
     private CactemEntity entity;
 
-
     public CactemRenderer(EntityRendererProvider.Context renderManager) {
         super(renderManager, new CactemModel());
         this.shadowRadius = 0.4F;

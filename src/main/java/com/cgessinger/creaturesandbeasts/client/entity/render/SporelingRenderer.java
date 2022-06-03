@@ -12,10 +12,9 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import software.bernie.geckolib3.geo.render.built.GeoBone;
-import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 
 @OnlyIn(Dist.CLIENT)
-public class SporelingRenderer extends GeoEntityRenderer<SporelingEntity> {
+public class SporelingRenderer extends LeadableGeoEntityRenderer<SporelingEntity> {
 
     public SporelingRenderer(EntityRendererProvider.Context context) {
         super(context, new SporelingModel());

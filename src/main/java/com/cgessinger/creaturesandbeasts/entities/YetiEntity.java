@@ -183,6 +183,11 @@ public class YetiEntity extends TamableAnimal implements IAnimatable, Enemy, Neu
     }
 
     @Override
+    public boolean canBeLeashed(Player player) {
+        return false;
+    }
+
+    @Override
     public int getRemainingPersistentAngerTime() {
         return this.remainingPersistentAngerTime;
     }

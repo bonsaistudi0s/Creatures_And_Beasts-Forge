@@ -165,6 +165,11 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
     }
 
     @Override
+    public boolean canBeLeashed(Player player) {
+        return false;
+    }
+
+    @Override
     protected int getExperienceReward(Player player) {
         return 3 + this.level.random.nextInt(4);
     }
