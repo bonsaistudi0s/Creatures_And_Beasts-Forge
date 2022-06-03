@@ -593,11 +593,16 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
         }
 
         public boolean canUse() {
-            return this.cactem.getTarget() != null;
+            LivingEntity livingentity = this.cactem.getTarget();
+            if (livingentity == null) {
+                return false;
+            } else {
+                return !(livingentity instanceof Player) || !livingentity.isSpectator() && !((Player) livingentity).isCreative();
+            }
         }
 
         public boolean canContinueToUse() {
-            return this.canUse() || !this.cactem.getNavigation().isDone();
+            return this.canUse();
         }
 
         public void start() {
@@ -670,11 +675,16 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
         }
 
         public boolean canUse() {
-            return this.cactem.getTarget() != null;
+            LivingEntity livingentity = this.cactem.getTarget();
+            if (livingentity == null) {
+                return false;
+            } else {
+                return !(livingentity instanceof Player) || !livingentity.isSpectator() && !((Player) livingentity).isCreative();
+            }
         }
 
         public boolean canContinueToUse() {
-            return (this.canUse() || !this.cactem.getNavigation().isDone());
+                return this.canUse();
         }
 
         public void start() {
