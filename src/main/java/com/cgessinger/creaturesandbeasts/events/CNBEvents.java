@@ -14,6 +14,7 @@ import com.cgessinger.creaturesandbeasts.entities.YetiEntity;
 import com.cgessinger.creaturesandbeasts.init.CNBEntityTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBItems;
 import com.cgessinger.creaturesandbeasts.init.CNBLootModifiers;
+import com.cgessinger.creaturesandbeasts.items.HealSpellBookItem;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -79,7 +80,7 @@ public class CNBEvents {
 
     @SubscribeEvent
     public void onAnvilChange(AnvilUpdateEvent event) {
-        if (event.getLeft().getItem() instanceof ArmorItem && event.getRight().sameItem(CNBItems.YETI_HIDE.get().getDefaultInstance())) {
+        if (event.getLeft().getItem() instanceof ArmorItem && event.getRight().is(CNBItems.YETI_HIDE.get())) {
             ItemStack output = event.getLeft().copy();
             CompoundTag nbt = output.getOrCreateTag();
             int hideAmount = 1;
@@ -96,6 +97,23 @@ public class CNBEvents {
             event.setCost(ServerConfig.HIDE_COST.value);
             event.setMaterialCost(1);
             event.setOutput(output);
+        } else if (event.getLeft().getItem() instanceof HealSpellBookItem && event.getRight().getItem() instanceof HealSpellBookItem && event.getLeft().sameItem(event.getRight())) {
+            ItemStack output;
+            int cost;
+            if (event.getLeft().is(CNBItems.HEAL_SPELL_BOOK_1.get())) {
+                output = new ItemStack(CNBItems.HEAL_SPELL_BOOK_2.get());
+                cost = 3;
+            } else if (event.getLeft().is(CNBItems.HEAL_SPELL_BOOK_2.get())) {
+                output = new ItemStack(CNBItems.HEAL_SPELL_BOOK_3.get());
+                cost = 6;
+            } else {
+                return;
+            }
+
+            output.setTag(event.getLeft().getOrCreateTag());
+            event.setCost(cost);
+            event.setOutput(output);
+            event.setMaterialCost(1);
         }
     }
 }

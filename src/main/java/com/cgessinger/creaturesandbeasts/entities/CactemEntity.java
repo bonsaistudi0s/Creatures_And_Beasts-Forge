@@ -159,8 +159,8 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
     public void aiStep() {
         super.aiStep();
 
-        if (this.isElder() && !this.getItemInHand(this.getUsedItemHand()).is(CNBItems.HEAL_SPELL_BOOK.get())) {
-            this.setItemInHand(this.getUsedItemHand(), new ItemStack(CNBItems.HEAL_SPELL_BOOK.get()));
+        if (this.isElder() && !this.getItemInHand(this.getUsedItemHand()).is(CNBItems.HEAL_SPELL_BOOK_1.get())) {
+            this.setItemInHand(this.getUsedItemHand(), new ItemStack(CNBItems.HEAL_SPELL_BOOK_1.get()));
         }
     }
 
@@ -181,7 +181,7 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
         if (!this.isBaby()) {
             if (elderChance < 0.25) {
                 this.setElder(true);
-                this.setItemInHand(this.getUsedItemHand(), new ItemStack(CNBItems.HEAL_SPELL_BOOK.get()));
+                this.setItemInHand(this.getUsedItemHand(), new ItemStack(CNBItems.HEAL_SPELL_BOOK_1.get()));
             } else {
                 this.setItemInHand(this.getUsedItemHand(), new ItemStack(CNBItems.CACTEM_SPEAR.get()));
                 this.setIdleAnim(this.random.nextInt(2));
@@ -233,7 +233,7 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
         if (!this.isBaby()) {
             if (elderChance < 0.25) {
                 this.setElder(true);
-                this.setItemInHand(this.getUsedItemHand(), new ItemStack(CNBItems.HEAL_SPELL_BOOK.get()));
+                this.setItemInHand(this.getUsedItemHand(), new ItemStack(CNBItems.HEAL_SPELL_BOOK_1.get()));
             } else {
                 this.setItemInHand(this.getUsedItemHand(), new ItemStack(CNBItems.CACTEM_SPEAR.get()));
             }
@@ -530,7 +530,7 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
             if (lootChance < 0.2) {
                 returnItem = new ItemStack(Items.EMERALD, 15 + this.entityIn.random.nextInt(10));
             } else if (lootChance < 0.7) {
-                returnItem = new ItemStack(CNBItems.HEAL_SPELL_BOOK.get());
+                returnItem = new ItemStack(CNBItems.HEAL_SPELL_BOOK_1.get());
             } else {
                 returnItem = new ItemStack(Items.DEAD_BUSH);
             }

@@ -60,7 +60,9 @@ public class CNBItems {
     public static final RegistryObject<Item> LIGHT_PINK_MINIPAD_FLOWER_GLOW = ITEMS.register("light_pink_minipad_flower_glow", () -> new MinipadFlowerGlowItem(new Item.Properties().tab(CreaturesAndBeasts.TAB)));
     public static final RegistryObject<Item> YELLOW_MINIPAD_FLOWER_GLOW = ITEMS.register("yellow_minipad_flower_glow", () -> new MinipadFlowerGlowItem(new Item.Properties().tab(CreaturesAndBeasts.TAB)));
 
-    public static final RegistryObject<HealSpellBookItem> HEAL_SPELL_BOOK = ITEMS.register("heal_spell_book", () -> new HealSpellBookItem(new Item.Properties().stacksTo(1).tab(CreaturesAndBeasts.TAB)));
+    public static final RegistryObject<HealSpellBookItem> HEAL_SPELL_BOOK_1 = ITEMS.register("heal_spell_book_1", () -> new HealSpellBookItem(new Item.Properties().stacksTo(1).tab(CreaturesAndBeasts.TAB)));
+    public static final RegistryObject<HealSpellBookItem> HEAL_SPELL_BOOK_2 = ITEMS.register("heal_spell_book_2", () -> new HealSpellBookItem(new Item.Properties().stacksTo(1).tab(CreaturesAndBeasts.TAB)));
+    public static final RegistryObject<HealSpellBookItem> HEAL_SPELL_BOOK_3 = ITEMS.register("heal_spell_book_3", () -> new HealSpellBookItem(new Item.Properties().stacksTo(1).tab(CreaturesAndBeasts.TAB)));
 
     // Armor
     public static final RegistryObject<FlowerCrownItem> FLOWER_CROWN = ITEMS.register("flower_crown", () -> new FlowerCrownItem(CNBArmorMaterials.FLOWER_CROWN, Ingredient.of(PINK_MINIPAD_FLOWER.get(), LIGHT_PINK_MINIPAD_FLOWER.get(), YELLOW_MINIPAD_FLOWER.get()), EquipmentSlot.HEAD, new Item.Properties().tab(CreaturesAndBeasts.TAB)));
