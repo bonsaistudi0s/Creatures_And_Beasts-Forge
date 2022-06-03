@@ -12,10 +12,9 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import software.bernie.geckolib3.geo.render.built.GeoBone;
-import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 
 @OnlyIn(Dist.CLIENT)
-public class CindershellRenderer extends GeoEntityRenderer<CindershellEntity> {
+public class CindershellRenderer extends LeadableGeoEntityRenderer<CindershellEntity> {
 
     public CindershellRenderer(EntityRendererProvider.Context context) {
         super(context, new CindershellModel());
