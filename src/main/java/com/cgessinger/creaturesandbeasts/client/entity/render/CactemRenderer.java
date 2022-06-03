@@ -51,6 +51,8 @@ public class CactemRenderer extends GeoEntityRenderer<CactemEntity> {
             stack.popPose();
             bufferIn = rtb.getBuffer(RenderType.entityTranslucent(whTexture));
         }
-        super.renderRecursively(bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+        if (!bone.getName().equals("spear") || this.entity.isSpearShown()) {
+            super.renderRecursively(bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+        }
     }
 }

@@ -47,4 +47,9 @@ public class HealSpellBookItem extends Item {
             return InteractionResultHolder.fail(stack);
         }
     }
+
+    @Override
+    public int getUseDuration(ItemStack stack) {
+        return 7200;
+    }
 }
