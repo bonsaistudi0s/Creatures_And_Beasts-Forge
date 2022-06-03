@@ -79,7 +79,7 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
     private final FollowElderGoal followElderGoal = new FollowElderGoal(this, 1.0D);
     private final TradeGoal tradeGoal = new TradeGoal(this, 16.0D, 0.5D);
     private final RangedSpearAttackGoal spearAttackGoal = new RangedSpearAttackGoal(this, 60, 16.0F);
-    private final HealGoal healGoal = new HealGoal(this, 0.5D, 60, 16.0F, 7.0F);
+    private final HealGoal healGoal = new HealGoal(this, 0.5D, 100, 160, 16.0F, 7.0F);
 
     private final AnimationFactory factory = new AnimationFactory(this);
     private final UUID healthReductionUUID = UUID.fromString("65a301bb-531d-499e-939c-eda5b857c0b4");
@@ -130,7 +130,7 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(3, new RandomLookAroundGoal(this));
         this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.targetSelector.addGoal(0, new HurtByTargetGoal(this).setAlertOthers());
+        this.targetSelector.addGoal(0, new HurtByTargetGoal(this, CactemEntity.class).setAlertOthers());
     }
 
     private void reassessGoals() {
@@ -396,9 +396,9 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
     }
 
     static class FollowElderGoal extends Goal {
-        public static final int HORIZONTAL_SCAN_RANGE = 16;
+        public static final int HORIZONTAL_SCAN_RANGE = 32;
         public static final int VERTICAL_SCAN_RANGE = 4;
-        public static final int DONT_FOLLOW_IF_CLOSER_THAN = 5;
+        public static final int DONT_FOLLOW_IF_CLOSER_THAN = 20;
         private final CactemEntity cactem;
         @Nullable
         private CactemEntity elder;
@@ -440,7 +440,7 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
                 return false;
             } else {
                 double d0 = this.cactem.distanceToSqr(this.elder);
-                return !(d0 < 9.0D) && !(d0 > 256.0D);
+                return !(d0 < 8.0D) && !(d0 > 256.0D);
             }
         }
 
@@ -455,7 +455,8 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
         public void tick() {
             if (--this.timeToRecalcPath <= 0) {
                 this.timeToRecalcPath = this.adjustedTickDelay(10);
-                this.cactem.getNavigation().moveTo(this.elder, this.speedModifier);
+                Path path = this.cactem.getNavigation().createPath(this.elder, 8);
+                this.cactem.getNavigation().moveTo(path, this.speedModifier);
             }
         }
     }
@@ -571,14 +572,16 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
         private final CactemEntity cactem;
         private final double speedModifier;
         private final int healIntervalMin;
+        private final int healIntervalDiff;
         private final float healRadius;
         private final float avoidDist;
         private int healTime = -1;
 
-        public HealGoal(CactemEntity cactem, double speedModifier, int healIntervalMin, float healRadius, float avoidDist) {
+        public HealGoal(CactemEntity cactem, double speedModifier, int healIntervalMin, int healIntervalMax, float healRadius, float avoidDist) {
             this.cactem = cactem;
             this.speedModifier = speedModifier;
             this.healIntervalMin = healIntervalMin;
+            this.healIntervalDiff = healIntervalMax - healIntervalMin;
             this.healRadius = healRadius;
             this.avoidDist = avoidDist;
             this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
@@ -621,7 +624,7 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
                     } else if (i >= 38) {
                         this.cactem.setHealing(false);
                         this.cactem.stopUsingItem();
-                        this.healTime = this.healIntervalMin + this.cactem.random.nextInt(41);
+                        this.healTime = this.healIntervalMin + this.cactem.random.nextInt(this.healIntervalDiff + 1);
                     }
                 } else if (--this.healTime <= 0) {
                     this.cactem.getNavigation().stop();
