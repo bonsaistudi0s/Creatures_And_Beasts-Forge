@@ -636,7 +636,7 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
                         this.cactem.stopUsingItem();
                         this.healTime = this.healIntervalMin + this.cactem.random.nextInt(this.healIntervalDiff + 1);
                     }
-                } else if (--this.healTime <= 0) {
+                } else if (--this.healTime <= 0 && this.cactemNeedsHeal(this.cactem, this.cactem.level)) {
                     this.cactem.getNavigation().stop();
                     this.cactem.setHealing(true);
                     this.cactem.startUsingItem(this.cactem.getUsedItemHand());
@@ -654,6 +654,17 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
                     }
                 }
             }
+        }
+
+        private boolean cactemNeedsHeal(CactemEntity elder, Level level) {
+            List<? extends CactemEntity> list = level.getEntitiesOfClass(CactemEntity.class, elder.getBoundingBox().inflate(this.healRadius, 4, this.healRadius));
+            for(CactemEntity nearbyCactem : list) {
+                if (!nearbyCactem.isElder() && nearbyCactem.getHealth() / nearbyCactem.getMaxHealth() <= 0.5) {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 
