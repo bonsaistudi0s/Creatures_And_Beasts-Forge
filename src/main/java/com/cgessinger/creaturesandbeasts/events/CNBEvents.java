@@ -20,6 +20,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
@@ -27,6 +28,8 @@ import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -51,6 +54,22 @@ public class CNBEvents {
     @SubscribeEvent
     public static void onRegisterLootModifiers(RegistryEvent.Register<GlobalLootModifierSerializer<?>> event) {
         event.getRegistry().register(new CNBLootModifiers.NetherBridgeLootSerializer().setRegistryName(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "nether_bridge_loot_modifier")));
+    }
+
+    @SubscribeEvent
+    public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
+        Player player = event.getPlayer();
+        if (player.isSecondaryUseActive() && player.getFirstPassenger() instanceof SporelingEntity sporelingEntity) {
+            sporelingEntity.stopRiding();
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public void onItemUnequip(LivingEvent.LivingUpdateEvent event) {
+        if (event.getEntityLiving() instanceof Player player && player.getFirstPassenger() instanceof SporelingEntity sporelingEntity && !player.getItemBySlot(EquipmentSlot.CHEST).is(CNBItems.SPORELING_BACKPACK.get())) {
+            sporelingEntity.stopRiding();
+        }
     }
 
 	@SubscribeEvent

@@ -2,6 +2,7 @@ package com.cgessinger.creaturesandbeasts.entities;
 
 import com.cgessinger.creaturesandbeasts.config.CNBConfig;
 import com.cgessinger.creaturesandbeasts.entities.ai.ConvertItemGoal;
+import com.cgessinger.creaturesandbeasts.init.CNBItems;
 import com.cgessinger.creaturesandbeasts.init.CNBSoundEvents;
 import com.cgessinger.creaturesandbeasts.init.CNBSporelingTypes;
 import com.cgessinger.creaturesandbeasts.util.SporelingType;
@@ -42,7 +43,6 @@ import net.minecraft.world.entity.ai.goal.TemptGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -69,7 +69,7 @@ import static com.cgessinger.creaturesandbeasts.util.SporelingType.SporelingHost
 import static com.cgessinger.creaturesandbeasts.util.SporelingType.SporelingHostility.HOSTILE;
 import static com.cgessinger.creaturesandbeasts.util.SporelingType.SporelingHostility.NEUTRAL;
 
-public class SporelingEntity extends TamableAnimal implements Enemy, IAnimatable {
+public class SporelingEntity extends TamableAnimal implements IAnimatable {
     private static final EntityDataAccessor<String> TYPE = SynchedEntityData.defineId(SporelingEntity.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> ATTACKING = SynchedEntityData.defineId(SporelingEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> WAVING = SynchedEntityData.defineId(SporelingEntity.class, EntityDataSerializers.BOOLEAN);
@@ -128,6 +128,14 @@ public class SporelingEntity extends TamableAnimal implements Enemy, IAnimatable
     }
 
     @Override
+    public void tick() {
+        super.tick();
+        if (this.getVehicle() != null) {
+            this.lerpYRot = 0.0F;
+        }
+    }
+
+    @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(1, new FloatGoal(this));
         this.goalSelector.addGoal(2, new SitWhenOrderedToGoal(this));
@@ -183,19 +191,38 @@ public class SporelingEntity extends TamableAnimal implements Enemy, IAnimatable
     }
 
     @Override
+    public boolean isNoAi() {
+        return super.isNoAi() || this.getVehicle() != null;
+    }
+
+    @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack itemstack = player.getItemInHand(hand);
         if (this.level.isClientSide) {
+            if (this.isTame()) {
+                InteractionResult interactionresult = super.mobInteract(player, hand);
+                if (!interactionresult.consumesAction() && this.isOwnedBy(player)) {
+                    if (player.isSecondaryUseActive() && player.getPassengers().isEmpty() && player.getItemBySlot(EquipmentSlot.CHEST).is(CNBItems.SPORELING_BACKPACK.get())) {
+                        this.startRiding(player);
+                        return InteractionResult.SUCCESS;
+                    }
+                }
+            }
+
             boolean flag = this.isOwnedBy(player) || this.isTame() || itemstack.is(Items.BONE) && !this.isTame();
             return flag ? InteractionResult.CONSUME : InteractionResult.PASS;
         } else {
             if (this.isTame()) {
                 InteractionResult interactionresult = super.mobInteract(player, hand);
                 if (!interactionresult.consumesAction() && this.isOwnedBy(player)) {
-                    this.setOrderedToSit(!this.isOrderedToSit());
-                    this.jumping = false;
-                    this.navigation.stop();
-                    this.setTarget(null);
+                    if (player.isSecondaryUseActive() && player.getPassengers().isEmpty() && player.getItemBySlot(EquipmentSlot.CHEST).is(CNBItems.SPORELING_BACKPACK.get())) {
+                        this.startRiding(player);
+                    } else {
+                        this.setOrderedToSit(!this.isOrderedToSit());
+                        this.jumping = false;
+                        this.navigation.stop();
+                        this.setTarget(null);
+                    }
                     return InteractionResult.SUCCESS;
                 }
 
@@ -413,8 +440,8 @@ public class SporelingEntity extends TamableAnimal implements Enemy, IAnimatable
     }
 
     @Override
-    public int getMaxHeadYRot() {
-        return 5;
+    public void rideTick() {
+        super.rideTick();
     }
 
     @Override
@@ -432,6 +459,10 @@ public class SporelingEntity extends TamableAnimal implements Enemy, IAnimatable
 
     public <E extends IAnimatable> PlayState animationPredicate(AnimationEvent<E> event) {
         Animation currentAnimation = event.getController().getCurrentAnimation();
+
+        if (this.getVehicle() != null) {
+            return PlayState.STOP;
+        }
 
         if (this.isInSittingPose()) {
             event.getController().setAnimation(new AnimationBuilder().addAnimation("sporeling_sit").addAnimation("sporeling_sitting"));
