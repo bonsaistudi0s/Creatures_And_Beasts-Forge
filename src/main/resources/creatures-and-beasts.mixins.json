@@ -8,9 +8,9 @@
     "defaultRequire": 1
   },
   "mixins": [
+    "MixinEntity"
   ],
   "client": [
-    "MixinEntity",
     "MixinGeoEntityRenderer",
     "MixinLivingEntityRenderer"
   ]
