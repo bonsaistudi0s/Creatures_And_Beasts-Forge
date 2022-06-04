@@ -74,12 +74,15 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
     private static final EntityDataAccessor<Boolean> TRADING = SynchedEntityData.defineId(CactemEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> IDLE_ANIM = SynchedEntityData.defineId(CactemEntity.class, EntityDataSerializers.INT);
 
-    private final RandomStrollGoal elderStrollGoal = new RandomStrollGoal(this, 0.5D);
+    // Elder Goals
+    private final RandomStrollGoal elderStrollGoal = new RandomStrollGoal(this, 0.65D);
+    private final TradeGoal tradeGoal = new TradeGoal(this, 16.0D, 0.65D);
+    private final HealGoal healGoal = new HealGoal(this, 0.65D, 100, 160, 16.0F, 7.0F);
+
+    // Other Goals
     private final RandomStrollGoal randomStrollGoal = new RandomStrollGoal(this, 1.0D);
     private final FollowElderGoal followElderGoal = new FollowElderGoal(this, 1.0D);
-    private final TradeGoal tradeGoal = new TradeGoal(this, 16.0D, 0.5D);
     private final RangedSpearAttackGoal spearAttackGoal = new RangedSpearAttackGoal(this, 60, 16.0F);
-    private final HealGoal healGoal = new HealGoal(this, 0.5D, 100, 160, 16.0F, 7.0F);
 
     private final AnimationFactory factory = new AnimationFactory(this);
     private final UUID healthReductionUUID = UUID.fromString("65a301bb-531d-499e-939c-eda5b857c0b4");
@@ -594,8 +597,17 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
 
         public boolean canUse() {
             LivingEntity livingentity = this.cactem.getTarget();
-            if (livingentity == null) {
+
+            if (livingentity != null && !livingentity.isAlive()) {
+                this.cactem.setTarget(null);
+                livingentity = null;
+            }
+
+            boolean cactemNeedsHealing = this.cactemNeedsHeal(this.cactem, this.cactem.level);
+            if (livingentity == null && !cactemNeedsHealing) {
                 return false;
+            } else if (cactemNeedsHealing) {
+                return true;
             } else {
                 return !(livingentity instanceof Player) || !livingentity.isSpectator() && !((Player) livingentity).isCreative();
             }
@@ -607,7 +619,9 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
 
         public void start() {
             super.start();
-            this.cactem.setAggressive(true);
+            if (this.cactem.getTarget() != null) {
+                this.cactem.setAggressive(true);
+            }
         }
 
         public void stop() {
@@ -625,33 +639,31 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
         public void tick() {
             LivingEntity targetEntity = this.cactem.getTarget();
 
-            if (targetEntity != null) {
-                if (this.cactem.isUsingItem()) {
-                    this.cactem.getNavigation().stop();
-                    int i = this.cactem.getTicksUsingItem();
-                    if (i >= 3 && i < 38) {
-                        this.cactem.performHeal(this.healRadius);
-                    } else if (i >= 38) {
-                        this.cactem.setHealing(false);
-                        this.cactem.stopUsingItem();
-                        this.healTime = this.healIntervalMin + this.cactem.random.nextInt(this.healIntervalDiff + 1);
-                    }
-                } else if (--this.healTime <= 0 && this.cactemNeedsHeal(this.cactem, this.cactem.level)) {
-                    this.cactem.getNavigation().stop();
-                    this.cactem.setHealing(true);
-                    this.cactem.startUsingItem(this.cactem.getUsedItemHand());
-                } else if (!this.cactem.getNavigation().isInProgress() && this.cactem.distanceToSqr(this.cactem.getTarget()) <= (this.avoidDist * this.avoidDist)) {
-                    Vec3 vec3 = DefaultRandomPos.getPosAway(this.cactem, (int) this.avoidDist, 7, targetEntity.position());
-                    if (vec3 != null) {
-                        Path path = this.cactem.getNavigation().createPath(vec3.x, vec3.y, vec3.z, 0);
-                        this.cactem.getNavigation().moveTo(path, this.speedModifier);
-                    }
-                } else if (!this.cactem.getNavigation().isInProgress()) {
-                    Vec3 vec3 = DefaultRandomPos.getPosTowards(this.cactem, (int) this.avoidDist, 7, targetEntity.position(), ((float)Math.PI / 2.0F));
-                    if (vec3 != null) {
-                        Path path = this.cactem.getNavigation().createPath(vec3.x, vec3.y, vec3.z, 0);
-                        this.cactem.getNavigation().moveTo(path, this.speedModifier);
-                    }
+            if (this.cactem.isUsingItem()) {
+                this.cactem.getNavigation().stop();
+                int i = this.cactem.getTicksUsingItem();
+                if (i >= 20 && i < 38) {
+                    this.cactem.performHeal(this.healRadius);
+                } else if (i >= 38) {
+                    this.cactem.setHealing(false);
+                    this.cactem.stopUsingItem();
+                    this.healTime = this.healIntervalMin + this.cactem.random.nextInt(this.healIntervalDiff + 1);
+                }
+            } else if (--this.healTime <= 0 && this.cactemNeedsHeal(this.cactem, this.cactem.level)) {
+                this.cactem.getNavigation().stop();
+                this.cactem.setHealing(true);
+                this.cactem.startUsingItem(this.cactem.getUsedItemHand());
+            } else if (targetEntity != null && !this.cactem.getNavigation().isInProgress() && this.cactem.distanceToSqr(this.cactem.getTarget()) <= (this.avoidDist * this.avoidDist)) {
+                Vec3 vec3 = DefaultRandomPos.getPosAway(this.cactem, (int) this.avoidDist, 7, targetEntity.position());
+                if (vec3 != null) {
+                    Path path = this.cactem.getNavigation().createPath(vec3.x, vec3.y, vec3.z, 0);
+                    this.cactem.getNavigation().moveTo(path, this.speedModifier);
+                }
+            } else if (targetEntity != null && !this.cactem.getNavigation().isInProgress()) {
+                Vec3 vec3 = DefaultRandomPos.getPosTowards(this.cactem, (int) this.avoidDist, 7, targetEntity.position(), ((float)Math.PI / 2.0F));
+                if (vec3 != null) {
+                    Path path = this.cactem.getNavigation().createPath(vec3.x, vec3.y, vec3.z, 0);
+                    this.cactem.getNavigation().moveTo(path, this.speedModifier);
                 }
             }
         }
@@ -688,6 +700,8 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
         public boolean canUse() {
             LivingEntity livingentity = this.cactem.getTarget();
             if (livingentity == null) {
+                return false;
+            } else if (!livingentity.isAlive()) {
                 return false;
             } else {
                 return !(livingentity instanceof Player) || !livingentity.isSpectator() && !((Player) livingentity).isCreative();
