@@ -53,6 +53,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.phys.HitResult;
 import software.bernie.geckolib3.core.AnimationState;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
@@ -247,6 +248,15 @@ public class SporelingEntity extends TamableAnimal implements IAnimatable {
             }
 
             return super.mobInteract(player, hand);
+        }
+    }
+
+    @Override
+    public ItemStack getPickedResult(HitResult target) {
+        if (this.getSporelingType().getHostility().equals(FRIENDLY)) {
+            return new ItemStack(CNBItems.SPORELING_OVERWORLD_EGG.get());
+        } else {
+            return new ItemStack(CNBItems.SPORELING_NETHER_EGG.get());
         }
     }
 
