@@ -16,7 +16,7 @@ public class MixinEntity {
     private void CNB_positionSporelingRider(Entity entity, Entity.MoveFunction moveFunction, CallbackInfo ci) {
         if (entity instanceof SporelingEntity sporelingEntity && ((Entity) (Object)this) instanceof Player player) {
             if (player.hasPassenger(sporelingEntity)) {
-                double d0 = player.getY() + 0.7D;
+                double d0 = player.getY() + 0.68D;
                 if (!player.isCrouching()) {
                     moveFunction.accept(sporelingEntity, player.getX() + Mth.sin(player.yBodyRot * Mth.DEG_TO_RAD) * 0.45D, d0, player.getZ() - Mth.cos(player.yBodyRot * Mth.DEG_TO_RAD) * 0.45D);
                 } else {

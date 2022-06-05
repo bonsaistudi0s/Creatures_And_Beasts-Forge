@@ -16,6 +16,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
@@ -442,6 +443,10 @@ public class SporelingEntity extends TamableAnimal implements IAnimatable {
     @Override
     public void rideTick() {
         super.rideTick();
+        if (this.isPassenger() && this.getFluidHeight(FluidTags.WATER) > this.getFluidJumpThreshold()) {
+            this.stopRiding();
+            this.setOrderedToSit(false);
+        }
     }
 
     @Override
