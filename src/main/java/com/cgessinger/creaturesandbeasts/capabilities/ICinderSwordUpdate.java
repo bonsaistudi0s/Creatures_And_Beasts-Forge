@@ -6,7 +6,4 @@ public interface ICinderSwordUpdate {
 
     int setImbuedTicks(int imbuedTicks);
 
-    boolean setImbued(boolean isImbued);
-
-    boolean getImbued();
 }

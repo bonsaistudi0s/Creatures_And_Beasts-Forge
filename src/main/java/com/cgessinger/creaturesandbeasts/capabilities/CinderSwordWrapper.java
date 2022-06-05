@@ -11,10 +11,8 @@ public class CinderSwordWrapper implements ICinderSwordUpdate, ICapabilityProvid
     private final LazyOptional<ICinderSwordUpdate> holder = LazyOptional.of(() -> this);
 
     private int imbuedTicks;
-    private boolean imbued;
 
     public CinderSwordWrapper() {
-        this.imbued = false;
         this.imbuedTicks = 0;
     }
 
@@ -25,25 +23,9 @@ public class CinderSwordWrapper implements ICinderSwordUpdate, ICapabilityProvid
 
     @Override
     public int setImbuedTicks(int imbuedTicks) {
-        if (imbuedTicks == 0) {
-            this.setImbued(false);
-        } else {
-            this.imbuedTicks = imbuedTicks;
-        }
+        this.imbuedTicks = imbuedTicks;
 
         return imbuedTicks;
-    }
-
-    @Override
-    public boolean setImbued(boolean isImbued) {
-        this.imbuedTicks = isImbued ? 1200 : 0;
-        this.imbued = isImbued;
-        return isImbued;
-    }
-
-    @Override
-    public boolean getImbued() {
-        return this.imbued;
     }
 
     @NotNull

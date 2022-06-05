@@ -3,18 +3,14 @@ package com.cgessinger.creaturesandbeasts.items;
 import com.cgessinger.creaturesandbeasts.capabilities.CinderSwordCapability;
 import com.cgessinger.creaturesandbeasts.capabilities.CinderSwordWrapper;
 import com.cgessinger.creaturesandbeasts.capabilities.ICinderSwordUpdate;
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
+import com.cgessinger.creaturesandbeasts.init.CNBItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
@@ -25,23 +21,24 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
-import org.jetbrains.annotations.Nullable;
+import net.minecraftforge.registries.RegistryObject;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 public class CinderSwordItem extends SwordItem {
-    private final float attackDamage;
-    private final float attackSpeed;
+    private static final List<RegistryObject<CinderSwordItem>> IMBUE_TIERS = List.of(CNBItems.CINDER_SWORD, CNBItems.CINDER_SWORD_1, CNBItems.CINDER_SWORD_2, CNBItems.CINDER_SWORD_3, CNBItems.CINDER_SWORD_4);
+    private final int imbueLevel;
 
-    public CinderSwordItem(Tier tier, int attackDamageModifier, float attackSpeedModifier, Properties properties) {
+    public CinderSwordItem(Tier tier, int imbueLevel, int attackDamageModifier, float attackSpeedModifier, Properties properties) {
         super(tier, attackDamageModifier, attackSpeedModifier, properties);
-        this.attackDamage = (float)attackDamageModifier + tier.getAttackDamageBonus();
-        this.attackSpeed = attackSpeedModifier;
+        this.imbueLevel = imbueLevel;
     }
 
     @Override
     public boolean hurtEnemy(ItemStack stack, LivingEntity targetEntity, LivingEntity attackingEntity) {
-        LazyOptional<ICinderSwordUpdate> capability = stack.getCapability(CinderSwordCapability.CINDER_SWORD_CAPABILITY);
-        if (capability.map(ICinderSwordUpdate::getImbued).get()) {
-            targetEntity.setSecondsOnFire(6);
+        if (this.imbueLevel > 0) {
+            targetEntity.setSecondsOnFire(2 * this.imbueLevel);
         }
 
         return super.hurtEnemy(stack, targetEntity, attackingEntity);
@@ -53,7 +50,17 @@ public class CinderSwordItem extends SwordItem {
         int imbuedTicks = capability.map(ICinderSwordUpdate::getImbuedTicks).get();
 
         if (imbuedTicks > 0) {
-            capability.map(handler -> handler.setImbuedTicks(imbuedTicks-1));
+            capability.map(handler -> handler.setImbuedTicks(imbuedTicks - 1));
+        } else if (this.imbueLevel > 0 && entity instanceof Player player) {
+            ItemStack sword = new ItemStack(IMBUE_TIERS.get(this.imbueLevel - 1).get());
+
+            if (this.imbueLevel == 1) {
+                player.playSound(SoundEvents.FIRE_EXTINGUISH, 1.0F, 1.0F);
+            }
+
+            sword.setTag(stack.getOrCreateTag());
+            sword.getCapability(CinderSwordCapability.CINDER_SWORD_CAPABILITY).map(handler -> handler.setImbuedTicks(400));
+            player.getInventory().setItem(slotNumber, sword);
         }
     }
 
@@ -64,7 +71,11 @@ public class CinderSwordItem extends SwordItem {
         BlockPos pos = blockhitresult.getBlockPos();
 
         if (level.getFluidState(pos).is(Fluids.LAVA)) {
-            itemstack.getCapability(CinderSwordCapability.CINDER_SWORD_CAPABILITY).map(handler -> handler.setImbued(true));
+            ItemStack imbuedSword = new ItemStack(IMBUE_TIERS.get(IMBUE_TIERS.size()-1).get());
+            imbuedSword.setTag(itemstack.getOrCreateTag());
+            imbuedSword.getCapability(CinderSwordCapability.CINDER_SWORD_CAPABILITY).map(handler -> handler.setImbuedTicks(400));
+            player.setItemInHand(hand, imbuedSword);
+            player.playSound(SoundEvents.BUCKET_FILL_LAVA, 1.0F, 1.0F);
             return InteractionResultHolder.success(itemstack);
         }
 
@@ -72,16 +83,8 @@ public class CinderSwordItem extends SwordItem {
     }
 
     @Override
-    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack) {
-        LazyOptional<ICinderSwordUpdate> capability = stack.getCapability(CinderSwordCapability.CINDER_SWORD_CAPABILITY);
-        if (slot == EquipmentSlot.MAINHAND && capability.map(ICinderSwordUpdate::getImbued).get()) {
-            ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
-            builder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Weapon modifier", this.attackDamage + 2.5, AttributeModifier.Operation.ADDITION));
-            builder.put(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Weapon modifier", this.attackSpeed, AttributeModifier.Operation.ADDITION));
-            return builder.build();
-        } else {
-            return this.getDefaultAttributeModifiers(slot);
-        }
+    public boolean onDroppedByPlayer(ItemStack item, Player player) {
+        return super.onDroppedByPlayer(item, player);
     }
 
     @Nullable

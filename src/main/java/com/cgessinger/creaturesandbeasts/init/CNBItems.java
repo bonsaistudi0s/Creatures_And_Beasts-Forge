@@ -71,7 +71,12 @@ public class CNBItems {
     public static final RegistryObject<SporelingBackpackItem> SPORELING_BACKPACK = ITEMS.register("sporeling_backpack", () -> new SporelingBackpackItem(CNBArmorMaterials.SPORELING_BACKPACK, EquipmentSlot.CHEST, new Item.Properties().tab(CreaturesAndBeasts.TAB)));
 
     // Tools
-    public static final RegistryObject<CinderSwordItem> CINDER_SWORD = ITEMS.register("cinder_sword", () -> new CinderSwordItem(CNBItemTiers.CINDER, 3, -2.4F, new Item.Properties().tab(CreaturesAndBeasts.TAB)));
+    public static final RegistryObject<CinderSwordItem> CINDER_SWORD = ITEMS.register("cinder_sword", () -> new CinderSwordItem(CNBItemTiers.CINDER, 0, 3, -2.4F, new Item.Properties().tab(CreaturesAndBeasts.TAB)));
+    public static final RegistryObject<CinderSwordItem> CINDER_SWORD_1 = ITEMS.register("cinder_sword_1", () -> new CinderSwordItem(CNBItemTiers.CINDER, 1, 4, -2.4F, new Item.Properties()));
+    public static final RegistryObject<CinderSwordItem> CINDER_SWORD_2 = ITEMS.register("cinder_sword_2", () -> new CinderSwordItem(CNBItemTiers.CINDER, 2, 5, -2.4F, new Item.Properties()));
+    public static final RegistryObject<CinderSwordItem> CINDER_SWORD_3 = ITEMS.register("cinder_sword_3", () -> new CinderSwordItem(CNBItemTiers.CINDER, 3, 6, -2.4F, new Item.Properties()));
+    public static final RegistryObject<CinderSwordItem> CINDER_SWORD_4 = ITEMS.register("cinder_sword_4", () -> new CinderSwordItem(CNBItemTiers.CINDER, 4, 7, -2.4F, new Item.Properties()));
+
     public static final RegistryObject<SpearItem> CACTEM_SPEAR = ITEMS.register("cactem_spear", () -> new SpearItem(new Item.Properties().durability(100).tab(CreaturesAndBeasts.TAB)));
 
     // Spawn Eggs
