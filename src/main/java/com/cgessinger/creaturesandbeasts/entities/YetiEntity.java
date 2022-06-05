@@ -377,7 +377,7 @@ public class YetiEntity extends TamableAnimal implements IAnimatable, Enemy, Neu
     }
 
     private void performAttack() {
-        List<LivingEntity> list = this.level.getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(1.0D, 4.0D, 1.0D));
+        List<LivingEntity> list = this.level.getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(1.0D, 1.0D, 1.0D));
 
         for (LivingEntity entity : list) {
             if ((entity instanceof Player && entity.getUUID().equals(this.getOwnerUUID())) || (entity instanceof YetiEntity && Objects.equals(this.getOwnerUUID(), ((YetiEntity) entity).getOwnerUUID()))) {
