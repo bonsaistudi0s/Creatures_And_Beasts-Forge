@@ -16,14 +16,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.Registry;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -104,7 +105,7 @@ public class CindershellEntity extends Animal implements IAnimatable, Bucketable
     private final UUID healthReductionUUID = UUID.fromString("189faad9-35de-4e15-a598-82d147b996d7");
     private final AnimationFactory factory = new AnimationFactory(this);
     protected CinderFurnaceContainer inventory;
-    private static final Component CONTAINER_TITLE = new TranslatableComponent("cnb.container.cinder_furnace");
+    private Player playerInMenu;
     private int eatTimer;
 
     int cookingProgress;
@@ -180,7 +181,9 @@ public class CindershellEntity extends Animal implements IAnimatable, Bucketable
             }
 
             tag.put("Items", listtag);
-            tag.putUUID("Player", this.entityData.get(PLAYER).get());
+            if (this.entityData.get(PLAYER).isPresent()) {
+                tag.putUUID("Player", this.entityData.get(PLAYER).get());
+            }
             tag.putInt("CookTime", this.cookingProgress);
             tag.putInt("CookTimeTotal", this.cookingTotalTime);
         }
@@ -194,8 +197,13 @@ public class CindershellEntity extends Animal implements IAnimatable, Bucketable
             playerUUID = tag.getUUID("Player");
         }
         this.setFurnace(tag.getBoolean("HasFurnace"), playerUUID);
-        if (this.hasFurnace() && tag.contains("Player")) {
-            this.inventory = this.createMenu(this.getId(), this.level.getPlayerByUUID(tag.getUUID("Player")).getInventory(), this.level.getPlayerByUUID(tag.getUUID("Player")));
+        if (this.hasFurnace()) {
+            if (tag.contains("Player") && this.level.getPlayerByUUID(tag.getUUID("Player")) != null) {
+                this.inventory = this.createMenu(this.getId(), this.level.getPlayerByUUID(tag.getUUID("Player")).getInventory(), this.level.getPlayerByUUID(tag.getUUID("Player")));
+            } else {
+                Player player = Minecraft.getInstance().player;
+                this.inventory = this.createMenu(this.getId(), player.getInventory(), player);
+            }
             ListTag listtag = tag.getList("Items", 10);
 
             for(int i = 0; i < listtag.size(); ++i) {
@@ -257,7 +265,7 @@ public class CindershellEntity extends Animal implements IAnimatable, Bucketable
                         this.playSound(SoundEvents.FURNACE_FIRE_CRACKLE, 1.0F, 1.0F);
                     }
                     ++this.cookingProgress;
-                    if (this.cookingProgress == this.cookingTotalTime) {
+                    if (this.cookingProgress >= this.cookingTotalTime) {
                         this.cookingProgress = 0;
                         this.cookingTotalTime = getTotalCookTime(this.level, this.inventory.getRecipeType(), this);
                         if (this.smelt(recipe, this.items, 64)) {
@@ -269,6 +277,18 @@ public class CindershellEntity extends Animal implements IAnimatable, Bucketable
                 }
             }
         }
+    }
+
+    @Nullable
+    @Override
+    public Entity changeDimension(ServerLevel level) {
+        if (this.playerInMenu != null) {
+            this.playerInMenu.closeContainer();
+        }
+        if (this.hasFurnace()) {
+            this.cookingTotalTime = getTotalCookTime(level, this.inventory.getRecipeType(), this);
+        }
+        return super.changeDimension(level);
     }
 
     @Override
@@ -382,6 +402,7 @@ public class CindershellEntity extends Animal implements IAnimatable, Bucketable
     }
 
     public CinderFurnaceContainer createMenu(int id, Inventory playerInventory, Player player) {
+        this.playerInMenu = player;
         return new CinderFurnaceContainer(id, playerInventory, this, this.dataAccess);
     }
 
@@ -460,7 +481,9 @@ public class CindershellEntity extends Animal implements IAnimatable, Bucketable
     }
 
     public static int getTotalCookTime(Level level, RecipeType<? extends AbstractCookingRecipe> recipeType, CindershellEntity container) {
-        return (int) (level.getRecipeManager().getRecipeFor(recipeType, container, level).map(AbstractCookingRecipe::getCookingTime).orElse(200) * 1.667);
+        ResourceKey<Level> dimensionKey = ResourceKey.create(Registry.DIMENSION_REGISTRY, container.level.dimension().location());
+        float cookTimeMultiplier = dimensionKey.equals(Level.NETHER) ? 1.0F : 1.667F;
+        return (int) (level.getRecipeManager().getRecipeFor(recipeType, container, level).map(AbstractCookingRecipe::getCookingTime).orElse(200) * cookTimeMultiplier);
     }
 
     private boolean smelt(@Nullable Recipe<?> recipe, NonNullList<ItemStack> stack, int amount) {
