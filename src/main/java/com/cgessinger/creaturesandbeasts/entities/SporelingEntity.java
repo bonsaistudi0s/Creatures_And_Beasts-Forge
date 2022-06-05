@@ -23,6 +23,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -475,9 +476,11 @@ public class SporelingEntity extends TamableAnimal implements IAnimatable {
     public <E extends IAnimatable> PlayState animationPredicate(AnimationEvent<E> event) {
         Animation currentAnimation = event.getController().getCurrentAnimation();
 
-        if (this.getVehicle() != null) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("sporeling_backpack_idle"));
-        } else if (this.isInSittingPose()) {
+        if (this.isPassenger()) {
+            return PlayState.STOP;
+        }
+
+        if (this.isInSittingPose()) {
             event.getController().setAnimation(new AnimationBuilder().addAnimation("sporeling_sit").addAnimation("sporeling_sitting"));
         } else if (currentAnimation != null && (currentAnimation.animationName.equals("sporeling_sitting") || (currentAnimation.animationName.equals("sporeling_stand") && !event.getController().getAnimationState().equals(AnimationState.Stopped))) && !this.isInSittingPose()) {
             event.getController().setAnimation(new AnimationBuilder().addAnimation("sporeling_stand"));
@@ -500,9 +503,26 @@ public class SporelingEntity extends TamableAnimal implements IAnimatable {
         return PlayState.CONTINUE;
     }
 
+    public <E extends IAnimatable> PlayState backpackAnimationPredicate(AnimationEvent<E> event) {
+        Entity vehicle = this.getVehicle();
+
+        if (vehicle != null) {
+            if (vehicle.isOnGround()) {
+                event.getController().setAnimation(new AnimationBuilder().addAnimation("sporeling_backpack_idle"));
+            } else {
+                event.getController().setAnimation(new AnimationBuilder().addAnimation("sporeling_backpack_air"));
+            }
+            return PlayState.CONTINUE;
+        }
+
+        event.getController().markNeedsReload();
+        return PlayState.STOP;
+    }
+
     @Override
     public void registerControllers(AnimationData animationData) {
         animationData.addAnimationController(new AnimationController<>(this, "controller", 0, this::animationPredicate));
+        animationData.addAnimationController(new AnimationController<>(this, "backpackController", 10, this::backpackAnimationPredicate));
     }
 
     @Override
