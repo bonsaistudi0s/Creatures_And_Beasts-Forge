@@ -361,7 +361,7 @@ public class CindershellEntity extends Animal implements IAnimatable, Bucketable
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack item = player.getItemInHand(hand);
 
-        if (item.sameItem(Items.LAVA_BUCKET.getDefaultInstance()) && this.isAlive()) {
+        if (item.sameItem(Items.LAVA_BUCKET.getDefaultInstance()) && this.isAlive() && this.isBaby()) {
             this.playSound(this.getPickupSound(), 1.0F, 1.0F);
             ItemStack bucketItem = this.getBucketItemStack();
             this.saveToBucketTag(bucketItem);
