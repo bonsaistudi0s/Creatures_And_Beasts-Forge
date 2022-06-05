@@ -371,8 +371,10 @@ public class CindershellEntity extends Animal implements IAnimatable, Bucketable
         } else if (this.hasFurnace() && player.isSecondaryUseActive()) {
             this.dropEquipment();
             return InteractionResult.sidedSuccess(this.level.isClientSide);
-        } else if (this.hasFurnace() && !this.level.isClientSide) {
-            NetworkHooks.openGui((ServerPlayer) player, this);
+        } else if (this.hasFurnace()) {
+            if (!this.level.isClientSide) {
+                NetworkHooks.openGui((ServerPlayer) player, this);
+            }
             return InteractionResult.sidedSuccess(this.level.isClientSide);
         } else {
             return InteractionResult.PASS;
