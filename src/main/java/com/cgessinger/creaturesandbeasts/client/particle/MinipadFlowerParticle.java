@@ -35,6 +35,13 @@ public class MinipadFlowerParticle extends TextureSheetParticle {
         return ParticleRenderType.PARTICLE_SHEET_LIT;
     }
 
+    @Override
+    public int getLightColor(float tick) {
+        int i = super.getLightColor(tick);
+        int k = i >> 16 & 255;
+        return 240 | k << 16;
+    }
+
     @OnlyIn(Dist.CLIENT)
     public static class Factory implements ParticleProvider<SimpleParticleType> {
         private final SpriteSet spriteSet;

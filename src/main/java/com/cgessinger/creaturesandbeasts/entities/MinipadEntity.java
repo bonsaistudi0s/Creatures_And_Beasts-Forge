@@ -151,9 +151,15 @@ public class MinipadEntity extends Animal implements IForgeShearable, IAnimatabl
         this.floatMinipad();
 
         SimpleParticleType particle = this.getMinipadType().getParticle();
-        if (particle != null && this.isGlowing() && this.tickCount % 10 == 0) {
-            this.level.addParticle(particle, this.getX() + (this.random.nextDouble(0.5) - 0.25), this.getY() + 0.8 + (this.random.nextDouble(0.1) - 0.05), this.getZ() + (this.random.nextDouble(0.5) - 0.25), this.getDeltaMovement().x, this.getDeltaMovement().y, this.getDeltaMovement().z);
+        if (particle != null && this.isGlowing()) {
+            if (this.random.nextDouble() < 0.1) {
+                this.level.addParticle(particle, this.getX() + (this.random.nextDouble(0.5) - 0.25), this.getY() + 0.8 + (this.random.nextDouble(0.1) - 0.05), this.getZ() + (this.random.nextDouble(0.5) - 0.25), this.getDeltaMovement().x, this.getDeltaMovement().y, this.getDeltaMovement().z);
+            }
+            if (this.random.nextDouble() < 0.05) {
+                this.level.addParticle(particle, this.getX() + (this.random.nextDouble(16) - 8), this.getY() + this.random.nextDouble(5), this.getZ() + (this.random.nextDouble(16) - 8), this.getDeltaMovement().x, this.getDeltaMovement().y, this.getDeltaMovement().z);
+            }
         }
+
     }
 
     @Override
@@ -295,7 +301,7 @@ public class MinipadEntity extends Animal implements IForgeShearable, IAnimatabl
             this.setSheared(true);
             java.util.List<ItemStack> items = new java.util.ArrayList<>();
 
-            if (this.level.isNight()) {
+            if (this.level.getDayTime() > 13000) {
                 items.add(new ItemStack(this.getMinipadType().getGlowShearItem()));
             } else {
                 items.add(new ItemStack(this.getMinipadType().getShearItem()));
