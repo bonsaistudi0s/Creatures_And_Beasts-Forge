@@ -791,13 +791,22 @@ public class CindershellEntity extends Animal implements IAnimatable, Bucketable
         if (!(animationSpeed > -0.05F && animationSpeed < 0.05F)) {
             event.getController().setAnimation(new AnimationBuilder().addAnimation(this.isBaby() ? "baby_cindershell_walk" : "cindershell_walk"));
         } else if (this.getEating()) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("cindershell_eat"));
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("cindershell_idle_eat"));
         } else if (this.isDeadOrDying()) {
             event.getController().setAnimation(new AnimationBuilder().addAnimation("cindershell_death"));
         } else {
             event.getController().setAnimation(new AnimationBuilder().addAnimation("cindershell_idle"));
         }
         return PlayState.CONTINUE;
+    }
+
+    private <E extends IAnimatable> PlayState eatAnimationPredicate(AnimationEvent<E> event) {
+        if (this.getEating()) {
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("cindershell_eat"));
+            return PlayState.CONTINUE;
+        }
+        event.getController().markNeedsReload();
+        return PlayState.STOP;
     }
 
     private <E extends IAnimatable> void soundListener(SoundKeyframeEvent<E> event) {
@@ -808,10 +817,12 @@ public class CindershellEntity extends Animal implements IAnimatable, Bucketable
     @Override
     public void registerControllers(AnimationData animationData) {
         AnimationController<CindershellEntity> controller = new AnimationController<>(this, "controller", 0, this::animationPredicate);
+        AnimationController<CindershellEntity> eatController = new AnimationController<>(this, "eatController", 0, this::eatAnimationPredicate);
 
-        controller.registerSoundListener(this::soundListener);
+        eatController.registerSoundListener(this::soundListener);
 
         animationData.addAnimationController(controller);
+        animationData.addAnimationController(eatController);
     }
 
     @Override

@@ -543,6 +543,46 @@
           }
         }
       },
+      "cindershell_idle_eat": {
+        "loop": true,
+        "animation_length": 1.28,
+        "bones": {
+          "body": {
+            "position": {
+              "0.0": {
+                "vector": [0, 0, 0]
+              },
+              "0.64": {
+                "vector": [0, -0.6, 0],
+                "easing": "easeInOutSine"
+              },
+              "1.28": {
+                "vector": [0, 0, 0],
+                "easing": "easeInOutSine"
+              }
+            }
+          },
+          "tail": {
+            "rotation": {
+              "0.0": {
+                "vector": [-2.5, 0, 0]
+              },
+              "0.32": {
+                "vector": [0, 0, 0],
+                "easing": "easeOutSine"
+              },
+              "0.96": {
+                "vector": [-5, 0, 0],
+                "easing": "easeInOutSine"
+              },
+              "1.28": {
+                "vector": [-2.5, 0, 0],
+                "easing": "easeInSine"
+              }
+            }
+          }
+        }
+      },
       "cindershell_death": {
         "animation_length": 1,
         "bones": {
