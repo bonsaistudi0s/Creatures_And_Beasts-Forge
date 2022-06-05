@@ -7,14 +7,17 @@ import com.cgessinger.creaturesandbeasts.init.CNBLizardTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBSoundEvents;
 import com.cgessinger.creaturesandbeasts.util.LizardType;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.SupportType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
@@ -45,6 +48,7 @@ public class LizardEggBlock extends Block {
         builder.add(EGGS);
     }
 
+    @Override
     public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, Random random) {
         if (this.canGrow(worldIn)) {
             this.removeOneEgg(worldIn, pos, state);
@@ -94,13 +98,21 @@ public class LizardEggBlock extends Block {
         this.parent2 = parent2;
     }
 
+    @Override
     public boolean canBeReplaced(BlockState blockState, BlockPlaceContext context) {
         return context.isSecondaryUseActive() && context.getItemInHand().is(this.asItem()) && blockState.getValue(EGGS) < 6 || super.canBeReplaced(blockState, context);
     }
 
+    @Override
     @Nullable
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         BlockState blockstate = context.getLevel().getBlockState(context.getClickedPos());
         return blockstate.is(this) ? blockstate.setValue(EGGS, Math.min(6, blockstate.getValue(EGGS) + 1)) : super.getStateForPlacement(context);
+    }
+
+    @Override
+    public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+        BlockState stateBelow = level.getBlockState(pos.below());
+        return stateBelow.isFaceSturdy(level, pos.below(), Direction.UP, SupportType.FULL);
     }
 }
