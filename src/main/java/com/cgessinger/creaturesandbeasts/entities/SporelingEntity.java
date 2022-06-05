@@ -461,10 +461,8 @@ public class SporelingEntity extends TamableAnimal implements IAnimatable {
         Animation currentAnimation = event.getController().getCurrentAnimation();
 
         if (this.getVehicle() != null) {
-            return PlayState.STOP;
-        }
-
-        if (this.isInSittingPose()) {
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("sporeling_backpack_idle"));
+        } else if (this.isInSittingPose()) {
             event.getController().setAnimation(new AnimationBuilder().addAnimation("sporeling_sit").addAnimation("sporeling_sitting"));
         } else if (currentAnimation != null && (currentAnimation.animationName.equals("sporeling_sitting") || (currentAnimation.animationName.equals("sporeling_stand") && !event.getController().getAnimationState().equals(AnimationState.Stopped))) && !this.isInSittingPose()) {
             event.getController().setAnimation(new AnimationBuilder().addAnimation("sporeling_stand"));

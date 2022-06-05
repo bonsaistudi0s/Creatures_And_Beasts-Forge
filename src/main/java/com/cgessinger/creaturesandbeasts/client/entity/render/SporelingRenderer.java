@@ -10,6 +10,8 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import software.bernie.geckolib3.geo.render.built.GeoBone;
@@ -24,7 +26,21 @@ public class SporelingRenderer extends LeadableGeoEntityRenderer<SporelingEntity
 
     @Override
     public void render(SporelingEntity entity, float entityYaw, float partialTicks, PoseStack stack, MultiBufferSource bufferIn, int packedLightIn) {
+        boolean isRidingCrouch = false;
+
+        if (entity.getVehicle() instanceof Player player && player.isCrouching()) {
+            stack.pushPose();
+            float yRotLerped = Mth.rotLerp(partialTicks, entity.yRotO, entity.getYRot());
+            stack.mulPose(Vector3f.XP.rotationDegrees(-25.0F * Mth.cos(yRotLerped * Mth.DEG_TO_RAD)));
+            stack.mulPose(Vector3f.ZP.rotationDegrees(-25.0F * Mth.sin(yRotLerped * Mth.DEG_TO_RAD)));
+            isRidingCrouch = true;
+        }
+
         super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
+
+        if (isRidingCrouch) {
+            stack.popPose();
+        }
     }
 
     @Override

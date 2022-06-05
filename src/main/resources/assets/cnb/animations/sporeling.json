@@ -835,6 +835,43 @@
 					}
 				}
 			}
-		}
+		},
+      "sporeling_backpack_idle": {
+        "loop": true,
+        "animation_length": 1.12,
+        "bones": {
+          "right_leg": {
+            "rotation": {
+              "0.0": {
+                "vector": [-12.5, 0, 0]
+              },
+              "0.56": {
+                "vector": [12.5, 0, 0],
+                "easing": "easeInOutSine"
+              },
+              "1.12": {
+                "vector": [-12.5, 0, 0],
+                "easing": "easeInOutSine"
+              }
+            }
+          },
+          "left_leg": {
+            "rotation": {
+              "0.0": {
+                "vector": [12.5, 0, 0],
+                "easing": "easeInOutSine"
+              },
+              "0.56": {
+                "vector": [-12.5, 0, 0],
+                "easing": "easeInOutSine"
+              },
+              "1.12": {
+                "vector": [12.5, 0, 0],
+                "easing": "easeInOutSine"
+              }
+            }
+          }
+        }
+      }
 	}
 }

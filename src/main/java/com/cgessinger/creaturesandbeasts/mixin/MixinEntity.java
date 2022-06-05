@@ -16,8 +16,12 @@ public class MixinEntity {
     private void CNB_positionSporelingRider(Entity entity, Entity.MoveFunction moveFunction, CallbackInfo ci) {
         if (entity instanceof SporelingEntity sporelingEntity && ((Entity) (Object)this) instanceof Player player) {
             if (player.hasPassenger(sporelingEntity)) {
-                double d0 = player.getY() + 0.6D;
-                moveFunction.accept(sporelingEntity, player.getX() + Mth.sin(player.yBodyRot * Mth.DEG_TO_RAD) * 0.45D, d0, player.getZ() - Mth.cos(player.yBodyRot * Mth.DEG_TO_RAD) * 0.45D);
+                double d0 = player.getY() + 0.7D;
+                if (!player.isCrouching()) {
+                    moveFunction.accept(sporelingEntity, player.getX() + Mth.sin(player.yBodyRot * Mth.DEG_TO_RAD) * 0.45D, d0, player.getZ() - Mth.cos(player.yBodyRot * Mth.DEG_TO_RAD) * 0.45D);
+                } else {
+                    moveFunction.accept(sporelingEntity, player.getX() + Mth.sin(player.yBodyRot * Mth.DEG_TO_RAD) * 0.7D, d0, player.getZ() - Mth.cos(player.yBodyRot * Mth.DEG_TO_RAD) * 0.7D);
+                }
                 this.clampRotation(player, sporelingEntity);
                 ci.cancel();
             }
@@ -34,6 +38,6 @@ public class MixinEntity {
     private void clampRotation(Player vehicle, SporelingEntity rider) {
         rider.setYBodyRot(vehicle.yBodyRot + 180.0F);
         rider.setYRot(vehicle.yBodyRot + 180.0F);
-        rider.setYHeadRot(vehicle.yBodyRot + 180.0F);
+        rider.setYHeadRot(rider.getYRot());
     }
 }
