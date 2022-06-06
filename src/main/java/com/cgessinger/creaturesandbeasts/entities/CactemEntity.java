@@ -583,7 +583,7 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
         private final int healIntervalDiff;
         private final float healRadius;
         private final float avoidDist;
-        private int healTime = -1;
+        private int healTime = 0;
 
         public HealGoal(CactemEntity cactem, double speedModifier, int healIntervalMin, int healIntervalMax, float healRadius, float avoidDist) {
             this.cactem = cactem;
@@ -627,7 +627,6 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
         public void stop() {
             super.stop();
             this.cactem.setAggressive(false);
-            this.healTime = -1;
             this.cactem.setHealing(false);
             this.cactem.stopUsingItem();
         }

@@ -522,7 +522,7 @@ public class SporelingEntity extends TamableAnimal implements IAnimatable {
     @Override
     public void registerControllers(AnimationData animationData) {
         animationData.addAnimationController(new AnimationController<>(this, "controller", 0, this::animationPredicate));
-        animationData.addAnimationController(new AnimationController<>(this, "backpackController", 10, this::backpackAnimationPredicate));
+        animationData.addAnimationController(new AnimationController<>(this, "backpackController", 7, this::backpackAnimationPredicate));
     }
 
     @Override
