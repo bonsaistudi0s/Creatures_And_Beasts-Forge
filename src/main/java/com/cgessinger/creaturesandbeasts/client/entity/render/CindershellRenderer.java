@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -15,6 +16,7 @@ import software.bernie.geckolib3.geo.render.built.GeoBone;
 
 @OnlyIn(Dist.CLIENT)
 public class CindershellRenderer extends LeadableGeoEntityRenderer<CindershellEntity> {
+    private CindershellEntity cindershell;
 
     public CindershellRenderer(EntityRendererProvider.Context context) {
         super(context, new CindershellModel());
@@ -28,8 +30,14 @@ public class CindershellRenderer extends LeadableGeoEntityRenderer<CindershellEn
     }
 
     @Override
+    public void renderEarly(CindershellEntity animatable, PoseStack stackIn, float ticks, MultiBufferSource renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float partialTicks) {
+        super.renderEarly(animatable, stackIn, ticks, renderTypeBuffer, vertexBuilder, packedLightIn, packedOverlayIn, red, green, blue, partialTicks);
+        this.cindershell = animatable;
+    }
+
+    @Override
     public void renderRecursively(GeoBone bone, PoseStack stack, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
-        if (bone.getName().equals("itemHolder")) {
+        if (bone.getName().equals("itemHolder") && !this.cindershell.isInvisible()) {
             stack.pushPose();
             stack.translate(0, 0.62D, -1.52D);
             stack.mulPose(Vector3f.XP.rotationDegrees(90.0F));
