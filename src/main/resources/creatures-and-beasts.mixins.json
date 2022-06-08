@@ -13,6 +13,7 @@
   ],
   "client": [
     "MixinGeoEntityRenderer",
+    "MixinHumanoidArmorLayer",
     "MixinLivingEntityRenderer"
   ]
 }
