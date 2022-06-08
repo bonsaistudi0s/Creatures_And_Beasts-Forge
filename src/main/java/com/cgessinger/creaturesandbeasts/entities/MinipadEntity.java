@@ -155,8 +155,8 @@ public class MinipadEntity extends Animal implements IForgeShearable, IAnimatabl
             if (this.random.nextDouble() < 0.1) {
                 this.level.addParticle(particle, this.getX() + (this.random.nextDouble(0.5) - 0.25), this.getY() + 0.8 + (this.random.nextDouble(0.1) - 0.05), this.getZ() + (this.random.nextDouble(0.5) - 0.25), this.getDeltaMovement().x, this.getDeltaMovement().y, this.getDeltaMovement().z);
             }
-            if (this.random.nextDouble() < 0.05) {
-                this.level.addParticle(particle, this.getX() + (this.random.nextDouble(16) - 8), this.getY() + this.random.nextDouble(5), this.getZ() + (this.random.nextDouble(16) - 8), this.getDeltaMovement().x, this.getDeltaMovement().y, this.getDeltaMovement().z);
+            if (this.random.nextDouble() < 0.07) {
+                this.level.addParticle(particle, this.getX() + (this.random.nextDouble(24) - 12), this.getY() + this.random.nextDouble(7.5), this.getZ() + (this.random.nextDouble(24) - 12), this.getDeltaMovement().x, this.getDeltaMovement().y, this.getDeltaMovement().z);
             }
         }
 
