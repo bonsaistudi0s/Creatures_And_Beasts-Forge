@@ -23,7 +23,6 @@ public class ConvertItemGoal extends Goal {
     protected ItemEntity itemInstance;
     protected double convertTime;
     protected double convertDelay;
-    protected boolean converting;
 
     protected final double speed;
     protected final SporelingEntity entityIn;
@@ -71,7 +70,6 @@ public class ConvertItemGoal extends Goal {
         this.path = null;
         this.navigation.stop();
         entityIn.setHolding(ItemStack.EMPTY);
-        converting = false;
         entityIn.setInspecting(false);
     }
 
@@ -82,11 +80,10 @@ public class ConvertItemGoal extends Goal {
 
     @Override
     public boolean canContinueToUse() {
-        return (!this.navigation.isDone() || this.convertTime > 0) && (!this.itemInstance.isRemoved() || this.converting);
+        return (!this.navigation.isDone() || this.convertTime > 0) && (!this.itemInstance.isRemoved() || this.entityIn.isInspecting());
     }
 
     public void convertItem() {
-        converting = false;
         entityIn.setInspecting(false);
 
         if (entityIn.getHolding().sameItem(Items.DIRT.getDefaultInstance())) {
@@ -124,10 +121,14 @@ public class ConvertItemGoal extends Goal {
             if (this.entityIn.distanceToSqr(itemInstance) < 2.0D || this.entityIn.isInspecting()) {
                 this.navigation.setSpeedModifier(0.0D);
 
-                if (!converting) {
-                    converting = true;
+                if (!this.entityIn.isInspecting() && !itemInstance.isRemoved()) {
                     this.entityIn.setHolding(itemInstance.getItem().copy());
                     itemInstance.getItem().shrink(1);
+
+                    if (itemInstance.getItem().isEmpty()) {
+                        itemInstance.discard();
+                    }
+
                     entityIn.setInspecting(true);
                     entityIn.lookAt(EntityAnchorArgument.Anchor.EYES, itemInstance.position());
                     this.convertTime = 54;

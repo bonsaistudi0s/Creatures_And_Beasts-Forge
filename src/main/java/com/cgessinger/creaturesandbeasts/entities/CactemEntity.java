@@ -474,7 +474,6 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
         protected ItemEntity itemInstance;
         protected double tradeTime;
         protected double tradeDelay;
-        protected boolean trading;
 
         protected final double speed;
         protected final CactemEntity entityIn;
@@ -510,7 +509,6 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
             this.itemInstance = null;
             this.path = null;
             this.navigation.stop();
-            trading = false;
             this.entityIn.setTrading(false);
         }
 
@@ -521,11 +519,10 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
 
         @Override
         public boolean canContinueToUse() {
-            return (!this.navigation.isDone() || this.tradeTime > 0) && (!this.itemInstance.isRemoved() || this.trading);
+            return (!this.navigation.isDone() || this.tradeTime > 0) && (!this.itemInstance.isRemoved() || this.entityIn.isTrading());
         }
 
         public void trade() {
-            trading = false;
             this.entityIn.setTrading(false);
             ItemStack returnItem;
             double lootChance = this.entityIn.random.nextDouble();
@@ -548,10 +545,14 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
                 if (this.entityIn.distanceToSqr(itemInstance) < 2.0D) {
                     this.navigation.setSpeedModifier(0.0D);
 
-                    if (!trading) {
-                        trading = true;
+                    if (!this.entityIn.isTrading() && !itemInstance.isRemoved()) {
                         this.entityIn.setTrading(true);
                         itemInstance.getItem().shrink(1);
+
+                        if (itemInstance.getItem().isEmpty()) {
+                            itemInstance.discard();
+                        }
+
                         entityIn.lookAt(EntityAnchorArgument.Anchor.EYES, itemInstance.position());
                         this.tradeTime = 54;
 
