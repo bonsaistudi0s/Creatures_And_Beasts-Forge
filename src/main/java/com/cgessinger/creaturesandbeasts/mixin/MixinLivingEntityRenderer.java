@@ -29,7 +29,7 @@ public class MixinLivingEntityRenderer<T extends LivingEntity> {
         }
     }
 
-    @ModifyVariable(method = "render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/util/Mth;rotLerp(FFF)F", ordinal = 1))
+    @ModifyVariable(method = "render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/util/Mth;rotLerp(FFF)F", ordinal = 1), ordinal = 0)
     private boolean CNB_stopPlayerRotatingOnWhale(boolean value, T entity, float p_115309_, float p_115310_, PoseStack stack, MultiBufferSource bufferIn, int p_115313_) {
         this.shouldSitTemp = value;
 
@@ -40,7 +40,7 @@ public class MixinLivingEntityRenderer<T extends LivingEntity> {
         }
     }
 
-    @ModifyVariable(method = "render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/util/Mth;lerp(FFF)F", ordinal = 0))
+    @ModifyVariable(method = "render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/util/Mth;lerp(FFF)F", ordinal = 0), ordinal = 0)
     private boolean CNB_resetShouldSit(boolean value, T entity, float p_115309_, float p_115310_, PoseStack stack, MultiBufferSource bufferIn, int p_115313_) {
         return this.shouldSitTemp;
     }
