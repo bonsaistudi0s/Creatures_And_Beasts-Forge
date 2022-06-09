@@ -27,6 +27,7 @@ public class SporelingRenderer extends LeadableGeoEntityRenderer<SporelingEntity
     @Override
     public void render(SporelingEntity entity, float entityYaw, float partialTicks, PoseStack stack, MultiBufferSource bufferIn, int packedLightIn) {
         boolean isRidingCrouch = false;
+        boolean isRidingAttacking = false;
 
         if (entity.getVehicle() instanceof Player player && player.isCrouching()) {
             stack.pushPose();
@@ -36,9 +37,19 @@ public class SporelingRenderer extends LeadableGeoEntityRenderer<SporelingEntity
             isRidingCrouch = true;
         }
 
+        if (entity.getVehicle() instanceof Player player && player.getAttackAnim(partialTicks) > 0) {
+            stack.pushPose();
+            float rotation = player.getAttackAnim(partialTicks);
+            stack.mulPose(Vector3f.YP.rotationDegrees(-Mth.sin(Mth.sqrt(rotation) * ((float)Math.PI * 2F)) * 0.2F * Mth.RAD_TO_DEG));
+            isRidingAttacking = true;
+        }
+
         super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
 
         if (isRidingCrouch) {
+            stack.popPose();
+        }
+        if (isRidingAttacking) {
             stack.popPose();
         }
     }

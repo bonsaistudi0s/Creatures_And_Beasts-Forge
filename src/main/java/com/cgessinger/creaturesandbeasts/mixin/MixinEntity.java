@@ -17,11 +17,19 @@ public class MixinEntity {
         if (entity instanceof SporelingEntity sporelingEntity && ((Entity) (Object)this) instanceof Player player) {
             if (player.hasPassenger(sporelingEntity)) {
                 double d0 = player.getY() + 0.68D;
-                if (!player.isCrouching()) {
-                    moveFunction.accept(sporelingEntity, player.getX() + Mth.sin(player.yBodyRot * Mth.DEG_TO_RAD) * 0.45D, d0, player.getZ() - Mth.cos(player.yBodyRot * Mth.DEG_TO_RAD) * 0.45D);
-                } else {
-                    moveFunction.accept(sporelingEntity, player.getX() + Mth.sin(player.yBodyRot * Mth.DEG_TO_RAD) * 0.7D, d0, player.getZ() - Mth.cos(player.yBodyRot * Mth.DEG_TO_RAD) * 0.7D);
+                float rotation = 0;
+
+                float attackTime = player.getAttackAnim(0);
+                if (attackTime > 0) {
+                    rotation = Mth.sin(Mth.sqrt(attackTime) * ((float)Math.PI * 2F)) * 0.2F * Mth.RAD_TO_DEG;
                 }
+
+                if (!player.isCrouching()) {
+                    moveFunction.accept(sporelingEntity, player.getX() + Mth.sin((player.yBodyRot + rotation) * Mth.DEG_TO_RAD) * 0.45D, d0, player.getZ() - Mth.cos((player.yBodyRot + rotation) * Mth.DEG_TO_RAD) * 0.45D);
+                } else {
+                    moveFunction.accept(sporelingEntity, player.getX() + Mth.sin((player.yBodyRot + rotation) * Mth.DEG_TO_RAD) * 0.7D, d0, player.getZ() - Mth.cos((player.yBodyRot + rotation) * Mth.DEG_TO_RAD) * 0.7D);
+                }
+
                 this.clampRotation(player, sporelingEntity);
                 ci.cancel();
             }
