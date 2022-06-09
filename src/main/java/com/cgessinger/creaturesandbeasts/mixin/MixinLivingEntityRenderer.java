@@ -3,19 +3,20 @@ package com.cgessinger.creaturesandbeasts.mixin;
 import com.cgessinger.creaturesandbeasts.entities.EndWhaleEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(LivingEntityRenderer.class)
 public class MixinLivingEntityRenderer<T extends LivingEntity> {
     private boolean shouldSitTemp;
+    private boolean isModifying;
 
     @Inject(method = "setupRotations(Lnet/minecraft/world/entity/LivingEntity;Lcom/mojang/blaze3d/vertex/PoseStack;FFF)V", at = @At("RETURN"))
     private void CNB_setupWhaleRidingRotations(T entity, PoseStack stack, float ageInTicks, float rotationYaw, float partialTicks, CallbackInfo ci) {
@@ -29,19 +30,13 @@ public class MixinLivingEntityRenderer<T extends LivingEntity> {
         }
     }
 
-    @ModifyVariable(method = "render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/util/Mth;rotLerp(FFF)F", ordinal = 1))
-    private boolean CNB_stopPlayerRotatingOnWhale(boolean value, T entity, float p_115309_, float p_115310_, PoseStack stack, MultiBufferSource bufferIn, int p_115313_) {
-        this.shouldSitTemp = value;
 
+    @Redirect(method = "render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getVehicle()Lnet/minecraft/world/entity/Entity;", ordinal = 2))
+    private Entity CNB_redirectPlayerRotOnWhale(LivingEntity entity) {
         if (entity.getVehicle() instanceof EndWhaleEntity) {
-            return false;
+            return null;
         } else {
-            return value;
+            return entity.getVehicle();
         }
-    }
-
-    @ModifyVariable(method = "render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/util/Mth;lerp(FFF)F", ordinal = 0))
-    private boolean CNB_resetShouldSit(boolean value, T entity, float p_115309_, float p_115310_, PoseStack stack, MultiBufferSource bufferIn, int p_115313_) {
-        return this.shouldSitTemp;
     }
 }
