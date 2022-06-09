@@ -2,7 +2,6 @@ package com.cgessinger.creaturesandbeasts.blocks;
 
 import com.cgessinger.creaturesandbeasts.entities.LizardEntity;
 import com.cgessinger.creaturesandbeasts.init.CNBEntityTypes;
-import com.cgessinger.creaturesandbeasts.init.CNBItems;
 import com.cgessinger.creaturesandbeasts.init.CNBLizardTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBSoundEvents;
 import com.cgessinger.creaturesandbeasts.util.LizardType;
@@ -10,6 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -18,6 +18,7 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.SupportType;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
@@ -67,10 +68,9 @@ public class LizardEggBlock extends Block {
     }
 
     @Override
-    public void spawnAfterBreak(BlockState state, ServerLevel worldIn, BlockPos pos, ItemStack stack) {
-        for (int i = 0; i < state.getValue(EGGS); i++) {
-            popResource(worldIn, pos, new ItemStack(CNBItems.LIZARD_EGG.get()));
-        }
+    public void playerDestroy(Level level, Player player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, ItemStack stack) {
+        super.playerDestroy(level, player, pos, state, blockEntity, stack);
+        this.removeOneEgg(level, pos, state);
     }
 
     private boolean canGrow(Level worldIn) {
