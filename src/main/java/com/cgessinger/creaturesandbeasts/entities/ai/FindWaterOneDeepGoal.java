@@ -23,7 +23,7 @@ public class FindWaterOneDeepGoal extends TryFindWaterGoal {
         BlockPos blockpos = lookForWaterOneDeep(this.creature.level, this.creature, 16);
 
         if (blockpos != null) {
-            this.creature.getNavigation().moveTo(blockpos.getX(), blockpos.getY(), blockpos.getZ(), 1.0D);
+            this.creature.getNavigation().moveTo(blockpos.getX(), blockpos.getY(), blockpos.getZ(), this.creature.isInWater() ? 1.5F : 1.0F);
         }
     }
 
@@ -35,7 +35,7 @@ public class FindWaterOneDeepGoal extends TryFindWaterGoal {
     }
 
     private boolean checkValidPos(BlockPos pos) {
-        return this.creature.level.getFluidState(pos).is(FluidTags.WATER) && this.creature.level.getBlockState(pos.below()).getMaterial().isSolid() && this.creature.level.getBlockState(pos.above()).isAir();
+        return this.creature.level.getFluidState(pos).is(FluidTags.WATER) && this.creature.isOnGround() && this.creature.level.getBlockState(pos.above()).isAir();
     }
 
     @Nullable
