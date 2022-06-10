@@ -2,8 +2,6 @@ package com.cgessinger.creaturesandbeasts.entities;
 
 import com.cgessinger.creaturesandbeasts.init.CNBEntityTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBItems;
-import net.minecraft.client.Minecraft;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -160,10 +158,6 @@ public class ThrownCactemSpearEntity extends AbstractArrow {
                 int fireAspectLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FIRE_ASPECT, this.getSpear());
                 if (fireAspectLevel > 0) {
                     hitEntity.setSecondsOnFire(fireAspectLevel * 4);
-                }
-
-                if (bonusDamage > 0) {
-                    Minecraft.getInstance().particleEngine.createTrackingEmitter(hitEntity, ParticleTypes.ENCHANTED_HIT);
                 }
 
                 double knockback = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.KNOCKBACK, this.getSpear());

@@ -507,10 +507,10 @@ public class SporelingEntity extends TamableAnimal implements IAnimatable {
         Entity vehicle = this.getVehicle();
 
         if (vehicle != null) {
-            if (vehicle.isOnGround()) {
-                event.getController().setAnimation(new AnimationBuilder().addAnimation("sporeling_backpack_idle"));
-            } else {
+            if (!vehicle.isOnGround() && vehicle.fallDistance > 0.1F) {
                 event.getController().setAnimation(new AnimationBuilder().addAnimation("sporeling_backpack_air"));
+            } else {
+                event.getController().setAnimation(new AnimationBuilder().addAnimation("sporeling_backpack_idle"));
             }
             return PlayState.CONTINUE;
         }

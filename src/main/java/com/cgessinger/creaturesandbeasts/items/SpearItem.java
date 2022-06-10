@@ -194,6 +194,7 @@ public class SpearItem extends Item implements Vanishable {
         return slot == EquipmentSlot.MAINHAND ? this.defaultModifiers : super.getDefaultAttributeModifiers(slot);
     }
 
+    @Override
     public int getEnchantmentValue() {
         return 1;
     }
