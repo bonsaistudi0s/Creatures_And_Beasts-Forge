@@ -9,7 +9,6 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.ModList;
 import software.bernie.geckolib3.renderers.geo.GeoLayerRenderer;
 import software.bernie.geckolib3.renderers.geo.IGeoRenderer;
 
@@ -34,9 +33,7 @@ public class MinipadGlowLayer extends GeoLayerRenderer<MinipadEntity> {
             matrixStackIn.pushPose();
 
             this.getRenderer().render(this.getEntityModel().getModel(MINIPAD_MODEL), entityLivingBaseIn, partialTicks, flowerGlow, matrixStackIn, bufferIn, bufferIn.getBuffer(flowerGlow), packedLightIn, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, 0.0f);
-            if (!ModList.get().isLoaded("optifine")) {
-                this.getRenderer().render(this.getEntityModel().getModel(MINIPAD_MODEL), entityLivingBaseIn, partialTicks, flowerTranslucent, matrixStackIn, bufferIn, bufferIn.getBuffer(flowerTranslucent), packedLightIn, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, (float) Math.pow((time - 18000) / 5000f, 2));
-            }
+            this.getRenderer().render(this.getEntityModel().getModel(MINIPAD_MODEL), entityLivingBaseIn, partialTicks, flowerTranslucent, matrixStackIn, bufferIn, bufferIn.getBuffer(flowerTranslucent), packedLightIn, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, (float) Math.pow((time - 18000) / 5000f, 2));
             this.getRenderer().render(this.getEntityModel().getModel(MINIPAD_MODEL), entityLivingBaseIn, partialTicks, eyesTexture, matrixStackIn, bufferIn, bufferIn.getBuffer(eyesTexture), packedLightIn, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, (float) -Math.pow((time-18000)/5000f, 2) + 1);
 
             matrixStackIn.popPose();
