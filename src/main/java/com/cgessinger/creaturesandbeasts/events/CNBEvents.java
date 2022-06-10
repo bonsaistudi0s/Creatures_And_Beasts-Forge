@@ -10,6 +10,7 @@ import com.cgessinger.creaturesandbeasts.entities.LittleGrebeEntity;
 import com.cgessinger.creaturesandbeasts.entities.LizardEntity;
 import com.cgessinger.creaturesandbeasts.entities.MinipadEntity;
 import com.cgessinger.creaturesandbeasts.entities.SporelingEntity;
+import com.cgessinger.creaturesandbeasts.entities.ThrownCactemSpearEntity;
 import com.cgessinger.creaturesandbeasts.entities.YetiEntity;
 import com.cgessinger.creaturesandbeasts.init.CNBEntityTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBItems;
@@ -17,18 +18,23 @@ import com.cgessinger.creaturesandbeasts.init.CNBLootModifiers;
 import com.cgessinger.creaturesandbeasts.items.HealSpellBookItem;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.IndirectEntityDamageSource;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.living.LootingLevelEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -62,6 +68,14 @@ public class CNBEvents {
         if (player.isSecondaryUseActive() && player.getFirstPassenger() instanceof SporelingEntity sporelingEntity) {
             sporelingEntity.stopRiding();
             event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public void onLootingCalculate(LootingLevelEvent event) {
+        DamageSource damageSource = event.getDamageSource();
+        if (damageSource instanceof IndirectEntityDamageSource indirectDamage && indirectDamage.getDirectEntity() instanceof ThrownCactemSpearEntity thrownSpear) {
+            event.setLootingLevel(EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MOB_LOOTING, thrownSpear.getSpear()));
         }
     }
 
