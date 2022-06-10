@@ -30,7 +30,9 @@ import net.minecraft.world.entity.ai.control.LookControl;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.PanicGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
-import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.util.GoalUtils;
+import net.minecraft.world.entity.ai.util.RandomPos;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -39,6 +41,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.IForgeShearable;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
@@ -110,8 +113,8 @@ public class LilytadEntity extends Animal implements IForgeShearable, IAnimatabl
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(1, new FindWaterOneDeepGoal(this));
-        this.goalSelector.addGoal(2, new PanicGoal(this, 1.25D));
-        this.goalSelector.addGoal(2, new RandomStrollGoal(this, 1.0D) {
+        this.goalSelector.addGoal(2, new LilytadPanicGoal(this, 1.25D));
+        this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 1.0D) {
             @Override
             public boolean canUse() {
                 return !this.mob.level.getFluidState(this.mob.blockPosition()).is(FluidTags.WATER) && super.canUse();
@@ -123,7 +126,7 @@ public class LilytadEntity extends Animal implements IForgeShearable, IAnimatabl
             }
         });
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(3, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
     }
 
     @Override
@@ -289,4 +292,41 @@ public class LilytadEntity extends Animal implements IForgeShearable, IAnimatabl
         return this.factory;
     }
 
+    static class LilytadPanicGoal extends PanicGoal {
+        private final LilytadEntity lilytad;
+
+        public LilytadPanicGoal(LilytadEntity lilytad, double speedModifier) {
+            super(lilytad, speedModifier);
+            this.lilytad = lilytad;
+        }
+
+        @Override
+        public void start() {
+            this.lilytad.getNavigation().moveTo(this.posX, this.posY, this.posZ, this.speedModifier);
+            this.isRunning = true;
+        }
+
+        @Override
+        protected boolean findRandomPosition() {
+            boolean flag = GoalUtils.mobRestricted(this.lilytad, 5);
+            Vec3 vec3 = RandomPos.generateRandomPos(this.lilytad, () -> {
+                BlockPos blockpos = RandomPos.generateRandomDirection(this.lilytad.getRandom(), 5, 4);
+                return generateRandomPosTowardDirection(this.lilytad, 5, flag, blockpos);
+            });
+            if (vec3 == null) {
+                return false;
+            }
+
+            this.posX = vec3.x;
+            this.posY = vec3.y;
+            this.posZ = vec3.z;
+            return true;
+        }
+
+        @Nullable
+        private static BlockPos generateRandomPosTowardDirection(LilytadEntity lilytad, int horizontalRange, boolean flag, BlockPos posTowards) {
+            BlockPos blockpos = RandomPos.generateRandomPosTowardDirection(lilytad, horizontalRange, lilytad.getRandom(), posTowards);
+            return !GoalUtils.isOutsideLimits(blockpos, lilytad) && !GoalUtils.isRestricted(flag, lilytad, blockpos) && !GoalUtils.hasMalus(lilytad, blockpos) && (!GoalUtils.isNotStable(lilytad.getNavigation(), blockpos) || (GoalUtils.isWater(lilytad, blockpos) && lilytad.level.getBlockState(blockpos.below()).canOcclude() && lilytad.level.getBlockState(blockpos.above()).isAir())) ? blockpos : null;
+        }
+    }
 }
