@@ -275,7 +275,7 @@ public class LilytadEntity extends Animal implements IForgeShearable, IAnimatabl
     }
 
     private <E extends IAnimatable> PlayState animationPredicate(AnimationEvent<E> event) {
-        if (!(animationSpeed > -0.15F && animationSpeed < 0.15F)) {
+        if (!(animationSpeed > -0.05F && animationSpeed < 0.05F)) {
             event.getController().setAnimation(new AnimationBuilder().addAnimation("lilytad.walk", true));
             return PlayState.CONTINUE;
         }
