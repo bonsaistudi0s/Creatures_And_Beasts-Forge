@@ -100,6 +100,10 @@ shadowJar {
     relocate 'org.infernalstudios.config', 'com.cgessinger.creaturesandbeasts.config.library'
 }
 
+reobf {
+    shadowJar {}
+}
+
 repositories {
     maven { url = 'https://repo.spongepowered.org/maven/' }
     maven { url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
@@ -136,6 +140,9 @@ jar {
 }
 
 jar.finalizedBy('reobfJar')
+
+tasks.build.dependsOn shadowJar
+tasks.build.dependsOn reobfShadowJar
 
 //This minifies the jsons, which makes the end jar smaller. 
 processResources {
