@@ -24,6 +24,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
@@ -83,6 +84,7 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
     private final RandomStrollGoal randomStrollGoal = new RandomStrollGoal(this, 1.0D);
     private final FollowElderGoal followElderGoal = new FollowElderGoal(this, 1.0D);
     private final RangedSpearAttackGoal spearAttackGoal = new RangedSpearAttackGoal(this, 60, 16.0F);
+    private final BecomeElderGoal becomeElderGoal = new BecomeElderGoal(this, 32.0F);
 
     private final AnimationFactory factory = new AnimationFactory(this);
     private final UUID healthReductionUUID = UUID.fromString("65a301bb-531d-499e-939c-eda5b857c0b4");
@@ -141,6 +143,7 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
         this.goalSelector.removeGoal(randomStrollGoal);
         this.goalSelector.removeGoal(spearAttackGoal);
         this.goalSelector.removeGoal(followElderGoal);
+        this.goalSelector.removeGoal(becomeElderGoal);
         this.goalSelector.removeGoal(tradeGoal);
         this.goalSelector.removeGoal(healGoal);
 
@@ -152,6 +155,7 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
             this.goalSelector.addGoal(1, spearAttackGoal);
             this.goalSelector.addGoal(1, followElderGoal);
             this.goalSelector.addGoal(2, randomStrollGoal);
+            this.goalSelector.addGoal(5, becomeElderGoal);
         } else {
             this.goalSelector.addGoal(1, followElderGoal);
             this.goalSelector.addGoal(2, randomStrollGoal);
@@ -251,6 +255,11 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
         this.setHealth(percentHealth * (float) this.getAttribute(Attributes.MAX_HEALTH).getValue());
 
         this.reassessGoals();
+    }
+
+    @Override
+    protected float getEquipmentDropChance(EquipmentSlot p_21520_) {
+        return 0.0F;
     }
 
     @Override
@@ -800,6 +809,38 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
                     this.cactem.startUsingItem(this.cactem.getUsedItemHand());
                 }
             }
+        }
+    }
+
+    static class BecomeElderGoal extends Goal {
+        private final CactemEntity cactem;
+        private final float elderRadius;
+
+        public BecomeElderGoal(CactemEntity cactem, float elderRadius) {
+            this.cactem = cactem;
+            this.elderRadius = elderRadius;
+        }
+
+        @Override
+        public void start() {
+            this.cactem.setElder(true);
+            this.cactem.setItemInHand(this.cactem.getUsedItemHand(), new ItemStack(CNBItems.HEAL_SPELL_BOOK_1.get()));
+            this.cactem.reassessGoals();
+        }
+
+        @Override
+        public boolean canUse() {
+            return !isElderNear();
+        }
+
+        private boolean isElderNear() {
+            List<? extends CactemEntity> list = this.cactem.level.getEntitiesOfClass(CactemEntity.class, this.cactem.getBoundingBox().inflate(this.elderRadius, 16.0F, this.elderRadius));
+            for (CactemEntity nearbyCactem : list) {
+                if (nearbyCactem.isElder()) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
