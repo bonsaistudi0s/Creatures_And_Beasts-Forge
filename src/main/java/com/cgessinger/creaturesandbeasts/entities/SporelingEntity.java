@@ -1,6 +1,5 @@
 package com.cgessinger.creaturesandbeasts.entities;
 
-import com.cgessinger.creaturesandbeasts.config.CNBConfig;
 import com.cgessinger.creaturesandbeasts.entities.ai.ConvertItemGoal;
 import com.cgessinger.creaturesandbeasts.init.CNBItems;
 import com.cgessinger.creaturesandbeasts.init.CNBSoundEvents;
@@ -431,24 +430,6 @@ public class SporelingEntity extends TamableAnimal implements IAnimatable {
     @Override
     protected boolean shouldDespawnInPeaceful() {
         return this.getSporelingType().getHostility() == SporelingType.SporelingHostility.HOSTILE;
-    }
-
-    @Override
-    public void checkDespawn() {
-        SporelingType.SporelingHostility hostility = this.getSporelingType().getHostility();
-
-        if (hostility == FRIENDLY && !CNBConfig.ServerConfig.FRIENDLY_SPORELING_CONFIG.shouldExist) {
-            this.discard();
-            return;
-        } else if (hostility == NEUTRAL && !CNBConfig.ServerConfig.NEUTRAL_SPORELING_CONFIG.shouldExist) {
-            this.discard();
-            return;
-        } else if (hostility == HOSTILE && !CNBConfig.ServerConfig.HOSTILE_SPORELING_CONFIG.shouldExist) {
-            this.discard();
-            return;
-        }
-
-        super.checkDespawn();
     }
 
     @Override

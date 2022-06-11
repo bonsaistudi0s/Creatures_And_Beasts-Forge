@@ -1,48 +1,71 @@
 package com.cgessinger.creaturesandbeasts.world.gen;
 
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
-import com.cgessinger.creaturesandbeasts.config.CNBConfig.ServerConfig;
-import com.cgessinger.creaturesandbeasts.config.EntityConfig;
+import com.cgessinger.creaturesandbeasts.config.CNBConfig;
+import com.cgessinger.creaturesandbeasts.config.EntitySpawnData;
 import com.cgessinger.creaturesandbeasts.entities.CindershellEntity;
 import com.cgessinger.creaturesandbeasts.entities.EndWhaleEntity;
-import com.cgessinger.creaturesandbeasts.entities.LittleGrebeEntity;
 import com.cgessinger.creaturesandbeasts.entities.LilytadEntity;
+import com.cgessinger.creaturesandbeasts.entities.LittleGrebeEntity;
 import com.cgessinger.creaturesandbeasts.entities.LizardEntity;
 import com.cgessinger.creaturesandbeasts.entities.MinipadEntity;
 import com.cgessinger.creaturesandbeasts.entities.SporelingEntity;
 import com.cgessinger.creaturesandbeasts.entities.YetiEntity;
 import com.cgessinger.creaturesandbeasts.init.CNBEntityTypes;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobCategory;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.MobSpawnSettings;
-import net.minecraft.world.level.biome.MobSpawnSettings.SpawnerData;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 
 @Mod.EventBusSubscriber(modid = CreaturesAndBeasts.MOD_ID)
 public class ModEntitySpawns {
 
     @SubscribeEvent
-    public static void spawnEntities(BiomeLoadingEvent event) {
-        String biomeName = event.getName().toString();
+    public static void onBiomeLoad(BiomeLoadingEvent event) {
+        if (event.getCategory() == null) {
+            return;
+        } else if (event.getName() == null) {
+            return;
+        }
 
-        checkAndAddSpawn(event, biomeName, ServerConfig.GREBE_CONFIG, CNBEntityTypes.LITTLE_GREBE.get(), MobCategory.CREATURE, 2, 3);
-        checkAndAddSpawn(event, biomeName, ServerConfig.LIZARD_CONFIG, CNBEntityTypes.LIZARD.get(), MobCategory.CREATURE, 1, 4);
-        checkAndAddSpawn(event, biomeName, ServerConfig.CINDERSHELL_CONFIG, CNBEntityTypes.CINDERSHELL.get(), MobCategory.MONSTER, 1, 2);
-        checkAndAddSpawn(event, biomeName, ServerConfig.FRIENDLY_SPORELING_CONFIG, CNBEntityTypes.SPORELING.get(), MobCategory.CREATURE, 3, 5);
-        checkAndAddSpawn(event, biomeName, ServerConfig.LILYTAD_CONFIG, CNBEntityTypes.LILYTAD.get(), MobCategory.CREATURE, 1, 1);
-        checkAndAddSpawn(event, biomeName, ServerConfig.YETI_CONFIG, CNBEntityTypes.YETI.get(), MobCategory.CREATURE, 2, 3);
-        checkAndAddSpawn(event, biomeName, ServerConfig.MINIPAD_CONFIG, CNBEntityTypes.MINIPAD.get(), MobCategory.CREATURE, 3, 6);
+        ResourceLocation name = event.getName();
+        ResourceKey<Biome> biome = ResourceKey.create(Registry.BIOME_REGISTRY, name);
+
+        onAddSpawns(event, biome);
     }
 
-    private static void checkAndAddSpawn(BiomeLoadingEvent event, String biomeName, EntityConfig config, EntityType<? extends Entity> type, MobCategory classification, int min, int max) {
-        if (config.spawnBiomes.contains(biomeName)) {
-            MobSpawnSettings.SpawnerData spawnInfo = new SpawnerData(type, config.spawnRate, min, max);
-            event.getSpawns().getSpawner(classification).add(spawnInfo);
+    private static void onAddSpawns(BiomeLoadingEvent event, ResourceKey<Biome> biome) {
+        for (EntitySpawnData spawn : CNBConfig.spawns) {
+            // For safety ;)
+            if (spawn == null) {
+                CreaturesAndBeasts.LOGGER.traceExit(
+                        "SpawnData is null! This should never happen, please report this to the developers at: %s",
+                        ((ModFileInfo) ModList.get().getModFileById(CreaturesAndBeasts.MOD_ID)).getIssueURL().toString());
+                continue;
+            }
+            if (spawn.getEntityType() == null) {
+                CreaturesAndBeasts.LOGGER.traceExit(
+                        "EntityType is null! This should never happen, please report this to the developers at: %s",
+                        ((ModFileInfo) ModList.get().getModFileById(CreaturesAndBeasts.MOD_ID)).getIssueURL().toString());
+                continue;
+            }
+            if (spawn.getBiome() == null) {
+                CreaturesAndBeasts.LOGGER.traceExit(
+                        "Biome is null! This should never happen, please report this to the developers at: %s",
+                        ((ModFileInfo) ModList.get().getModFileById(CreaturesAndBeasts.MOD_ID)).getIssueURL().toString());
+                continue;
+            }
+            if (spawn.getBiome().equals(biome)) {
+                event.getSpawns().addSpawn(spawn.getEntityType().getCategory(), new MobSpawnSettings.SpawnerData(spawn.getEntityType(), spawn.getSpawnWeight(), spawn.getMinCount(), spawn.getMaxCount()));
+            }
         }
     }
 
@@ -52,7 +75,7 @@ public class ModEntitySpawns {
         SpawnPlacements.register(CNBEntityTypes.CINDERSHELL.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, CindershellEntity::checkCindershellSpawnRules);
         SpawnPlacements.register(CNBEntityTypes.SPORELING.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SporelingEntity::checkSporelingSpawnRules);
         SpawnPlacements.register(CNBEntityTypes.LILYTAD.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, LilytadEntity::checkLilytadSpawnRules);
-        SpawnPlacements.register(CNBEntityTypes.YETI.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, YetiEntity::checkYetiSpawnRules);
+        SpawnPlacements.register(CNBEntityTypes.YETI.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, YetiEntity::checkMobSpawnRules);
         SpawnPlacements.register(CNBEntityTypes.MINIPAD.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MinipadEntity::checkMinipadSpawnRules);
         SpawnPlacements.register(CNBEntityTypes.END_WHALE.get(), SpawnPlacements.Type.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, EndWhaleEntity::checkEndWhaleSpawnRules);
     }

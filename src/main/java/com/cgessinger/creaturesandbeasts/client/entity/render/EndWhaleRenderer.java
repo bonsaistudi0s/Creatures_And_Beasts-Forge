@@ -14,9 +14,10 @@ import net.minecraft.world.entity.Entity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 
 @OnlyIn(Dist.CLIENT)
-public class EndWhaleRenderer extends LeadableGeoEntityRenderer<EndWhaleEntity> {
+public class EndWhaleRenderer extends GeoEntityRenderer<EndWhaleEntity> {
 
     public EndWhaleRenderer(EntityRendererProvider.Context renderManager) {
         super(renderManager, new EndWhaleModel());

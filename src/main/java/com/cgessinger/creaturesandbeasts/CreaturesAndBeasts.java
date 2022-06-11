@@ -16,6 +16,7 @@ import com.cgessinger.creaturesandbeasts.init.CNBParticleTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBSoundEvents;
 import com.cgessinger.creaturesandbeasts.init.CNBSporelingTypes;
 import com.cgessinger.creaturesandbeasts.world.gen.ModEntitySpawns;
+import com.electronwill.nightconfig.core.io.ParsingException;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
@@ -27,17 +28,22 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig.Type;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLPaths;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.infernalstudios.config.Config;
 import software.bernie.geckolib3.GeckoLib;
+
+import java.io.IOException;
 
 @Mod(CreaturesAndBeasts.MOD_ID)
 public class CreaturesAndBeasts {
     public static final String MOD_ID = "cnb";
+    public static final Logger LOGGER = LogManager.getLogger();
     public static final CreativeModeTab TAB = new CreativeModeTab("cnb_tab") {
         @Override
         public ItemStack makeIcon() {
@@ -51,8 +57,6 @@ public class CreaturesAndBeasts {
         eventBus.addListener(this::commonSetup);
         eventBus.addListener(this::clientSetup);
         eventBus.addListener(this::registerCapabilities);
-
-        ModLoadingContext.get().registerConfig(Type.COMMON, CNBConfig.COMMON_SPEC);
 
         CNBParticleTypes.PARTICLE_TYPES.register(eventBus);
         CNBBlocks.BLOCKS.register(eventBus);
@@ -71,6 +75,23 @@ public class CreaturesAndBeasts {
         MinecraftForge.EVENT_BUS.register(new CNBEvents());
 
         GeckoLib.initialize();
+
+        try {
+            CNBConfig.CONFIG = Config
+                    .builder(FMLPaths.CONFIGDIR.get().resolve("creaturesandbeasts-common.toml"))
+                    .loadClass(CNBConfig.class)
+                    .build();
+        } catch (IllegalStateException | IllegalArgumentException | IOException | ParsingException e) {
+            throw new RuntimeException(
+                    "Failed to load Creatures and Beasts config" +
+                            (e instanceof ParsingException ? ", try fixing/deleting your config file" : ""), e);
+        }
+
+        CNBConfig.CONFIG.onReload(stage -> {
+            if (stage == Config.ReloadStage.PRE) {
+                CreaturesAndBeasts.LOGGER.debug("Reloading Creatures and Beasts config");
+            }
+        });
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {

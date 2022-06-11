@@ -1,6 +1,5 @@
 package com.cgessinger.creaturesandbeasts.entities;
 
-import com.cgessinger.creaturesandbeasts.config.CNBConfig;
 import com.cgessinger.creaturesandbeasts.containers.CinderFurnaceContainer;
 import com.cgessinger.creaturesandbeasts.init.CNBBlocks;
 import com.cgessinger.creaturesandbeasts.init.CNBEntityTypes;
@@ -298,15 +297,6 @@ public class CindershellEntity extends Animal implements IAnimatable, Bucketable
 
     public static boolean checkCindershellSpawnRules(EntityType<CindershellEntity> entity, LevelAccessor level, MobSpawnType mobSpawnType, BlockPos pos, Random random) {
         return true;
-    }
-
-    @Override
-    public void checkDespawn() {
-        if (!CNBConfig.ServerConfig.CINDERSHELL_CONFIG.shouldExist) {
-            this.discard();
-            return;
-        }
-        super.checkDespawn();
     }
 
     @Override

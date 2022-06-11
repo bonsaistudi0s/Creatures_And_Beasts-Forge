@@ -33,7 +33,7 @@ public class CNBEntityTypes {
     public static final RegistryObject<EntityType<CactemEntity>> CACTEM = ENTITY_TYPES.register("cactem", () -> EntityType.Builder.of(CactemEntity::new, MobCategory.CREATURE).sized(0.75F, 1.0F).build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "cactem").toString()));
 
     /* MONSTERS */
-    public static final RegistryObject<EntityType<YetiEntity>> YETI = ENTITY_TYPES.register("yeti", () -> EntityType.Builder.of(YetiEntity::new, MobCategory.MONSTER).sized(1.55f, 2.05f).build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "yeti").toString()));
+    public static final RegistryObject<EntityType<YetiEntity>> YETI = ENTITY_TYPES.register("yeti", () -> EntityType.Builder.of(YetiEntity::new, MobCategory.CREATURE).sized(1.55f, 2.05f).build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "yeti").toString()));
 
     /* PROJECTILES */
     public static final RegistryObject<EntityType<LizardEggEntity>> LIZARD_EGG = ENTITY_TYPES.register("lizard_egg", () -> EntityType.Builder.<LizardEggEntity>of(LizardEggEntity::new, MobCategory.MISC).sized(0.25f, 0.25f).clientTrackingRange(4).updateInterval(10).build(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "lizard_egg").toString()));

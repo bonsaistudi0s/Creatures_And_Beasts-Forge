@@ -1,7 +1,6 @@
 package com.cgessinger.creaturesandbeasts.entities;
 
 import com.cgessinger.creaturesandbeasts.blocks.LizardEggBlock;
-import com.cgessinger.creaturesandbeasts.config.CNBConfig;
 import com.cgessinger.creaturesandbeasts.init.CNBBlocks;
 import com.cgessinger.creaturesandbeasts.init.CNBEntityTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBItems;
@@ -256,15 +255,6 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
     @Override
     public boolean canBeLeashed(Player player) {
         return false;
-    }
-
-    @Override
-    public void checkDespawn() {
-        if (!CNBConfig.ServerConfig.LIZARD_CONFIG.shouldExist) {
-            this.discard();
-            return;
-        }
-        super.checkDespawn();
     }
 
     @Override

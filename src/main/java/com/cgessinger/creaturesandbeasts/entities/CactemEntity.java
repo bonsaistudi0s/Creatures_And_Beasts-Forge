@@ -181,6 +181,10 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroup, @Nullable CompoundTag tag) {
         double elderChance = level.getRandom().nextDouble();
 
+        if (spawnGroup == null) {
+            spawnGroup = new AgeableMobGroupData(0.5F);
+        }
+
         if (!this.isBaby()) {
             if (elderChance < 0.25) {
                 this.setElder(true);

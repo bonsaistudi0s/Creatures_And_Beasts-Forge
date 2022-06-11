@@ -1,6 +1,5 @@
 package com.cgessinger.creaturesandbeasts.entities;
 
-import com.cgessinger.creaturesandbeasts.config.CNBConfig;
 import com.cgessinger.creaturesandbeasts.init.CNBSoundEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -345,15 +344,6 @@ public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, Saddl
 
     public static boolean checkEndWhaleSpawnRules(EntityType<EndWhaleEntity> animal, LevelAccessor worldIn, MobSpawnType reason, BlockPos pos, Random randomIn) {
         return true;
-    }
-
-    @Override
-    public void checkDespawn() {
-        if (!CNBConfig.ServerConfig.END_WHALE_CONFIG.shouldExist) {
-            this.discard();
-            return;
-        }
-        super.checkDespawn();
     }
 
     @Override

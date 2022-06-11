@@ -1,6 +1,5 @@
 package com.cgessinger.creaturesandbeasts.entities;
 
-import com.cgessinger.creaturesandbeasts.config.CNBConfig;
 import com.cgessinger.creaturesandbeasts.init.CNBMinipadTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBSoundEvents;
 import com.cgessinger.creaturesandbeasts.util.MinipadType;
@@ -182,15 +181,6 @@ public class MinipadEntity extends Animal implements IForgeShearable, IAnimatabl
 
     public static boolean checkMinipadSpawnRules(EntityType<MinipadEntity> animal, LevelAccessor worldIn, MobSpawnType reason, BlockPos pos, Random randomIn) {
         return true;
-    }
-
-    @Override
-    public void checkDespawn() {
-        if (!CNBConfig.ServerConfig.MINIPAD_CONFIG.shouldExist) {
-            this.discard();
-            return;
-        }
-        super.checkDespawn();
     }
 
     @Override

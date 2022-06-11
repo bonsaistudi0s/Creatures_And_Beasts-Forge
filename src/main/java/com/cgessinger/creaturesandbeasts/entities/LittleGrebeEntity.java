@@ -1,6 +1,5 @@
 package com.cgessinger.creaturesandbeasts.entities;
 
-import com.cgessinger.creaturesandbeasts.config.CNBConfig;
 import com.cgessinger.creaturesandbeasts.entities.ai.GoToWaterGoal;
 import com.cgessinger.creaturesandbeasts.entities.ai.MountAdultGoal;
 import com.cgessinger.creaturesandbeasts.entities.ai.SmoothSwimGoal;
@@ -214,15 +213,6 @@ public class LittleGrebeEntity extends Animal implements IAnimatable {
             super.travel(travelVector);
         }
 
-    }
-
-    @Override
-    public void checkDespawn() {
-        if (!CNBConfig.ServerConfig.GREBE_CONFIG.shouldExist) {
-            this.discard();
-            return;
-        }
-        super.checkDespawn();
     }
 
     private <E extends IAnimatable> PlayState animationPredicate(AnimationEvent<E> event) {

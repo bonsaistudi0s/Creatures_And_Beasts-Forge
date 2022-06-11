@@ -1,102 +1,69 @@
 package com.cgessinger.creaturesandbeasts.config;
 
-import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
-import com.google.common.collect.Lists;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
-import org.apache.commons.lang3.tuple.Pair;
+import com.cgessinger.creaturesandbeasts.init.CNBEntityTypes;
+import net.minecraft.world.level.biome.Biomes;
+import org.infernalstudios.config.Config;
+import org.infernalstudios.config.annotation.Configurable;
+import org.infernalstudios.config.annotation.DoubleRange;
+import org.infernalstudios.config.annotation.IntegerRange;
 
-@EventBusSubscriber(modid = CreaturesAndBeasts.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+import java.util.ArrayList;
+import java.util.List;
+
 public class CNBConfig {
-    public static final ServerConfig COMMON;
-    public static final ForgeConfigSpec COMMON_SPEC;
+    public static Config CONFIG;
 
-    static {
-        final Pair<ServerConfig, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(ServerConfig::new);
-        COMMON_SPEC = specPair.getRight();
-        COMMON = specPair.getLeft();
-    }
+    @Configurable(description = "Determines how many yeti hides can be used to reinforce an item.", category = "General")
+    @IntegerRange(min = 0)
+    public static int hideAmount = 5;
 
-    public static void bakeConfig() {
-        ServerConfig.GREBE_CONFIG.bake();
-        ServerConfig.LIZARD_CONFIG.bake();
-        ServerConfig.CINDERSHELL_CONFIG.bake();
-        ServerConfig.FRIENDLY_SPORELING_CONFIG.bake();
-        ServerConfig.HOSTILE_SPORELING_CONFIG.bake();
-        ServerConfig.NEUTRAL_SPORELING_CONFIG.bake();
-        ServerConfig.LILYTAD_CONFIG.bake();
-        ServerConfig.YETI_CONFIG.bake();
-        ServerConfig.MINIPAD_CONFIG.bake();
-        ServerConfig.END_WHALE_CONFIG.bake();
-        ServerConfig.YETI_PROP.bake();
+    @Configurable(description = "Determines the experience cost of applying yeti hide to an item.", category = "General")
+    @IntegerRange(min = 0)
+    public static int hideCost = 1;
 
-        ServerConfig.HIDE_AMOUNT.bake();
-        ServerConfig.HIDE_MULTIPLIER.bake();
-        ServerConfig.HIDE_COST.bake();
-    }
+    @Configurable(description = "Determines the multiplier used to add armor per yeti hide on an item.", category = "General")
+    @DoubleRange(min = 0)
+    public static double hideMultiplier = 0.01D;
 
-    @SubscribeEvent
-    public static void onModConfigEvent(final ModConfigEvent configEvent) {
-        bakeConfig();
-    }
-
-    public static class ServerConfig {
-        public static EntityConfig GREBE_CONFIG;
-        public static EntityConfig LIZARD_CONFIG;
-        public static EntityConfig CINDERSHELL_CONFIG;
-        public static EntityConfig FRIENDLY_SPORELING_CONFIG;
-        public static EntityConfig HOSTILE_SPORELING_CONFIG;
-        public static EntityConfig NEUTRAL_SPORELING_CONFIG;
-        public static EntityConfig LILYTAD_CONFIG;
-        public static EntityConfig YETI_CONFIG;
-        public static EntityConfig MINIPAD_CONFIG;
-        public static EntityConfig END_WHALE_CONFIG;
-        public static OtherConfig<Double> YETI_PROP;
-
-        public static OtherConfig<Integer> HIDE_AMOUNT;
-        public static OtherConfig<Double> HIDE_MULTIPLIER;
-        public static OtherConfig<Integer> HIDE_COST;
-
-        public ServerConfig(ForgeConfigSpec.Builder builder) {
-            builder.push(CreaturesAndBeasts.MOD_ID).comment("Creatures And Beasts common config");
-
-            builder.push(CreaturesAndBeasts.MOD_ID + "_entity").comment("Creatures And Beasts Entity Config");
-
-            GREBE_CONFIG = EntityConfig.createConfigForEntity(builder, "grebe", true, 30, Lists.newArrayList("minecraft:frozen_river", "minecraft:river"));
-
-            LIZARD_CONFIG = EntityConfig.createConfigForEntity(builder, "lizard", true, 50, Lists.newArrayList("minecraft:badlands", "minecraft:wooded_badlands_plateau", "minecraft:badlands_plateau", "minecraft:desert", "minecraft:desert_hills", "minecraft:desert_lakes"));
-
-            CINDERSHELL_CONFIG = EntityConfig.createConfigForEntity(builder, "cindershell", true, 10, Lists.newArrayList("minecraft:soul_sand_valley", "minecraft:crimson_forest", "minecraft:warped_forest", "minecraft:basalt_deltas", "minecraft:nether_wastes"));
-
-            FRIENDLY_SPORELING_CONFIG = EntityConfig.createConfigForEntity(builder, "friendly_sporeling", true, 40, Lists.newArrayList("minecraft:mushroom_fields", "minecraft:mushroom_field_shore", "minecraft:dark_forest", "minecraft:swamp", "minecraft:swamp_hills"));
-
-            HOSTILE_SPORELING_CONFIG = EntityConfig.createConfigForEntity(builder, "hostile_sporeling", true, 10, Lists.newArrayList("minecraft:basalt_deltas", "minecraft:nether_wastes"));
-
-            NEUTRAL_SPORELING_CONFIG = EntityConfig.createConfigForEntity(builder, "neutral_sporeling", true, 5, Lists.newArrayList("minecraft:crimson_forest", "minecraft:warped_forest"));
-
-            LILYTAD_CONFIG = EntityConfig.createConfigForEntity(builder, "lilytad", true, 35, Lists.newArrayList("minecraft:swamp", "minecraft:swamp_hills"));
-
-            YETI_CONFIG = EntityConfig.createConfigForEntity(builder, "yeti", true, 1, Lists.newArrayList("minecraft:snowy_tundra", "minecraft:snowy_mountains", "minecraft:snowy_taiga", "minecraft:snowy_taiga_hills", "minecraft:ice_spikes", "minecraft:snowy_taiga_mountains"));
-
-            MINIPAD_CONFIG = EntityConfig.createConfigForEntity(builder, "minipad", true, 10, Lists.newArrayList("minecraft:swamp", "minecraft:swamp_hills"));
-
-            END_WHALE_CONFIG = EntityConfig.createConfigForEntity(builder, "end_whale", true, 1, Lists.newArrayList("minecraft:end"));
-
-            YETI_PROP = OtherConfig.withRange(builder, "Define extra chance to spawn yeti. Each time a yeti should spawn it checks random.nextFloat() >= value. Increase this value up to 1.0 to make yetis more rare", "yeti chance", 0.5D, 0D, 1D, Double.class);
-
-            builder.pop();
-
-            builder.push(CreaturesAndBeasts.MOD_ID + "_other").comment("Creatures And Beasts Other Config");
-
-            HIDE_AMOUNT = OtherConfig.with(builder, "Define how often items can be reinforced with the yeti hide", "hide amount", 5);
-            HIDE_MULTIPLIER = OtherConfig.with(builder, "Define the yeti hide reinforcement multiplier. The armor attribute value will be increased by this percentage each time", "hide multiplier", 0.01D);
-            HIDE_COST = OtherConfig.with(builder, "Define amount of xp needed to upgrade armor with yeti hide", "hide cost", 1);
-
-            builder.pop();
-
-            builder.pop();
+    @Configurable(handler = "com.cgessinger.creaturesandbeasts.config.handler.EntitySpawnDataListConfigHandler.INSTANCE", category = "Spawns")
+    public static List<EntitySpawnData> spawns = new ArrayList<>(List.of(
+            EntitySpawnData.of(CNBEntityTypes.YETI.getId(), Biomes.SNOWY_PLAINS, 1, 2, 3),
+            EntitySpawnData.of(CNBEntityTypes.YETI.getId(), Biomes.ICE_SPIKES, 1, 2, 3),
+            EntitySpawnData.of(CNBEntityTypes.YETI.getId(), Biomes.SNOWY_TAIGA, 1, 2, 3),
+            EntitySpawnData.of(CNBEntityTypes.YETI.getId(), Biomes.FROZEN_PEAKS, 1, 2, 3),
+            EntitySpawnData.of(CNBEntityTypes.YETI.getId(), Biomes.SNOWY_SLOPES, 1, 2, 3),
+            EntitySpawnData.of(CNBEntityTypes.LITTLE_GREBE.getId(), Biomes.RIVER, 30, 2, 3),
+            EntitySpawnData.of(CNBEntityTypes.CACTEM.getId(), Biomes.BADLANDS, 8, 6, 13),
+            EntitySpawnData.of(CNBEntityTypes.CACTEM.getId(), Biomes.WOODED_BADLANDS, 8, 6, 13),
+            EntitySpawnData.of(CNBEntityTypes.CACTEM.getId(), Biomes.ERODED_BADLANDS, 8, 6, 13),
+            EntitySpawnData.of(CNBEntityTypes.CACTEM.getId(), Biomes.DESERT, 8, 6, 13),
+            EntitySpawnData.of(CNBEntityTypes.SPORELING.getId(), Biomes.MUSHROOM_FIELDS, 40, 3, 5),
+            EntitySpawnData.of(CNBEntityTypes.SPORELING.getId(), Biomes.SWAMP, 40, 3, 5),
+            EntitySpawnData.of(CNBEntityTypes.SPORELING.getId(), Biomes.LUSH_CAVES, 40, 3, 5),
+            EntitySpawnData.of(CNBEntityTypes.SPORELING.getId(), Biomes.DARK_FOREST, 40, 3, 5),
+            EntitySpawnData.of(CNBEntityTypes.SPORELING.getId(), Biomes.NETHER_WASTES, 10, 3, 5),
+            EntitySpawnData.of(CNBEntityTypes.SPORELING.getId(), Biomes.WARPED_FOREST, 5, 3, 5),
+            EntitySpawnData.of(CNBEntityTypes.SPORELING.getId(), Biomes.CRIMSON_FOREST, 5, 3, 5),
+            EntitySpawnData.of(CNBEntityTypes.LILYTAD.getId(), Biomes.SWAMP, 35, 1, 1),
+            EntitySpawnData.of(CNBEntityTypes.MINIPAD.getId(), Biomes.SWAMP, 10, 3, 6),
+            EntitySpawnData.of(CNBEntityTypes.END_WHALE.getId(), Biomes.THE_END, 1, 1, 1),
+            EntitySpawnData.of(CNBEntityTypes.END_WHALE.getId(), Biomes.END_BARRENS, 1, 1, 1),
+            EntitySpawnData.of(CNBEntityTypes.END_WHALE.getId(), Biomes.END_HIGHLANDS, 1, 1, 1),
+            EntitySpawnData.of(CNBEntityTypes.END_WHALE.getId(), Biomes.END_MIDLANDS, 1, 1, 1),
+            EntitySpawnData.of(CNBEntityTypes.END_WHALE.getId(), Biomes.SMALL_END_ISLANDS, 1, 1, 1),
+            EntitySpawnData.of(CNBEntityTypes.CINDERSHELL.getId(), Biomes.NETHER_WASTES, 10, 1, 2),
+            EntitySpawnData.of(CNBEntityTypes.LIZARD.getId(), Biomes.BADLANDS, 50, 1, 4),
+            EntitySpawnData.of(CNBEntityTypes.LIZARD.getId(), Biomes.WOODED_BADLANDS, 50, 1, 4),
+            EntitySpawnData.of(CNBEntityTypes.LIZARD.getId(), Biomes.ERODED_BADLANDS, 50, 1, 4),
+            EntitySpawnData.of(CNBEntityTypes.LIZARD.getId(), Biomes.DESERT, 50, 1, 4),
+            EntitySpawnData.of(CNBEntityTypes.LIZARD.getId(), Biomes.JUNGLE, 50, 1, 4),
+            EntitySpawnData.of(CNBEntityTypes.LIZARD.getId(), Biomes.BAMBOO_JUNGLE, 50, 1, 4),
+            EntitySpawnData.of(CNBEntityTypes.LIZARD.getId(), Biomes.SPARSE_JUNGLE, 50, 1, 4),
+            EntitySpawnData.of(CNBEntityTypes.LIZARD.getId(), Biomes.MUSHROOM_FIELDS, 50, 1, 4)
+    )) {
+        @Override
+        public String toString() {
+            return "";
         }
-    }
+    };
 }

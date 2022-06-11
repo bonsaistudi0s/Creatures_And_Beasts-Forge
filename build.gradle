@@ -12,6 +12,11 @@ buildscript {
         classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.4.0'
     }
 }
+
+plugins {
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+}
+
 apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'eclipse'
@@ -81,9 +86,24 @@ mixin {
     add sourceSets.main, 'creatures-and-beasts.refmap.json'
 }
 
+configurations {
+    packIntoJar {
+        // If set to false, any dependencies will not be packed into the jar.
+        transitive = false
+    }
+}
+
+shadowJar {
+    classifier ''
+    configurations = [project.configurations.packIntoJar]
+    // This is done to avoid any duplicate package issues.
+    relocate 'org.infernalstudios.config', 'com.cgessinger.creaturesandbeasts.config.library'
+}
+
 repositories {
     maven { url = 'https://repo.spongepowered.org/maven/' }
-    maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
+    maven { url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
+    maven { url = 'https://maven.infernalstudios.org/releases' }
 }
 
 dependencies {
@@ -91,7 +111,10 @@ dependencies {
     annotationProcessor 'org.spongepowered:mixin:0.8.4:processor'
 
     // Geckolib for ingame animations
-    implementation fg.deobf('software.bernie.geckolib:geckolib-1.18-forge:3.0.18')
+    implementation fg.deobf('software.bernie.geckolib:geckolib-forge-1.18:3.0.24')
+
+    implementation 'org.infernalstudios:config:3.0.1'
+    packIntoJar 'org.infernalstudios:config:3.0.1'
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..
@@ -108,6 +131,8 @@ jar {
             'MixinConfigs'          : 'creatures-and-beasts.mixins.json'
         ])
     }
+
+    classifier 'base'
 }
 
 jar.finalizedBy('reobfJar')

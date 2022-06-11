@@ -1,7 +1,7 @@
 package com.cgessinger.creaturesandbeasts.events;
 
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
-import com.cgessinger.creaturesandbeasts.config.CNBConfig.ServerConfig;
+import com.cgessinger.creaturesandbeasts.config.CNBConfig;
 import com.cgessinger.creaturesandbeasts.entities.CactemEntity;
 import com.cgessinger.creaturesandbeasts.entities.CindershellEntity;
 import com.cgessinger.creaturesandbeasts.entities.EndWhaleEntity;
@@ -100,13 +100,13 @@ public class CNBEvents {
             int hideAmount = tag.getInt("HideAmount");
 
             if (equipmentSlot.equals(EquipmentSlot.HEAD)) {
-                event.addModifier(Attributes.ARMOR, new AttributeModifier(UUID.fromString("96a6b318-81f1-475a-b4a4-b3da41d2711e"), "yeti_hide", ServerConfig.HIDE_MULTIPLIER.value * hideAmount, AttributeModifier.Operation.MULTIPLY_TOTAL));
+                event.addModifier(Attributes.ARMOR, new AttributeModifier(UUID.fromString("96a6b318-81f1-475a-b4a4-b3da41d2711e"), "yeti_hide", CNBConfig.hideMultiplier * hideAmount, AttributeModifier.Operation.MULTIPLY_TOTAL));
             } else if (equipmentSlot.equals(EquipmentSlot.CHEST)) {
-                event.addModifier(Attributes.ARMOR, new AttributeModifier(UUID.fromString("3f3136ff-4f04-4d62-a9cc-8d1f4175c1e2"), "yeti_hide", ServerConfig.HIDE_MULTIPLIER.value * hideAmount, AttributeModifier.Operation.MULTIPLY_TOTAL));
+                event.addModifier(Attributes.ARMOR, new AttributeModifier(UUID.fromString("3f3136ff-4f04-4d62-a9cc-8d1f4175c1e2"), "yeti_hide", CNBConfig.hideMultiplier * hideAmount, AttributeModifier.Operation.MULTIPLY_TOTAL));
             } else if (equipmentSlot.equals(EquipmentSlot.LEGS)) {
-                event.addModifier(Attributes.ARMOR, new AttributeModifier(UUID.fromString("f49d078c-2740-4283-8255-5d1f106efea0"), "yeti_hide", ServerConfig.HIDE_MULTIPLIER.value * hideAmount, AttributeModifier.Operation.MULTIPLY_TOTAL));
+                event.addModifier(Attributes.ARMOR, new AttributeModifier(UUID.fromString("f49d078c-2740-4283-8255-5d1f106efea0"), "yeti_hide", CNBConfig.hideMultiplier * hideAmount, AttributeModifier.Operation.MULTIPLY_TOTAL));
             } else {
-                event.addModifier(Attributes.ARMOR, new AttributeModifier(UUID.fromString("b16e7c3f-508d-461d-8868-de6ee2a1314c"), "yeti_hide", ServerConfig.HIDE_MULTIPLIER.value * hideAmount, AttributeModifier.Operation.MULTIPLY_TOTAL));
+                event.addModifier(Attributes.ARMOR, new AttributeModifier(UUID.fromString("b16e7c3f-508d-461d-8868-de6ee2a1314c"), "yeti_hide", CNBConfig.hideMultiplier * hideAmount, AttributeModifier.Operation.MULTIPLY_TOTAL));
             }
 		}
 	}
@@ -121,13 +121,13 @@ public class CNBEvents {
             if (nbt.contains("HideAmount")) {
                 hideAmount += nbt.getInt("HideAmount");
 
-                if (hideAmount > ServerConfig.HIDE_AMOUNT.value) {
+                if (hideAmount > CNBConfig.hideAmount) {
                     return;
                 }
             }
 
             nbt.putInt("HideAmount", hideAmount);
-            event.setCost(ServerConfig.HIDE_COST.value);
+            event.setCost(CNBConfig.hideCost);
             event.setMaterialCost(1);
             event.setOutput(output);
         } else if (event.getLeft().getItem() instanceof HealSpellBookItem && event.getRight().getItem() instanceof HealSpellBookItem && event.getLeft().sameItem(event.getRight())) {
