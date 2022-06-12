@@ -19,7 +19,7 @@ public class CactemHealParticle extends TextureSheetParticle {
         this.yd = motionY;
         this.zd = motionZ;
         this.quadSize *= level.getRandom().nextDouble(0.6D) + 0.4D;
-        this.lifetime = level.getRandom().nextInt(7) + 12;
+        this.lifetime = level.getRandom().nextInt(15) + 20;
         this.sprites = sprites;
         this.setSpriteFromAge(this.sprites);
     }
@@ -27,7 +27,7 @@ public class CactemHealParticle extends TextureSheetParticle {
     @Override
     public void tick() {
         super.tick();
-        this.yd += 0.03D;
+        this.yd += 0.01D;
         this.setSpriteFromAge(this.sprites);
     }
 
