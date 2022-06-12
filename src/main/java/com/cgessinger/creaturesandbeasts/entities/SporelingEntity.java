@@ -50,9 +50,11 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.HitResult;
 import software.bernie.geckolib3.core.AnimationState;
 import software.bernie.geckolib3.core.IAnimatable;
@@ -284,6 +286,15 @@ public class SporelingEntity extends TamableAnimal implements IAnimatable {
             return worldIn.getDifficulty() != Difficulty.PEACEFUL;
         } else {
             return worldIn.getRawBrightness(pos, 0) > 8;
+        }
+    }
+
+    @Override
+    public float getWalkTargetValue(BlockPos pos, LevelReader level) {
+        if (this.getSporelingType().getHostility() == FRIENDLY) {
+            return level.getBlockState(pos.below()).is(Blocks.MYCELIUM) ? 10.0F : level.getBrightness(pos) - 0.5F;
+        } else {
+            return 10.0F;
         }
     }
 
