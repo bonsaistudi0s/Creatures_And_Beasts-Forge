@@ -8,13 +8,14 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
 
-public record EntitySpawnData(ResourceLocation entityType, ResourceLocation biome, int spawnWeight, int minCount, int maxCount) {
+public record EntitySpawnData(ResourceLocation entityType, ResourceLocation biome, MobCategory spawnCategory, int spawnWeight, int minCount, int maxCount) {
 
     public ResourceLocation getEntityTypeLocation() {
         return entityType;
@@ -34,6 +35,15 @@ public record EntitySpawnData(ResourceLocation entityType, ResourceLocation biom
         return ResourceKey.create(Registry.BIOME_REGISTRY, biome);
     }
 
+    public String getCategoryName() {
+        return spawnCategory.getName();
+    }
+
+    @Nullable
+    public MobCategory getCategory() {
+        return spawnCategory;
+    }
+
     public int getMinCount() {
         return minCount;
     }
@@ -47,16 +57,18 @@ public record EntitySpawnData(ResourceLocation entityType, ResourceLocation biom
     }
 
     public Config toConfig() {
-        CommentedConfig config = CommentedConfig.of(() -> new HashMap<>(5), TomlFormat.instance());
+        CommentedConfig config = CommentedConfig.of(() -> new HashMap<>(6), TomlFormat.instance());
 
         config.set("entityType", this.getEntityTypeLocation().toString());
         config.set("biome", this.getBiomeLocation().toString());
+        config.set("spawnCategory", this.getCategoryName());
         config.set("spawnWeight", this.getSpawnWeight());
         config.set("minCount", this.getMinCount());
         config.set("maxCount", this.getMaxCount());
 
         config.setComment("entityType", " Determines what entity this spawn is applied to.");
         config.setComment("biome", " Determines what biome this entity should spawn in.");
+        config.setComment("spawnCategory", "Determines what spawn category this entity should use.");
         config.setComment("spawnWeight", " Determines the spawn weight of the entity.\n Range: [0, 1000000]");
         config.setComment("minCount", " Determines the minimum number of entities to spawn.\n Range: [0, 1000000]");
         config.setComment("maxCount", " Determines the maximum number of entities to spawn.\n Range: [0, 1000000]");
@@ -66,27 +78,28 @@ public record EntitySpawnData(ResourceLocation entityType, ResourceLocation biom
 
     @Override
     public String toString() {
-        return "SpawnData [entityType=" + entityType + ", biome=" + biome + ", minCount=" + minCount + ", maxCount=" + maxCount + ", spawnWeight=" + spawnWeight + "]";
+        return "SpawnData [entityType=" + entityType + ", biome=" + biome + ", spawnCategory=" + spawnCategory + ", spawnWeight=" + spawnWeight + ", minCount=" + minCount + ", maxCount=" + maxCount + "]";
     }
 
     public static EntitySpawnData fromConfig(Config config) {
         return new EntitySpawnData(
                 ResourceLocation.tryParse(config.get("entityType")),
                 ResourceLocation.tryParse(config.get("biome")),
+                config.getEnum("spawnCategory", MobCategory.class),
                 config.getInt("spawnWeight"),
                 config.getInt("minCount"),
                 config.getInt("maxCount"));
     }
 
-    public static EntitySpawnData of(EntityType<? extends Entity> entityType, ResourceKey<Biome> biome, int spawnWeight, int minCount, int maxCount) {
-        return new EntitySpawnData(ForgeRegistries.ENTITIES.getKey(entityType), biome.location(), spawnWeight, minCount, maxCount);
+    public static EntitySpawnData of(EntityType<? extends Entity> entityType, ResourceKey<Biome> biome, MobCategory category, int spawnWeight, int minCount, int maxCount) {
+        return new EntitySpawnData(ForgeRegistries.ENTITIES.getKey(entityType), biome.location(), category, spawnWeight, minCount, maxCount);
     }
 
-    public static EntitySpawnData of(ResourceLocation entityType, ResourceKey<Biome> biome, int spawnWeight, int minCount, int maxCount) {
-        return new EntitySpawnData(entityType, biome.location(), spawnWeight, minCount, maxCount);
+    public static EntitySpawnData of(ResourceLocation entityType, ResourceKey<Biome> biome, MobCategory category, int spawnWeight, int minCount, int maxCount) {
+        return new EntitySpawnData(entityType, biome.location(), category, spawnWeight, minCount, maxCount);
     }
 
-    public static EntitySpawnData of(ResourceLocation entityType, ResourceLocation biome, int spawnWeight, int minCount, int maxCount) {
-        return new EntitySpawnData(entityType, biome, spawnWeight, minCount, maxCount);
+    public static EntitySpawnData of(ResourceLocation entityType, ResourceLocation biome, MobCategory category, int spawnWeight, int minCount, int maxCount) {
+        return new EntitySpawnData(entityType, biome, category, spawnWeight, minCount, maxCount);
     }
 }

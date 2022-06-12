@@ -63,8 +63,14 @@ public class ModEntitySpawns {
                         ((ModFileInfo) ModList.get().getModFileById(CreaturesAndBeasts.MOD_ID)).getIssueURL().toString());
                 continue;
             }
+            if (spawn.getCategory() == null) {
+                CreaturesAndBeasts.LOGGER.traceExit(
+                        "SpawnCategory is null! This should never happen, please report this to the developers at: %s",
+                        ((ModFileInfo) ModList.get().getModFileById(CreaturesAndBeasts.MOD_ID)).getIssueURL().toString());
+                continue;
+            }
             if (spawn.getBiome().equals(biome)) {
-                event.getSpawns().addSpawn(spawn.getEntityType().getCategory(), new MobSpawnSettings.SpawnerData(spawn.getEntityType(), spawn.getSpawnWeight(), spawn.getMinCount(), spawn.getMaxCount()));
+                event.getSpawns().addSpawn(spawn.getCategory(), new MobSpawnSettings.SpawnerData(spawn.getEntityType(), spawn.getSpawnWeight(), spawn.getMinCount(), spawn.getMaxCount()));
             }
         }
     }
