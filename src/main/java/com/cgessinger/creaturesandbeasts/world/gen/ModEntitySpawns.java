@@ -71,6 +71,9 @@ public class ModEntitySpawns {
             }
             if (spawn.getBiome().equals(biome)) {
                 event.getSpawns().addSpawn(spawn.getCategory(), new MobSpawnSettings.SpawnerData(spawn.getEntityType(), spawn.getSpawnWeight(), spawn.getMinCount(), spawn.getMaxCount()));
+                if (spawn.getMobCost() > 0 && spawn.getEnergyBudget() > 0) {
+                    event.getSpawns().addMobCharge(spawn.getEntityType(), spawn.getMobCost(), spawn.getEnergyBudget());
+                }
             }
         }
     }
