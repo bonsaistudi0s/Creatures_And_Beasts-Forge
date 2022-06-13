@@ -27,7 +27,7 @@ public class CactemHealParticle extends TextureSheetParticle {
     @Override
     public void tick() {
         super.tick();
-        this.yd += 0.01D;
+        this.yd += level.getRandom().nextDouble(0.01D);
         this.setSpriteFromAge(this.sprites);
     }
 

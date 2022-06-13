@@ -172,7 +172,7 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
             this.setItemInHand(this.getUsedItemHand(), new ItemStack(CNBItems.HEAL_SPELL_BOOK_1.get()));
         }
 
-        if (this.isHealing() && this.tickCount % 2 == 0) {
+        if (this.isHealing()) {
             spawnHealParticles();
         }
     }
@@ -230,7 +230,7 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
     }
 
     private void spawnHealParticles() {
-        for (float i = 0; i < Mth.TWO_PI; i += this.random.nextFloat(0.5F) + 0.5F) {
+        for (float i = 0; i < Mth.TWO_PI; i += this.random.nextFloat(0.8F) + 0.5F) {
             this.level.addParticle(CNBParticleTypes.CACTEM_HEAL_PARTICLE.get(), this.getX() + Mth.cos(i) * 1.25D, this.getY(), this.getZ() + Mth.sin(i) * 1.25D, 0.0D, 0.0D, 0.0D);
         }
     }
