@@ -107,14 +107,14 @@ public class YetiEntity extends TamableAnimal implements IAnimatable, Enemy, Neu
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        compound.putBoolean("passive", this.isPassive());
+        compound.putBoolean("Passive", this.isPassive());
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        if (compound.contains("passive")) {
-            this.setPassive(compound.getBoolean("passive"));
+        if (compound.contains("Passive")) {
+            this.setPassive(compound.getBoolean("Passive"));
         }
     }
 
@@ -278,6 +278,7 @@ public class YetiEntity extends TamableAnimal implements IAnimatable, Enemy, Neu
 
         if (!this.level.isClientSide && this.isPassive() && this.getOwner() != null && this.getOwner() instanceof ServerPlayer player) {
             this.tame(player);
+            this.setPassive(false);
             this.navigation.stop();
             this.setTarget(null);
             this.level.broadcastEntityEvent(this, (byte)7);
@@ -382,7 +383,6 @@ public class YetiEntity extends TamableAnimal implements IAnimatable, Enemy, Neu
                 if (!yeti.isBaby() && !yeti.isTame()) {
                     yeti.setPassive(false);
                     yeti.setOwnerUUID(null);
-                    break;
                 }
             }
         }
@@ -491,9 +491,9 @@ public class YetiEntity extends TamableAnimal implements IAnimatable, Enemy, Neu
 
         @Override
         public boolean canUse() {
-            if (!yeti.isBaby() && super.canUse()) {
+            if (!this.yeti.isBaby() && !this.yeti.isPassive() && super.canUse()) {
                 for (YetiEntity yeti : yeti.level.getEntitiesOfClass(YetiEntity.class, yeti.getBoundingBox().inflate(8.0D, 4.0D, 8.0D))) {
-                    if (yeti.isBaby() && !yeti.isPassive()) {
+                    if (yeti.isBaby()) {
                         return true;
                     }
                 }
@@ -518,12 +518,15 @@ public class YetiEntity extends TamableAnimal implements IAnimatable, Enemy, Neu
 
         @Override
         public boolean canContinueToUse() {
-            return super.canContinueToUse() && !this.yeti.isPassive() && !this.yeti.isBaby();
+            return super.canContinueToUse() && !this.yeti.isBaby();
         }
 
         @Override
         public boolean canUse() {
-            return super.canUse() && !this.yeti.isPassive() && !this.yeti.isBaby();
+            if (this.yeti.getTarget() instanceof TamableAnimal tamableAnimal && this.yeti.isTame() && this.yeti.getOwner().equals(tamableAnimal.getOwner())) {
+                return false;
+            }
+            return super.canUse() && !this.yeti.isBaby() && this.yeti.getTarget() != this.yeti.getOwner();
         }
 
         @Override
