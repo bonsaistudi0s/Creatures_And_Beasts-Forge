@@ -150,7 +150,7 @@ public class MinipadEntity extends Animal implements IForgeShearable, IAnimatabl
         this.floatMinipad();
 
         SimpleParticleType particle = this.getMinipadType().getParticle();
-        if (particle != null && this.isGlowing()) {
+        if (particle != null && this.isGlowing() && !this.getSheared()) {
             if (this.random.nextDouble() < 0.1) {
                 this.level.addParticle(particle, this.getX() + (this.random.nextDouble() * 0.5D - 0.25), this.getY() + 0.8 + (this.random.nextDouble() * 0.1D - 0.05), this.getZ() + (this.random.nextDouble() * 0.5D - 0.25), this.getDeltaMovement().x, this.getDeltaMovement().y, this.getDeltaMovement().z);
             }
