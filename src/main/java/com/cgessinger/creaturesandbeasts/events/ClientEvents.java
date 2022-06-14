@@ -15,15 +15,12 @@ import com.cgessinger.creaturesandbeasts.client.entity.render.SporelingRenderer;
 import com.cgessinger.creaturesandbeasts.client.entity.render.ThrownCactemSpearRenderer;
 import com.cgessinger.creaturesandbeasts.client.entity.render.YetiRenderer;
 import com.cgessinger.creaturesandbeasts.init.CNBEntityTypes;
-import com.cgessinger.creaturesandbeasts.items.CNBSpawnEggItem;
 import com.cgessinger.creaturesandbeasts.items.FlowerCrownItem;
 import com.cgessinger.creaturesandbeasts.items.GlowingFlowerCrownItem;
 import com.cgessinger.creaturesandbeasts.items.SporelingBackpackItem;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
-import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import software.bernie.geckolib3.renderers.geo.GeoArmorRenderer;
@@ -49,11 +46,6 @@ public class ClientEvents {
     @SubscribeEvent
     public static void onRegisterLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(CactemSpearModel.LAYER_LOCATION, CactemSpearModel::createLayer);
-    }
-
-    @SubscribeEvent
-    public static void onRegisterEntities(final RegistryEvent.Register<EntityType<?>> event) {
-        CNBSpawnEggItem.initUnaddedEggs();
     }
 
     @SubscribeEvent

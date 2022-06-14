@@ -3,7 +3,6 @@ package com.cgessinger.creaturesandbeasts.items;
 import com.cgessinger.creaturesandbeasts.init.CNBItems;
 import com.cgessinger.creaturesandbeasts.init.CNBSoundEvents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
@@ -73,11 +72,11 @@ public class HealSpellBookItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag tooltipFlag) {
         if (stack.is(CNBItems.HEAL_SPELL_BOOK_1.get())) {
-            tooltip.add(new TextComponent("\u00A72Level 1"));
+            tooltip.add(Component.literal("\u00A72Level 1"));
         } else if (stack.is(CNBItems.HEAL_SPELL_BOOK_2.get())) {
-            tooltip.add(new TextComponent("\u00A74Level 2"));
+            tooltip.add(Component.literal("\u00A74Level 2"));
         } else {
-            tooltip.add(new TextComponent("\u00A76Level 3"));
+            tooltip.add(Component.literal("\u00A76Level 3"));
         }
     }
 

@@ -30,6 +30,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.ContainerListener;
@@ -92,7 +93,6 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 import java.util.UUID;
 
 public class CindershellEntity extends Animal implements IAnimatable, Bucketable, ContainerListener, Container, RecipeHolder, StackedContentsCompatible, MenuProvider {
@@ -258,7 +258,7 @@ public class CindershellEntity extends Animal implements IAnimatable, Bucketable
         super.tick();
 
         if (this.hasFurnace() && this.random.nextDouble() <= 0.25) {
-            this.level.addParticle(ParticleTypes.LARGE_SMOKE, this.getX() + (this.random.nextDouble(0.5) - 0.25), this.getY() + 2.5 + (this.random.nextDouble(0.1) - 0.05), this.getZ() + (this.random.nextDouble(0.5) - 0.25), this.getDeltaMovement().x, 0, this.getDeltaMovement().z);
+            this.level.addParticle(ParticleTypes.LARGE_SMOKE, this.getX() + (this.random.nextDouble() * 0.5D - 0.25), this.getY() + 2.5 + (this.random.nextDouble() * 0.1D - 0.05), this.getZ() + (this.random.nextDouble() * 0.5D - 0.25), this.getDeltaMovement().x, 0, this.getDeltaMovement().z);
         }
 
         if (!this.level.isClientSide && this.hasFurnace()) {
@@ -301,7 +301,7 @@ public class CindershellEntity extends Animal implements IAnimatable, Bucketable
         return true;
     }
 
-    public static boolean checkCindershellSpawnRules(EntityType<CindershellEntity> entity, LevelAccessor level, MobSpawnType mobSpawnType, BlockPos pos, Random random) {
+    public static boolean checkCindershellSpawnRules(EntityType<CindershellEntity> entity, LevelAccessor level, MobSpawnType mobSpawnType, BlockPos pos, RandomSource random) {
         return true;
     }
 

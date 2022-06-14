@@ -18,17 +18,17 @@ public class YetiModel extends AnimatedGeoModel<YetiEntity> {
     private static final ResourceLocation YETI_ANIMATIONS = new ResourceLocation(CreaturesAndBeasts.MOD_ID, "animations/yeti.json");
 
     @Override
-    public ResourceLocation getModelLocation(YetiEntity entity) {
+    public ResourceLocation getModelResource(YetiEntity entity) {
         return entity.isBaby() ? BABY_YETI_MODEL : YETI_MODEL;
     }
 
     @Override
-    public ResourceLocation getTextureLocation(YetiEntity entity) {
+    public ResourceLocation getTextureResource(YetiEntity entity) {
         return entity.isBaby() ? BABY_YETI_TEXTURE : YETI_TEXTURE;
     }
 
     @Override
-    public ResourceLocation getAnimationFileLocation(YetiEntity entity) {
+    public ResourceLocation getAnimationResource(YetiEntity entity) {
         return YETI_ANIMATIONS;
     }
 }

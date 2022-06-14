@@ -20,17 +20,17 @@ public class LizardModel extends AnimatedGeoModel<LizardEntity> {
     private static final ResourceLocation LIZARD_ANIMATIONS = new ResourceLocation(CreaturesAndBeasts.MOD_ID, "animations/lizard.json");
 
     @Override
-    public ResourceLocation getModelLocation(LizardEntity entity) {
+    public ResourceLocation getModelResource(LizardEntity entity) {
         return entity.getSad() ? SAD_LIZARD_MODEL : LIZARD_MODEL;
     }
 
     @Override
-    public ResourceLocation getTextureLocation(LizardEntity entity) {
+    public ResourceLocation getTextureResource(LizardEntity entity) {
         return entity.getSad() ? entity.getLizardType().getSadTextureLocation() : entity.getLizardType().getTextureLocation();
     }
 
     @Override
-    public ResourceLocation getAnimationFileLocation(LizardEntity entity) {
+    public ResourceLocation getAnimationResource(LizardEntity entity) {
         return LIZARD_ANIMATIONS;
     }
 

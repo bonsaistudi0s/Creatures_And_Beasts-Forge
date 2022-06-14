@@ -172,7 +172,7 @@ curseforge {
         releaseType = "release"
         changelogType = 'html'
         changelog = '<h2>Big Changes!</h2>'
-        addGameVersion("1.18.2")
+        addGameVersion("1.19")
         addGameVersion("Forge")
         addGameVersion("Java 17")
 

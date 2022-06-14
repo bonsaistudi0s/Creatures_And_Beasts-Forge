@@ -183,7 +183,7 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
     }
 
     @Override
-    protected int getExperienceReward(Player player) {
+    public int getExperienceReward() {
         return 3 + this.level.random.nextInt(4);
     }
 
@@ -230,7 +230,7 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
     }
 
     private void spawnHealParticles() {
-        for (float i = 0; i < Mth.TWO_PI; i += this.random.nextFloat(0.8F) + 0.5F) {
+        for (float i = 0; i < Mth.TWO_PI; i += this.random.nextFloat() * 0.8F + 0.5F) {
             this.level.addParticle(CNBParticleTypes.CACTEM_HEAL_PARTICLE.get(), this.getX() + Mth.cos(i) * 1.25D, this.getY(), this.getZ() + Mth.sin(i) * 1.25D, 0.0D, 0.0D, 0.0D);
         }
     }

@@ -329,7 +329,7 @@ public class YetiEntity extends TamableAnimal implements IAnimatable, Enemy, Neu
         this.setHolding(stack);
         this.usePlayerItem(player, player.getUsedItemHand(), stack);
         this.setEating(true);
-        this.gameEvent(GameEvent.MOB_INTERACT, this.eyeBlockPosition());
+        this.gameEvent(GameEvent.ENTITY_INTERACT, player);
         SoundEvent sound = this.isBaby() ? CNBSoundEvents.YETI_BABY_EAT.get() : CNBSoundEvents.YETI_ADULT_EAT.get();
         this.playSound(sound, 1.1F, 1F);
         return InteractionResult.SUCCESS;

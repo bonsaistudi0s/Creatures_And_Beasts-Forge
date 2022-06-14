@@ -17,7 +17,7 @@ public class CactemModel extends AnimatedGeoModel<CactemEntity> {
     private static final ResourceLocation CACTEM_ANIMATIONS = new ResourceLocation(CreaturesAndBeasts.MOD_ID, "animations/cactem.json");
 
     @Override
-    public ResourceLocation getModelLocation(CactemEntity entity) {
+    public ResourceLocation getModelResource(CactemEntity entity) {
         if (entity.isBaby()) {
             return BABY_CACTEM_MODEL;
         } else if (entity.isElder()) {
@@ -28,7 +28,7 @@ public class CactemModel extends AnimatedGeoModel<CactemEntity> {
     }
 
     @Override
-    public ResourceLocation getTextureLocation(CactemEntity entity) {
+    public ResourceLocation getTextureResource(CactemEntity entity) {
         if (entity.isBaby()) {
             return BABY_CACTEM_TEXTURE;
         } else if (entity.isElder()) {
@@ -39,7 +39,7 @@ public class CactemModel extends AnimatedGeoModel<CactemEntity> {
     }
 
     @Override
-    public ResourceLocation getAnimationFileLocation(CactemEntity entity) {
+    public ResourceLocation getAnimationResource(CactemEntity entity) {
         return CACTEM_ANIMATIONS;
     }
 }

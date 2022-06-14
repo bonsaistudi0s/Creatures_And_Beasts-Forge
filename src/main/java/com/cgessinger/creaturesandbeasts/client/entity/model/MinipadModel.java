@@ -14,17 +14,17 @@ public class MinipadModel extends AnimatedGeoModel<MinipadEntity> {
     private static final ResourceLocation MINIPAD_ANIMATIONS = new ResourceLocation(CreaturesAndBeasts.MOD_ID, "animations/minipad.json");
 
     @Override
-    public ResourceLocation getModelLocation(MinipadEntity entity) {
+    public ResourceLocation getModelResource(MinipadEntity entity) {
         return MINIPAD_MODEL;
     }
 
     @Override
-    public ResourceLocation getTextureLocation(MinipadEntity entity) {
+    public ResourceLocation getTextureResource(MinipadEntity entity) {
         return entity.getSheared() ? MINIPAD_SHEARED_TEXTURE : entity.getMinipadType().getTextureLocation();
     }
 
     @Override
-    public ResourceLocation getAnimationFileLocation(MinipadEntity entity) {
+    public ResourceLocation getAnimationResource(MinipadEntity entity) {
         return MINIPAD_ANIMATIONS;
     }
 }

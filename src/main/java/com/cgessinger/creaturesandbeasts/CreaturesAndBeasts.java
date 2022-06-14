@@ -10,11 +10,13 @@ import com.cgessinger.creaturesandbeasts.init.CNBEntityTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBItems;
 import com.cgessinger.creaturesandbeasts.init.CNBLilytadTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBLizardTypes;
+import com.cgessinger.creaturesandbeasts.init.CNBLootModifiers;
 import com.cgessinger.creaturesandbeasts.init.CNBMinipadTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBPaintingTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBParticleTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBSoundEvents;
 import com.cgessinger.creaturesandbeasts.init.CNBSporelingTypes;
+import com.cgessinger.creaturesandbeasts.items.CNBSpawnEggItem;
 import com.cgessinger.creaturesandbeasts.world.gen.ModEntitySpawns;
 import com.electronwill.nightconfig.core.io.ParsingException;
 import net.minecraft.client.renderer.item.ItemProperties;
@@ -65,6 +67,7 @@ public class CreaturesAndBeasts {
         CNBPaintingTypes.PAINTINGS.register(eventBus);
         CNBSoundEvents.SOUND_EVENTS.register(eventBus);
         CNBEntityTypes.ENTITY_TYPES.register(eventBus);
+        CNBLootModifiers.LOOT_MODIFIERS.register(eventBus);
 
         CNBSporelingTypes.registerAll();
         CNBLizardTypes.registerAll();
@@ -102,6 +105,8 @@ public class CreaturesAndBeasts {
         flowerPot.addPlant(CNBBlocks.PINK_WATERLILY_BLOCK.getId(), CNBBlocks.POTTED_PINK_WATERLILY);
         flowerPot.addPlant(CNBBlocks.LIGHT_PINK_WATERLILY_BLOCK.getId(), CNBBlocks.POTTED_LIGHT_PINK_WATERLILY);
         flowerPot.addPlant(CNBBlocks.YELLOW_WATERLILY_BLOCK.getId(), CNBBlocks.POTTED_YELLOW_WATERLILY);
+
+        CNBSpawnEggItem.initUnaddedEggs();
     }
 
     private void clientSetup(final FMLClientSetupEvent event) {

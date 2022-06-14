@@ -14,17 +14,17 @@ public class LilytadModel extends AnimatedGeoModel<LilytadEntity> {
     private static final ResourceLocation LILYTAD_ANIMATIONS = new ResourceLocation(CreaturesAndBeasts.MOD_ID, "animations/lilytad.json");
 
     @Override
-    public ResourceLocation getModelLocation(LilytadEntity entity) {
+    public ResourceLocation getModelResource(LilytadEntity entity) {
         return LILYTAD_MODEL;
     }
 
     @Override
-    public ResourceLocation getTextureLocation(LilytadEntity entity) {
+    public ResourceLocation getTextureResource(LilytadEntity entity) {
         return entity.getSheared() ? LILYTAD_SHEARED_TEXTURE : entity.getLilytadType().getTextureLocation();
     }
 
     @Override
-    public ResourceLocation getAnimationFileLocation(LilytadEntity entity) {
+    public ResourceLocation getAnimationResource(LilytadEntity entity) {
         return LILYTAD_ANIMATIONS;
     }
 }

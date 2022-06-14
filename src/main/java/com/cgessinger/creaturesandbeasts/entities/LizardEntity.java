@@ -10,7 +10,6 @@ import com.cgessinger.creaturesandbeasts.util.Netable;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -26,6 +25,8 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
+import net.minecraft.tags.BiomeTags;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -55,10 +56,12 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.registries.ForgeRegistries;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -68,7 +71,7 @@ import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 import javax.annotation.Nullable;
-import java.util.Random;
+import java.util.Optional;
 
 public class LizardEntity extends Animal implements IAnimatable, Netable {
     private static final EntityDataAccessor<String> TYPE = SynchedEntityData.defineId(LizardEntity.class, EntityDataSerializers.STRING);
@@ -180,29 +183,28 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
         }
     }
 
-    public static boolean checkLizardSpawnRules(EntityType<LizardEntity> animal, LevelAccessor worldIn, MobSpawnType reason, BlockPos pos, Random randomIn) {
+    public static boolean checkLizardSpawnRules(EntityType<LizardEntity> animal, LevelAccessor worldIn, MobSpawnType reason, BlockPos pos, RandomSource randomIn) {
         return worldIn.getRawBrightness(pos, 0) > 8;
     }
 
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, MobSpawnType reason, @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
         Holder<Biome> biome = worldIn.getBiome(this.blockPosition());
-        ResourceKey<Biome> biomeKey = ResourceKey.create(Registry.BIOME_REGISTRY, biome.value().getRegistryName());
-        Biome.BiomeCategory biomeCategory = Biome.getBiomeCategory(biome);
+        Optional<ResourceKey<Biome>> biomeKey = ForgeRegistries.BIOMES.getResourceKey(biome.get());
 
         if (reason == MobSpawnType.SPAWN_EGG && dataTag != null && dataTag.contains("LizardType")) {
             LizardType type = LizardType.getById(dataTag.getString("LizardType"));
             if (type != null) {
                 this.setLizardType(type);
             }
-        } else {
-            if (biomeCategory.equals(Biome.BiomeCategory.DESERT) || biomeCategory.equals(Biome.BiomeCategory.MESA)) {
+        } else if (biomeKey.isPresent()) {
+            if (biomeKey.get().equals(Biomes.DESERT) || biome.is(BiomeTags.IS_BADLANDS)) {
                 if (random.nextBoolean()) {
                     this.setLizardType(CNBLizardTypes.DESERT);
                 } else {
                     this.setLizardType(CNBLizardTypes.DESERT_2);
                 }
-            } else if (biomeCategory.equals(Biome.BiomeCategory.JUNGLE)) {
+            } else if (biome.is(BiomeTags.IS_JUNGLE)) {
                 if (random.nextBoolean()) {
                     this.setLizardType(CNBLizardTypes.JUNGLE);
                 } else {
@@ -492,7 +494,7 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
             this.lizard.partner = (LizardEntity) this.partner;
             this.animal.resetLove();
             this.partner.resetLove();
-            Random random = this.animal.getRandom();
+            RandomSource random = this.animal.getRandom();
             if (this.level.getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT)) {
                 this.level.addFreshEntity(new ExperienceOrb(this.level, this.animal.getX(), this.animal.getY(), this.animal.getZ(), random.nextInt(7) + 1));
             }

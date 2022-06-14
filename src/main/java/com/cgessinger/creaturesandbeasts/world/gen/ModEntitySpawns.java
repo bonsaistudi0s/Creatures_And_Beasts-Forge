@@ -1,8 +1,6 @@
 package com.cgessinger.creaturesandbeasts.world.gen;
 
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
-import com.cgessinger.creaturesandbeasts.config.CNBConfig;
-import com.cgessinger.creaturesandbeasts.config.EntitySpawnData;
 import com.cgessinger.creaturesandbeasts.entities.CindershellEntity;
 import com.cgessinger.creaturesandbeasts.entities.EndWhaleEntity;
 import com.cgessinger.creaturesandbeasts.entities.LilytadEntity;
@@ -12,22 +10,14 @@ import com.cgessinger.creaturesandbeasts.entities.MinipadEntity;
 import com.cgessinger.creaturesandbeasts.entities.SporelingEntity;
 import com.cgessinger.creaturesandbeasts.entities.YetiEntity;
 import com.cgessinger.creaturesandbeasts.init.CNBEntityTypes;
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.SpawnPlacements;
-import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraftforge.event.world.BiomeLoadingEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 
 @Mod.EventBusSubscriber(modid = CreaturesAndBeasts.MOD_ID)
 public class ModEntitySpawns {
 
+    /*
     @SubscribeEvent
     public static void onBiomeLoad(BiomeLoadingEvent event) {
         if (event.getCategory() == null) {
@@ -77,6 +67,7 @@ public class ModEntitySpawns {
             }
         }
     }
+    */
 
     public static void entitySpawnPlacementRegistry() {
         SpawnPlacements.register(CNBEntityTypes.LITTLE_GREBE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, LittleGrebeEntity::checkGrebeSpawnRules);

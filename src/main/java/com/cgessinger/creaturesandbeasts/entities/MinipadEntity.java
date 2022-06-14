@@ -14,6 +14,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
@@ -60,7 +61,6 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Random;
 
 public class MinipadEntity extends Animal implements IForgeShearable, IAnimatable {
     public static final EntityDataAccessor<String> TYPE = SynchedEntityData.defineId(MinipadEntity.class, EntityDataSerializers.STRING);
@@ -152,10 +152,10 @@ public class MinipadEntity extends Animal implements IForgeShearable, IAnimatabl
         SimpleParticleType particle = this.getMinipadType().getParticle();
         if (particle != null && this.isGlowing()) {
             if (this.random.nextDouble() < 0.1) {
-                this.level.addParticle(particle, this.getX() + (this.random.nextDouble(0.5) - 0.25), this.getY() + 0.8 + (this.random.nextDouble(0.1) - 0.05), this.getZ() + (this.random.nextDouble(0.5) - 0.25), this.getDeltaMovement().x, this.getDeltaMovement().y, this.getDeltaMovement().z);
+                this.level.addParticle(particle, this.getX() + (this.random.nextDouble() * 0.5D - 0.25), this.getY() + 0.8 + (this.random.nextDouble() * 0.1D - 0.05), this.getZ() + (this.random.nextDouble() * 0.5D - 0.25), this.getDeltaMovement().x, this.getDeltaMovement().y, this.getDeltaMovement().z);
             }
             if (this.random.nextDouble() < 0.07) {
-                this.level.addParticle(particle, this.getX() + (this.random.nextDouble(24) - 12), this.getY() + this.random.nextDouble(7.5), this.getZ() + (this.random.nextDouble(24) - 12), this.getDeltaMovement().x, this.getDeltaMovement().y, this.getDeltaMovement().z);
+                this.level.addParticle(particle, this.getX() + (this.random.nextDouble() * 24D - 12), this.getY() + this.random.nextDouble() * 7.5D, this.getZ() + (this.random.nextDouble() * 24D - 12), this.getDeltaMovement().x, this.getDeltaMovement().y, this.getDeltaMovement().z);
             }
         }
 
@@ -179,7 +179,7 @@ public class MinipadEntity extends Animal implements IForgeShearable, IAnimatabl
         return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData, tag);
     }
 
-    public static boolean checkMinipadSpawnRules(EntityType<MinipadEntity> animal, LevelAccessor worldIn, MobSpawnType reason, BlockPos pos, Random randomIn) {
+    public static boolean checkMinipadSpawnRules(EntityType<MinipadEntity> animal, LevelAccessor worldIn, MobSpawnType reason, BlockPos pos, RandomSource randomIn) {
         return true;
     }
 
@@ -307,7 +307,7 @@ public class MinipadEntity extends Animal implements IForgeShearable, IAnimatabl
     }
 
     @Override
-    protected int getExperienceReward(Player p_27590_) {
+    public int getExperienceReward() {
         return 2 + this.level.random.nextInt(3);
     }
 

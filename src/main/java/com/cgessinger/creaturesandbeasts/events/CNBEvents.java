@@ -14,10 +14,8 @@ import com.cgessinger.creaturesandbeasts.entities.ThrownCactemSpearEntity;
 import com.cgessinger.creaturesandbeasts.entities.YetiEntity;
 import com.cgessinger.creaturesandbeasts.init.CNBEntityTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBItems;
-import com.cgessinger.creaturesandbeasts.init.CNBLootModifiers;
 import com.cgessinger.creaturesandbeasts.items.HealSpellBookItem;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.IndirectEntityDamageSource;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -28,10 +26,8 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
-import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LootingLevelEvent;
@@ -55,11 +51,6 @@ public class CNBEvents {
         event.put(CNBEntityTypes.MINIPAD.get(), MinipadEntity.createAttributes().build());
         event.put(CNBEntityTypes.END_WHALE.get(), EndWhaleEntity.createAttributes().build());
         event.put(CNBEntityTypes.CACTEM.get(), CactemEntity.createAttributes().build());
-    }
-
-    @SubscribeEvent
-    public static void onRegisterLootModifiers(RegistryEvent.Register<GlobalLootModifierSerializer<?>> event) {
-        event.getRegistry().register(new CNBLootModifiers.NetherBridgeLootSerializer().setRegistryName(new ResourceLocation(CreaturesAndBeasts.MOD_ID, "nether_bridge_loot_modifier")));
     }
 
     @SubscribeEvent

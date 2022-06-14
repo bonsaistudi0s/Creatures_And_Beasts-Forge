@@ -18,17 +18,17 @@ public class EndWhaleModel extends AnimatedGeoModel<EndWhaleEntity> {
 
 
     @Override
-    public ResourceLocation getModelLocation(EndWhaleEntity entity) {
+    public ResourceLocation getModelResource(EndWhaleEntity entity) {
         return END_WHALE_MODEL;
     }
 
     @Override
-    public ResourceLocation getTextureLocation(EndWhaleEntity entity) {
+    public ResourceLocation getTextureResource(EndWhaleEntity entity) {
         return entity.isSaddled() ? END_WHALE_SADDLE_TEXTURE : END_WHALE_TEXTURE;
     }
 
     @Override
-    public ResourceLocation getAnimationFileLocation(EndWhaleEntity entity) {
+    public ResourceLocation getAnimationResource(EndWhaleEntity entity) {
         return END_WHALE_ANIMATIONS;
     }
 }

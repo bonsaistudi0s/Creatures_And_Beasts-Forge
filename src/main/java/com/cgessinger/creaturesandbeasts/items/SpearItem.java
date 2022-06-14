@@ -12,6 +12,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -40,8 +41,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.Random;
-
 public class SpearItem extends Item implements Vanishable {
     private final Multimap<Attribute, AttributeModifier> defaultModifiers;
 
@@ -64,7 +63,7 @@ public class SpearItem extends Item implements Vanishable {
                 enchantment instanceof DigDurabilityEnchantment || enchantment instanceof VanishingCurseEnchantment ||
                 enchantment instanceof FireAspectEnchantment || enchantment instanceof DamageEnchantment ||
                 enchantment instanceof KnockbackEnchantment || enchantment instanceof MultiShotEnchantment ||
-                enchantment.getRegistryName().equals(Enchantments.MOB_LOOTING.getRegistryName())) {
+                enchantment.equals(Enchantments.MOB_LOOTING)) {
             return true;
         }
 
@@ -149,12 +148,12 @@ public class SpearItem extends Item implements Vanishable {
         level.playSound(null, thrownSpear, CNBSoundEvents.SPEAR_THROW.get(), SoundSource.PLAYERS, 1.0F, soundVariation);
     }
 
-    private static float[] getShotPitches(Random rand) {
+    private static float[] getShotPitches(RandomSource rand) {
         boolean flag = rand.nextBoolean();
         return new float[]{1.0F, getRandomShotPitch(flag, rand), getRandomShotPitch(!flag, rand)};
     }
 
-    private static float getRandomShotPitch(boolean chance, Random rand) {
+    private static float getRandomShotPitch(boolean chance, RandomSource rand) {
         float f = chance ? 0.63F : 0.43F;
         return 1.0F / (rand.nextFloat() * 0.5F + 1.8F) + f;
     }

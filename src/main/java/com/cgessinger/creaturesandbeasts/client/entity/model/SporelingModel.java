@@ -12,17 +12,17 @@ public class SporelingModel extends AnimatedGeoModel<SporelingEntity> {
     private static final ResourceLocation SPORELING_ANIMATIONS = new ResourceLocation(CreaturesAndBeasts.MOD_ID, "animations/sporeling.json");
 
     @Override
-    public ResourceLocation getModelLocation(SporelingEntity entity) {
+    public ResourceLocation getModelResource(SporelingEntity entity) {
         return entity.getSporelingType().getModelLocation();
     }
 
     @Override
-    public ResourceLocation getTextureLocation(SporelingEntity entity) {
+    public ResourceLocation getTextureResource(SporelingEntity entity) {
         return entity.getSporelingType().getTextureLocation();
     }
 
     @Override
-    public ResourceLocation getAnimationFileLocation(SporelingEntity entity) {
+    public ResourceLocation getAnimationResource(SporelingEntity entity) {
         return SPORELING_ANIMATIONS;
     }
 }

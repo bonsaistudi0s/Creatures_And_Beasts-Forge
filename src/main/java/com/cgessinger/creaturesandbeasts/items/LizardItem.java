@@ -124,7 +124,7 @@ public class LizardItem extends CNBSpawnEggItem {
                     }
 
                     player.awardStat(Stats.ITEM_USED.get(this));
-                    level.gameEvent(GameEvent.ENTITY_PLACE, player);
+                    level.gameEvent(player, GameEvent.ENTITY_PLACE, player.position());
                     return InteractionResultHolder.consume(itemstack);
                 }
             } else {

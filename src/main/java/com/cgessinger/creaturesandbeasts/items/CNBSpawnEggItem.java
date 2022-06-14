@@ -6,7 +6,6 @@ import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.core.dispenser.DispenseItemBehavior;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
@@ -73,10 +72,10 @@ public class CNBSpawnEggItem extends SpawnEggItem {
         if (stack.hasTag()) {
             CompoundTag nbt = stack.getTag();
             if (nbt.contains("name")) {
-                tooltip.add(new TextComponent("Name: " + nbt.getString("name")));
+                tooltip.add(Component.literal("Name: " + nbt.getString("name")));
             }
             if (nbt.contains("health")) {
-                tooltip.add(new TextComponent("Health: " + Math.round(nbt.getFloat("health"))));
+                tooltip.add(Component.literal("Health: " + Math.round(nbt.getFloat("health"))));
             }
         }
     }

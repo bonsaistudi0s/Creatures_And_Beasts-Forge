@@ -13,17 +13,17 @@ public class SporelingBackpackModel extends AnimatedGeoModel<SporelingBackpackIt
     private final ResourceLocation SPORELING_BACKPACK_TEXTURE = new ResourceLocation(CreaturesAndBeasts.MOD_ID, "textures/armor/sporeling_backpack.png");
 
     @Override
-    public ResourceLocation getModelLocation(SporelingBackpackItem object) {
+    public ResourceLocation getModelResource(SporelingBackpackItem object) {
         return SPORELING_BACKPACK_MODEL;
     }
 
     @Override
-    public ResourceLocation getTextureLocation(SporelingBackpackItem object) {
+    public ResourceLocation getTextureResource(SporelingBackpackItem object) {
         return SPORELING_BACKPACK_TEXTURE;
     }
 
     @Override
-    public ResourceLocation getAnimationFileLocation(SporelingBackpackItem animatable) {
+    public ResourceLocation getAnimationResource(SporelingBackpackItem animatable) {
         return null;
     }
 

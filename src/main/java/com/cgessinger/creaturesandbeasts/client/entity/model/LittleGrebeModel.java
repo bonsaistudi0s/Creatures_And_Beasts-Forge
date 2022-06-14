@@ -18,17 +18,17 @@ public class LittleGrebeModel extends AnimatedGeoModel<LittleGrebeEntity> {
     private static final ResourceLocation LITTLE_GREBE_ANIMATIONS = new ResourceLocation(CreaturesAndBeasts.MOD_ID, "animations/little_grebe.json");
 
     @Override
-    public ResourceLocation getModelLocation(LittleGrebeEntity entity) {
+    public ResourceLocation getModelResource(LittleGrebeEntity entity) {
         return entity.isBaby() ? LITTLE_GREBE_CHICK_MODEL : LITTLE_GREBE_MODEL;
     }
 
     @Override
-    public ResourceLocation getTextureLocation(LittleGrebeEntity entity) {
+    public ResourceLocation getTextureResource(LittleGrebeEntity entity) {
         return entity.isBaby() ? LITTLE_GREBE_CHICK_TEXTURE : LITTLE_GREBE_TEXTURE;
     }
 
     @Override
-    public ResourceLocation getAnimationFileLocation(LittleGrebeEntity entity) {
+    public ResourceLocation getAnimationResource(LittleGrebeEntity entity) {
         return LITTLE_GREBE_ANIMATIONS;
     }
 

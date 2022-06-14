@@ -13,17 +13,17 @@ public class FlowerCrownModel extends AnimatedGeoModel<FlowerCrownItem> {
     private final ResourceLocation FLOWER_CROWN_TEXTURE = new ResourceLocation(CreaturesAndBeasts.MOD_ID, "textures/armor/flower_crown.png");
 
     @Override
-    public ResourceLocation getModelLocation(FlowerCrownItem object) {
+    public ResourceLocation getModelResource(FlowerCrownItem object) {
         return FLOWER_CROWN_MODEL;
     }
 
     @Override
-    public ResourceLocation getTextureLocation(FlowerCrownItem object) {
+    public ResourceLocation getTextureResource(FlowerCrownItem object) {
         return FLOWER_CROWN_TEXTURE;
     }
 
     @Override
-    public ResourceLocation getAnimationFileLocation(FlowerCrownItem animatable) {
+    public ResourceLocation getAnimationResource(FlowerCrownItem animatable) {
         return null;
     }
 }

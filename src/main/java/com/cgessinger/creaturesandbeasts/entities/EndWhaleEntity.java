@@ -11,6 +11,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -54,7 +55,6 @@ import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 import java.util.EnumSet;
-import java.util.Random;
 
 public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, Saddleable, IAnimatable {
     private static final EntityDataAccessor<Boolean> SADDLED = SynchedEntityData.defineId(EndWhaleEntity.class, EntityDataSerializers.BOOLEAN);
@@ -190,7 +190,7 @@ public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, Saddl
     }
 
     @Override
-    public boolean canBeControlledByRider() {
+    public boolean isControlledByLocalInstance() {
         return this.getControllingPassenger() instanceof LivingEntity;
     }
 
@@ -213,7 +213,7 @@ public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, Saddl
     @Override
     public void travel(Vec3 travelVector) {
         if (this.isAlive()) {
-            if (this.isVehicle() && this.canBeControlledByRider() && this.isSaddled()) {
+            if (this.isVehicle() && this.isControlledByLocalInstance() && this.isSaddled()) {
                 LivingEntity livingentity = (LivingEntity)this.getControllingPassenger();
                 this.setYRot(Mth.rotLerp(0.05F, this.getYRot(), livingentity.getYRot()));
                 this.yRotO = this.getYRot();
@@ -339,11 +339,11 @@ public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, Saddl
     }
 
     @Override
-    protected int getExperienceReward(Player player) {
+    public int getExperienceReward() {
         return 12 + this.level.random.nextInt(5);
     }
 
-    public static boolean checkEndWhaleSpawnRules(EntityType<EndWhaleEntity> animal, LevelAccessor worldIn, MobSpawnType reason, BlockPos pos, Random randomIn) {
+    public static boolean checkEndWhaleSpawnRules(EntityType<EndWhaleEntity> animal, LevelAccessor worldIn, MobSpawnType reason, BlockPos pos, RandomSource randomIn) {
         return true;
     }
 
