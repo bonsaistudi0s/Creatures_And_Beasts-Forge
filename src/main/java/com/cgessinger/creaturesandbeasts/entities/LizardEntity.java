@@ -10,7 +10,6 @@ import com.cgessinger.creaturesandbeasts.util.Netable;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -19,7 +18,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -138,7 +136,7 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 12.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.4D);
+                .add(Attributes.MOVEMENT_SPEED, 0.18D);
     }
 
     @Override
@@ -151,6 +149,11 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
             @Override
             public boolean canUse() {
                 return !((LizardEntity) this.mob).isPartying() && super.canUse();
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                return !((LizardEntity) this.mob).isPartying() && super.canContinueToUse();
             }
         });
         this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 6.0F));
@@ -165,7 +168,7 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
         if (this.jukeboxPosition != null) {
             BlockEntity te = this.level.getBlockEntity(this.jukeboxPosition);
             Vec3 pos = this.position();
-            if (!this.jukeboxPosition.closerThan(new Vec3i(pos.x, pos.y, pos.z), 10.0D) || !(te instanceof JukeboxBlockEntity) || ((JukeboxBlockEntity) te).getRecord() == ItemStack.EMPTY) {
+            if (!this.jukeboxPosition.closerThan(new Vec3i(pos.x, pos.y, pos.z), 10.0D) || !(te instanceof JukeboxBlockEntity)) {
                 this.setPartying(false, null);
             }
         }
@@ -187,7 +190,6 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, MobSpawnType reason, @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
         Holder<Biome> biome = worldIn.getBiome(this.blockPosition());
-        ResourceKey<Biome> biomeKey = ResourceKey.create(Registry.BIOME_REGISTRY, biome.value().getRegistryName());
         Biome.BiomeCategory biomeCategory = Biome.getBiomeCategory(biome);
 
         if (reason == MobSpawnType.SPAWN_EGG && dataTag != null && dataTag.contains("LizardType")) {
@@ -208,8 +210,10 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
                 } else {
                     this.setLizardType(CNBLizardTypes.JUNGLE_2);
                 }
+            }  else if (biomeCategory.equals(Biome.BiomeCategory.MUSHROOM)) {
+                this.setLizardType(CNBLizardTypes.MUSHROOM);
             } else {
-                switch (random.nextInt(4)) {
+                switch (random.nextInt(5)) {
                     case 0:
                         this.setLizardType(CNBLizardTypes.DESERT);
                         break;
@@ -222,6 +226,9 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
                     case 3:
                     default:
                         this.setLizardType(CNBLizardTypes.JUNGLE_2);
+                        break;
+                    case 4:
+                        this.setLizardType(CNBLizardTypes.MUSHROOM);
                         break;
                 }
             }
@@ -445,7 +452,7 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
         if (this.entityData.get(LAYING_EGG)) {
             event.getController().setAnimation(new AnimationBuilder().addAnimation("lizard_dig", true));
             return PlayState.CONTINUE;
-        } else if (!(animationSpeed > -0.15F && animationSpeed < 0.15F)) {
+        } else if (!(animationSpeed > -0.13F && animationSpeed < 0.13F)) {
             event.getController().setAnimation(new AnimationBuilder().addAnimation("lizard_walk", true));
             return PlayState.CONTINUE;
         } else if (this.isPartying()) {
