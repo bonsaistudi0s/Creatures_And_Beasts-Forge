@@ -92,6 +92,8 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
     private final UUID healthReductionUUID = UUID.fromString("65a301bb-531d-499e-939c-eda5b857c0b4");
     private final float babyHealth = 20.0F;
 
+    private int healCooldown = 0;
+
     public CactemEntity(EntityType<CactemEntity> entity, Level level) {
         super(entity, level);
     }
@@ -174,6 +176,10 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
 
         if (this.isHealing()) {
             spawnHealParticles();
+        }
+
+        if (this.healCooldown > 0) {
+            this.healCooldown--;
         }
     }
 
@@ -609,7 +615,6 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
         private final int healIntervalDiff;
         private final float healRadius;
         private final float avoidDist;
-        private int healTime = 0;
 
         public HealGoal(CactemEntity cactem, double speedModifier, int healIntervalMin, int healIntervalMax, float healRadius, float avoidDist) {
             this.cactem = cactem;
@@ -667,14 +672,14 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
             if (this.cactem.isUsingItem()) {
                 this.cactem.getNavigation().stop();
                 int i = this.cactem.getTicksUsingItem();
-                if (i >= 20 && i < 38) {
+                if (i == 20) {
                     this.cactem.performHeal(this.healRadius);
                 } else if (i >= 38) {
                     this.cactem.setHealing(false);
                     this.cactem.stopUsingItem();
-                    this.healTime = this.healIntervalMin + this.cactem.random.nextInt(this.healIntervalDiff + 1);
+                    this.cactem.healCooldown = this.healIntervalMin + this.cactem.random.nextInt(this.healIntervalDiff + 1);
                 }
-            } else if (--this.healTime <= 0 && this.cactemNeedsHeal(this.cactem, this.cactem.level)) {
+            } else if (this.cactem.healCooldown <= 0 && this.cactemNeedsHeal(this.cactem, this.cactem.level)) {
                 this.cactem.getNavigation().stop();
                 this.cactem.setHealing(true);
                 this.cactem.startUsingItem(this.cactem.getUsedItemHand());
