@@ -428,7 +428,7 @@ public class YetiEntity extends TamableAnimal implements IAnimatable, Enemy, Neu
         } else if (this.isAttacking()) {
             event.getController().setAnimation(new AnimationBuilder().addAnimation("yeti_attack"));
         } else if (!(animationSpeed > -0.15F && animationSpeed < 0.15F)) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("yeti_walk"));
+            event.getController().setAnimation(new AnimationBuilder().addAnimation(this.isBaby() ? "yeti_baby_walk" : "yeti_adult_walk"));
         } else {
             event.getController().setAnimation(new AnimationBuilder().addAnimation("yeti_idle"));
         }
