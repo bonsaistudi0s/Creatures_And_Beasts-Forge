@@ -141,7 +141,7 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 12.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.4D);
+                .add(Attributes.MOVEMENT_SPEED, 0.18D);
     }
 
     @Override
@@ -154,6 +154,11 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
             @Override
             public boolean canUse() {
                 return !((LizardEntity) this.mob).isPartying() && super.canUse();
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                return !((LizardEntity) this.mob).isPartying() && super.canContinueToUse();
             }
         });
         this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 6.0F));
@@ -168,7 +173,7 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
         if (this.jukeboxPosition != null) {
             BlockEntity te = this.level.getBlockEntity(this.jukeboxPosition);
             Vec3 pos = this.position();
-            if (!this.jukeboxPosition.closerThan(new Vec3i(pos.x, pos.y, pos.z), 10.0D) || !(te instanceof JukeboxBlockEntity) || ((JukeboxBlockEntity) te).getRecord() == ItemStack.EMPTY) {
+            if (!this.jukeboxPosition.closerThan(new Vec3i(pos.x, pos.y, pos.z), 10.0D) || !(te instanceof JukeboxBlockEntity)) {
                 this.setPartying(false, null);
             }
         }
@@ -210,8 +215,10 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
                 } else {
                     this.setLizardType(CNBLizardTypes.JUNGLE_2);
                 }
+            }  else if (biomeKey.get().equals(Biomes.MUSHROOM_FIELDS)) {
+                this.setLizardType(CNBLizardTypes.MUSHROOM);
             } else {
-                switch (random.nextInt(4)) {
+                switch (random.nextInt(5)) {
                     case 0:
                         this.setLizardType(CNBLizardTypes.DESERT);
                         break;
@@ -224,6 +231,9 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
                     case 3:
                     default:
                         this.setLizardType(CNBLizardTypes.JUNGLE_2);
+                        break;
+                    case 4:
+                        this.setLizardType(CNBLizardTypes.MUSHROOM);
                         break;
                 }
             }
@@ -447,7 +457,7 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
         if (this.entityData.get(LAYING_EGG)) {
             event.getController().setAnimation(new AnimationBuilder().addAnimation("lizard_dig", true));
             return PlayState.CONTINUE;
-        } else if (!(animationSpeed > -0.15F && animationSpeed < 0.15F)) {
+        } else if (!(animationSpeed > -0.13F && animationSpeed < 0.13F)) {
             event.getController().setAnimation(new AnimationBuilder().addAnimation("lizard_walk", true));
             return PlayState.CONTINUE;
         } else if (this.isPartying()) {
