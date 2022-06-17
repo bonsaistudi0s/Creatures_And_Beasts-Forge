@@ -38,7 +38,7 @@ public class LizardEggBlock extends Block {
     private LizardType parent2;
 
     public LizardEggBlock() {
-        super(BlockBehaviour.Properties.of(Material.EGG, MaterialColor.SAND).strength(0.5F).sound(SoundType.METAL).strength(1.5F, 6.0F).randomTicks().noOcclusion());
+        super(BlockBehaviour.Properties.of(Material.EGG, MaterialColor.SAND).strength(0.5F).sound(SoundType.METAL).randomTicks().noOcclusion());
         this.registerDefaultState(this.stateDefinition.any().setValue(EGGS, 1));
         this.parent1 = CNBLizardTypes.DESERT;
         this.parent2 = CNBLizardTypes.JUNGLE;
