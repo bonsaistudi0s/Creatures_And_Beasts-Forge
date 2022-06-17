@@ -525,6 +525,12 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
             return super.canContinueToUse() && this.lizard.hasEgg();
         }
 
+        @Override
+        public void stop() {
+            super.stop();
+            this.lizard.setLayingEgg(false);
+        }
+
         public void tick() {
             super.tick();
             BlockPos blockpos = this.lizard.blockPosition();
@@ -547,8 +553,10 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
                 if (this.lizard.isLayingEgg()) {
                     ++this.lizard.layEggCounter;
                 }
+            } else if (!this.isReachedTarget()) {
+                this.lizard.setLayingEgg(false);
+                this.moveMobToBlock();
             }
-
         }
 
         protected boolean isValidTarget(LevelReader levelReader, BlockPos pos) {
