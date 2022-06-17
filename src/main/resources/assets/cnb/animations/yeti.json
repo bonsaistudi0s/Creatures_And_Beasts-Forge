@@ -412,65 +412,105 @@
           }
         }
       },
-		"yeti_attack": {
-			"animation_length": 1.16,
-			"bones": {
-				"bone": {
-					"rotation": {
-						"0.0": [0, 0, 0],
-						"0.4": [0, 0, 0]
-					}
-				},
-				"Body": {
-					"rotation": {
-						"0.0": [0, 0, 0],
-						"0.4": [-30, 0, 0],
-						"0.68": [10, 0, 0],
-						"0.8": [7.5, 0, 0],
-						"1.16": [0, 0, 0]
-					}
-				},
-				"Head2": {
-					"rotation": {
-						"0.0": [0, 0, 0],
-						"0.4": [22.5, 0, 0],
-						"0.68": [-5, 0, 0],
-						"0.92": [22.5, 0, 0],
-						"1.16": [0, 0, 0]
-					}
-				},
-				"RightArm": {
-					"rotation": {
-						"0.0": [0, 0, 0],
-						"0.4": [-115, 22.5, 0],
-						"0.56": [-140, 22.5, 0],
-						"0.72": [-52.5, 22.5, 0],
-						"0.88": [-57.5, 22.5, 0],
-						"1.16": [0, 0, 0]
-					}
-				},
-				"LeftArm": {
-					"rotation": {
-						"0.0": [0, 0, 0],
-						"0.4": [-115, -25, 0],
-						"0.56": [-140, -25, 0],
-						"0.8": [-52.5, -22.5, 0],
-						"0.88": [-55, -25, 0],
-						"1.04": [0, 0, 0]
-					}
-				}
-			},
-			"sound_effects": {
-				"0.56": {
-					"effect": "hit.ground.sound"
-				}
-			},
-			"particle_effects": {
-				"0.56": {
-					"effect": "hit.ground.particle"
-				}
-			}
-		},
+      "yeti_attack": {
+        "animation_length": 1.16,
+        "bones": {
+          "body": {
+            "rotation": {
+              "0.0": {
+                "vector": [0, 0, 0]
+              },
+              "0.4": {
+                "vector": [-30, 0, 0],
+                "easing": "easeInOutQuad"
+              },
+              "0.68": {
+                "vector": [10, 0, 0],
+                "easing": "easeInCubic"
+              },
+              "0.8": {
+                "vector": [7.5, 0, 0]
+              },
+              "1.16": {
+                "vector": [0, 0, 0],
+                "easing": "easeInOutQuint"
+              }
+            }
+          },
+          "Head2": {
+            "rotation": {
+              "0.0": {
+                "vector": [0, 0, 0]
+              },
+              "0.4": {
+                "vector": [22.5, 0, 0],
+                "easing": "easeOutQuad"
+              },
+              "0.68": {
+                "vector": [-5, 0, 0],
+                "easing": "easeInOutCubic"
+              },
+              "0.92": {
+                "vector": [22.5, 0, 0],
+                "easing": "easeOutQuart"
+              },
+              "1.16": {
+                "vector": [0, 0, 0],
+                "easing": "easeInOutCubic"
+              }
+            }
+          },
+          "right_arm": {
+            "rotation": {
+              "0.0": {
+                "vector": [0, 0, 0]
+              },
+              "0.4": {
+                "vector": [-115, 22.5, 0],
+                "easing": "easeInOutCubic"
+              },
+              "0.56": {
+                "vector": [-140, 22.5, 0]
+              },
+              "0.72": {
+                "vector": [-52.5, 22.5, 0]
+              },
+              "0.88": {
+                "vector": [-57.5, 22.5, 0]
+              },
+              "1.16": {
+                "vector": [0, 0, 0],
+                "easing": "easeInOutCubic"
+              }
+            }
+          },
+          "left_arm": {
+            "rotation": {
+              "0.0": {
+                "vector": [0, 0, 0]
+              },
+              "0.4": {
+                "vector": [-115, -25, 0],
+                "easing": "easeInOutCubic"
+              },
+              "0.56": {
+                "vector": [-140, -25, 0]
+              },
+              "0.8": {
+                "vector": [-52.5, -22.5, 0],
+                "easing": "easeInOutQuad"
+              },
+              "0.88": {
+                "vector": [-55, -25, 0]
+              },
+              "1.04": {
+                "vector": [0, 0, 0],
+                "easing": "easeInOutCubic"
+              }
+            }
+          }
+        }
+      },
 		"yeti_adult_eat": {
 			"animation_length": 1.56,
 			"bones": {
