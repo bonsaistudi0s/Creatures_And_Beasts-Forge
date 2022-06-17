@@ -218,7 +218,7 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
             }  else if (biomeKey.get().equals(Biomes.MUSHROOM_FIELDS)) {
                 this.setLizardType(CNBLizardTypes.MUSHROOM);
             } else {
-                switch (random.nextInt(5)) {
+                switch (random.nextInt(4)) {
                     case 0:
                         this.setLizardType(CNBLizardTypes.DESERT);
                         break;
@@ -231,9 +231,6 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
                     case 3:
                     default:
                         this.setLizardType(CNBLizardTypes.JUNGLE_2);
-                        break;
-                    case 4:
-                        this.setLizardType(CNBLizardTypes.MUSHROOM);
                         break;
                 }
             }
