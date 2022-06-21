@@ -408,6 +408,16 @@ public class YetiEntity extends TamableAnimal implements IAnimatable, Enemy, Neu
     }
 
     @Override
+    public int getMaxHeadYRot() {
+        return 50;
+    }
+
+    @Override
+    public int getMaxHeadXRot() {
+        return 25;
+    }
+
+    @Override
     protected SoundEvent getAmbientSound() {
         return this.isBaby() ? null : CNBSoundEvents.YETI_AMBIENT.get();
     }

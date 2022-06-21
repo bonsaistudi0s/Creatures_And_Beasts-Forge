@@ -5,7 +5,10 @@ import com.cgessinger.creaturesandbeasts.entities.LittleGrebeEntity;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
+import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
+import software.bernie.geckolib3.model.provider.data.EntityModelData;
 
 @OnlyIn(Dist.CLIENT)
 public class LittleGrebeModel extends AnimatedGeoModel<LittleGrebeEntity> {
@@ -30,6 +33,16 @@ public class LittleGrebeModel extends AnimatedGeoModel<LittleGrebeEntity> {
     @Override
     public ResourceLocation getAnimationResource(LittleGrebeEntity entity) {
         return LITTLE_GREBE_ANIMATIONS;
+    }
+
+    @Override
+    public void setLivingAnimations(LittleGrebeEntity entity, Integer uniqueID, AnimationEvent customPredicate) {
+        super.setLivingAnimations(entity, uniqueID, customPredicate);
+        IBone head = this.getAnimationProcessor().getBone("head");
+
+        EntityModelData extraData = (EntityModelData) customPredicate.getExtraDataOfType(EntityModelData.class).get(0);
+        head.setRotationX(head.getRotationX() + extraData.headPitch * ((float) Math.PI / 180F));
+        head.setRotationY(head.getRotationY() + extraData.netHeadYaw * ((float) Math.PI / 180F));
     }
 
 }
