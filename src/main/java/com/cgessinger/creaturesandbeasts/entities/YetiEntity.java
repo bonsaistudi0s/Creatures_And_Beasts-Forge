@@ -172,7 +172,7 @@ public class YetiEntity extends TamableAnimal implements IAnimatable, Enemy, Neu
             this.setEating(false);
         }
 
-        if (this.attackTimer == 10) {
+        if (this.attackTimer == 10 && !this.isDeadOrDying()) {
             this.performAttack();
         } else if (this.attackTimer == 0) {
             this.setAttacking(false);
@@ -535,6 +535,12 @@ public class YetiEntity extends TamableAnimal implements IAnimatable, Enemy, Neu
             if (distance <= d0 && this.yeti.attackTimer <= 0 && this.ticksUntilNextAttack <= 0) {
                 this.resetAttackCooldown();
             }
+        }
+
+        @Override
+        public void stop() {
+            super.stop();
+            this.yeti.setAttacking(false);
         }
 
         @Override
