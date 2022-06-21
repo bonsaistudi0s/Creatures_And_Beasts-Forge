@@ -10,6 +10,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -25,13 +26,14 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.registries.RegistryObject;
 
 import java.util.Objects;
 
-public class SporelingSpawnEggItem extends CNBSpawnEggItem {
+public class SporelingSpawnEggItem extends ForgeSpawnEggItem {
 
-    public SporelingSpawnEggItem(final RegistryObject<? extends EntityType<?>> entityTypeSupplier, final int primaryColor, final int secondaryColor, final Properties properties) {
+    public SporelingSpawnEggItem(final RegistryObject<? extends EntityType<? extends Mob>> entityTypeSupplier, final int primaryColor, final int secondaryColor, final Properties properties) {
         super(entityTypeSupplier, primaryColor, secondaryColor, properties);
     }
 
