@@ -438,21 +438,25 @@ public class YetiEntity extends TamableAnimal implements IAnimatable, Enemy, Neu
 
     private <E extends IAnimatable> void soundListener(SoundKeyframeEvent<E> event) {
         LocalPlayer player = Minecraft.getInstance().player;
-        player.playSound(CNBSoundEvents.YETI_HIT.get(), 0.4F, 1F);
+        if (event.sound.equals("hit.ground.sound")) {
+            player.playSound(CNBSoundEvents.YETI_HIT.get(), 0.4F, 1.0F);
+        } else if (event.sound.equals("yeti_ambient")) {
+            player.playSound(CNBSoundEvents.YETI_AMBIENT.get(), 1.0F, 1.0F);
+        }
     }
 
     private <E extends IAnimatable> void particleListener(ParticleKeyFrameEvent<E> event) {
         ParticleEngine manager = Minecraft.getInstance().particleEngine;
         BlockPos pos = this.blockPosition();
 
-        if ("hit.ground.particle".equals(event.effect)) {
+        if (event.effect.equals("hit.ground.particle")) {
             for (int x = pos.getX() - 1; x <= pos.getX() + 1; x++) {
                 for (int z = pos.getZ() - 1; z <= pos.getZ() + 1; z++) {
                     BlockPos newPos = new BlockPos(x, pos.getY() - 1, z);
                     manager.destroy(newPos, this.level.getBlockState(newPos));
                 }
             }
-        } else if ("eat.particle".equals(event.effect)) {
+        } else if (event.effect.equals("eat.particle")) {
             spawnParticles(ParticleTypes.HAPPY_VILLAGER);
         }
     }

@@ -509,46 +509,119 @@
               }
             }
           }
+        },
+        "sound_effects": {
+          "0.12": {
+            "effect": "yeti_ambient"
+          },
+          "o.56": {
+            "effect": "hit.ground.sound"
+          }
+        },
+        "particle_effects": {
+          "0.56": {
+            "effect": "hit.ground.particle"
+          }
         }
       },
-		"yeti_adult_eat": {
-			"animation_length": 1.56,
-			"bones": {
-				"Head": {
-					"rotation": {
-						"0.0": [0, 0, 0],
-						"0.52": [7.5, 7.5, 0],
-						"0.68": [0, 7.5, 0],
-						"0.84": [7.5, 7.5, 0],
-						"1.0": [0, 7.5, 0],
-						"1.16": [7.5, 7.5, 0],
-						"1.56": [0, 0, 0]
-					}
-				},
-				"bone20": {
-					"rotation": {
-						"0.0": [0, 0, 0],
-						"0.12": [0, 0, 0],
-						"0.68": [27.5, 0, 0],
-						"0.84": [0, 0, 0],
-						"1.0": [27.5, 0, 0],
-						"1.16": [0, 0, 0]
-					}
-				},
-				"RightArm": {
-					"rotation": {
-						"0.0": [0, 0, 0],
-						"0.36": [-80, -7, -20],
-						"0.52": [-80, -2, -20],
-						"0.68": [-80, -7, -20],
-						"0.84": [-80, -2, -20],
-						"1.0": [-80, -7, -20],
-						"1.16": [-80, -2, -20],
-						"1.56": [0, 0, 0]
-					}
-				}
-			}
-		},
+      "yeti_adult_eat": {
+        "animation_length": 1.56,
+        "bones": {
+          "Head": {
+            "rotation": {
+              "0.0": {
+                "vector": [0, 0, 0]
+              },
+              "0.52": {
+                "vector": [7.5, 7.5, 0],
+                "easing": "easeInOutSine"
+              },
+              "0.68": {
+                "vector": [0, 7.5, 0],
+                "easing": "easeInOutSine"
+              },
+              "0.84": {
+                "vector": [7.5, 7.5, 0],
+                "easing": "easeInOutSine"
+              },
+              "1.0": {
+                "vector": [0, 7.5, 0],
+                "easing": "easeInOutSine"
+              },
+              "1.16": {
+                "vector": [7.5, 7.5, 0],
+                "easing": "easeInOutSine"
+              },
+              "1.56": {
+                "vector": [0, 0, 0],
+                "easing": "easeInOutSine"
+              }
+            }
+          },
+          "bone20": {
+            "rotation": {
+              "0.0": {
+                "vector": [0, 0, 0]
+              },
+              "0.12": {
+                "vector": [0, 0, 0],
+                "easing": "easeInOutSine"
+              },
+              "0.68": {
+                "vector": [27.5, 0, 0],
+                "easing": "easeInOutSine"
+              },
+              "0.84": {
+                "vector": [0, 0, 0],
+                "easing": "easeInOutSine"
+              },
+              "1.0": {
+                "vector": [27.5, 0, 0],
+                "easing": "easeInOutSine"
+              },
+              "1.16": {
+                "vector": [0, 0, 0],
+                "easing": "easeInOutSine"
+              }
+            }
+          },
+          "right_arm": {
+            "rotation": {
+              "0.0": {
+                "vector": [0, 0, 0]
+              },
+              "0.36": {
+                "vector": [-80, -7, -20],
+                "easing": "easeInOutSine"
+              },
+              "0.52": {
+                "vector": [-80, -2, -20],
+                "easing": "easeInOutSine"
+              },
+              "0.68": {
+                "vector": [-80, -7, -20],
+                "easing": "easeInOutSine"
+              },
+              "0.84": {
+                "vector": [-80, -2, -20],
+                "easing": "easeInOutSine"
+              },
+              "1.0": {
+                "vector": [-80, -7, -20],
+                "easing": "easeInOutSine"
+              },
+              "1.16": {
+                "vector": [-80, -2, -20],
+                "easing": "easeInOutSine"
+              },
+              "1.56": {
+                "vector": [0, 0, 0],
+                "easing": "easeInOutQuad"
+              }
+            }
+          }
+        }
+      },
 		"yeti_baby_eat": {
 			"animation_length": 1.56,
 			"bones": {
