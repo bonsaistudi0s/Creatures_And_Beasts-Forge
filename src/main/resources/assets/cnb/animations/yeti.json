@@ -698,9 +698,6 @@
 					"effect": "eat.particle"
 				}
 			}
-		},
-		"yeti_idle": {
-			"loop": true
 		}
 	},
 	"geckolib_format_version": 2,
