@@ -783,6 +783,16 @@ public class CindershellEntity extends Animal implements IAnimatable, Bucketable
         return super.getSoundVolume() * 2;
     }
 
+    @Override
+    public int getMaxHeadYRot() {
+        return 50;
+    }
+
+    @Override
+    public int getMaxHeadXRot() {
+        return 25;
+    }
+
     private <E extends IAnimatable> PlayState animationPredicate(AnimationEvent<E> event) {
         if (!(animationSpeed > -0.05F && animationSpeed < 0.05F)) {
             event.getController().setAnimation(new AnimationBuilder().addAnimation(this.isBaby() ? "baby_cindershell_walk" : "cindershell_walk"));

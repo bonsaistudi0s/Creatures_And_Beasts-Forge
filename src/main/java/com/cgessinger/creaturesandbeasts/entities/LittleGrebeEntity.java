@@ -190,6 +190,16 @@ public class LittleGrebeEntity extends Animal implements IAnimatable {
     }
 
     @Override
+    public int getMaxHeadYRot() {
+        return 60;
+    }
+
+    @Override
+    public int getMaxHeadXRot() {
+        return 35;
+    }
+
+    @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(TRAVEL_POS, new BlockPos(0, 2, 0));

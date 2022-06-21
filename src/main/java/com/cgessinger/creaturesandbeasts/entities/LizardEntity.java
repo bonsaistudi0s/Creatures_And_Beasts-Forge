@@ -445,6 +445,16 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
         return LizardType.getById(this.entityData.get(TYPE));
     }
 
+    @Override
+    public int getMaxHeadYRot() {
+        return 50;
+    }
+
+    @Override
+    public int getMaxHeadXRot() {
+        return 35;
+    }
+
     private <E extends IAnimatable> PlayState animationPredicate(AnimationEvent<E> event) {
         if (this.entityData.get(LAYING_EGG)) {
             event.getController().setAnimation(new AnimationBuilder().addAnimation("lizard_dig", true));
