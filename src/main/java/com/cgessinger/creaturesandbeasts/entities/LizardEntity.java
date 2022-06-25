@@ -60,6 +60,7 @@ import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.ForgeRegistries;
 import software.bernie.geckolib3.core.IAnimatable;
@@ -458,6 +459,11 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
     @Override
     public int getMaxHeadXRot() {
         return 35;
+    }
+
+    @Override
+    public ItemStack getPickedResult(HitResult target) {
+        return new ItemStack(this.getLizardType().getSpawnItem());
     }
 
     private <E extends IAnimatable> PlayState animationPredicate(AnimationEvent<E> event) {
