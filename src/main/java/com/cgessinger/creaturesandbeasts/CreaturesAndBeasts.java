@@ -16,7 +16,6 @@ import com.cgessinger.creaturesandbeasts.init.CNBPaintingTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBParticleTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBSoundEvents;
 import com.cgessinger.creaturesandbeasts.init.CNBSporelingTypes;
-import com.cgessinger.creaturesandbeasts.items.CNBSpawnEggItem;
 import com.cgessinger.creaturesandbeasts.world.gen.ModEntitySpawns;
 import com.electronwill.nightconfig.core.io.ParsingException;
 import net.minecraft.client.renderer.item.ItemProperties;
@@ -105,8 +104,6 @@ public class CreaturesAndBeasts {
         flowerPot.addPlant(CNBBlocks.PINK_WATERLILY_BLOCK.getId(), CNBBlocks.POTTED_PINK_WATERLILY);
         flowerPot.addPlant(CNBBlocks.LIGHT_PINK_WATERLILY_BLOCK.getId(), CNBBlocks.POTTED_LIGHT_PINK_WATERLILY);
         flowerPot.addPlant(CNBBlocks.YELLOW_WATERLILY_BLOCK.getId(), CNBBlocks.POTTED_YELLOW_WATERLILY);
-
-        CNBSpawnEggItem.initUnaddedEggs();
     }
 
     private void clientSetup(final FMLClientSetupEvent event) {
