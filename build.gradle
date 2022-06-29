@@ -111,7 +111,7 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.19-41.0.45'
+    minecraft 'net.minecraftforge:forge:1.19-41.0.62'
     annotationProcessor 'org.spongepowered:mixin:0.8.4:processor'
 
     // Geckolib for ingame animations
