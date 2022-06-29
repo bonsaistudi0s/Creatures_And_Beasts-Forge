@@ -4,6 +4,7 @@ import com.cgessinger.creaturesandbeasts.capabilities.CinderSwordCapability;
 import com.cgessinger.creaturesandbeasts.client.CNBClient;
 import com.cgessinger.creaturesandbeasts.config.CNBConfig;
 import com.cgessinger.creaturesandbeasts.events.CNBEvents;
+import com.cgessinger.creaturesandbeasts.init.CNBBiomeModifiers;
 import com.cgessinger.creaturesandbeasts.init.CNBBlocks;
 import com.cgessinger.creaturesandbeasts.init.CNBContainerTypes;
 import com.cgessinger.creaturesandbeasts.init.CNBEntityTypes;
@@ -67,6 +68,7 @@ public class CreaturesAndBeasts {
         CNBSoundEvents.SOUND_EVENTS.register(eventBus);
         CNBEntityTypes.ENTITY_TYPES.register(eventBus);
         CNBLootModifiers.LOOT_MODIFIERS.register(eventBus);
+        CNBBiomeModifiers.BIOME_MODIFIERS.register(eventBus);
 
         CNBSporelingTypes.registerAll();
         CNBLizardTypes.registerAll();

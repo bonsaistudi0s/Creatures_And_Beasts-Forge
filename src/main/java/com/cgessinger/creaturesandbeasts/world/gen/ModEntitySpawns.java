@@ -1,6 +1,5 @@
 package com.cgessinger.creaturesandbeasts.world.gen;
 
-import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
 import com.cgessinger.creaturesandbeasts.entities.CindershellEntity;
 import com.cgessinger.creaturesandbeasts.entities.EndWhaleEntity;
 import com.cgessinger.creaturesandbeasts.entities.LilytadEntity;
@@ -12,62 +11,8 @@ import com.cgessinger.creaturesandbeasts.entities.YetiEntity;
 import com.cgessinger.creaturesandbeasts.init.CNBEntityTypes;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraftforge.fml.common.Mod;
 
-@Mod.EventBusSubscriber(modid = CreaturesAndBeasts.MOD_ID)
 public class ModEntitySpawns {
-
-    /*
-    @SubscribeEvent
-    public static void onBiomeLoad(BiomeLoadingEvent event) {
-        if (event.getCategory() == null) {
-            return;
-        } else if (event.getName() == null) {
-            return;
-        }
-
-        ResourceLocation name = event.getName();
-        ResourceKey<Biome> biome = ResourceKey.create(Registry.BIOME_REGISTRY, name);
-
-        onAddSpawns(event, biome);
-    }
-
-    private static void onAddSpawns(BiomeLoadingEvent event, ResourceKey<Biome> biome) {
-        for (EntitySpawnData spawn : CNBConfig.spawns) {
-            // For safety ;)
-            if (spawn == null) {
-                CreaturesAndBeasts.LOGGER.traceExit(
-                        "SpawnData is null! This should never happen, please report this to the developers at: %s",
-                        ((ModFileInfo) ModList.get().getModFileById(CreaturesAndBeasts.MOD_ID)).getIssueURL().toString());
-                continue;
-            }
-            if (spawn.getEntityType() == null) {
-                CreaturesAndBeasts.LOGGER.traceExit(
-                        "EntityType is null! This should never happen, please report this to the developers at: %s",
-                        ((ModFileInfo) ModList.get().getModFileById(CreaturesAndBeasts.MOD_ID)).getIssueURL().toString());
-                continue;
-            }
-            if (spawn.getBiome() == null) {
-                CreaturesAndBeasts.LOGGER.traceExit(
-                        "Biome is null! This should never happen, please report this to the developers at: %s",
-                        ((ModFileInfo) ModList.get().getModFileById(CreaturesAndBeasts.MOD_ID)).getIssueURL().toString());
-                continue;
-            }
-            if (spawn.getCategory() == null) {
-                CreaturesAndBeasts.LOGGER.traceExit(
-                        "SpawnCategory is null! This should never happen, please report this to the developers at: %s",
-                        ((ModFileInfo) ModList.get().getModFileById(CreaturesAndBeasts.MOD_ID)).getIssueURL().toString());
-                continue;
-            }
-            if (spawn.getBiome().equals(biome)) {
-                event.getSpawns().addSpawn(spawn.getCategory(), new MobSpawnSettings.SpawnerData(spawn.getEntityType(), spawn.getSpawnWeight(), spawn.getMinCount(), spawn.getMaxCount()));
-                if (spawn.getMobCost() > 0 && spawn.getEnergyBudget() > 0) {
-                    event.getSpawns().addMobCharge(spawn.getEntityType(), spawn.getMobCost(), spawn.getEnergyBudget());
-                }
-            }
-        }
-    }
-    */
 
     public static void entitySpawnPlacementRegistry() {
         SpawnPlacements.register(CNBEntityTypes.LITTLE_GREBE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, LittleGrebeEntity::checkGrebeSpawnRules);
@@ -79,4 +24,5 @@ public class ModEntitySpawns {
         SpawnPlacements.register(CNBEntityTypes.MINIPAD.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MinipadEntity::checkMinipadSpawnRules);
         SpawnPlacements.register(CNBEntityTypes.END_WHALE.get(), SpawnPlacements.Type.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, EndWhaleEntity::checkEndWhaleSpawnRules);
     }
+
 }

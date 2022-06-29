@@ -1,0 +1,38 @@
+{
+  "type": "cnb:add_costed_spawns",
+  "entityType": "cnb:lizard",
+  "spawns": [
+    {
+      "biomes": [
+        "minecraft:badlands",
+        "minecraft:wooded_badlands",
+        "minecraft:eroded_badlands",
+        "minecraft:desert"
+      ],
+      "category": "creature",
+      "weight": 15,
+      "min": 1,
+      "max": 4,
+      "cost": 0.0,
+      "budget": 0.0
+    },
+    {
+      "biomes": "#minecraft:is_jungle",
+      "category": "creature",
+      "weight": 100,
+      "min": 1,
+      "max": 4,
+      "cost": 0.0,
+      "budget": 0.0
+    },
+    {
+      "biomes": "#forge:is_mushroom",
+      "category": "creature",
+      "weight": 10,
+      "min": 1,
+      "max": 4,
+      "cost": 0.0,
+      "budget": 0.0
+    }
+  ]
+}
