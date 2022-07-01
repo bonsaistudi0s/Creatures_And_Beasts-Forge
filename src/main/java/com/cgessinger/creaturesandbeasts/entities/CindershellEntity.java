@@ -302,7 +302,7 @@ public class CindershellEntity extends Animal implements IAnimatable, Bucketable
     }
 
     public static boolean checkCindershellSpawnRules(EntityType<CindershellEntity> entity, LevelAccessor level, MobSpawnType mobSpawnType, BlockPos pos, RandomSource random) {
-        return true;
+        return pos.getY() <= 50;
     }
 
     @Override
@@ -747,7 +747,7 @@ public class CindershellEntity extends Animal implements IAnimatable, Bucketable
 
     @Override
     public boolean removeWhenFarAway(double distanceToClosestPlayer) {
-        return !this.hasFurnace();
+        return distanceToClosestPlayer > 256 && !this.hasFurnace();
     }
 
     @Override
