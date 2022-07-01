@@ -9,10 +9,10 @@ displayName="Creatures and Beasts"
 # updateJSONURL="http://myurl.me/"
 displayURL="https://github.com/CreaturesAndBeasts/Creatures_And_Beasts-Forge"
 logoFile="logo.png"
-credits="Thanks for this minecraft mod goes to the authors, Azure Doom, and everyone who contributed to the project"
-authors="Joosh, CGessinger, HellionGames"
+credits="Credits to AzureDoom and Christian for contributions to the code"
+authors="Joosh, CGessinger, and HellionGames"
 description='''
-Creatures and Beasts is a vanilla-style creature mod which fills each biome with new mobs, from the plains of the overworld to the void of the end
+Creatures and Beasts is a vanilla-style creature mod which fills each biome with new mobs, from the plains of the overworld to the void of the end!
 '''
 [[dependencies.cnb]]
     modId="minecraft"
