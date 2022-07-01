@@ -52,7 +52,7 @@ public class CNBConfig {
             EntitySpawnData.of(CNBEntityTypes.END_WHALE.getId(), Biomes.END_HIGHLANDS, MobCategory.CREATURE, 1, 1, 1, 400.0D, 1.0D),
             EntitySpawnData.of(CNBEntityTypes.END_WHALE.getId(), Biomes.END_MIDLANDS, MobCategory.CREATURE, 1, 1, 1, 400.0D, 1.0D),
             EntitySpawnData.of(CNBEntityTypes.END_WHALE.getId(), Biomes.SMALL_END_ISLANDS, MobCategory.CREATURE, 1, 1, 1, 400.0D, 1.0D),
-            EntitySpawnData.of(CNBEntityTypes.CINDERSHELL.getId(), Biomes.NETHER_WASTES, MobCategory.CREATURE, 350, 2, 8, 0, 0),
+            EntitySpawnData.of(CNBEntityTypes.CINDERSHELL.getId(), Biomes.NETHER_WASTES, MobCategory.CREATURE, 400, 2, 8, 0, 0),
             EntitySpawnData.of(CNBEntityTypes.LIZARD.getId(), Biomes.BADLANDS, MobCategory.CREATURE, 15, 1, 4, 0, 0),
             EntitySpawnData.of(CNBEntityTypes.LIZARD.getId(), Biomes.WOODED_BADLANDS, MobCategory.CREATURE, 15, 1, 4, 0, 0),
             EntitySpawnData.of(CNBEntityTypes.LIZARD.getId(), Biomes.ERODED_BADLANDS, MobCategory.CREATURE, 15, 1, 4, 0, 0),

@@ -22,6 +22,7 @@ import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -37,6 +38,7 @@ import net.minecraft.world.entity.ai.util.RandomPos;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -125,7 +127,8 @@ public class MinipadEntity extends Animal implements IForgeShearable, IAnimatabl
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new MinipadFloatGoal(this));
         this.goalSelector.addGoal(1, new MinipadPanicGoal(this, 1.25D));
-        this.goalSelector.addGoal(2, new TryFindWaterGoal(this));
+        //this.goalSelector.addGoal(2, new TryFindWaterGoal(this));
+        this.goalSelector.addGoal(2, new MinipadTryFindWaterGoal(this, 1.0D));
         this.goalSelector.addGoal(3, new MinipadRandomStrollGoal(this, 1.0D, 60, 240));
         this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
@@ -486,6 +489,26 @@ public class MinipadEntity extends Animal implements IForgeShearable, IAnimatabl
         private static BlockPos generateRandomPosTowardDirection(MinipadEntity minipad, int horizontalRange, boolean flag, BlockPos posTowards) {
             BlockPos blockpos = RandomPos.generateRandomPosTowardDirection(minipad, horizontalRange, minipad.getRandom(), posTowards);
             return !GoalUtils.isOutsideLimits(blockpos, minipad) && !GoalUtils.isRestricted(flag, minipad, blockpos) && !GoalUtils.hasMalus(minipad, blockpos) && (!GoalUtils.isNotStable(minipad.getNavigation(), blockpos) || GoalUtils.isWater(minipad, blockpos)) ? blockpos : null;
+        }
+    }
+
+    static class MinipadTryFindWaterGoal extends TryFindWaterGoal {
+        private final MinipadEntity minipad;
+        private final double speedModifier;
+
+        public MinipadTryFindWaterGoal(MinipadEntity minipad, double speedModifier) {
+            super(minipad);
+            this.minipad = minipad;
+            this.speedModifier = speedModifier;
+        }
+
+        @Override
+        public void start() {
+                BlockPos blockpos = this.minipad.blockPosition();
+                BlockPos waterPos = this.minipad.level.getBlockState(blockpos).getCollisionShape(this.minipad.level, blockpos).isEmpty() ? null : BlockPos.findClosestMatch(this.minipad.blockPosition(), 16, 5, (pos) -> this.minipad.level.getFluidState(pos).is(FluidTags.WATER)).orElse(null);
+                if (waterPos != null) {
+                    this.minipad.getNavigation().moveTo(waterPos.getX(), waterPos.getY(), waterPos.getZ(), this.speedModifier);
+                }
         }
     }
 }
