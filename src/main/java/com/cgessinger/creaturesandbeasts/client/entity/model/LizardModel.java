@@ -3,12 +3,10 @@ package com.cgessinger.creaturesandbeasts.client.entity.model;
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
 import com.cgessinger.creaturesandbeasts.entities.LizardEntity;
 import com.cgessinger.creaturesandbeasts.init.CNBLizardTypes;
-import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.model.provider.data.EntityModelData;
@@ -45,14 +43,12 @@ public class LizardModel extends AnimatedGeoModel<LizardEntity> {
     public void setLivingAnimations(LizardEntity entity, Integer uniqueID, AnimationEvent customPredicate) {
         super.setLivingAnimations(entity, uniqueID, customPredicate);
 
-        IBone head = this.getAnimationProcessor().getBone("head");
+        IBone head_rotation = this.getAnimationProcessor().getBone("head_rotation");
+
         EntityModelData extraData = (EntityModelData) customPredicate.getExtraDataOfType(EntityModelData.class).get(0);
 
-        AnimationData manager = entity.getFactory().getOrCreateAnimationData(uniqueID);
-        int unpausedMultiplier = !Minecraft.getInstance().isPaused() || manager.shouldPlayWhilePaused ? 1 : 0;
-
-        head.setRotationX(head.getRotationX() + extraData.headPitch * ((float) Math.PI / 180F) * unpausedMultiplier);
-        head.setRotationY(head.getRotationY() + extraData.netHeadYaw * ((float) Math.PI / 180F) * unpausedMultiplier);
+        head_rotation.setRotationX(extraData.headPitch * ((float) Math.PI / 180F));
+        head_rotation.setRotationY(extraData.netHeadYaw * ((float) Math.PI / 180F));
     }
 
 }

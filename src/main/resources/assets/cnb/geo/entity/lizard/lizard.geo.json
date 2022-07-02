@@ -73,8 +73,13 @@
 					]
 				},
 				{
-					"name": "head",
+					"name": "head_rotation",
 					"parent": "neck",
+					"pivot": [0, 2, -6.5]
+				},
+				{
+					"name": "head",
+					"parent": "head_rotation",
 					"pivot": [0, 2.0108, -6.515],
 					"rotation": [7.49429, 0, 0],
 					"cubes": [

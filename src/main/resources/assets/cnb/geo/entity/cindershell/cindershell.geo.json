@@ -35,10 +35,23 @@
 					]
 				},
 				{
-					"name": "head",
+					"name": "head_rotation",
 					"parent": "body",
 					"pivot": [0, 10, -10]
 				},
+				{
+					"name": "head",
+					"parent": "head_rotation",
+					"pivot": [0, 10, -10]
+				},
+                {
+                    "name": "itemHolder",
+                    "parent": "head",
+                    "pivot": [0, 9, -22],
+                    "cubes": [
+                        {"origin": [0, 9, -22], "size": [0, 0, 0], "uv": [0, 0]}
+                    ]
+                },
 				{
 					"name": "lower_jaw",
 					"parent": "head",
@@ -58,14 +71,6 @@
 						{"origin": [-3, 9.98, -22], "size": [6, 3, 12], "uv": [0, 55]}
 					]
 				},
-                {
-                    "name": "itemHolder",
-                    "parent": "head",
-                    "pivot": [0, 9, -22],
-                    "cubes": [
-                      {"origin": [0, 9, -22], "size": [0, 0, 0], "uv": [0, 0]}
-                    ]
-                },
 				{
 					"name": "left_leg",
 					"parent": "main",
