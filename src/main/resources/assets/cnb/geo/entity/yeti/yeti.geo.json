@@ -84,6 +84,14 @@
 						{"origin": [-5.3, 36.8152, -5.1], "size": [0, 15, 21], "uv": [44, 48], "mirror": true}
 					]
 				},
+                {
+                    "name": "ItemHolder",
+                    "parent": "right_arm",
+                    "pivot": [-7, 16.5, 1],
+                    "cubes": [
+                        {"origin": [-7, 16.5, 1], "size": [0, 0, 0], "uv": [0, 0]}
+                    ]
+                },
 				{
 					"name": "Neck",
 					"parent": "Body3",
@@ -94,8 +102,13 @@
 					]
 				},
 				{
-					"name": "Head2",
+					"name": "head_rotation",
 					"parent": "Neck",
+					"pivot": [0, 41.7, -8.8]
+				},
+				{
+					"name": "Head2",
+					"parent": "head_rotation",
 					"pivot": [0, 41.7, -8.8]
 				},
 				{
