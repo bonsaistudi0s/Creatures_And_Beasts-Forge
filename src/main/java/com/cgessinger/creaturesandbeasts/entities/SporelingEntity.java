@@ -449,7 +449,7 @@ public class SporelingEntity extends TamableAnimal implements IAnimatable {
     @Override
     public void rideTick() {
         super.rideTick();
-        if (this.isPassenger() && (this.getFluidHeight(FluidTags.WATER) > this.getFluidJumpThreshold() || this.getVehicle().getVehicle() instanceof EndWhaleEntity)) {
+        if (this.isPassenger() && (this.getVehicle().isSpectator() || this.getFluidHeight(FluidTags.WATER) > this.getFluidJumpThreshold() || this.getVehicle().getVehicle() instanceof EndWhaleEntity || this.getVehicle().isVisuallySwimming())) {
             this.stopRiding();
             this.setOrderedToSit(false);
         }
