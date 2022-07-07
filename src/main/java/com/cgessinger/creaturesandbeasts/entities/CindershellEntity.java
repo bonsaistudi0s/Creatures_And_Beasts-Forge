@@ -200,9 +200,8 @@ public class CindershellEntity extends Animal implements IAnimatable, Bucketable
         if (this.hasFurnace()) {
             if (tag.contains("Player") && this.level.getPlayerByUUID(tag.getUUID("Player")) != null) {
                 this.inventory = this.createMenu(this.getId(), this.level.getPlayerByUUID(tag.getUUID("Player")).getInventory(), this.level.getPlayerByUUID(tag.getUUID("Player")));
-            } else {
-                Player player = Minecraft.getInstance().player;
-                this.inventory = this.createMenu(this.getId(), player.getInventory(), player);
+            } else  {
+                this.inventory = this.createMenu(this.getId(), new Inventory(null), null);
             }
             ListTag listtag = tag.getList("Items", 10);
 
@@ -281,6 +280,13 @@ public class CindershellEntity extends Animal implements IAnimatable, Bucketable
                     this.cookingProgress = 0;
                 }
             }
+        }
+    }
+
+    @Override
+    protected void handleNetherPortal() {
+        if (!this.hasFurnace()) {
+            super.handleNetherPortal();
         }
     }
 
