@@ -440,6 +440,7 @@ public class YetiEntity extends TamableAnimal implements IAnimatable, Enemy, Neu
         } else if (!(animationSpeed > -0.15F && animationSpeed < 0.15F)) {
             event.getController().setAnimation(new AnimationBuilder().addAnimation(this.isBaby() ? "yeti_baby_walk" : "yeti_adult_walk"));
         } else {
+            event.getController().markNeedsReload();
             return PlayState.STOP;
         }
 
