@@ -36,7 +36,6 @@ import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.infernalstudios.config.Config;
-import software.bernie.geckolib3.GeckoLib;
 
 import java.io.IOException;
 
@@ -52,7 +51,7 @@ public class CreaturesAndBeasts {
     };
 
     public CreaturesAndBeasts() {
-        IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        final IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         eventBus.addListener(this::commonSetup);
         eventBus.addListener(this::clientSetup);
@@ -71,10 +70,7 @@ public class CreaturesAndBeasts {
         CNBLilytadTypes.registerAll();
         CNBMinipadTypes.registerAll();
 
-        MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(new CNBEvents());
-
-        GeckoLib.initialize();
 
         try {
             CNBConfig.CONFIG = Config
