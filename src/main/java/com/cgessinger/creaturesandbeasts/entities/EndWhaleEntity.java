@@ -565,7 +565,6 @@ public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, Saddl
             this.player = null;
             this.endWhale.getNavigation().stop();
             this.calmDown = reducedTickDelay(100);
-            this.endWhale.navigation.stop();
         }
 
         @Override
