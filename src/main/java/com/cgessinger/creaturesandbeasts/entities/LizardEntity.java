@@ -18,7 +18,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -62,7 +61,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.registries.ForgeRegistries;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -72,7 +70,6 @@ import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 import javax.annotation.Nullable;
-import java.util.Optional;
 
 public class LizardEntity extends Animal implements IAnimatable, Netable {
     private static final EntityDataAccessor<String> TYPE = SynchedEntityData.defineId(LizardEntity.class, EntityDataSerializers.STRING);
@@ -196,15 +193,14 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, MobSpawnType reason, @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
         Holder<Biome> biome = worldIn.getBiome(this.blockPosition());
-        Optional<ResourceKey<Biome>> biomeKey = ForgeRegistries.BIOMES.getResourceKey(biome.get());
 
         if (reason == MobSpawnType.SPAWN_EGG && dataTag != null && dataTag.contains("LizardType")) {
             LizardType type = LizardType.getById(dataTag.getString("LizardType"));
             if (type != null) {
                 this.setLizardType(type);
             }
-        } else if (biomeKey.isPresent()) {
-            if (biomeKey.get().equals(Biomes.DESERT) || biome.is(BiomeTags.IS_BADLANDS)) {
+        } else {
+            if (biome.is(Biomes.DESERT) || biome.is(BiomeTags.IS_BADLANDS)) {
                 if (random.nextBoolean()) {
                     this.setLizardType(CNBLizardTypes.DESERT);
                 } else {
@@ -216,7 +212,7 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
                 } else {
                     this.setLizardType(CNBLizardTypes.JUNGLE_2);
                 }
-            }  else if (biomeKey.get().equals(Biomes.MUSHROOM_FIELDS)) {
+            }  else if (biome.is(Biomes.MUSHROOM_FIELDS)) {
                 this.setLizardType(CNBLizardTypes.MUSHROOM);
             } else {
                 switch (random.nextInt(4)) {

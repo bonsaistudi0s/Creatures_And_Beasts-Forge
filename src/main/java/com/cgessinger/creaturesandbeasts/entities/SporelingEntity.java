@@ -11,7 +11,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.BiomeTags;
@@ -57,7 +56,6 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.registries.ForgeRegistries;
 import software.bernie.geckolib3.core.AnimationState;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
@@ -69,7 +67,6 @@ import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 import javax.annotation.Nullable;
-import java.util.Optional;
 
 import static com.cgessinger.creaturesandbeasts.util.SporelingType.SporelingHostility.FRIENDLY;
 import static com.cgessinger.creaturesandbeasts.util.SporelingType.SporelingHostility.HOSTILE;
@@ -304,48 +301,44 @@ public class SporelingEntity extends TamableAnimal implements IAnimatable {
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, MobSpawnType reason, @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
         Holder<Biome> biome = worldIn.getBiome(this.blockPosition());
-        Optional<ResourceKey<Biome>> biomeKey = ForgeRegistries.BIOMES.getResourceKey(biome.get());
 
-        if (biomeKey.isPresent()) {
-            if (reason == MobSpawnType.SPAWN_EGG && dataTag != null && dataTag.contains("EggType")) {
-                String eggType = dataTag.getString("EggType");
-
-                if (eggType.equals("Nether")) {
-                    if (biomeKey.get().equals(Biomes.CRIMSON_FOREST)) {
-                        this.setSporelingType(CNBSporelingTypes.CRIMSON_FUNGUS);
-                    } else if (biomeKey.get().equals(Biomes.WARPED_FOREST)) {
-                        this.setSporelingType(CNBSporelingTypes.WARPED_FUNGUS);
-                    } else {
-                        if (random.nextBoolean()) {
-                            this.setSporelingType(CNBSporelingTypes.RED_NETHER);
-                        } else {
-                            this.setSporelingType(CNBSporelingTypes.BROWN_NETHER);
-                        }
-                    }
-                } else {
-                    if (random.nextBoolean()) {
-                        this.setSporelingType(CNBSporelingTypes.RED_OVERWORLD);
-                    } else {
-                        this.setSporelingType(CNBSporelingTypes.BROWN_OVERWORLD);
-                    }
-                }
-            } else {
-                if (biomeKey.get().equals(Biomes.CRIMSON_FOREST)) {
+        if (reason == MobSpawnType.SPAWN_EGG && dataTag != null && dataTag.contains("EggType")) {
+            String eggType = dataTag.getString("EggType");
+            if (eggType.equals("Nether")) {
+                if (biome.is(Biomes.CRIMSON_FOREST)) {
                     this.setSporelingType(CNBSporelingTypes.CRIMSON_FUNGUS);
-                } else if (biomeKey.get().equals(Biomes.WARPED_FOREST)) {
+                } else if (biome.is(Biomes.WARPED_FOREST)) {
                     this.setSporelingType(CNBSporelingTypes.WARPED_FUNGUS);
-                } else if (biome.is(BiomeTags.IS_NETHER)) {
+                } else {
                     if (random.nextBoolean()) {
                         this.setSporelingType(CNBSporelingTypes.RED_NETHER);
                     } else {
                         this.setSporelingType(CNBSporelingTypes.BROWN_NETHER);
                     }
+                }
+            } else {
+                if (random.nextBoolean()) {
+                    this.setSporelingType(CNBSporelingTypes.RED_OVERWORLD);
                 } else {
-                    if (random.nextBoolean()) {
-                        this.setSporelingType(CNBSporelingTypes.RED_OVERWORLD);
-                    } else {
-                        this.setSporelingType(CNBSporelingTypes.BROWN_OVERWORLD);
-                    }
+                    this.setSporelingType(CNBSporelingTypes.BROWN_OVERWORLD);
+                }
+            }
+        } else {
+            if (biome.is(Biomes.CRIMSON_FOREST)) {
+                this.setSporelingType(CNBSporelingTypes.CRIMSON_FUNGUS);
+            } else if (biome.is(Biomes.WARPED_FOREST)) {
+                this.setSporelingType(CNBSporelingTypes.WARPED_FUNGUS);
+            } else if (biome.is(BiomeTags.IS_NETHER)) {
+                if (random.nextBoolean()) {
+                    this.setSporelingType(CNBSporelingTypes.RED_NETHER);
+                } else {
+                    this.setSporelingType(CNBSporelingTypes.BROWN_NETHER);
+                }
+            } else {
+                if (random.nextBoolean()) {
+                    this.setSporelingType(CNBSporelingTypes.RED_OVERWORLD);
+                } else {
+                    this.setSporelingType(CNBSporelingTypes.BROWN_OVERWORLD);
                 }
             }
         }

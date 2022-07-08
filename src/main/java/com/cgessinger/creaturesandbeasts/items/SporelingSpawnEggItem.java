@@ -71,9 +71,9 @@ public class SporelingSpawnEggItem extends ForgeSpawnEggItem {
 
             CompoundTag itemTag = itemstack.getOrCreateTag();
 
-            if (itemstack.sameItem(CNBItems.SPORELING_OVERWORLD_EGG.get().getDefaultInstance())) {
+            if (itemstack.is(CNBItems.SPORELING_OVERWORLD_EGG.get())) {
                 itemTag.putString("EggType", "Overworld");
-            } else if (itemstack.sameItem(CNBItems.SPORELING_NETHER_EGG.get().getDefaultInstance())) {
+            } else if (itemstack.is(CNBItems.SPORELING_NETHER_EGG.get())) {
                 itemTag.putString("EggType", "Nether");
             }
 
