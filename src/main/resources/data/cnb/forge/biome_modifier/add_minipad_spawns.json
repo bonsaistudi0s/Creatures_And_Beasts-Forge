@@ -1,0 +1,15 @@
+{
+  "type": "cnb:add_costed_spawns",
+  "entityType": "cnb:minipad",
+  "spawns": [
+    {
+      "biomes": "minecraft:swamp",
+      "category": "creature",
+      "weight": 20,
+      "min": 3,
+      "max": 6,
+      "cost": 0.0,
+      "budget": 0.0
+    }
+  ]
+}

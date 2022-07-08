@@ -1,0 +1,15 @@
+{
+  "type": "cnb:add_costed_spawns",
+  "entityType": "cnb:little_grebe",
+  "spawns": [
+    {
+      "biomes": "minecraft:river",
+      "category": "creature",
+      "weight": 35,
+      "min": 2,
+      "max": 3,
+      "cost": 0.0,
+      "budget": 0.0
+    }
+  ]
+}

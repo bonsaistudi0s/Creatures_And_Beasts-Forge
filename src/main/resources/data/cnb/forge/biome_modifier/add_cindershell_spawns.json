@@ -1,0 +1,15 @@
+{
+  "type": "cnb:add_costed_spawns",
+  "entityType": "cnb:cindershell",
+  "spawns": [
+    {
+      "biomes": "minecraft:nether_wastes",
+      "category": "creature",
+      "weight": 400,
+      "min": 2,
+      "max": 8,
+      "cost": 0.0,
+      "budget": 0.0
+    }
+  ]
+}
