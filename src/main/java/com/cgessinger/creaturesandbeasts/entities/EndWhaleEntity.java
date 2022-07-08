@@ -484,19 +484,27 @@ public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, Saddl
             this.endWhale = endWhale;
         }
 
+        @Override
         public boolean canUse() {
-            return this.endWhale.navigation.isDone() && this.endWhale.random.nextInt(3) == 0;
+            return this.endWhale.navigation.isDone() && this.endWhale.random.nextInt(3) == 0 && !this.endWhale.isVehicle();
         }
 
+        @Override
         public boolean canContinueToUse() {
-            return this.endWhale.navigation.isInProgress();
+            return this.endWhale.navigation.isInProgress() && !this.endWhale.isVehicle();
         }
 
+        @Override
         public void start() {
             Vec3 vec3 = this.findPos();
             if (vec3 != null) {
                 this.endWhale.navigation.moveTo(this.endWhale.navigation.createPath(new BlockPos(vec3), 3), 1.0D);
             }
+        }
+
+        @Override
+        public void stop() {
+            this.endWhale.navigation.stop();
         }
 
         @Nullable
@@ -532,13 +540,14 @@ public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, Saddl
             this.targetingConditions = TEMP_TARGETING.copy().selector(this::shouldFollow);
         }
 
+        @Override
         public boolean canUse() {
             if (this.calmDown > 0) {
                 --this.calmDown;
                 return false;
             } else {
                 this.player = this.endWhale.level.getNearestPlayer(this.targetingConditions, this.endWhale);
-                return this.player != null;
+                return this.player != null && !this.endWhale.isVehicle();
             }
         }
 
@@ -546,16 +555,20 @@ public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, Saddl
             return this.items.test(entity.getMainHandItem()) || this.items.test(entity.getOffhandItem());
         }
 
+        @Override
         public boolean canContinueToUse() {
             return this.canUse();
         }
 
+        @Override
         public void stop() {
             this.player = null;
             this.endWhale.getNavigation().stop();
             this.calmDown = reducedTickDelay(100);
+            this.endWhale.navigation.stop();
         }
 
+        @Override
         public void tick() {
             this.endWhale.getLookControl().setLookAt(this.player, (float)(this.endWhale.getMaxHeadYRot() + 20), (float)this.endWhale.getMaxHeadXRot());
             if (this.endWhale.distanceToSqr(this.player) < 6.25D) {
