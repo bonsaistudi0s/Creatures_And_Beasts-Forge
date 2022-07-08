@@ -2,41 +2,47 @@ buildscript {
     repositories {
         maven { url = 'https://files.minecraftforge.net/maven' }
         maven { url  = 'https://plugins.gradle.org/m2/' }
+        maven { url = 'https://repo.spongepowered.org/maven/' }
         jcenter()
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath group: 'org.spongepowered',                   name: 'mixingradle', version: '0.7-SNAPSHOT'
         classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.4.0'
     }
 }
+
+plugins {
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+}
+
 apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'eclipse'
-apply plugin: 'maven-publish'
+apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'com.matthewprenger.cursegradle'
 
 import groovy.json.JsonSlurper
 import groovy.json.JsonOutput
 
-version = '1.2.11'
+version = '1.3.2'
 group = 'com.cgessinger.creaturesandbeasts' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "CNB-1.16.3_5"
+archivesBaseName = "CNB-1.18.2"
 
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
-println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 minecraft {
-    mappings channel: 'snapshot', version: '20201028-1.16.3'
+    mappings channel: 'official', version: '1.18.2'
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+
     runs {
         client {
             workingDirectory project.file('run')
 
-            // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
+            arg '-mixin.config=creatures-and-beasts.mixins.json'
 
             mods {
                 cnb {
@@ -48,11 +54,9 @@ minecraft {
         server {
             workingDirectory project.file('run')
 
-            // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
+            arg '-mixin.config=creatures-and-beasts.mixins.json'
 
             mods {
                 cnb {
@@ -63,9 +67,6 @@ minecraft {
 
         data {
             workingDirectory project.file('run')
-
-            // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
@@ -79,14 +80,45 @@ minecraft {
             }
         }
     }
-    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+}
+
+mixin {
+    add sourceSets.main, 'creatures-and-beasts.refmap.json'
+}
+
+configurations {
+    packIntoJar {
+        // If set to false, any dependencies will not be packed into the jar.
+        transitive = false
+    }
+}
+
+shadowJar {
+    classifier ''
+    configurations = [project.configurations.packIntoJar]
+    // This is done to avoid any duplicate package issues.
+    relocate 'org.infernalstudios.config', 'com.cgessinger.creaturesandbeasts.config.library'
+}
+
+reobf {
+    shadowJar {}
+}
+
+repositories {
+    maven { url = 'https://repo.spongepowered.org/maven/' }
+    maven { url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
+    maven { url = 'https://maven.infernalstudios.org/releases' }
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.16.4-35.1.37'
+    minecraft 'net.minecraftforge:forge:1.18.2-40.0.32'
+    annotationProcessor 'org.spongepowered:mixin:0.8.4:processor'
 
     // Geckolib for ingame animations
-    implementation fg.deobf('software.bernie.geckolib:forge-1.16.4-geckolib:3.0.0')
+    implementation fg.deobf('software.bernie.geckolib:geckolib-forge-1.18:3.0.24')
+
+    implementation 'org.infernalstudios:config:3.0.1'
+    packIntoJar 'org.infernalstudios:config:3.0.1'
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..
@@ -94,38 +126,23 @@ jar {
     manifest {
         attributes([
             "Specification-Title": "cnb",
-            "Specification-Vendor": "examplemodsareus",
+            "Specification-Vendor": "bonsaistudios",
             "Specification-Version": "1", // We are version 1 of ourselves
-            "Implementation-Title": project.name,
+            "Implementation-Title": "cnb",
             "Implementation-Version": "${version}",
-            "Implementation-Vendor" :"examplemodsareus",
-            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+            "Implementation-Vendor" :"bonsaistudios",
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+            'MixinConfigs'          : 'creatures-and-beasts.mixins.json'
         ])
     }
+
+    classifier 'base'
 }
 
 jar.finalizedBy('reobfJar')
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifact jar
-        }
-    }
-    repositories {
-        maven {
-            url "file:///${project.projectDir}/mcmodsrepo"
-        }
-    }
-}
-
-repositories {
-    maven { url 'https://repo.repsy.io/mvn/gandiber/geckolib' }
-    maven {
-        name = "CurseForge"
-        url = "https://minecraft.curseforge.com/api/maven/"
-    }
-}
+tasks.build.dependsOn shadowJar
+tasks.build.dependsOn reobfShadowJar
 
 //This minifies the jsons, which makes the end jar smaller. 
 processResources {
@@ -155,9 +172,9 @@ curseforge {
         releaseType = "release"
         changelogType = 'html'
         changelog = '<h2>Big Changes!</h2>'
-        addGameVersion("1.16.4")
+        addGameVersion("1.18.2")
         addGameVersion("Forge")
-        addGameVersion("Java 8")
+        addGameVersion("Java 17")
 
         relations {
             requiredDependency 'geckolib'     
