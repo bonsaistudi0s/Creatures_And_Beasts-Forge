@@ -82,7 +82,7 @@ public class SporelingEntity extends TamableAnimal implements IAnimatable {
     private final NearestAttackableTargetGoal<Player> nearestAttackableTargetGoal = new NearestAttackableTargetGoal<>(this, Player.class, true);
     private final HurtByTargetGoal hurtByTargetGoal = new HurtByTargetGoal(this);
     private final WaveGoal waveGoal = new WaveGoal(this, Player.class, 8.0F);
-    private final TemptGoal temptGoal = new TemptGoal(this, 1.0D,Ingredient.of(Items.BONE_MEAL), false);
+    private final TemptGoal temptGoal = new SporelingTemptGoal(this, 1.0D,Ingredient.of(Items.BONE_MEAL), false);
     private final PanicGoal panicGoal = new PanicGoal(this, 1.25D);
     private final ConvertItemGoal convertItemGoal = new ConvertItemGoal(this, 16.0D, 1.3D);
 
@@ -565,6 +565,20 @@ public class SporelingEntity extends TamableAnimal implements IAnimatable {
         protected void resetAttackCooldown() {
             super.resetAttackCooldown();
             this.goalOwner.setAttacking(true);
+        }
+    }
+
+    static class SporelingTemptGoal extends TemptGoal {
+        private final SporelingEntity sporelingEntity;
+
+        public SporelingTemptGoal(SporelingEntity sporeling, double speedModifier, Ingredient temptItems, boolean canScare) {
+            super(sporeling, speedModifier, temptItems, canScare);
+            this.sporelingEntity = sporeling;
+        }
+
+        @Override
+        public boolean canUse() {
+            return super.canUse() && !this.sporelingEntity.isTame();
         }
     }
 }
