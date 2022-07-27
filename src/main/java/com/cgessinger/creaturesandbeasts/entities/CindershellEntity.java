@@ -95,13 +95,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.cgessinger.creaturesandbeasts.init.CNBTags.Items.CINDERSHELL_FOOD;
+
 public class CindershellEntity extends Animal implements IAnimatable, Bucketable, ContainerListener, Container, RecipeHolder, StackedContentsCompatible, MenuProvider {
     private static final EntityDataAccessor<Boolean> EATING = SynchedEntityData.defineId(CindershellEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> FROM_BUCKET = SynchedEntityData.defineId(CindershellEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> FURNACE = SynchedEntityData.defineId(CindershellEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Optional<UUID>> PLAYER = SynchedEntityData.defineId(CindershellEntity.class, EntityDataSerializers.OPTIONAL_UUID);
 
-    private static final Ingredient TEMPTATION_ITEMS = Ingredient.of(Items.CRIMSON_FUNGUS, Items.WARPED_FUNGUS);
     private final UUID healthReductionUUID = UUID.fromString("189faad9-35de-4e15-a598-82d147b996d7");
     private final AnimationFactory factory = new AnimationFactory(this);
     protected CinderFurnaceContainer inventory;
@@ -225,7 +226,7 @@ public class CindershellEntity extends Animal implements IAnimatable, Bucketable
         this.goalSelector.addGoal(0, new CindershellFloatGoal(this));
         this.goalSelector.addGoal(1, new PanicGoal(this, 1.25D));
         this.goalSelector.addGoal(2, new CindershellBreedGoal(this, 1.0D));
-        this.goalSelector.addGoal(3, new TemptGoal(this, 1.0D, TEMPTATION_ITEMS, false));
+        this.goalSelector.addGoal(3, new TemptGoal(this, 1.0D, Ingredient.of(CINDERSHELL_FOOD), false));
         this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 1.0D));
         this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 6.0F));
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
@@ -330,7 +331,7 @@ public class CindershellEntity extends Animal implements IAnimatable, Bucketable
 
     @Override
     public boolean isFood(ItemStack stack) {
-        return TEMPTATION_ITEMS.test(stack);
+        return Ingredient.of(CINDERSHELL_FOOD).test(stack);
     }
 
     public InteractionResult tryStartEat(Player player, ItemStack stack) {

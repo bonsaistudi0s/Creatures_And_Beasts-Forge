@@ -68,6 +68,7 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 import javax.annotation.Nullable;
 
+import static com.cgessinger.creaturesandbeasts.init.CNBTags.Items.SPORELING_FOOD;
 import static com.cgessinger.creaturesandbeasts.util.SporelingType.SporelingHostility.FRIENDLY;
 import static com.cgessinger.creaturesandbeasts.util.SporelingType.SporelingHostility.HOSTILE;
 import static com.cgessinger.creaturesandbeasts.util.SporelingType.SporelingHostility.NEUTRAL;
@@ -82,7 +83,7 @@ public class SporelingEntity extends TamableAnimal implements IAnimatable {
     private final NearestAttackableTargetGoal<Player> nearestAttackableTargetGoal = new NearestAttackableTargetGoal<>(this, Player.class, true);
     private final HurtByTargetGoal hurtByTargetGoal = new HurtByTargetGoal(this);
     private final WaveGoal waveGoal = new WaveGoal(this, Player.class, 8.0F);
-    private final TemptGoal temptGoal = new SporelingTemptGoal(this, 1.0D,Ingredient.of(Items.BONE_MEAL), false);
+    private final TemptGoal temptGoal = new SporelingTemptGoal(this, 1.0D, Ingredient.of(SPORELING_FOOD), false);
     private final PanicGoal panicGoal = new PanicGoal(this, 1.25D);
     private final ConvertItemGoal convertItemGoal = new ConvertItemGoal(this, 16.0D, 1.3D);
 
