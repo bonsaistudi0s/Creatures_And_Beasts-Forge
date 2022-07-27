@@ -1,7 +1,10 @@
 package com.cgessinger.creaturesandbeasts.entities;
 
 import com.cgessinger.creaturesandbeasts.containers.CinderFurnaceContainer;
-import com.cgessinger.creaturesandbeasts.init.*;
+import com.cgessinger.creaturesandbeasts.init.CNBBlocks;
+import com.cgessinger.creaturesandbeasts.init.CNBEntityTypes;
+import com.cgessinger.creaturesandbeasts.init.CNBItems;
+import com.cgessinger.creaturesandbeasts.init.CNBSoundEvents;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
