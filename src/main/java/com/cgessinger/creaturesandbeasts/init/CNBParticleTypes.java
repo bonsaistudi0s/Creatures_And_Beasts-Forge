@@ -9,7 +9,7 @@ import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
+import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.DeferredRegister;
@@ -28,7 +28,7 @@ public class CNBParticleTypes {
 
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
-    public static void registerParticleFactories(ParticleFactoryRegisterEvent event) {
+    public static void registerParticleFactories(RegisterParticleProvidersEvent event) {
         ParticleEngine particleEngine = Minecraft.getInstance().particleEngine;
 
         particleEngine.register(PINK_MINIPAD_FLOWER.get(), MinipadFlowerParticle.Factory::new);

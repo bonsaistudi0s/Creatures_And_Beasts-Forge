@@ -26,6 +26,8 @@ import net.minecraftforge.registries.RegistryObject;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import net.minecraft.world.item.Item.Properties;
+
 public class CinderSwordItem extends SwordItem {
     private static final List<RegistryObject<CinderSwordItem>> IMBUE_TIERS = List.of(CNBItems.CINDER_SWORD, CNBItems.CINDER_SWORD_1, CNBItems.CINDER_SWORD_2, CNBItems.CINDER_SWORD_3, CNBItems.CINDER_SWORD_4);
     private final int imbueLevel;

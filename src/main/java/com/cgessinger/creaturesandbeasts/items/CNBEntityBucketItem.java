@@ -23,6 +23,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
+import net.minecraft.world.item.Item.Properties;
+
 public class CNBEntityBucketItem extends BucketItem {
     private final Supplier<? extends EntityType<?>> entityTypeSupplier;
     private final Supplier<SoundEvent> emptyingSoundSupplier;

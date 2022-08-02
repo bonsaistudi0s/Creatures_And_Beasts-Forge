@@ -59,6 +59,8 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 import javax.annotation.Nullable;
 import java.util.UUID;
 
+import net.minecraft.world.entity.AgeableMob.AgeableMobGroupData;
+
 public class LittleGrebeEntity extends Animal implements IAnimatable {
     public static final Ingredient TEMPTATION_ITEMS = Ingredient.of(Items.COD, Items.SALMON, Items.TROPICAL_FISH);
     private static final EntityDataAccessor<BlockPos> TRAVEL_POS = SynchedEntityData.defineId(LittleGrebeEntity.class, EntityDataSerializers.BLOCK_POS);

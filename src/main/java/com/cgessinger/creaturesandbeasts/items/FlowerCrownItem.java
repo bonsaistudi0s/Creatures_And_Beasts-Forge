@@ -10,6 +10,8 @@ import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 import software.bernie.geckolib3.item.GeoArmorItem;
 
+import net.minecraft.world.item.Item.Properties;
+
 public class FlowerCrownItem extends GeoArmorItem implements IAnimatable {
     private final Ingredient repairItems;
     private final AnimationFactory factory = new AnimationFactory(this);

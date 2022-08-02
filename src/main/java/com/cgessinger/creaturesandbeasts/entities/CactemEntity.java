@@ -69,6 +69,8 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.UUID;
 
+import net.minecraft.world.entity.AgeableMob.AgeableMobGroupData;
+
 public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimatable {
     private static final EntityDataAccessor<Boolean> ELDER = SynchedEntityData.defineId(CactemEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> ATTACKING = SynchedEntityData.defineId(CactemEntity.class, EntityDataSerializers.BOOLEAN);

@@ -55,7 +55,7 @@ public class CNBEvents {
 
     @SubscribeEvent
     public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
-        Player player = event.getPlayer();
+        Player player = event.getEntity();
         if (player.isSecondaryUseActive() && player.getFirstPassenger() instanceof SporelingEntity sporelingEntity) {
             sporelingEntity.stopRiding();
             event.setCanceled(true);
@@ -71,8 +71,8 @@ public class CNBEvents {
     }
 
     @SubscribeEvent
-    public void onItemUnequip(LivingEvent.LivingUpdateEvent event) {
-        if (event.getEntityLiving() instanceof Player player && player.getFirstPassenger() instanceof SporelingEntity sporelingEntity && !player.getItemBySlot(EquipmentSlot.CHEST).is(CNBItems.SPORELING_BACKPACK.get())) {
+    public void onItemUnequip(LivingEvent.LivingTickEvent event) {
+        if (event.getEntity() instanceof Player player && player.getFirstPassenger() instanceof SporelingEntity sporelingEntity && !player.getItemBySlot(EquipmentSlot.CHEST).is(CNBItems.SPORELING_BACKPACK.get())) {
             sporelingEntity.stopRiding();
         }
     }

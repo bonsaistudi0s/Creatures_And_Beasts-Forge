@@ -9,7 +9,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 public class CNBContainerTypes {
-    public static final DeferredRegister<MenuType<?>> CONTAINER_TYPES = DeferredRegister.create(ForgeRegistries.CONTAINERS, CreaturesAndBeasts.MOD_ID);
+    public static final DeferredRegister<MenuType<?>> CONTAINER_TYPES = DeferredRegister.create(ForgeRegistries.MENU_TYPES, CreaturesAndBeasts.MOD_ID);
 
     public static final RegistryObject<MenuType<CinderFurnaceContainer>> CINDER_FURNACE_CONTAINER = CONTAINER_TYPES.register("cinder_furnace_container", () -> IForgeMenuType.create(((windowId, inv, data) -> new CinderFurnaceContainer(windowId, inv))));
 }

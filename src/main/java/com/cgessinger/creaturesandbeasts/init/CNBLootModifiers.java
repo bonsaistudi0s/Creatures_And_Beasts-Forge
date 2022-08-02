@@ -1,13 +1,13 @@
 package com.cgessinger.creaturesandbeasts.init;
 
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
-import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
+import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifier;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -18,11 +18,13 @@ import java.util.Random;
 
 public class CNBLootModifiers {
 
-    public static final DeferredRegister<GlobalLootModifierSerializer<?>> LOOT_MODIFIERS = DeferredRegister.create(ForgeRegistries.Keys.LOOT_MODIFIER_SERIALIZERS, CreaturesAndBeasts.MOD_ID);
+    public static final DeferredRegister<Codec<? extends IGlobalLootModifier>> LOOT_MODIFIERS = DeferredRegister.create(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, CreaturesAndBeasts.MOD_ID);
 
-    public static final RegistryObject<GlobalLootModifierSerializer<NetherBridgeLootModifier>> NETHER_BRIDGE_LOOT_MODIFIER = LOOT_MODIFIERS.register("nether_bridge_loot_modifier", NetherBridgeLootSerializer::new);
+    public static final RegistryObject<Codec<NetherBridgeLootModifier>> NETHER_BRIDGE_LOOT_MODIFIER = LOOT_MODIFIERS.register("nether_bridge_loot_modifier", () -> NetherBridgeLootModifier.CODEC);
 
     protected static class NetherBridgeLootModifier extends LootModifier {
+        public static final Codec<NetherBridgeLootModifier> CODEC = RecordCodecBuilder.create(inst -> codecStart(inst).apply(inst, NetherBridgeLootModifier::new));
+
         private final Random rand = new Random();
 
         /**
@@ -44,18 +46,10 @@ public class CNBLootModifiers {
 
             return generatedLoot;
         }
-    }
-
-    public static class NetherBridgeLootSerializer extends GlobalLootModifierSerializer<NetherBridgeLootModifier> {
 
         @Override
-        public NetherBridgeLootModifier read(ResourceLocation location, JsonObject object, LootItemCondition[] conditionsIn) {
-            return new NetherBridgeLootModifier(conditionsIn);
-        }
-
-        @Override
-        public JsonObject write(NetherBridgeLootModifier instance) {
-            return null;
+        public Codec<? extends IGlobalLootModifier> codec() {
+            return CODEC;
         }
     }
 }

@@ -23,7 +23,7 @@ public record EntitySpawnData(ResourceLocation entityType, ResourceLocation biom
 
     @Nullable
     public EntityType<? extends Entity> getEntityType() {
-        return ForgeRegistries.ENTITIES.getValue(this.getEntityTypeLocation());
+        return ForgeRegistries.ENTITY_TYPES.getValue(this.getEntityTypeLocation());
     }
 
     public ResourceLocation getBiomeLocation() {
@@ -116,7 +116,7 @@ public record EntitySpawnData(ResourceLocation entityType, ResourceLocation biom
     }
 
     public static EntitySpawnData of(EntityType<? extends Entity> entityType, ResourceKey<Biome> biome, MobCategory category, int spawnWeight, int minCount, int maxCount, double mobCost, double energyBudget) {
-        return new EntitySpawnData(ForgeRegistries.ENTITIES.getKey(entityType), biome.location(), category, spawnWeight, minCount, maxCount, mobCost, energyBudget);
+        return new EntitySpawnData(ForgeRegistries.ENTITY_TYPES.getKey(entityType), biome.location(), category, spawnWeight, minCount, maxCount, mobCost, energyBudget);
     }
 
     public static EntitySpawnData of(ResourceLocation entityType, ResourceKey<Biome> biome, MobCategory category, int spawnWeight, int minCount, int maxCount, double mobCost, double energyBudget) {

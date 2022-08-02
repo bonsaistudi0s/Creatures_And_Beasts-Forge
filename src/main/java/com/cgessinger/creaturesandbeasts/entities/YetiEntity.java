@@ -71,6 +71,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+import net.minecraft.world.entity.AgeableMob.AgeableMobGroupData;
+
 public class YetiEntity extends TamableAnimal implements IAnimatable, Enemy, NeutralMob {
     public static final EntityDataAccessor<Boolean> ATTACKING = SynchedEntityData.defineId(YetiEntity.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<Boolean> EATING = SynchedEntityData.defineId(YetiEntity.class, EntityDataSerializers.BOOLEAN);

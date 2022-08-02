@@ -20,6 +20,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+import net.minecraft.world.item.Item.Properties;
+
 public class HealSpellBookItem extends Item {
 
     public HealSpellBookItem(Properties properties) {
