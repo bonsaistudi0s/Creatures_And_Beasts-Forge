@@ -43,7 +43,11 @@ public class YetiModel extends AnimatedGeoModel<YetiEntity> {
         EntityModelData extraData = (EntityModelData) customPredicate.getExtraDataOfType(EntityModelData.class).get(0);
 
         head_rotation.setRotationX(extraData.headPitch * ((float) Math.PI / 180F));
-        head_rotation.setRotationY(extraData.netHeadYaw * ((float) Math.PI / 180F));
+        if (entity.isBaby()) {
+            head_rotation.setRotationZ(extraData.netHeadYaw * ((float) Math.PI / 180F));
+        } else {
+            head_rotation.setRotationY(extraData.netHeadYaw * ((float) Math.PI / 180F));
+        }
     }
 
 }
