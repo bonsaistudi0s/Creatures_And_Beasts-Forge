@@ -114,5 +114,7 @@
 
   "itemGroup.cnb_tab": "Creatures And Beasts",
 
-  "cnb.container.cinder_furnace": "Lò than hồng"
+  "cnb.container.cinder_furnace": "Lò than hồng",
+
+  "cnb.item.tooltip.cinder_furnace": "§7Right click a Cindershell to equip"
 }
