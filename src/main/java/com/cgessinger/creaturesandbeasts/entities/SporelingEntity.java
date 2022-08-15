@@ -450,7 +450,7 @@ public class SporelingEntity extends TamableAnimal implements IAnimatable {
 
     @Override
     public boolean removeWhenFarAway(double distanceToClosestPlayer) {
-        return !this.isTame();
+        return !this.isTame() && !this.hasCustomName();
     }
 
     public void setSporelingType(SporelingType shroomloinType) {

@@ -69,8 +69,6 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.UUID;
 
-import net.minecraft.world.entity.AgeableMob.AgeableMobGroupData;
-
 public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimatable {
     private static final EntityDataAccessor<Boolean> ELDER = SynchedEntityData.defineId(CactemEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> ATTACKING = SynchedEntityData.defineId(CactemEntity.class, EntityDataSerializers.BOOLEAN);
@@ -193,6 +191,11 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
     @Override
     public int getExperienceReward() {
         return 3 + this.level.random.nextInt(4);
+    }
+
+    @Override
+    public boolean removeWhenFarAway(double p_21542_) {
+        return !this.hasCustomName();
     }
 
     @Override
