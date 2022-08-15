@@ -55,6 +55,7 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.HitResult;
 import software.bernie.geckolib3.core.AnimationState;
 import software.bernie.geckolib3.core.IAnimatable;
@@ -217,6 +218,16 @@ public class SporelingEntity extends TamableAnimal implements IAnimatable {
             return flag ? InteractionResult.CONSUME : InteractionResult.PASS;
         } else {
             if (this.isTame()) {
+                if ((itemstack.is(Items.RED_MUSHROOM) || itemstack.is(Items.BROWN_MUSHROOM)) && this.getHealth() < this.getMaxHealth()) {
+                    if (!player.getAbilities().instabuild) {
+                        itemstack.shrink(1);
+                    }
+
+                    this.heal(2);
+                    this.gameEvent(GameEvent.EAT, this);
+                    return InteractionResult.SUCCESS;
+                }
+
                 InteractionResult interactionresult = super.mobInteract(player, hand);
                 if (!interactionresult.consumesAction() && this.isOwnedBy(player)) {
                     if (player.isSecondaryUseActive() && player.getPassengers().isEmpty() && player.getItemBySlot(EquipmentSlot.CHEST).is(CNBItems.SPORELING_BACKPACK.get())) {
@@ -251,6 +262,11 @@ public class SporelingEntity extends TamableAnimal implements IAnimatable {
 
             return super.mobInteract(player, hand);
         }
+    }
+
+    @Override
+    public boolean isFood(ItemStack stack) {
+        return false;
     }
 
     @Override
