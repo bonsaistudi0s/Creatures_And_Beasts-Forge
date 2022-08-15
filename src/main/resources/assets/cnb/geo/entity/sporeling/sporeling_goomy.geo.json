@@ -43,6 +43,14 @@
 					]
 				},
 				{
+					"name": "itemHolder",
+					"parent": "right_arm",
+					"pivot": [-4.5, 4, 0],
+					"cubes": [
+						{"origin": [-4, 1, 0], "size": [0, 0, 0], "uv": [0, 0]}
+					]
+				},
+				{
 					"name": "left_arm",
 					"parent": "body",
 					"pivot": [4.5, 4, 0],
