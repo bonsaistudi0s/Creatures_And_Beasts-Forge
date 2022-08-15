@@ -3,6 +3,7 @@ package com.cgessinger.creaturesandbeasts.init;
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeasts;
 import com.cgessinger.creaturesandbeasts.items.CNBEntityBucketItem;
 import com.cgessinger.creaturesandbeasts.items.CNBFuelItem;
+import com.cgessinger.creaturesandbeasts.items.CinderFurnaceItem;
 import com.cgessinger.creaturesandbeasts.items.CinderSwordItem;
 import com.cgessinger.creaturesandbeasts.items.FlowerCrownItem;
 import com.cgessinger.creaturesandbeasts.items.GlowingFlowerCrownItem;
@@ -19,7 +20,6 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.food.FoodProperties;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.material.Fluids;
@@ -97,5 +97,5 @@ public class CNBItems {
     public static RegistryObject<SporelingSpawnEggItem> SPORELING_NETHER_EGG = ITEMS.register("sporeling_nether_egg", () -> new SporelingSpawnEggItem(CNBEntityTypes.SPORELING, 0xBF2828, 0xFF9245, new Item.Properties().tab(CreaturesAndBeasts.TAB)));
 
     // Block Items
-    public static RegistryObject<BlockItem> CINDERSHELL_FURNACE = ITEMS.register("cinder_furnace", () -> new BlockItem(CNBBlocks.CINDER_FURNACE.get(), new Item.Properties().tab(CreaturesAndBeasts.TAB)));
+    public static RegistryObject<CinderFurnaceItem> CINDERSHELL_FURNACE = ITEMS.register("cinder_furnace", () -> new CinderFurnaceItem(CNBBlocks.CINDER_FURNACE.get(), new Item.Properties().tab(CreaturesAndBeasts.TAB)));
 }
