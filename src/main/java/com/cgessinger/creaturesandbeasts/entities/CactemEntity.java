@@ -194,6 +194,11 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
     }
 
     @Override
+    public boolean removeWhenFarAway(double p_21542_) {
+        return !this.hasCustomName();
+    }
+
+    @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroup, @Nullable CompoundTag tag) {
         double elderChance = level.getRandom().nextDouble();
 

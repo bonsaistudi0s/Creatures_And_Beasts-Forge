@@ -360,7 +360,7 @@ public class YetiEntity extends TamableAnimal implements IAnimatable, Enemy, Neu
 
     @Override
     public boolean removeWhenFarAway(double distanceToClosestPlayer) {
-        return !this.isTame();
+        return !this.isTame() && !this.hasCustomName();
     }
 
     private void performAttack() {
