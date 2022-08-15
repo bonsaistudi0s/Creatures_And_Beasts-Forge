@@ -7,6 +7,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -20,8 +21,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import net.minecraft.world.item.Item.Properties;
-
 public class HealSpellBookItem extends Item {
 
     public HealSpellBookItem(Properties properties) {
@@ -33,29 +32,34 @@ public class HealSpellBookItem extends Item {
         ItemStack stack = player.getItemInHand(hand);
 
         if (stack.is(CNBItems.HEAL_SPELL_BOOK_1.get())) {
-            return this.applyEffects(level, player, stack, 800, new MobEffectInstance(MobEffects.REGENERATION, 200, 0));
+            this.applyEffects(level, player, stack, MobEffects.REGENERATION, 200, 0);
+            return this.applyCooldowns(player, stack, 800);
         } else if (stack.is(CNBItems.HEAL_SPELL_BOOK_2.get())) {
-            return this.applyEffects(level, player, stack, 700, new MobEffectInstance(MobEffects.REGENERATION, 140, 1), new MobEffectInstance(MobEffects.HEAL, 1, 0));
+            this.applyEffects(level, player, stack, MobEffects.REGENERATION, 140, 1);
+            this.applyEffects(level, player, stack, MobEffects.HEAL, 1, 0);
+            return this.applyCooldowns(player, stack, 700);
         } else {
-            return this.applyEffects(level, player, stack, 600, new MobEffectInstance(MobEffects.REGENERATION, 100, 2), new MobEffectInstance(MobEffects.HEAL, 1, 1));
+            this.applyEffects(level, player, stack, MobEffects.REGENERATION, 100, 2);
+            this.applyEffects(level, player, stack, MobEffects.HEAL, 1, 1);
+            return this.applyCooldowns(player, stack, 600);
         }
     }
 
-    private InteractionResultHolder<ItemStack> applyEffects(Level level, Player player, ItemStack stack, int cooldownTime, MobEffectInstance... effects) {
+    private void applyEffects(Level level, Player player, ItemStack stack, MobEffect effect, int duration, int amplifier) {
         if (!player.getCooldowns().isOnCooldown(stack.getItem())) {
-            for (MobEffectInstance effect : effects) {
-                player.addEffect(effect);
-            }
+            player.addEffect(new MobEffectInstance(effect, duration, amplifier));
 
             List<? extends LivingEntity> list = level.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(15, 4, 15));
             for (LivingEntity nearbyEntity : list) {
                 if (nearbyEntity instanceof TamableAnimal tamableAnimal && tamableAnimal.getOwner() != null && tamableAnimal.getOwner().equals(player)) {
-                    for (MobEffectInstance effect : effects) {
-                        nearbyEntity.addEffect(effect);
-                    }
+                    nearbyEntity.addEffect(new MobEffectInstance(effect, duration, amplifier));
                 }
             }
+        }
+    }
 
+    private InteractionResultHolder<ItemStack> applyCooldowns(Player player, ItemStack stack, int cooldownTime) {
+        if (!player.getCooldowns().isOnCooldown(stack.getItem())) {
             player.awardStat(Stats.ITEM_USED.get(this));
 
             player.playSound(CNBSoundEvents.PLAYER_HEAL.get(), 1.0F, 1.0F);
