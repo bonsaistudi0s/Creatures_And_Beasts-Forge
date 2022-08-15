@@ -11,6 +11,7 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 public class FlowerCrownModel extends AnimatedGeoModel<FlowerCrownItem> {
     private final ResourceLocation FLOWER_CROWN_MODEL = new ResourceLocation(CreaturesAndBeasts.MOD_ID, "geo/armor/flower_crown.geo.json");
     private final ResourceLocation FLOWER_CROWN_TEXTURE = new ResourceLocation(CreaturesAndBeasts.MOD_ID, "textures/armor/flower_crown.png");
+    private final ResourceLocation FLOWER_CROWN_ANIMATION = new ResourceLocation(CreaturesAndBeasts.MOD_ID, "animations/flower_crown.json");
 
     @Override
     public ResourceLocation getModelResource(FlowerCrownItem object) {
@@ -24,6 +25,6 @@ public class FlowerCrownModel extends AnimatedGeoModel<FlowerCrownItem> {
 
     @Override
     public ResourceLocation getAnimationResource(FlowerCrownItem animatable) {
-        return null;
+        return FLOWER_CROWN_ANIMATION;
     }
 }
