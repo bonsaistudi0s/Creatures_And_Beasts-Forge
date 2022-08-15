@@ -38,6 +38,9 @@ public class ConvertItemGoal extends Goal {
 
     @Override
     public boolean canUse() {
+        if (this.entityIn.isInSittingPose()) {
+            return false;
+        }
         if (this.itemInstance == null) {
             List<ItemEntity> list = this.entityIn.level.getEntitiesOfClass(ItemEntity.class, this.entityIn.getBoundingBox().inflate(this.range, 3.0D, this.range));
 

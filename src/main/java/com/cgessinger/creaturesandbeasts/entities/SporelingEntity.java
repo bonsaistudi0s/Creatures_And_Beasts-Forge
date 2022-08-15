@@ -528,7 +528,7 @@ public class SporelingEntity extends TamableAnimal implements IAnimatable {
 
         @Override
         public boolean canUse() {
-            return super.canUse() && !sporeling.isInspecting() && sporeling.random.nextDouble() <= 0.25D;
+            return super.canUse() && !sporeling.isInspecting() && sporeling.random.nextDouble() <= 0.25D && !sporeling.isInSittingPose();
         }
 
         @Override
