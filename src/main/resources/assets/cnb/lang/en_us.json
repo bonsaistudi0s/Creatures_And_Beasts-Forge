@@ -114,5 +114,7 @@
 
   "itemGroup.cnb_tab": "Creatures And Beasts",
 
-  "cnb.container.cinder_furnace": "Cinder Furnace"
+  "cnb.container.cinder_furnace": "Cinder Furnace",
+
+  "cnb.item.tooltip.cinder_furnace": "\u00A77Right click a Cindershell to equip"
 }
