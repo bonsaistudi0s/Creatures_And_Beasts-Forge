@@ -54,7 +54,7 @@ public class SporelingModel extends AnimatedGeoModel<SporelingEntity> {
                     return SHRIMPSNAIL_TEXTURE;
             }
         }
-        
+
         return entity.getSporelingType().getTextureLocation();
     }
 

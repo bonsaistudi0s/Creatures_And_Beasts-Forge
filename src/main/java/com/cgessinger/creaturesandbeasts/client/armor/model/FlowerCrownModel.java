@@ -24,7 +24,7 @@ public class FlowerCrownModel extends AnimatedGeoModel<FlowerCrownItem> {
     }
 
     @Override
-    public ResourceLocation getAnimationResource(FlowerCrownItem animatable) {
+    public ResourceLocation getAnimationFileLocation(FlowerCrownItem animatable) {
         return FLOWER_CROWN_ANIMATION;
     }
 }
