@@ -1,6 +1,7 @@
 package com.cgessinger.creaturesandbeasts.entities;
 
 import com.cgessinger.creaturesandbeasts.init.CNBSoundEvents;
+import com.cgessinger.creaturesandbeasts.init.CNBTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -56,6 +57,8 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 import java.util.EnumSet;
 
+import static com.cgessinger.creaturesandbeasts.init.CNBTags.Items.END_WHALE_FOOD;
+
 public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, Saddleable, IAnimatable {
     private static final EntityDataAccessor<Boolean> SADDLED = SynchedEntityData.defineId(EndWhaleEntity.class, EntityDataSerializers.BOOLEAN);
 
@@ -77,7 +80,7 @@ public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, Saddl
     }
 
     protected void registerGoals() {
-        this.goalSelector.addGoal(0, new EndWhaleTemptGoal(this, 1.25D, Ingredient.of(Items.CHORUS_FRUIT)));
+        this.goalSelector.addGoal(0, new EndWhaleTemptGoal(this, 1.25D, Ingredient.of(END_WHALE_FOOD)));
         this.goalSelector.addGoal(1, new EndWhaleWanderGoal(this));
     }
 
@@ -291,7 +294,7 @@ public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, Saddl
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack itemstack = player.getItemInHand(hand);
         if (this.level.isClientSide) {
-            boolean flag = this.isOwnedBy(player) || this.isTame() || itemstack.is(Items.CHORUS_FRUIT) && !this.isTame();
+            boolean flag = this.isOwnedBy(player) || this.isTame() || itemstack.is(END_WHALE_FOOD) && !this.isTame();
             return flag ? InteractionResult.CONSUME : InteractionResult.PASS;
         } else if (this.isSaddled() && player.isSecondaryUseActive()) {
             this.removeSaddle();
@@ -300,7 +303,7 @@ public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, Saddl
             this.mountWhale(player);
             return InteractionResult.sidedSuccess(this.level.isClientSide);
         } else if (!this.isTame()) {
-            if (itemstack.is(Items.CHORUS_FRUIT)) {
+            if (itemstack.is(END_WHALE_FOOD)) {
                 if (!player.getAbilities().instabuild) {
                     itemstack.shrink(1);
                 }

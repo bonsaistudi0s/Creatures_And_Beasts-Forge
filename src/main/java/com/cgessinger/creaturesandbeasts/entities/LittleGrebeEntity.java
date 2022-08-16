@@ -61,8 +61,9 @@ import java.util.UUID;
 
 import net.minecraft.world.entity.AgeableMob.AgeableMobGroupData;
 
+import static com.cgessinger.creaturesandbeasts.init.CNBTags.Items.LITTLE_GREBE_FOOD;
+
 public class LittleGrebeEntity extends Animal implements IAnimatable {
-    public static final Ingredient TEMPTATION_ITEMS = Ingredient.of(Items.COD, Items.SALMON, Items.TROPICAL_FISH);
     private static final EntityDataAccessor<BlockPos> TRAVEL_POS = SynchedEntityData.defineId(LittleGrebeEntity.class, EntityDataSerializers.BLOCK_POS);
     private final UUID healthReductionUUID = UUID.fromString("189faad9-35de-4e15-a598-82d147b996d7");
     public float flapSpeed;
@@ -86,7 +87,7 @@ public class LittleGrebeEntity extends Animal implements IAnimatable {
         this.goalSelector.addGoal(1, new MountAdultGoal(this, 1.2D));
         this.goalSelector.addGoal(2, new SmoothSwimGoal(this));
         this.goalSelector.addGoal(3, new PanicGoal(this, 1.0D));
-        this.goalSelector.addGoal(3, new TemptGoal(this, 1.0D, TEMPTATION_ITEMS, false));
+        this.goalSelector.addGoal(3, new TemptGoal(this, 1.0D, Ingredient.of(LITTLE_GREBE_FOOD), false));
         this.goalSelector.addGoal(4, new BreedGoal(this, 1.0D));
         this.goalSelector.addGoal(5, new FollowParentGoal(this, 1.25D));
         this.goalSelector.addGoal(5, new LittleGrebeEntity.SwimTravelGoal(this, 1.0D));
@@ -209,7 +210,7 @@ public class LittleGrebeEntity extends Animal implements IAnimatable {
 
     @Override
     public boolean isFood(ItemStack stack) {
-        return TEMPTATION_ITEMS.test(stack);
+        return Ingredient.of(LITTLE_GREBE_FOOD).test(stack);
     }
 
     @Override
