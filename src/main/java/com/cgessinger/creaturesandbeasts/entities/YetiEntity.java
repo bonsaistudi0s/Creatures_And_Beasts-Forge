@@ -448,11 +448,10 @@ public class YetiEntity extends TamableAnimal implements IAnimatable, Enemy, Neu
     }
 
     private <E extends IAnimatable> void soundListener(SoundKeyframeEvent<E> event) {
-        LocalPlayer player = Minecraft.getInstance().player;
         if (event.sound.equals("hit.ground.sound")) {
-            player.playSound(CNBSoundEvents.YETI_HIT.get(), 0.4F, 1.0F);
+            this.playSound(CNBSoundEvents.YETI_HIT.get(), 0.4F, 1.0F);
         } else if (event.sound.equals("yeti_ambient")) {
-            player.playSound(CNBSoundEvents.YETI_AMBIENT.get(), 1.0F, 1.0F);
+            this.playSound(CNBSoundEvents.YETI_AMBIENT.get(), 1.0F, 1.0F);
         }
     }
 
@@ -538,7 +537,7 @@ public class YetiEntity extends TamableAnimal implements IAnimatable, Enemy, Neu
 
         @Override
         public boolean canUse() {
-            if (this.yeti.getTarget() instanceof TamableAnimal tamableAnimal && this.yeti.isTame() && this.yeti.getOwner().equals(tamableAnimal.getOwner())) {
+            if (this.yeti.getTarget() instanceof TamableAnimal tamableAnimal && this.yeti.isTame() && this.yeti.getOwner() != null && this.yeti.getOwner().equals(tamableAnimal.getOwner())) {
                 return false;
             }
             return super.canUse() && !this.yeti.isBaby() && this.yeti.getTarget() != this.yeti.getOwner();
