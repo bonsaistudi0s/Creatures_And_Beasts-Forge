@@ -489,12 +489,12 @@ public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, Saddl
 
         @Override
         public boolean canUse() {
-            return this.endWhale.navigation.isDone() && this.endWhale.random.nextInt(3) == 0 && !this.endWhale.isVehicle();
+            return this.endWhale.navigation.isDone() && this.endWhale.random.nextInt(3) == 0 && !this.endWhale.isVehicle() && !this.endWhale.isLeashed();
         }
 
         @Override
         public boolean canContinueToUse() {
-            return this.endWhale.navigation.isInProgress() && !this.endWhale.isVehicle();
+            return this.endWhale.navigation.isInProgress() && !this.endWhale.isVehicle() && !this.endWhale.isLeashed();
         }
 
         @Override
