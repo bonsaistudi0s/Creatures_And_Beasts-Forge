@@ -94,6 +94,8 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
 
     private int healCooldown = 0;
 
+    private boolean shouldUpdateGoals = false;
+
     public CactemEntity(EntityType<CactemEntity> entity, Level level) {
         super(entity, level);
     }
@@ -164,6 +166,15 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
             this.goalSelector.addGoal(1, followElderGoal);
             this.goalSelector.addGoal(2, randomStrollGoal);
         }
+    }
+
+    @Override
+    public void tick() {
+        if (!this.level.isClientSide && this.shouldUpdateGoals) {
+            this.reassessGoals();
+        }
+        
+        super.tick();
     }
 
     @Override
@@ -277,7 +288,9 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
         this.getAttribute(Attributes.MAX_HEALTH).removeModifier(this.healthReductionUUID);
         this.setHealth(percentHealth * (float) this.getAttribute(Attributes.MAX_HEALTH).getValue());
 
-        this.reassessGoals();
+        if (!this.level.isClientSide) {
+            this.shouldUpdateGoals = true;
+        }
     }
 
     @Override
@@ -310,6 +323,10 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
     @Override
     public float getScale() {
         return this.isBaby() ? 0.75F : 1.0F;
+    }
+
+    public void setShouldUpdateGoals(boolean shouldUpdateGoals) {
+        this.shouldUpdateGoals = shouldUpdateGoals;
     }
 
     public boolean isElder() {
@@ -847,7 +864,7 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
         public void start() {
             this.cactem.setElder(true);
             this.cactem.setItemInHand(this.cactem.getUsedItemHand(), new ItemStack(CNBItems.HEAL_SPELL_BOOK_1.get()));
-            this.cactem.reassessGoals();
+            this.cactem.setShouldUpdateGoals(true);
         }
 
         @Override
