@@ -8,9 +8,10 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 import software.bernie.geckolib3.item.GeoArmorItem;
 
 import net.minecraft.world.item.Item.Properties;
+import software.bernie.geckolib3.util.GeckoLibUtil;
 
 public class SporelingBackpackItem extends GeoArmorItem implements IAnimatable {
-    private final AnimationFactory factory = new AnimationFactory(this);
+    private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
 
     public SporelingBackpackItem(ArmorMaterial material, EquipmentSlot slot, Properties properties) {
         super(material, slot, properties);

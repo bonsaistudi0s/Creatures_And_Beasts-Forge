@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -69,7 +70,7 @@ public class SporelingRenderer extends GeoEntityRenderer<SporelingEntity> {
             stack.scale(0.5F, 0.5F, 0.5F);
             stack.translate(0.6F, 0.1F, -0.1F);
             stack.mulPose(Vector3f.XP.rotationDegrees(-90.0F));
-            Minecraft.getInstance().getItemRenderer().renderStatic(mainHand, TransformType.THIRD_PERSON_LEFT_HAND, packedLightIn, packedOverlayIn, stack, this.rtb, 0);
+            Minecraft.getInstance().getItemRenderer().renderStatic(this.animatable.getItemBySlot(EquipmentSlot.MAINHAND), TransformType.THIRD_PERSON_LEFT_HAND, packedLightIn, packedOverlayIn, stack, this.rtb, 0);
             stack.popPose();
 
             // restore the render buffer - GeckoLib expects this state otherwise you'll have weird texture issues

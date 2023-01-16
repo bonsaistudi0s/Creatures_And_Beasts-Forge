@@ -54,6 +54,7 @@ import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
+import software.bernie.geckolib3.util.GeckoLibUtil;
 
 import java.util.EnumSet;
 
@@ -62,7 +63,7 @@ import static com.cgessinger.creaturesandbeasts.init.CNBTags.Items.END_WHALE_FOO
 public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, Saddleable, IAnimatable {
     private static final EntityDataAccessor<Boolean> SADDLED = SynchedEntityData.defineId(EndWhaleEntity.class, EntityDataSerializers.BOOLEAN);
 
-    private final AnimationFactory factory = new AnimationFactory(this);
+    private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
 
     public EndWhaleEntity(EntityType<EndWhaleEntity> entityType, Level level) {
         super(entityType, level);

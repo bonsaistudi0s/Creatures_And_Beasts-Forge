@@ -51,6 +51,7 @@ import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
+import software.bernie.geckolib3.core.builder.ILoopType;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
@@ -60,6 +61,7 @@ import javax.annotation.Nullable;
 import java.util.UUID;
 
 import net.minecraft.world.entity.AgeableMob.AgeableMobGroupData;
+import software.bernie.geckolib3.util.GeckoLibUtil;
 
 import static com.cgessinger.creaturesandbeasts.init.CNBTags.Items.LITTLE_GREBE_FOOD;
 
@@ -68,7 +70,7 @@ public class LittleGrebeEntity extends Animal implements IAnimatable {
     private final UUID healthReductionUUID = UUID.fromString("189faad9-35de-4e15-a598-82d147b996d7");
     public float flapSpeed;
     private float nextFlap = 1.0F;
-    private final AnimationFactory factory = new AnimationFactory(this);
+    private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
 
     public LittleGrebeEntity(EntityType<LittleGrebeEntity> type, Level worldIn) {
         super(type, worldIn);
@@ -230,16 +232,16 @@ public class LittleGrebeEntity extends Animal implements IAnimatable {
 
     private <E extends IAnimatable> PlayState animationPredicate(AnimationEvent<E> event) {
         if (!(this.isOnGround() || this.isInWater() || this.isBaby())) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("little_grebe.fall", true));
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("little_grebe.fall", ILoopType.EDefaultLoopTypes.LOOP));
             return PlayState.CONTINUE;
         } else if (this.isInWater()) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("little_grebe.swim", true));
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("little_grebe.swim", ILoopType.EDefaultLoopTypes.LOOP));
             return PlayState.CONTINUE;
         } else if (!(animationSpeed > -0.15F && animationSpeed < 0.15F)) {
             if (this.isBaby()) {
-                event.getController().setAnimation(new AnimationBuilder().addAnimation("little_grebe_chick.walk", true));
+                event.getController().setAnimation(new AnimationBuilder().addAnimation("little_grebe_chick.walk", ILoopType.EDefaultLoopTypes.LOOP));
             } else {
-                event.getController().setAnimation(new AnimationBuilder().addAnimation("little_grebe.walk", true));
+                event.getController().setAnimation(new AnimationBuilder().addAnimation("little_grebe.walk", ILoopType.EDefaultLoopTypes.LOOP));
             }
             return PlayState.CONTINUE;
         }

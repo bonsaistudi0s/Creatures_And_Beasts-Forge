@@ -36,18 +36,18 @@ public class YetiModel extends AnimatedGeoModel<YetiEntity> {
     }
 
     @Override
-    public void setLivingAnimations(YetiEntity entity, Integer uniqueID, AnimationEvent customPredicate) {
-        super.setLivingAnimations(entity, uniqueID, customPredicate);
+    public void setCustomAnimations(YetiEntity animatable, int instanceId, AnimationEvent animationEvent) {
+        super.setCustomAnimations(animatable, instanceId, animationEvent);
+
         IBone head_rotation = this.getAnimationProcessor().getBone("head_rotation");
 
-        EntityModelData extraData = (EntityModelData) customPredicate.getExtraDataOfType(EntityModelData.class).get(0);
+        EntityModelData extraData = (EntityModelData) animationEvent.getExtraDataOfType(EntityModelData.class).get(0);
 
         head_rotation.setRotationX(extraData.headPitch * ((float) Math.PI / 180F));
-        if (entity.isBaby()) {
+        if (animatable.isBaby()) {
             head_rotation.setRotationZ(extraData.netHeadYaw * ((float) Math.PI / 180F));
         } else {
             head_rotation.setRotationY(extraData.netHeadYaw * ((float) Math.PI / 180F));
         }
     }
-
 }

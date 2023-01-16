@@ -89,6 +89,7 @@ import software.bernie.geckolib3.core.event.SoundKeyframeEvent;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
+import software.bernie.geckolib3.util.GeckoLibUtil;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -104,7 +105,7 @@ public class CindershellEntity extends Animal implements IAnimatable, Bucketable
     private static final EntityDataAccessor<Optional<UUID>> PLAYER = SynchedEntityData.defineId(CindershellEntity.class, EntityDataSerializers.OPTIONAL_UUID);
 
     private final UUID healthReductionUUID = UUID.fromString("189faad9-35de-4e15-a598-82d147b996d7");
-    private final AnimationFactory factory = new AnimationFactory(this);
+    private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
     protected CinderFurnaceContainer inventory;
     private Player playerInMenu;
     private int eatTimer;

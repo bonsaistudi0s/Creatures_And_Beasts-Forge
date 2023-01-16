@@ -111,11 +111,11 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.19-41.1.0'
+    minecraft 'net.minecraftforge:forge:1.19.2-43.2.0'
     annotationProcessor 'org.spongepowered:mixin:0.8.4:processor'
 
     // Geckolib for ingame animations
-    implementation fg.deobf('software.bernie.geckolib:geckolib-forge-1.19:3.1.12')
+    implementation fg.deobf('software.bernie.geckolib:geckolib-forge-1.19:3.1.39')
 
     implementation 'org.infernalstudios:config:3.0.1'
     packIntoJar 'org.infernalstudios:config:3.0.1'

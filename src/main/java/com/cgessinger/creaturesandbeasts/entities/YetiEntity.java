@@ -65,6 +65,7 @@ import software.bernie.geckolib3.core.event.SoundKeyframeEvent;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
+import software.bernie.geckolib3.util.GeckoLibUtil;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -77,7 +78,7 @@ public class YetiEntity extends TamableAnimal implements IAnimatable, Enemy, Neu
     public static final EntityDataAccessor<Boolean> PASSIVE = SynchedEntityData.defineId(YetiEntity.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<ItemStack> HELD_ITEM = SynchedEntityData.defineId(YetiEntity.class, EntityDataSerializers.ITEM_STACK);
 
-    private final AnimationFactory factory = new AnimationFactory(this);
+    private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
     private final UUID healthReductionUUID = UUID.fromString("189faad9-35de-4e15-a598-82d147b996d7");
     private final float babyHealth = 20.0F;
 

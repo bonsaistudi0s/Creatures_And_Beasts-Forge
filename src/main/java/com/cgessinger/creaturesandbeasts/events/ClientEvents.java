@@ -50,8 +50,8 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void registerRenderers(final EntityRenderersEvent.AddLayers event) {
-        GeoArmorRenderer.registerArmorRenderer(FlowerCrownItem.class, new FlowerCrownRenderer());
-        GeoArmorRenderer.registerArmorRenderer(GlowingFlowerCrownItem.class, new FlowerCrownRenderer());
-        GeoArmorRenderer.registerArmorRenderer(SporelingBackpackItem.class, new SporelingBackpackRenderer());
+        GeoArmorRenderer.registerArmorRenderer(FlowerCrownItem.class, FlowerCrownRenderer::new);
+        GeoArmorRenderer.registerArmorRenderer(GlowingFlowerCrownItem.class, FlowerCrownRenderer::new);
+        GeoArmorRenderer.registerArmorRenderer(SporelingBackpackItem.class, SporelingBackpackRenderer::new);
     }
 }
