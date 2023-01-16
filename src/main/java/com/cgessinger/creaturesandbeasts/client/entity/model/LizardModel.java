@@ -39,15 +39,14 @@ public class LizardModel extends AnimatedGeoModel<LizardEntity> {
     }
 
     @Override
-    public void setLivingAnimations(LizardEntity entity, Integer uniqueID, AnimationEvent customPredicate) {
-        super.setLivingAnimations(entity, uniqueID, customPredicate);
+    public void setCustomAnimations(LizardEntity animatable, int instanceId, AnimationEvent animationEvent) {
+        super.setCustomAnimations(animatable, instanceId, animationEvent);
 
         IBone head_rotation = this.getAnimationProcessor().getBone("head_rotation");
 
-        EntityModelData extraData = (EntityModelData) customPredicate.getExtraDataOfType(EntityModelData.class).get(0);
+        EntityModelData extraData = (EntityModelData) animationEvent.getExtraDataOfType(EntityModelData.class).get(0);
 
         head_rotation.setRotationX(extraData.headPitch * ((float) Math.PI / 180F));
         head_rotation.setRotationY(extraData.netHeadYaw * ((float) Math.PI / 180F));
     }
-
 }

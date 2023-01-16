@@ -61,10 +61,12 @@ import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
+import software.bernie.geckolib3.core.builder.ILoopType;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
+import software.bernie.geckolib3.util.GeckoLibUtil;
 
 import javax.annotation.Nullable;
 import java.util.Random;
@@ -77,7 +79,7 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
     private static final EntityDataAccessor<Boolean> LAYING_EGG = SynchedEntityData.defineId(LizardEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> FROM_NET = SynchedEntityData.defineId(LizardEntity.class, EntityDataSerializers.BOOLEAN);
 
-    private final AnimationFactory factory = new AnimationFactory(this);
+    private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
     private LizardEntity partner;
 
     public BlockPos jukeboxPosition;
@@ -463,13 +465,13 @@ public class LizardEntity extends Animal implements IAnimatable, Netable {
 
     private <E extends IAnimatable> PlayState animationPredicate(AnimationEvent<E> event) {
         if (this.entityData.get(LAYING_EGG)) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("lizard_dig", true));
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("lizard_dig", ILoopType.EDefaultLoopTypes.LOOP));
             return PlayState.CONTINUE;
         } else if (!(animationSpeed > -0.13F && animationSpeed < 0.13F)) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("lizard_walk", true));
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("lizard_walk", ILoopType.EDefaultLoopTypes.LOOP));
             return PlayState.CONTINUE;
         } else if (this.isPartying()) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("lizard_dance", true));
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("lizard_dance", ILoopType.EDefaultLoopTypes.LOOP));
             return PlayState.CONTINUE;
         }
         return PlayState.STOP;

@@ -22,6 +22,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'com.matthewprenger.cursegradle'
+apply from: "https://moddingtutorials.org/applesilicon.gradle"
 
 import groovy.json.JsonSlurper
 import groovy.json.JsonOutput
@@ -111,11 +112,11 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.18.2-40.0.32'
+    minecraft 'net.minecraftforge:forge:1.18.2-40.2.0'
     annotationProcessor 'org.spongepowered:mixin:0.8.4:processor'
 
     // Geckolib for ingame animations
-    implementation fg.deobf('software.bernie.geckolib:geckolib-forge-1.18:3.0.24')
+    implementation fg.deobf('software.bernie.geckolib:geckolib-forge-1.18:3.0.57')
 
     implementation 'org.infernalstudios:config:3.0.1'
     packIntoJar 'org.infernalstudios:config:3.0.1'

@@ -66,6 +66,7 @@ import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
+import software.bernie.geckolib3.util.GeckoLibUtil;
 
 import javax.annotation.Nullable;
 import java.util.Random;
@@ -89,7 +90,7 @@ public class SporelingEntity extends TamableAnimal implements IAnimatable {
     private final PanicGoal panicGoal = new PanicGoal(this, 1.25D);
     private final ConvertItemGoal convertItemGoal = new ConvertItemGoal(this, 16.0D, 1.3D);
 
-    private final AnimationFactory factory = new AnimationFactory(this);
+    private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
     private int attackTimer;
     private int waveTimer;
 

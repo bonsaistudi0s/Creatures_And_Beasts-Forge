@@ -9,10 +9,11 @@ import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 import software.bernie.geckolib3.item.GeoArmorItem;
+import software.bernie.geckolib3.util.GeckoLibUtil;
 
 public class FlowerCrownItem extends GeoArmorItem implements IAnimatable {
     private final Ingredient repairItems;
-    private final AnimationFactory factory = new AnimationFactory(this);
+    private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
 
     public FlowerCrownItem(ArmorMaterial material, Ingredient repairItems, EquipmentSlot slot, Properties properties) {
         super(material, slot, properties);

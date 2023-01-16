@@ -45,10 +45,12 @@ import net.minecraftforge.common.IForgeShearable;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
+import software.bernie.geckolib3.core.builder.ILoopType;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
+import software.bernie.geckolib3.util.GeckoLibUtil;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -58,7 +60,7 @@ import java.util.Random;
 public class LilytadEntity extends Animal implements IForgeShearable, IAnimatable {
     public static final EntityDataAccessor<String> TYPE = SynchedEntityData.defineId(LilytadEntity.class, EntityDataSerializers.STRING);
     public static final EntityDataAccessor<Boolean> SHEARED = SynchedEntityData.defineId(LilytadEntity.class, EntityDataSerializers.BOOLEAN);
-    private final AnimationFactory factory = new AnimationFactory(this);
+    private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
     private int shearedTimer;
 
     public LilytadEntity(EntityType<LilytadEntity> type, Level worldIn) {
@@ -266,7 +268,7 @@ public class LilytadEntity extends Animal implements IForgeShearable, IAnimatabl
 
     private <E extends IAnimatable> PlayState animationPredicate(AnimationEvent<E> event) {
         if (!(animationSpeed > -0.05F && animationSpeed < 0.05F)) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("lilytad.walk", true));
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("lilytad.walk", ILoopType.EDefaultLoopTypes.LOOP));
             return PlayState.CONTINUE;
         }
         return PlayState.STOP;

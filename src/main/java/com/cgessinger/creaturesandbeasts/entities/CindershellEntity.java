@@ -83,11 +83,13 @@ import net.minecraftforge.network.NetworkHooks;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
+import software.bernie.geckolib3.core.builder.ILoopType;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.SoundKeyframeEvent;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
+import software.bernie.geckolib3.util.GeckoLibUtil;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -104,7 +106,7 @@ public class CindershellEntity extends Animal implements IAnimatable, Bucketable
     private static final EntityDataAccessor<Optional<UUID>> PLAYER = SynchedEntityData.defineId(CindershellEntity.class, EntityDataSerializers.OPTIONAL_UUID);
 
     private final UUID healthReductionUUID = UUID.fromString("189faad9-35de-4e15-a598-82d147b996d7");
-    private final AnimationFactory factory = new AnimationFactory(this);
+    private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
     protected CinderFurnaceContainer inventory;
     private Player playerInMenu;
     private int eatTimer;
@@ -802,20 +804,20 @@ public class CindershellEntity extends Animal implements IAnimatable, Bucketable
 
     private <E extends IAnimatable> PlayState animationPredicate(AnimationEvent<E> event) {
         if (!(animationSpeed > -0.05F && animationSpeed < 0.05F)) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation(this.isBaby() ? "baby_cindershell_walk" : "cindershell_walk"));
+            event.getController().setAnimation(new AnimationBuilder().addAnimation(this.isBaby() ? "baby_cindershell_walk" : "cindershell_walk", ILoopType.EDefaultLoopTypes.LOOP));
         } else if (this.getEating()) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("cindershell_idle_eat"));
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("cindershell_idle_eat", ILoopType.EDefaultLoopTypes.PLAY_ONCE));
         } else if (this.isDeadOrDying()) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("cindershell_death"));
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("cindershell_death", ILoopType.EDefaultLoopTypes.PLAY_ONCE));
         } else {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("cindershell_idle"));
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("cindershell_idle", ILoopType.EDefaultLoopTypes.LOOP));
         }
         return PlayState.CONTINUE;
     }
 
     private <E extends IAnimatable> PlayState eatAnimationPredicate(AnimationEvent<E> event) {
         if (this.getEating()) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("cindershell_eat"));
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("cindershell_eat", ILoopType.EDefaultLoopTypes.PLAY_ONCE));
             return PlayState.CONTINUE;
         }
         event.getController().markNeedsReload();

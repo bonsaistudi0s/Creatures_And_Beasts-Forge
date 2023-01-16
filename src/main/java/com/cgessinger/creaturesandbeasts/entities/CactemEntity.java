@@ -59,11 +59,13 @@ import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.Animation;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
+import software.bernie.geckolib3.core.builder.ILoopType;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.SoundKeyframeEvent;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
+import software.bernie.geckolib3.util.GeckoLibUtil;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -88,7 +90,7 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
     private final RangedSpearAttackGoal spearAttackGoal = new RangedSpearAttackGoal(this, 60, 16.0F);
     private final BecomeElderGoal becomeElderGoal = new BecomeElderGoal(this, 32.0F);
 
-    private final AnimationFactory factory = new AnimationFactory(this);
+    private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
     private final UUID healthReductionUUID = UUID.fromString("65a301bb-531d-499e-939c-eda5b857c0b4");
     private final float babyHealth = 20.0F;
 
@@ -421,7 +423,7 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
         Animation currentAnim = event.getController().getCurrentAnimation();
 
         if (this.isAttacking() || (currentAnim != null && currentAnim.animationName.equals("cactem_throw") && event.getController().getAnimationState().equals(AnimationState.Running))) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("cactem_throw"));
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("cactem_throw", ILoopType.EDefaultLoopTypes.PLAY_ONCE));
             return PlayState.CONTINUE;
         }
 
