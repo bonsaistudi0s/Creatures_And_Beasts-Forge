@@ -117,8 +117,8 @@ dependencies {
     // Geckolib for ingame animations
     implementation fg.deobf('software.bernie.geckolib:geckolib-forge-1.19:3.1.39')
 
-    implementation 'org.infernalstudios:config:3.0.1'
-    packIntoJar 'org.infernalstudios:config:3.0.1'
+    implementation 'org.infernalstudios:config:3.0.3'
+    packIntoJar 'org.infernalstudios:config:3.0.3'
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..
