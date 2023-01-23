@@ -27,7 +27,7 @@ apply from: "https://moddingtutorials.org/applesilicon.gradle"
 import groovy.json.JsonSlurper
 import groovy.json.JsonOutput
 
-version = '1.4.0'
+version = '1.5.0'
 group = 'com.cgessinger.creaturesandbeasts' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "CNB-1.18.2"
 
