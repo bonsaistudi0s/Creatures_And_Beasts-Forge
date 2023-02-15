@@ -30,17 +30,16 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.BreedGoal;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.FollowParentGoal;
-import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.PanicGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.TemptGoal;
-import net.minecraft.world.entity.ai.util.DefaultRandomPos;
+import net.minecraft.world.entity.ai.util.GoalUtils;
+import net.minecraft.world.entity.ai.util.RandomPos;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -72,7 +71,7 @@ public class LittleGrebeEntity extends Animal implements IAnimatable {
 
     public LittleGrebeEntity(EntityType<LittleGrebeEntity> type, Level worldIn) {
         super(type, worldIn);
-        this.setPathfindingMalus(BlockPathTypes.WATER, 10.0F);
+        this.setPathfindingMalus(BlockPathTypes.WATER, 0.0F);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -90,8 +89,7 @@ public class LittleGrebeEntity extends Animal implements IAnimatable {
         this.goalSelector.addGoal(3, new TemptGoal(this, 1.0D, Ingredient.of(LITTLE_GREBE_FOOD), false));
         this.goalSelector.addGoal(4, new BreedGoal(this, 1.0D));
         this.goalSelector.addGoal(5, new FollowParentGoal(this, 1.25D));
-        this.goalSelector.addGoal(5, new LittleGrebeEntity.SwimTravelGoal(this, 1.0D));
-        this.goalSelector.addGoal(6, new LittleGrebeEntity.WanderGoal(this, 1.0D, 120));
+        this.goalSelector.addGoal(6, new LittleGrebeEntity.LittleGrebeRandomStrollGoal(this, 1.0D, 60, 1));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0F));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
         this.goalSelector.addGoal(9, new GoToWaterGoal(this, 0.8D));
@@ -256,67 +254,77 @@ public class LittleGrebeEntity extends Animal implements IAnimatable {
         return this.factory;
     }
 
-    static class WanderGoal extends RandomStrollGoal {
-        private WanderGoal(LittleGrebeEntity entity, double speedIn, int chance) {
-            super(entity, speedIn, chance);
+    static class LittleGrebeRandomStrollGoal extends RandomStrollGoal {
+        private static final Random rand = new Random();
+        private final LittleGrebeEntity littleGrebe;
+        private final int intervalLand;
+        private final int intervalWater;
+        private final boolean checkNoActionTime;
+
+        public LittleGrebeRandomStrollGoal(LittleGrebeEntity littleGrebe, double speedModifier) {
+            this(littleGrebe, speedModifier, 60, 120);
         }
 
-        @Override
-        public boolean canUse() {
-            return !this.mob.isInWater() && super.canUse();
-        }
-    }
-
-    static class SwimTravelGoal extends Goal {
-        private final LittleGrebeEntity grebeEntity;
-        private final double speed;
-        private boolean stuck;
-
-        SwimTravelGoal(LittleGrebeEntity grebeEntity, double speedIn) {
-            this.grebeEntity = grebeEntity;
-            this.speed = speedIn;
+        public LittleGrebeRandomStrollGoal(LittleGrebeEntity littleGrebe, double speedModifier, int intervalLand, int intervalWater) {
+            this(littleGrebe, speedModifier, intervalLand, intervalWater, true);
         }
 
-        @Override
-        public boolean canUse() {
-            return this.grebeEntity.isInWater();
+        public LittleGrebeRandomStrollGoal(LittleGrebeEntity littleGrebe, double speedModifier, int intervalLand, int intervalWater, boolean checkNoActionTime) {
+            super(littleGrebe, speedModifier, intervalLand, checkNoActionTime);
+            this.littleGrebe = littleGrebe;
+            this.intervalLand = intervalLand;
+            this.intervalWater = intervalWater;
+            this.checkNoActionTime = checkNoActionTime;
         }
 
         @Override
         public void start() {
-            this.stuck = false;
+            this.littleGrebe.getNavigation().moveTo(this.wantedX, this.wantedY, this.wantedZ, this.speedModifier);
         }
 
         @Override
-        public void tick() {
-            if (this.grebeEntity.getNavigation().isDone()) {
-                Vec3 vector3d = Vec3.atBottomCenterOf(this.grebeEntity.getTravelPos());
-                Vec3 vector3d1 = DefaultRandomPos.getPosTowards(this.grebeEntity, 16, 3, vector3d, ((float) Math.PI / 10F));
-                if (vector3d1 == null) {
-                    vector3d1 = DefaultRandomPos.getPosTowards(this.grebeEntity, 8, 7, vector3d, ((float) Math.PI / 2F));
-                }
+        public boolean canUse() {
+            if (this.mob.isVehicle()) {
+                return false;
+            } else {
+                if (!this.forceTrigger) {
+                    if (this.checkNoActionTime && this.mob.getNoActionTime() >= 100) {
+                        return false;
+                    }
 
-                if (vector3d1 != null) {
-                    int i = Mth.floor(vector3d1.x);
-                    int j = Mth.floor(vector3d1.z);
-                    if (!this.grebeEntity.level.hasChunksAt(i - 34, 0, j - 34, i + 34, 0, j + 34)) {
-                        vector3d1 = null;
+                    int i = this.littleGrebe.isInWater() ? this.intervalWater : this.intervalLand;
+                    if (this.mob.getRandom().nextInt(reducedTickDelay(i)) != 0) {
+                        return false;
                     }
                 }
 
-                if (vector3d1 == null) {
-                    this.stuck = true;
-                    return;
+                Vec3 vec3 = this.getPosition();
+                if (vec3 == null) {
+                    return false;
+                } else {
+                    this.wantedX = vec3.x;
+                    this.wantedY = vec3.y;
+                    this.wantedZ = vec3.z;
+                    this.forceTrigger = false;
+                    return true;
                 }
-
-                this.grebeEntity.getNavigation().moveTo(vector3d1.x, vector3d1.y, vector3d1.z, this.speed);
             }
-
         }
 
         @Override
-        public boolean canContinueToUse() {
-            return !this.grebeEntity.getNavigation().isDone() && !this.stuck && !this.grebeEntity.isInLove();
+        protected Vec3 getPosition() {
+            boolean flag = GoalUtils.mobRestricted(this.littleGrebe, 10);
+
+            return RandomPos.generateRandomPos(this.littleGrebe, () -> {
+                BlockPos blockpos = this.littleGrebe.isInWater() ? RandomPos.generateRandomDirection(this.littleGrebe.getRandom(), 10, 1) : RandomPos.generateRandomDirection(this.littleGrebe.getRandom(), 10, 7);
+                return generateRandomPosTowardDirection(this.littleGrebe, 10, flag, blockpos);
+            });
+        }
+
+        @Nullable
+        private static BlockPos generateRandomPosTowardDirection(LittleGrebeEntity littleGrebe, int horizontalRange, boolean flag, BlockPos posTowards) {
+            BlockPos blockpos = RandomPos.generateRandomPosTowardDirection(littleGrebe, horizontalRange, littleGrebe.getRandom(), posTowards);
+            return !GoalUtils.isOutsideLimits(blockpos, littleGrebe) && !GoalUtils.isRestricted(flag, littleGrebe, blockpos) && !GoalUtils.hasMalus(littleGrebe, blockpos) && (!GoalUtils.isNotStable(littleGrebe.getNavigation(), blockpos) || GoalUtils.isWater(littleGrebe, blockpos)) ? blockpos : null;
         }
     }
 }

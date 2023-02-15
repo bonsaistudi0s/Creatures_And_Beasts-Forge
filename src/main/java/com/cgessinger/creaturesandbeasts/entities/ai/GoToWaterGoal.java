@@ -6,7 +6,6 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
 
-// ToDo: Rework This Goal (Look at FindWaterOneDeepGoal)
 public class GoToWaterGoal extends MoveToBlockGoal {
     private final Animal creature;
 
@@ -18,12 +17,12 @@ public class GoToWaterGoal extends MoveToBlockGoal {
 
     @Override
     public boolean canContinueToUse() {
-        return !this.creature.isInWater() && this.tryTicks <= 1200 && this.isValidTarget(this.creature.level, this.blockPos);
+        return !this.creature.isInWater() && super.canContinueToUse();
     }
 
     @Override
     public boolean canUse() {
-        return !this.creature.isInWater() && !this.creature.isInLove() && this.creature.getRandom().nextInt(200) == 0;
+        return !this.creature.isInWater() && !this.creature.isInLove() && super.canUse();
     }
 
     @Override
