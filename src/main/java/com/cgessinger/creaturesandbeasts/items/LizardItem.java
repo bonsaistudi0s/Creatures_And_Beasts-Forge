@@ -33,8 +33,6 @@ import net.minecraftforge.registries.RegistryObject;
 
 import java.util.Objects;
 
-import net.minecraft.world.item.Item.Properties;
-
 public class LizardItem extends ForgeSpawnEggItem {
     private final LizardType type;
 

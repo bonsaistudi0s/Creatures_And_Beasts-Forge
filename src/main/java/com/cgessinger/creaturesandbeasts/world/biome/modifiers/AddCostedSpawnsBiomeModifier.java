@@ -17,8 +17,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.List;
 
-import net.minecraftforge.common.world.BiomeModifier.Phase;
-
 public record AddCostedSpawnsBiomeModifier(EntityType<? extends Entity> entityType, List<CostSpawnerData> spawnerData) implements BiomeModifier {
 
     public static final Codec<AddCostedSpawnsBiomeModifier> CODEC = RecordCodecBuilder.create(builder -> builder.group(

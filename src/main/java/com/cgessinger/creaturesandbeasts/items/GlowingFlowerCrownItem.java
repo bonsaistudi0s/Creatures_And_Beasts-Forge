@@ -6,8 +6,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.Enchantment;
 
-import net.minecraft.world.item.Item.Properties;
-
 public class GlowingFlowerCrownItem extends FlowerCrownItem {
     public GlowingFlowerCrownItem(ArmorMaterial material, Ingredient repairItems, EquipmentSlot slot, Properties properties) {
         super(material, repairItems, slot, properties);

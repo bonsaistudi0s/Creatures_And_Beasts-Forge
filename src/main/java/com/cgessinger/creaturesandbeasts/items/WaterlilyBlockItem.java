@@ -6,8 +6,6 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
-import net.minecraft.world.item.Item.Properties;
-
 public class WaterlilyBlockItem extends BlockItem {
     public WaterlilyBlockItem(Block block, Properties properties) {
         super(block, properties.tab(CreaturesAndBeasts.TAB));

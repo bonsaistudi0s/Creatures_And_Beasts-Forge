@@ -31,8 +31,6 @@ import net.minecraftforge.registries.RegistryObject;
 
 import java.util.Objects;
 
-import net.minecraft.world.item.Item.Properties;
-
 public class SporelingSpawnEggItem extends ForgeSpawnEggItem {
 
     public SporelingSpawnEggItem(final RegistryObject<? extends EntityType<? extends Mob>> entityTypeSupplier, final int primaryColor, final int secondaryColor, final Properties properties) {

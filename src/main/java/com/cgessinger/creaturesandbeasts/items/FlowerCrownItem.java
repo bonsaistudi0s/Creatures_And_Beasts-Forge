@@ -9,8 +9,6 @@ import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 import software.bernie.geckolib3.item.GeoArmorItem;
-
-import net.minecraft.world.item.Item.Properties;
 import software.bernie.geckolib3.util.GeckoLibUtil;
 
 public class FlowerCrownItem extends GeoArmorItem implements IAnimatable {
