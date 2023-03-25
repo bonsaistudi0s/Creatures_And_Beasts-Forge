@@ -3,7 +3,12 @@
   "entityType": "cnb:end_whale",
   "spawns": [
     {
-      "biomes": "#forge:is_end",
+      "biomes": [
+        "minecraft:end_highlands",
+        "minecraft:end_midlands",
+        "minecraft:small_end_islands",
+        "minecraft:end_barrens"
+      ],
       "category": "creature",
       "weight": 1,
       "min": 1,

@@ -347,7 +347,7 @@ public class EndWhaleEntity extends TamableAnimal implements FlyingAnimal, Saddl
     }
 
     public static boolean checkEndWhaleSpawnRules(EntityType<EndWhaleEntity> animal, LevelAccessor worldIn, MobSpawnType reason, BlockPos pos, RandomSource randomIn) {
-        return true;
+        return pos.getY() >= 50;
     }
 
     @Override
