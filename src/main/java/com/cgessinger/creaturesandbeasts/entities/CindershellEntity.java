@@ -754,11 +754,6 @@ public class CindershellEntity extends Animal implements IAnimatable, Bucketable
     }
 
     @Override
-    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
-        return !this.hasFurnace() && !this.hasCustomName();
-    }
-
-    @Override
     public boolean causeFallDamage(float distance, float damageMultiplier, DamageSource source) {
         return false;
     }
