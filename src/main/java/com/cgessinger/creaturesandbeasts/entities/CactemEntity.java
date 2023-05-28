@@ -173,6 +173,7 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
     public void tick() {
         if (!this.level.isClientSide && this.shouldUpdateGoals) {
             this.reassessGoals();
+            this.shouldUpdateGoals = false;
         }
         
         super.tick();
@@ -539,6 +540,8 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
             this.range = range;
             this.speed = speedIn;
             this.navigation = entityIn.getNavigation();
+
+            this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
         }
 
         @Override
@@ -574,6 +577,11 @@ public class CactemEntity extends AgeableMob implements RangedAttackMob, IAnimat
         @Override
         public boolean canContinueToUse() {
             return (!this.navigation.isDone() || this.tradeTime > 0) && (!this.itemInstance.isRemoved() || this.entityIn.isTrading());
+        }
+
+        @Override
+        public boolean isInterruptable() {
+            return this.tradeTime <= 0;
         }
 
         public void trade() {
