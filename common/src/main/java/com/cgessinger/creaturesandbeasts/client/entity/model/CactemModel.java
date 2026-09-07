@@ -14,7 +14,7 @@ public class CactemModel extends GeoModel<CactemEntity> {
     private static final ResourceLocation WARRIOR_CACTEM_TEXTURE = ResourceLocation.fromNamespaceAndPath(CreaturesAndBeastsConstants.MOD_ID, "textures/entity/cactem/warrior_cactem.png");
     private static final ResourceLocation BABY_CACTEM_TEXTURE = ResourceLocation.fromNamespaceAndPath(CreaturesAndBeastsConstants.MOD_ID, "textures/entity/cactem/baby_cactem.png");
 
-    private static final ResourceLocation CACTEM_ANIMATIONS = ResourceLocation.fromNamespaceAndPath(CreaturesAndBeastsConstants.MOD_ID, "animations/cactem.json");
+    private static final ResourceLocation CACTEM_ANIMATIONS = ResourceLocation.fromNamespaceAndPath(CreaturesAndBeastsConstants.MOD_ID, "animations/cactem.animation.json");
 
     @Override
     public ResourceLocation getModelResource(CactemEntity entity) {

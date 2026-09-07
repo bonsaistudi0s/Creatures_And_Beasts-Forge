@@ -75,6 +75,15 @@ public class CinderSwordItem extends SwordItem {
         if (level.getFluidState(pos).is(Fluids.LAVA)) {
             itemstack.update(CNBDataComponentTypeModule.IMBUE_LEVEL, 0, comp -> 4);
             itemstack.update(CNBDataComponentTypeModule.IMBUE_TICKS, 0, comp -> 400);
+
+            itemstack.update(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY, comp -> comp.withModifierAdded(
+                    Attributes.ATTACK_DAMAGE,
+                    new AttributeModifier(
+                            BASE_ATTACK_DAMAGE_ID, 7.0D + (double) CNBItemTiers.CINDER.getAttackDamageBonus(), AttributeModifier.Operation.ADD_VALUE
+                    ),
+                    EquipmentSlotGroup.MAINHAND)
+            );
+
             player.playSound(SoundEvents.BUCKET_FILL_LAVA, 1.0F, 1.0F);
             return InteractionResultHolder.success(itemstack);
         }

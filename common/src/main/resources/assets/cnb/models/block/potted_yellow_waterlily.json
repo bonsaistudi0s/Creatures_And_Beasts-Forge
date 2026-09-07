@@ -2,7 +2,7 @@
 	"texture_size": [128, 128],
 	"render_type": "cutout",
 	"textures": {
-		"1": "cnb:entity/lilytad/lilytad_yellow",
+		"1": "cnb:block/lilytad/lilytad_yellow",
 		"particle": "block/flower_pot",
 		"flowerpot": "block/flower_pot"
 	},

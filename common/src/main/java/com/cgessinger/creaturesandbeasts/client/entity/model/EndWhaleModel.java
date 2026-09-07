@@ -11,7 +11,7 @@ public class EndWhaleModel extends GeoModel<EndWhaleEntity> {
     private static final ResourceLocation END_WHALE_TEXTURE = ResourceLocation.fromNamespaceAndPath(CreaturesAndBeastsConstants.MOD_ID, "textures/entity/end_whale/end_whale.png");
     private static final ResourceLocation END_WHALE_SADDLE_TEXTURE = ResourceLocation.fromNamespaceAndPath(CreaturesAndBeastsConstants.MOD_ID, "textures/entity/end_whale/end_whale_saddle.png");
 
-    private static final ResourceLocation END_WHALE_ANIMATIONS = ResourceLocation.fromNamespaceAndPath(CreaturesAndBeastsConstants.MOD_ID, "animations/end_whale.json");
+    private static final ResourceLocation END_WHALE_ANIMATIONS = ResourceLocation.fromNamespaceAndPath(CreaturesAndBeastsConstants.MOD_ID, "animations/end_whale.animation.json");
 
 
     @Override

@@ -16,7 +16,7 @@ public class YetiModel extends GeoModel<YetiEntity> {
     private static final ResourceLocation YETI_TEXTURE = ResourceLocation.fromNamespaceAndPath(CreaturesAndBeastsConstants.MOD_ID, "textures/entity/yeti/yeti.png");
     private static final ResourceLocation BABY_YETI_TEXTURE = ResourceLocation.fromNamespaceAndPath(CreaturesAndBeastsConstants.MOD_ID, "textures/entity/yeti/baby_yeti.png");
 
-    private static final ResourceLocation YETI_ANIMATIONS = ResourceLocation.fromNamespaceAndPath(CreaturesAndBeastsConstants.MOD_ID, "animations/yeti.json");
+    private static final ResourceLocation YETI_ANIMATIONS = ResourceLocation.fromNamespaceAndPath(CreaturesAndBeastsConstants.MOD_ID, "animations/yeti.animation.json");
 
     @Override
     public ResourceLocation getModelResource(YetiEntity entity) {

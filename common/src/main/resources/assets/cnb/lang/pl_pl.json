@@ -116,5 +116,12 @@
 
   "cnb.container.cinder_furnace": "Rozżarzony piec",
 
-  "cnb.item.tooltip.cinder_furnace": "\u00A77Kliknij Żużełwia prawym przyciskiem myszy aby załozyć"
+  "cnb.item.tooltip.cinder_furnace": "\u00A77Kliknij Żużełwia prawym przyciskiem myszy aby załozyć",
+  "tab.cnb": "Creatures and Beasts",
+  "tag.item.cnb.cindershell_food": "Cindershell Food",
+  "tag.item.cnb.end_whale_food": "End Whale Food",
+  "tag.item.cnb.glowing_minipad_flowers": "Glowing Minipad Flowers",
+  "tag.item.cnb.little_grebe_food": "Little Grebe Food",
+  "tag.item.cnb.minipad_flowers": "Minipad Flowers",
+  "tag.item.cnb.sporeling_food": "Sporeling Food"
 }

@@ -1,8 +1,9 @@
 {
 	"texture_size": [128, 128],
+	"render_type": "cutout",
 	"textures": {
-		"2": "cnb:entity/lilytad/lilytad_yellow",
-		"particle": "cnb:entity/lilytad/lilytad_yellow"
+		"2": "cnb:block/lilytad/lilytad_yellow",
+		"particle": "cnb:block/lilytad/lilytad_yellow"
 	},
 	"elements": [
 		{

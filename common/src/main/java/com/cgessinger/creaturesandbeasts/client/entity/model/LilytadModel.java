@@ -8,7 +8,7 @@ import software.bernie.geckolib.model.GeoModel;
 public class LilytadModel extends GeoModel<LilytadEntity> {
     private static final ResourceLocation LILYTAD_MODEL = ResourceLocation.fromNamespaceAndPath(CreaturesAndBeastsConstants.MOD_ID, "geo/entity/lilytad/lilytad.geo.json");
     private static final ResourceLocation LILYTAD_SHEARED_TEXTURE = ResourceLocation.fromNamespaceAndPath(CreaturesAndBeastsConstants.MOD_ID, "textures/entity/lilytad/lilytad_sheared.png");
-    private static final ResourceLocation LILYTAD_ANIMATIONS = ResourceLocation.fromNamespaceAndPath(CreaturesAndBeastsConstants.MOD_ID, "animations/lilytad.json");
+    private static final ResourceLocation LILYTAD_ANIMATIONS = ResourceLocation.fromNamespaceAndPath(CreaturesAndBeastsConstants.MOD_ID, "animations/lilytad.animation.json");
 
     @Override
     public ResourceLocation getModelResource(LilytadEntity entity) {

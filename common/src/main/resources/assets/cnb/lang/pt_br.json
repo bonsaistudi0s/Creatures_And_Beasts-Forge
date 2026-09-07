@@ -116,5 +116,12 @@
 
   "cnb.container.cinder_furnace": "Fornalha de Casca de lava",
 
-  "cnb.item.tooltip.cinder_furnace": "§7Clique em um Casca de lava com o botão direito para equipar"
+  "cnb.item.tooltip.cinder_furnace": "§7Clique em um Casca de lava com o botão direito para equipar",
+  "tab.cnb": "Creatures and Beasts",
+  "tag.item.cnb.cindershell_food": "Cindershell Food",
+  "tag.item.cnb.end_whale_food": "End Whale Food",
+  "tag.item.cnb.glowing_minipad_flowers": "Glowing Minipad Flowers",
+  "tag.item.cnb.little_grebe_food": "Little Grebe Food",
+  "tag.item.cnb.minipad_flowers": "Minipad Flowers",
+  "tag.item.cnb.sporeling_food": "Sporeling Food"
 }

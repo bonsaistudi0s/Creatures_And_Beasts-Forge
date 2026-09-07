@@ -8,7 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.model.GeoModel;
 
 public class SporelingModel extends GeoModel<SporelingEntity> {
-    private static final ResourceLocation SPORELING_ANIMATIONS = ResourceLocation.fromNamespaceAndPath(CreaturesAndBeastsConstants.MOD_ID, "animations/sporeling.json");
+    private static final ResourceLocation SPORELING_ANIMATIONS = ResourceLocation.fromNamespaceAndPath(CreaturesAndBeastsConstants.MOD_ID, "animations/sporeling.animation.json");
 
     private static final ResourceLocation GOOMY_MODEL = ResourceLocation.fromNamespaceAndPath(CreaturesAndBeastsConstants.MOD_ID, "geo/entity/sporeling/sporeling_goomy.geo.json");
     private static final ResourceLocation SHRIMPSNAIL_MODEL = ResourceLocation.fromNamespaceAndPath(CreaturesAndBeastsConstants.MOD_ID, "geo/entity/sporeling/sporeling_shrimpsnail.geo.json");

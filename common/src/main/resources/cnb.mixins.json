@@ -20,7 +20,6 @@
   "client": [
     "accessor.ItemPropertiesAccessor",
     "accessor.ModelLayersAccessor",
-    "client.MixinHumanoidArmorLayer",
     "client.MixinLayerDefinitions",
     "client.MixinLivingEntityRenderer",
     "client.MixinMultiPlayerGameMode"

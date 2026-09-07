@@ -24,6 +24,11 @@ public class CindershellRenderer extends GeoEntityRenderer<CindershellEntity> {
     }
 
     @Override
+    public float getMotionAnimThreshold(CindershellEntity animatable) {
+        return 0.005F;
+    }
+
+    @Override
     protected float getDeathMaxRotation(CindershellEntity entityLivingBaseIn) {
         return 0;
     }

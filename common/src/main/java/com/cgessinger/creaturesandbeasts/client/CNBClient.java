@@ -2,16 +2,7 @@ package com.cgessinger.creaturesandbeasts.client;
 
 import com.cgessinger.creaturesandbeasts.CreaturesAndBeastsConstants;
 import com.cgessinger.creaturesandbeasts.client.entity.model.CactemSpearModel;
-import com.cgessinger.creaturesandbeasts.client.entity.render.CactemRenderer;
-import com.cgessinger.creaturesandbeasts.client.entity.render.CindershellRenderer;
-import com.cgessinger.creaturesandbeasts.client.entity.render.EndWhaleRenderer;
-import com.cgessinger.creaturesandbeasts.client.entity.render.LilytadRenderer;
-import com.cgessinger.creaturesandbeasts.client.entity.render.LittleGrebeRenderer;
-import com.cgessinger.creaturesandbeasts.client.entity.render.LizardRenderer;
-import com.cgessinger.creaturesandbeasts.client.entity.render.MinipadRenderer;
-import com.cgessinger.creaturesandbeasts.client.entity.render.SporelingRenderer;
-import com.cgessinger.creaturesandbeasts.client.entity.render.ThrownCactemSpearRenderer;
-import com.cgessinger.creaturesandbeasts.client.entity.render.YetiRenderer;
+import com.cgessinger.creaturesandbeasts.client.entity.render.*;
 import com.cgessinger.creaturesandbeasts.client.gui.screens.inventory.CinderFurnaceScreen;
 import com.cgessinger.creaturesandbeasts.client.particle.CactemHealParticle;
 import com.cgessinger.creaturesandbeasts.client.particle.MinipadFlowerParticle;

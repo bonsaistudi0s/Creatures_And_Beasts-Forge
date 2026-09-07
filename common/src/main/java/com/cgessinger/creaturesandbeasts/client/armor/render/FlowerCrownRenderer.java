@@ -2,6 +2,7 @@ package com.cgessinger.creaturesandbeasts.client.armor.render;
 
 import com.cgessinger.creaturesandbeasts.client.armor.model.FlowerCrownModel;
 import com.cgessinger.creaturesandbeasts.items.FlowerCrownItem;
+import com.cgessinger.creaturesandbeasts.items.GlowingFlowerCrownItem;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
@@ -16,6 +17,10 @@ public class FlowerCrownRenderer extends GeoArmorRenderer<FlowerCrownItem> {
 
     @Override
     public RenderType getRenderType(FlowerCrownItem animatable, ResourceLocation texture, @Nullable MultiBufferSource bufferSource, float partialTick) {
-        return RenderType.eyes(texture);
+        if (animatable instanceof GlowingFlowerCrownItem) {
+            return RenderType.eyes(texture);
+        } else {
+            return super.getRenderType(animatable, texture, bufferSource, partialTick);
+        }
     }
 }
